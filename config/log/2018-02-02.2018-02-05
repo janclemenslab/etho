@@ -1,0 +1,239 @@
+WARNING  2018-01-06,04:12:15.502 CAM@rpi5:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-06,04:12:15.524 CAM@rpi5:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-06,04:12:15.540 CAM@rpi5:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-06,04:12:15.541 CAM@rpi5:CamZeroService:finish:102 -    was not recording
+WARNING  2018-02-02,07:51:47.428 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,07:51:47.443 CAM@rpi8:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-02-02,07:51:47.454 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,07:51:47.455 CAM@rpi8:CamZeroService:finish:102 -    was not recording
+WARNING  2018-02-02,08:52:23.660 THU@rpi8:ThuZeroService:finish:55 - stopping
+WARNING  2018-02-02,08:52:24.664 THU@rpi8:ThuZeroService:finish:60 -    stopped
+WARNING  2018-02-02,08:52:26.668 THU@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,08:52:26.670 THU@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,08:52:26.671 THU@rpi8:ZeroService:service_kill:142 -    kill process 21320
+WARNING  2018-02-02,08:52:39.299 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,08:52:39.330 CAM@rpi8:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-02-02,08:52:41.333 CAM@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,08:52:41.335 CAM@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,08:52:41.336 CAM@rpi8:ZeroService:service_kill:142 -    kill process 21389
+WARNING  2018-01-06,05:15:28.714 THU@rpi5:ThuZeroService:finish:55 - stopping
+WARNING  2018-01-06,05:15:29.719 THU@rpi5:ThuZeroService:finish:60 -    stopped
+WARNING  2018-01-06,05:15:31.723 THU@rpi5:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-06,05:15:32.177 THU@rpi5:ZeroService:service_stop:137 -    done
+WARNING  2018-01-06,05:15:32.180 THU@rpi5:ZeroService:service_kill:142 -    kill process 19615
+WARNING  2018-01-06,05:15:44.117 CAM@rpi5:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-06,05:15:44.137 CAM@rpi5:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-06,05:15:46.141 CAM@rpi5:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-06,05:15:46.142 CAM@rpi5:ZeroService:service_stop:137 -    done
+WARNING  2018-01-06,05:15:46.144 CAM@rpi5:ZeroService:service_kill:142 -    kill process 19684
+WARNING  2018-02-02,08:54:27.337 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-02-02,08:54:27.338 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-02-02,08:54:27.340 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-02-02,08:54:27.341 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-02-02,08:54:28.343 SND@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,08:54:28.345 SND@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,08:54:28.346 SND@rpi8:ZeroService:service_kill:142 -    kill process 21468
+WARNING  2018-01-06,05:17:31.460 SND@rpi5:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-06,05:17:31.462 SND@rpi5:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-06,05:17:31.463 SND@rpi5:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-06,05:17:31.465 SND@rpi5:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-06,05:17:32.467 SND@rpi5:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-06,05:17:32.469 SND@rpi5:ZeroService:service_stop:137 -    done
+WARNING  2018-01-06,05:17:32.477 SND@rpi5:ZeroService:service_kill:142 -    kill process 19763
+WARNING  2018-02-02,10:14:55.075 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,10:14:55.100 CAM@rpi8:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-02-02,10:14:55.116 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,10:14:55.118 CAM@rpi8:CamZeroService:finish:102 -    was not recording
+WARNING  2018-02-02,10:15:35.748 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-02-02,10:15:35.751 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-12,07:07:21.739 CAM@rpi7:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-12,07:07:21.765 CAM@rpi7:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-12,07:07:21.780 CAM@rpi7:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-12,07:07:21.781 CAM@rpi7:CamZeroService:finish:102 -    was not recording
+WARNING  2018-01-05,09:05:24.126 CAM@rpi9:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-05,09:05:24.155 CAM@rpi9:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-05,09:05:24.169 CAM@rpi9:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-05,09:05:24.170 CAM@rpi9:CamZeroService:finish:102 -    was not recording
+WARNING  2018-02-02,11:15:13.671 THU@rpi8:ThuZeroService:finish:55 - stopping
+WARNING  2018-02-02,11:15:14.676 THU@rpi8:ThuZeroService:finish:60 -    stopped
+WARNING  2018-02-02,11:15:16.679 THU@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,11:15:16.681 THU@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,11:15:16.682 THU@rpi8:ZeroService:service_kill:142 -    kill process 22595
+WARNING  2018-02-02,11:15:29.245 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,11:15:29.283 CAM@rpi8:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-02-02,11:15:31.286 CAM@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,11:15:31.288 CAM@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,11:15:31.289 CAM@rpi8:ZeroService:service_kill:142 -    kill process 22664
+WARNING  2018-01-12,08:07:39.034 THU@rpi7:ThuZeroService:finish:55 - stopping
+WARNING  2018-01-12,08:07:40.426 THU@rpi7:ThuZeroService:finish:60 -    stopped
+WARNING  2018-01-12,08:07:42.429 THU@rpi7:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-12,08:07:42.431 THU@rpi7:ZeroService:service_stop:137 -    done
+WARNING  2018-01-12,08:07:42.432 THU@rpi7:ZeroService:service_kill:142 -    kill process 23287
+WARNING  2018-01-12,08:07:54.422 CAM@rpi7:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-12,08:07:54.441 CAM@rpi7:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-12,08:07:56.445 CAM@rpi7:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-12,08:07:56.447 CAM@rpi7:ZeroService:service_stop:137 -    done
+WARNING  2018-01-12,08:07:56.448 CAM@rpi7:ZeroService:service_kill:142 -    kill process 23356
+WARNING  2018-02-02,11:17:23.741 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-02-02,11:17:23.743 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-02-02,11:17:23.744 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-02-02,11:17:23.746 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-02-02,11:17:24.749 SND@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,11:17:24.750 SND@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,11:17:24.752 SND@rpi8:ZeroService:service_kill:142 -    kill process 21468
+WARNING  2018-01-05,10:05:50.872 THU@rpi9:ThuZeroService:finish:55 - stopping
+WARNING  2018-01-05,10:05:51.878 THU@rpi9:ThuZeroService:finish:60 -    stopped
+WARNING  2018-01-05,10:05:53.882 THU@rpi9:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-05,10:05:53.884 THU@rpi9:ZeroService:service_stop:137 -    done
+WARNING  2018-01-05,10:05:53.885 THU@rpi9:ZeroService:service_kill:142 -    kill process 20826
+WARNING  2018-01-05,10:06:06.473 CAM@rpi9:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-05,10:06:06.509 CAM@rpi9:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-05,10:06:08.512 CAM@rpi9:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-05,10:06:08.514 CAM@rpi9:ZeroService:service_stop:137 -    done
+WARNING  2018-01-05,10:06:08.520 CAM@rpi9:ZeroService:service_kill:142 -    kill process 20895
+WARNING  2018-01-12,08:09:42.877 SND@rpi7:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-12,08:09:42.879 SND@rpi7:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-12,08:09:42.881 SND@rpi7:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-12,08:09:42.883 SND@rpi7:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-12,08:09:43.885 SND@rpi7:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-12,08:09:43.887 SND@rpi7:ZeroService:service_stop:137 -    done
+WARNING  2018-01-12,08:09:43.888 SND@rpi7:ZeroService:service_kill:142 -    kill process 23434
+WARNING  2018-01-05,10:07:54.144 SND@rpi9:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-05,10:07:54.152 SND@rpi9:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-05,10:07:54.154 SND@rpi9:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-05,10:07:54.155 SND@rpi9:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-05,10:07:55.158 SND@rpi9:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-05,10:07:55.159 SND@rpi9:ZeroService:service_stop:137 -    done
+WARNING  2018-01-05,10:07:55.161 SND@rpi9:ZeroService:service_kill:142 -    kill process 20974
+WARNING  2018-02-02,12:27:18.665 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,12:27:18.694 CAM@rpi8:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-02-02,12:27:18.708 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,12:27:18.709 CAM@rpi8:CamZeroService:finish:102 -    was not recording
+WARNING  2018-01-12,09:20:31.026 CAM@rpi7:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-12,09:20:31.053 CAM@rpi7:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-12,09:20:31.068 CAM@rpi7:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-12,09:20:31.069 CAM@rpi7:CamZeroService:finish:102 -    was not recording
+WARNING  2018-01-12,09:21:07.571 SND@rpi7:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-12,09:21:07.572 SND@rpi7:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-05,11:18:25.053 CAM@rpi9:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-05,11:18:25.085 CAM@rpi9:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-05,11:18:25.099 CAM@rpi9:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-05,11:18:25.100 CAM@rpi9:CamZeroService:finish:102 -    was not recording
+WARNING  2018-01-05,11:19:00.707 SND@rpi9:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-05,11:19:00.708 SND@rpi9:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-02-02,13:27:39.362 THU@rpi8:ThuZeroService:finish:55 - stopping
+WARNING  2018-02-02,13:27:40.367 THU@rpi8:ThuZeroService:finish:60 -    stopped
+WARNING  2018-02-02,13:27:42.369 THU@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,13:27:42.370 THU@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,13:27:42.372 THU@rpi8:ZeroService:service_kill:142 -    kill process 24069
+WARNING  2018-02-02,13:27:54.755 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,13:27:54.776 CAM@rpi8:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-02-02,13:27:56.780 CAM@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,13:27:56.782 CAM@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,13:27:56.783 CAM@rpi8:ZeroService:service_kill:142 -    kill process 24138
+WARNING  2018-02-02,13:29:43.372 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-02-02,13:29:43.373 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-02-02,13:29:43.374 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-02-02,13:29:43.376 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-02-02,13:29:44.378 SND@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,13:29:44.380 SND@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,13:29:44.381 SND@rpi8:ZeroService:service_kill:142 -    kill process 24217
+WARNING  2018-01-12,10:20:47.433 THU@rpi7:ThuZeroService:finish:55 - stopping
+WARNING  2018-01-12,10:20:48.438 THU@rpi7:ThuZeroService:finish:60 -    stopped
+WARNING  2018-01-12,10:20:50.442 THU@rpi7:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-12,10:20:50.444 THU@rpi7:ZeroService:service_stop:137 -    done
+WARNING  2018-01-12,10:20:50.445 THU@rpi7:ZeroService:service_kill:142 -    kill process 24652
+WARNING  2018-01-12,10:21:02.834 CAM@rpi7:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-12,10:21:02.872 CAM@rpi7:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-12,10:21:04.876 CAM@rpi7:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-12,10:21:04.878 CAM@rpi7:ZeroService:service_stop:137 -    done
+WARNING  2018-01-12,10:21:04.879 CAM@rpi7:ZeroService:service_kill:142 -    kill process 24720
+WARNING  2018-01-05,12:18:42.171 THU@rpi9:ThuZeroService:finish:55 - stopping
+WARNING  2018-01-05,12:18:43.585 THU@rpi9:ThuZeroService:finish:60 -    stopped
+WARNING  2018-01-05,12:18:45.587 THU@rpi9:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-05,12:18:45.589 THU@rpi9:ZeroService:service_stop:137 -    done
+WARNING  2018-01-05,12:18:45.590 THU@rpi9:ZeroService:service_kill:142 -    kill process 22186
+WARNING  2018-01-05,12:18:57.595 CAM@rpi9:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-05,12:18:57.617 CAM@rpi9:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-05,12:18:59.621 CAM@rpi9:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-05,12:18:59.623 CAM@rpi9:ZeroService:service_stop:137 -    done
+WARNING  2018-01-05,12:18:59.625 CAM@rpi9:ZeroService:service_kill:142 -    kill process 22254
+WARNING  2018-01-12,10:22:57.430 SND@rpi7:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-12,10:22:57.432 SND@rpi7:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-12,10:22:57.433 SND@rpi7:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-12,10:22:57.434 SND@rpi7:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-12,10:22:58.437 SND@rpi7:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-12,10:22:58.438 SND@rpi7:ZeroService:service_stop:137 -    done
+WARNING  2018-01-12,10:22:58.440 SND@rpi7:ZeroService:service_kill:142 -    kill process 23434
+WARNING  2018-01-05,12:20:51.925 SND@rpi9:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-05,12:20:51.926 SND@rpi9:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-05,12:20:51.927 SND@rpi9:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-05,12:20:51.929 SND@rpi9:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-05,12:20:52.931 SND@rpi9:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-05,12:20:52.932 SND@rpi9:ZeroService:service_stop:137 -    done
+WARNING  2018-01-05,12:20:52.937 SND@rpi9:ZeroService:service_kill:142 -    kill process 20974
+WARNING  2018-02-02,14:54:47.515 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,14:54:47.548 CAM@rpi8:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-02-02,14:54:47.563 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,14:54:47.564 CAM@rpi8:CamZeroService:finish:102 -    was not recording
+WARNING  2018-02-02,14:55:22.249 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-02-02,14:55:22.251 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-12,11:46:32.291 CAM@rpi7:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-12,11:46:32.323 CAM@rpi7:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-12,11:46:32.338 CAM@rpi7:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-12,11:46:32.339 CAM@rpi7:CamZeroService:finish:102 -    was not recording
+WARNING  2018-01-05,13:45:16.940 CAM@rpi9:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-05,13:45:16.972 CAM@rpi9:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-05,13:45:16.986 CAM@rpi9:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-05,13:45:16.987 CAM@rpi9:CamZeroService:finish:102 -    was not recording
+WARNING  2018-02-02,15:55:01.478 THU@rpi8:ThuZeroService:finish:55 - stopping
+WARNING  2018-02-02,15:55:02.482 THU@rpi8:ThuZeroService:finish:60 -    stopped
+WARNING  2018-02-02,15:55:04.486 THU@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,15:55:04.487 THU@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,15:55:04.489 THU@rpi8:ZeroService:service_kill:142 -    kill process 25569
+WARNING  2018-02-02,15:55:20.834 CAM@rpi8:CamZeroService:finish:97 - stopping recording
+WARNING  2018-02-02,15:55:20.852 CAM@rpi8:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-02-02,15:55:22.856 CAM@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,15:55:22.858 CAM@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,15:55:22.859 CAM@rpi8:ZeroService:service_kill:142 -    kill process 25638
+WARNING  2018-02-02,15:55:47.275 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-02-02,15:55:47.277 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-02-02,15:55:47.278 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-02-02,15:55:47.279 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-02-02,15:55:48.281 SND@rpi8:ZeroService:service_stop:130 - stopping service
+WARNING  2018-02-02,15:55:48.283 SND@rpi8:ZeroService:service_stop:137 -    done
+WARNING  2018-02-02,15:55:48.284 SND@rpi8:ZeroService:service_kill:142 -    kill process 24217
+WARNING  2018-01-12,12:47:03.801 THU@rpi7:ThuZeroService:finish:55 - stopping
+WARNING  2018-01-12,12:47:04.805 THU@rpi7:ThuZeroService:finish:60 -    stopped
+WARNING  2018-01-12,12:47:06.809 THU@rpi7:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-12,12:47:06.811 THU@rpi7:ZeroService:service_stop:137 -    done
+WARNING  2018-01-12,12:47:06.813 THU@rpi7:ZeroService:service_kill:142 -    kill process 26266
+WARNING  2018-01-12,12:47:19.303 CAM@rpi7:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-12,12:47:19.335 CAM@rpi7:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-12,12:47:21.338 CAM@rpi7:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-12,12:47:21.340 CAM@rpi7:ZeroService:service_stop:137 -    done
+WARNING  2018-01-12,12:47:21.342 CAM@rpi7:ZeroService:service_kill:142 -    kill process 26334
+WARNING  2018-01-05,14:45:37.202 THU@rpi9:ThuZeroService:finish:55 - stopping
+WARNING  2018-01-05,14:45:38.208 THU@rpi9:ThuZeroService:finish:60 -    stopped
+WARNING  2018-01-05,14:45:40.212 THU@rpi9:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-05,14:45:40.820 THU@rpi9:ZeroService:service_stop:137 -    done
+WARNING  2018-01-05,14:45:40.823 THU@rpi9:ZeroService:service_kill:142 -    kill process 23867
+WARNING  2018-01-05,14:45:52.630 CAM@rpi9:CamZeroService:finish:97 - stopping recording
+WARNING  2018-01-05,14:45:52.650 CAM@rpi9:CamZeroService:finish:100 -    stopped recording
+WARNING  2018-01-05,14:45:54.654 CAM@rpi9:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-05,14:45:54.655 CAM@rpi9:ZeroService:service_stop:137 -    done
+WARNING  2018-01-05,14:45:54.657 CAM@rpi9:ZeroService:service_kill:142 -    kill process 23936
+WARNING  2018-01-12,12:49:07.859 SND@rpi7:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-12,12:49:07.861 SND@rpi7:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-12,12:49:07.862 SND@rpi7:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-12,12:49:07.863 SND@rpi7:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-12,12:49:08.866 SND@rpi7:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-12,12:49:08.868 SND@rpi7:ZeroService:service_stop:137 -    done
+WARNING  2018-01-12,12:49:08.869 SND@rpi7:ZeroService:service_kill:142 -    kill process 26412
+WARNING  2018-01-05,14:47:40.365 SND@rpi9:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-05,14:47:40.367 SND@rpi9:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-05,14:47:40.368 SND@rpi9:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-05,14:47:40.369 SND@rpi9:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-05,14:47:41.372 SND@rpi9:ZeroService:service_stop:130 - stopping service
+WARNING  2018-01-05,14:47:41.373 SND@rpi9:ZeroService:service_stop:137 -    done
+WARNING  2018-01-05,14:47:41.374 SND@rpi9:ZeroService:service_kill:142 -    kill process 24015

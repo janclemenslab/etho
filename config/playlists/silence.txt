@@ -1,0 +1,2 @@
+stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
+SIN_100_0_1000	29000	30000	0	0.0	100	

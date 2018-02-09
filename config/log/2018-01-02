@@ -1,0 +1,364 @@
+WARNING  2018-01-04,09:26:33.449 CAM@rpi8:CamZeroService:finish:94 - stopping recording
+WARNING  2018-01-04,09:26:33.462 CAM@rpi8:CamZeroService:finish:97 -    stopped recording
+WARNING  2018-01-04,09:26:33.478 CAM@rpi8:CamZeroService:finish:94 - stopping recording
+WARNING  2018-01-04,09:26:33.479 CAM@rpi8:CamZeroService:finish:99 -    was not recording
+WARNING  2018-01-04,09:42:06.199 THU@rpi8:ThuZeroService:finish:53 - stopping
+WARNING  2018-01-04,09:42:06.200 THU@rpi8:ThuZeroService:finish:58 -    stopped
+ERROR    2018-01-04,09:42:07.846 THU@rpi8:core:_print_traceback:130 -  - (<class 'TypeError'>, TypeError("setup() missing 3 required positional arguments: 'pin', 'delay', and 'duration'",), <traceback object at 0x75ce5850>)
+Traceback (most recent call last):
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/core.py", line 153, in _async_task
+    functor.pattern.process_call(self._context, bufchan, event, functor)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/patterns.py", line 30, in process_call
+    result = functor(*req_event.args)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/decorators.py", line 44, in __call__
+    return self._functor(*args, **kargs)
+TypeError: setup() missing 3 required positional arguments: 'pin', 'delay', and 'duration'
+WARNING  2018-01-04,09:42:24.335 THU@rpi8:ThuZeroService:finish:53 - stopping
+WARNING  2018-01-04,09:42:24.336 THU@rpi8:ThuZeroService:finish:58 -    stopped
+ERROR    2018-01-04,09:42:25.860 THU@rpi8:gevent_zmq:recv:183 - /!\ gevent_zeromq BUG /!\ catching up after missing event (RECV) /!\ - None
+ERROR    2018-01-04,09:42:25.865 THU@rpi8:core:_print_traceback:130 -  - (<class 'NameError'>, NameError("name 'Timer' is not defined",), <traceback object at 0x73c86b98>)
+Traceback (most recent call last):
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/core.py", line 153, in _async_task
+    functor.pattern.process_call(self._context, bufchan, event, functor)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/patterns.py", line 30, in process_call
+    result = functor(*req_event.args)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/decorators.py", line 44, in __call__
+    return self._functor(*args, **kargs)
+  File "/home/ncb/code/ethoservice/ethoservice/ThuZeroService.py", line 33, in setup
+    self._thread_timer = Timer(self.duration, self.finish, kwargs={'stop_service':True})
+NameError: name 'Timer' is not defined
+WARNING  2018-01-04,09:44:05.548 THU@rpi8:ThuZeroService:finish:54 - stopping
+WARNING  2018-01-04,09:44:05.550 THU@rpi8:ThuZeroService:finish:59 -    stopped
+ERROR    2018-01-04,09:44:07.095 THU@rpi8:core:_print_traceback:130 -  - (<class 'NameError'>, NameError("name 'Timer' is not defined",), <traceback object at 0x73c86b98>)
+Traceback (most recent call last):
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/core.py", line 153, in _async_task
+    functor.pattern.process_call(self._context, bufchan, event, functor)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/patterns.py", line 30, in process_call
+    result = functor(*req_event.args)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/decorators.py", line 44, in __call__
+    return self._functor(*args, **kargs)
+  File "/home/ncb/code/ethoservice/ethoservice/ThuZeroService.py", line 33, in setup
+    # setup up thread
+NameError: name 'Timer' is not defined
+WARNING  2018-01-04,09:44:20.392 THU@rpi8:ThuZeroService:finish:54 - stopping
+WARNING  2018-01-04,09:44:20.393 THU@rpi8:ThuZeroService:finish:59 -    stopped
+ERROR    2018-01-04,09:44:21.944 THU@rpi8:core:_print_traceback:130 -  - (<class 'NameError'>, NameError("name 'Timer' is not defined",), <traceback object at 0x73c73e40>)
+Traceback (most recent call last):
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/core.py", line 153, in _async_task
+    functor.pattern.process_call(self._context, bufchan, event, functor)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/patterns.py", line 30, in process_call
+    result = functor(*req_event.args)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/decorators.py", line 44, in __call__
+    return self._functor(*args, **kargs)
+  File "/home/ncb/code/ethoservice/ethoservice/ThuZeroService.py", line 33, in setup
+    # setup up thread
+NameError: name 'Timer' is not defined
+WARNING  2018-01-04,09:44:50.697 THU@rpi8:ThuZeroService:finish:54 - stopping
+WARNING  2018-01-04,09:44:50.699 THU@rpi8:ThuZeroService:finish:59 -    stopped
+ERROR    2018-01-04,09:44:52.114 THU@rpi8:core:_print_traceback:130 -  - (<class 'NameError'>, NameError("name 'Timer' is not defined",), <traceback object at 0x73c99c60>)
+Traceback (most recent call last):
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/core.py", line 153, in _async_task
+    functor.pattern.process_call(self._context, bufchan, event, functor)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/patterns.py", line 30, in process_call
+    result = functor(*req_event.args)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/decorators.py", line 44, in __call__
+    return self._functor(*args, **kargs)
+  File "/home/ncb/code/ethoservice/ethoservice/ThuZeroService.py", line 33, in setup
+    # setup up thread
+NameError: name 'Timer' is not defined
+WARNING  2018-01-04,09:44:56.202 THU@rpi8:ThuZeroService:finish:54 - stopping
+WARNING  2018-01-04,09:44:56.203 THU@rpi8:ThuZeroService:finish:59 -    stopped
+ERROR    2018-01-04,09:44:57.846 THU@rpi8:core:_print_traceback:130 -  - (<class 'NameError'>, NameError("name 'Timer' is not defined",), <traceback object at 0x73c99210>)
+Traceback (most recent call last):
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/core.py", line 153, in _async_task
+    functor.pattern.process_call(self._context, bufchan, event, functor)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/patterns.py", line 30, in process_call
+    result = functor(*req_event.args)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/decorators.py", line 44, in __call__
+    return self._functor(*args, **kargs)
+  File "/home/ncb/code/ethoservice/ethoservice/ThuZeroService.py", line 33, in setup
+    # setup up thread
+NameError: name 'Timer' is not defined
+ERROR    2018-01-04,09:45:13.664 THU@rpi8:core:_print_traceback:130 -  - (<class 'AttributeError'>, AttributeError("'THU' object has no attribute '_thread_stopper'",), <traceback object at 0x75ca9878>)
+Traceback (most recent call last):
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/core.py", line 153, in _async_task
+    functor.pattern.process_call(self._context, bufchan, event, functor)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/patterns.py", line 30, in process_call
+    result = functor(*req_event.args)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/decorators.py", line 44, in __call__
+    return self._functor(*args, **kargs)
+  File "/home/ncb/code/ethoservice/ethoservice/ThuZeroService.py", line 36, in setup
+    target=self._read_temperature_and_humidity, args=(self._thread_stopper,))
+AttributeError: 'THU' object has no attribute '_thread_stopper'
+ERROR    2018-01-04,09:46:31.659 THU@rpi8:gevent_zmq:recv:183 - /!\ gevent_zeromq BUG /!\ catching up after missing event (RECV) /!\ - None
+ERROR    2018-01-04,09:47:33.244 THU@rpi8:gevent_zmq:recv:183 - /!\ gevent_zeromq BUG /!\ catching up after missing event (RECV) /!\ - None
+ERROR    2018-01-04,09:47:36.319 THU@rpi8:gevent_zmq:recv:183 - /!\ gevent_zeromq BUG /!\ catching up after missing event (RECV) /!\ - None
+ERROR    2018-01-04,09:48:14.304 THU@rpi8:gevent_zmq:recv:183 - /!\ gevent_zeromq BUG /!\ catching up after missing event (RECV) /!\ - None
+ERROR    2018-01-04,09:48:16.833 THU@rpi8:gevent_zmq:recv:183 - /!\ gevent_zeromq BUG /!\ catching up after missing event (RECV) /!\ - None
+ERROR    2018-01-04,09:48:54.766 THU@rpi8:gevent_zmq:recv:183 - /!\ gevent_zeromq BUG /!\ catching up after missing event (RECV) /!\ - None
+ERROR    2018-01-04,09:48:57.897 THU@rpi8:gevent_zmq:recv:183 - /!\ gevent_zeromq BUG /!\ catching up after missing event (RECV) /!\ - None
+ERROR    2018-01-04,09:49:18.427 THU@rpi8:gevent_zmq:recv:183 - /!\ gevent_zeromq BUG /!\ catching up after missing event (RECV) /!\ - None
+WARNING  2018-01-04,09:49:31.119 THU@rpi8:ThuZeroService:finish:55 - stopping
+WARNING  2018-01-04,09:49:31.752 THU@rpi8:ThuZeroService:finish:55 - stopping
+WARNING  2018-01-04,09:49:32.121 THU@rpi8:ThuZeroService:finish:60 -    stopped
+WARNING  2018-01-04,09:49:32.755 THU@rpi8:ThuZeroService:finish:60 -    stopped
+WARNING  2018-01-04,09:49:34.125 THU@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,09:49:34.126 THU@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,09:49:34.128 THU@rpi8:ZeroService:service_kill:141 -    kill process 23098
+WARNING  2018-01-04,13:10:54.783 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'f68f5f2a23cb4337a35933bfacf216f6', 'v': 3, 'response_to': b'f68f5f2923cb4337a35933bfacf216f6'} [...]
+WARNING  2018-01-04,13:11:32.649 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:11:32.650 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:11:32.652 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:11:32.654 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:11:34.658 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:11:34.660 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:11:34.661 SND@rpi8:ZeroService:service_kill:141 -    kill process 23951
+WARNING  2018-01-04,13:12:09.029 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'1e08dc30f23c4e0a85ec19d6500a9126', 'v': 3, 'response_to': b'1e08dc2ff23c4e0a85ec19d6500a9126'} [...]
+WARNING  2018-01-04,13:12:47.030 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:12:47.033 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:12:47.035 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:12:47.037 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:12:49.040 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:12:49.047 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:12:49.049 SND@rpi8:ZeroService:service_kill:141 -    kill process 24034
+WARNING  2018-01-04,13:13:44.593 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'a42af422a7514e3a85cffe1054238ba0', 'v': 3, 'response_to': b'a42af421a7514e3a85cffe1054238ba0'} [...]
+WARNING  2018-01-04,13:14:22.576 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:14:22.578 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:14:22.580 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:14:22.582 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:14:24.586 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:14:24.588 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:14:24.590 SND@rpi8:ZeroService:service_kill:141 -    kill process 24115
+WARNING  2018-01-04,13:17:58.255 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'e541616b4f43483ca40df303d83a39a0', 'v': 3, 'response_to': b'e541616a4f43483ca40df303d83a39a0'} [...]
+WARNING  2018-01-04,13:18:36.225 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:18:36.228 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:18:36.230 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:18:36.232 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:18:38.237 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:18:38.239 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:18:38.241 SND@rpi8:ZeroService:service_kill:141 -    kill process 24219
+WARNING  2018-01-04,13:20:48.262 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'd994bc43a01b487fa83093a82859950e', 'v': 3, 'response_to': b'd994bc42a01b487fa83093a82859950e'} [...]
+WARNING  2018-01-04,13:21:26.275 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:21:26.277 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:21:26.279 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:21:26.281 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:21:28.285 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:21:28.293 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:21:28.295 SND@rpi8:ZeroService:service_kill:141 -    kill process 24308
+WARNING  2018-01-04,13:22:15.202 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'dd127531e0a4455b9038813c4103b891', 'v': 3, 'response_to': b'dd127530e0a4455b9038813c4103b891'} [...]
+WARNING  2018-01-04,13:22:53.036 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:22:53.037 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:22:53.039 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:22:53.040 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:22:55.044 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:22:55.046 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:22:55.047 SND@rpi8:ZeroService:service_kill:141 -    kill process 24390
+WARNING  2018-01-04,13:24:13.404 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'4a111ef09dc547cc92554170f5a572bf', 'v': 3, 'response_to': b'4a111eef9dc547cc92554170f5a572bf'} [...]
+WARNING  2018-01-04,13:24:51.335 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:24:51.336 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:24:51.339 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:24:51.341 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:24:53.344 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:24:53.346 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:24:53.349 SND@rpi8:ZeroService:service_kill:141 -    kill process 24471
+WARNING  2018-01-04,13:25:37.569 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'eea94dcf773c4f219eb9e59a612e4ee2', 'v': 3, 'response_to': b'eea94dce773c4f219eb9e59a612e4ee2'} [...]
+WARNING  2018-01-04,13:26:15.464 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:26:15.466 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:26:15.468 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:26:15.470 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:26:17.474 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:26:17.481 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:26:17.483 SND@rpi8:ZeroService:service_kill:141 -    kill process 24550
+WARNING  2018-01-04,13:26:41.207 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'36613f4db47f4dc09004d92e05626565', 'v': 3, 'response_to': b'36613f4cb47f4dc09004d92e05626565'} [...]
+WARNING  2018-01-04,13:27:19.185 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:27:19.186 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:27:19.188 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:27:19.190 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:27:21.192 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:27:21.194 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:27:21.195 SND@rpi8:ZeroService:service_kill:141 -    kill process 24631
+WARNING  2018-01-04,13:27:44.302 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'd34089cd6fd84eb2a5712bdb600624a9', 'v': 3, 'response_to': b'd34089cc6fd84eb2a5712bdb600624a9'} [...]
+WARNING  2018-01-04,13:28:28.863 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:28:28.864 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:28:36.592 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98j'> _zpc_hb {'message_id': b'8ea94877a90d4aad8aff05a3b987e3e8', 'v': 3, 'response_to': b'8ea94876a90d4aad8aff05a3b987e3e8'} [...]
+WARNING  2018-01-04,13:28:58.120 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:28:58.122 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:29:05.107 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98k'> _zpc_hb {'message_id': b'4d9065b05dd043ffb32d31641de3b8c8', 'v': 3, 'response_to': b'4d9065af5dd043ffb32d31641de3b8c8'} [...]
+WARNING  2018-01-04,13:29:43.420 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:29:43.421 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:29:43.423 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:29:43.425 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:29:45.429 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:29:45.431 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:29:45.433 SND@rpi8:ZeroService:service_kill:141 -    kill process 24711
+WARNING  2018-01-04,13:31:07.797 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'9791024a0918481f87918250fb9567fc', 'v': 3, 'response_to': b'979102490918481f87918250fb9567fc'} [...]
+WARNING  2018-01-04,13:32:01.226 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'13f1e25e483a4100a67d4c9081a28ba7', 'v': 3, 'response_to': b'13f1e25d483a4100a67d4c9081a28ba7'} [...]
+WARNING  2018-01-04,13:32:39.214 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:32:39.216 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:32:39.221 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:32:39.224 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:32:41.229 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:32:41.231 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:32:41.233 SND@rpi8:ZeroService:service_kill:141 -    kill process 25134
+WARNING  2018-01-04,13:33:18.898 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'7e4fdd20088e4ce6a2aca70ad60c01cd', 'v': 3, 'response_to': b'7e4fdd1f088e4ce6a2aca70ad60c01cd'} [...]
+WARNING  2018-01-04,13:34:55.223 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'beca132fbcc9431ba5ebe95367f35713', 'v': 3, 'response_to': b'beca132ebcc9431ba5ebe95367f35713'} [...]
+WARNING  2018-01-04,13:37:01.610 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'aacbf34de1444a9bac9a3fb5eebc48b3', 'v': 3, 'response_to': b'aacbf34ce1444a9bac9a3fb5eebc48b3'} [...]
+WARNING  2018-01-04,13:37:30.582 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:37:30.583 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:37:39.124 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98j'> _zpc_hb {'message_id': b'a9fd5fda048f4057b3aabd086ad08342', 'v': 3, 'response_to': b'a9fd5fd9048f4057b3aabd086ad08342'} [...]
+WARNING  2018-01-04,13:38:19.420 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:38:19.421 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:38:27.311 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98k'> _zpc_hb {'message_id': b'37a44c0f945e4fbeafe1fb51e32c9bd0', 'v': 3, 'response_to': b'37a44c0e945e4fbeafe1fb51e32c9bd0'} [...]
+WARNING  2018-01-04,13:39:06.209 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:39:06.210 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:39:15.152 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98l'> _zpc_hb {'message_id': b'93c7ff9d9e674645bf0c71567df2091f', 'v': 3, 'response_to': b'93c7ff9c9e674645bf0c71567df2091f'} [...]
+WARNING  2018-01-04,13:39:48.445 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'2d3c7a8c3bda4d9dab9acac052d7aa2f', 'v': 3, 'response_to': b'2d3c7a8b3bda4d9dab9acac052d7aa2f'} [...]
+WARNING  2018-01-04,13:40:26.388 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:40:26.390 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:40:26.392 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:40:26.393 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:40:28.397 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:40:28.398 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:40:28.399 SND@rpi8:ZeroService:service_kill:141 -    kill process 26153
+WARNING  2018-01-04,13:40:53.608 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'ff8400be07414f1a9e4975620cba4d9d', 'v': 3, 'response_to': b'ff8400bd07414f1a9e4975620cba4d9d'} [...]
+WARNING  2018-01-04,13:41:16.943 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,13:41:16.971 CAM@rpi8:CamZeroService:finish:98 -    stopped recording
+WARNING  2018-01-04,13:41:16.987 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,13:41:16.988 CAM@rpi8:CamZeroService:finish:100 -    was not recording
+WARNING  2018-01-04,13:41:28.663 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:41:28.664 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:41:36.287 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98j'> _zpc_hb {'message_id': b'4a1986193341453f85be3197b915bf2d', 'v': 3, 'response_to': b'4a1986183341453f85be3197b915bf2d'} [...]
+WARNING  2018-01-04,13:42:05.519 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:42:05.520 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:43:22.719 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'd459c8e5ce1a4329a1ee1e69d3d31044', 'v': 3, 'response_to': b'd459c8e4ce1a4329a1ee1e69d3d31044'} [...]
+WARNING  2018-01-04,13:44:00.594 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:44:00.596 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:44:00.597 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:44:00.599 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:44:02.602 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:44:02.604 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:44:02.610 SND@rpi8:ZeroService:service_kill:141 -    kill process 26540
+WARNING  2018-01-04,13:44:57.771 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'c86fe80e24eb437988bd4dadcf40cfbc', 'v': 3, 'response_to': b'c86fe80d24eb437988bd4dadcf40cfbc'} [...]
+WARNING  2018-01-04,13:45:39.110 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'c597b60d8c954263b21e8d648e8732ae', 'v': 3, 'response_to': b'c597b60c8c954263b21e8d648e8732ae'} [...]
+WARNING  2018-01-04,13:46:16.990 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:46:16.991 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:46:16.992 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:46:16.994 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:46:18.997 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:46:18.999 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:46:19.005 SND@rpi8:ZeroService:service_kill:141 -    kill process 26933
+WARNING  2018-01-04,13:46:25.443 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,13:46:25.468 CAM@rpi8:CamZeroService:finish:98 -    stopped recording
+WARNING  2018-01-04,13:46:25.482 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,13:46:25.483 CAM@rpi8:CamZeroService:finish:100 -    was not recording
+WARNING  2018-01-04,13:47:23.418 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'a7bede0c384f473d9a11997045d11331', 'v': 3, 'response_to': b'a7bede0b384f473d9a11997045d11331'} [...]
+WARNING  2018-01-04,13:47:33.533 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,13:47:33.561 CAM@rpi8:CamZeroService:finish:98 -    stopped recording
+WARNING  2018-01-04,13:47:33.575 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,13:47:33.576 CAM@rpi8:CamZeroService:finish:100 -    was not recording
+WARNING  2018-01-04,13:48:03.884 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'bd35fc714af14077a01f5de2843c80f9', 'v': 3, 'response_to': b'bd35fc704af14077a01f5de2843c80f9'} [...]
+WARNING  2018-01-04,13:48:45.118 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'58fbd8a2d5564fa99e1d45d36847f368', 'v': 3, 'response_to': b'58fbd8a1d5564fa99e1d45d36847f368'} [...]
+WARNING  2018-01-04,13:49:22.973 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,13:49:22.974 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,13:49:22.975 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:49:22.976 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:49:23.337 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,13:49:23.339 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,13:49:24.977 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,13:49:24.978 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,13:49:24.979 SND@rpi8:ZeroService:service_kill:141 -    kill process 27622
+WARNING  2018-01-04,15:34:17.523 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,15:34:17.549 CAM@rpi8:CamZeroService:finish:98 -    stopped recording
+WARNING  2018-01-04,15:34:17.564 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,15:34:17.568 CAM@rpi8:CamZeroService:finish:100 -    was not recording
+WARNING  2018-01-04,15:35:18.885 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,15:35:18.904 CAM@rpi8:CamZeroService:finish:98 -    stopped recording
+WARNING  2018-01-04,15:35:18.917 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,15:35:18.918 CAM@rpi8:CamZeroService:finish:100 -    was not recording
+WARNING  2018-01-04,15:36:15.173 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'21846505cded42cf943978bb2a66d0fd', 'v': 3, 'response_to': b'21846504cded42cf943978bb2a66d0fd'} [...]
+WARNING  2018-01-04,15:36:40.221 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,15:36:40.246 CAM@rpi8:CamZeroService:finish:98 -    stopped recording
+WARNING  2018-01-04,15:36:40.256 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,15:36:40.257 CAM@rpi8:CamZeroService:finish:100 -    was not recording
+WARNING  2018-01-04,15:37:46.391 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,15:37:46.392 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,15:37:54.385 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98j'> _zpc_hb {'message_id': b'6e0e0259d0d44b48ab4b511724831f0a', 'v': 3, 'response_to': b'6e0e0258d0d44b48ab4b511724831f0a'} [...]
+WARNING  2018-01-04,15:38:17.883 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,15:38:17.884 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,15:43:53.809 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'2d152cc2dc5b4aac8f8f3850f471eb19', 'v': 3, 'response_to': b'2d152cc1dc5b4aac8f8f3850f471eb19'} [...]
+WARNING  2018-01-04,15:44:31.702 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,15:44:31.703 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,15:44:31.705 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,15:44:31.706 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,15:44:31.718 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,15:44:31.722 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,15:44:33.731 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,15:44:33.733 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,15:44:33.734 SND@rpi8:ZeroService:service_kill:141 -    kill process 13294
+WARNING  2018-01-04,15:45:48.468 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'17e8d07fc29d481398b225b6fb79bf59', 'v': 3, 'response_to': b'17e8d07ec29d481398b225b6fb79bf59'} [...]
+WARNING  2018-01-04,15:46:28.067 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'a48edbbe2017415ca86fa0ea4c7ede41', 'v': 3, 'response_to': b'a48edbbd2017415ca86fa0ea4c7ede41'} [...]
+WARNING  2018-01-04,15:46:41.079 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,15:46:41.111 CAM@rpi8:CamZeroService:finish:98 -    stopped recording
+WARNING  2018-01-04,15:46:41.125 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,15:46:41.126 CAM@rpi8:CamZeroService:finish:100 -    was not recording
+WARNING  2018-01-04,15:49:31.004 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'e6a9b464d8c44ca8ac0a2faad0168e3f', 'v': 3, 'response_to': b'e6a9b463d8c44ca8ac0a2faad0168e3f'} [...]
+WARNING  2018-01-04,15:50:12.968 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'6f774b18e7714c7c93ab04ab49b51542', 'v': 3, 'response_to': b'6f774b17e7714c7c93ab04ab49b51542'} [...]
+WARNING  2018-01-04,15:51:45.803 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'bb820f5ead774308ac84bcb8c644d5a9', 'v': 3, 'response_to': b'bb820f5dad774308ac84bcb8c644d5a9'} [...]
+WARNING  2018-01-04,15:51:53.192 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'bb820f60ad774308ac84bcb8c644d5a9', 'v': 3, 'response_to': b'bb820f5fad774308ac84bcb8c644d5a9'} [...]
+ERROR    2018-01-04,15:52:02.097 SND@rpi8:gevent_zmq:recv:183 - /!\ gevent_zeromq BUG /!\ catching up after missing event (RECV) /!\ - None
+WARNING  2018-01-04,15:52:31.236 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,15:52:31.237 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,15:52:31.238 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,15:52:31.240 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,15:52:31.705 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,15:52:31.707 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,15:52:33.242 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,15:52:33.244 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,15:52:33.246 SND@rpi8:ZeroService:service_kill:141 -    kill process 647
+WARNING  2018-01-04,15:53:17.674 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'a4aec88aaa00432d9e4754dbae0df014', 'v': 3, 'response_to': b'a4aec889aa00432d9e4754dbae0df014'} [...]
+WARNING  2018-01-04,15:55:27.131 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,15:55:27.132 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,15:55:34.861 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98j'> _zpc_hb {'message_id': b'1e24d499a84d4689850bacc684c508b5', 'v': 3, 'response_to': b'1e24d498a84d4689850bacc684c508b5'} [...]
+WARNING  2018-01-04,15:56:02.393 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'a39ed583d890401cb3c5bfcfe6bf6b5c', 'v': 3, 'response_to': b'a39ed582d890401cb3c5bfcfe6bf6b5c'} [...]
+WARNING  2018-01-04,15:56:40.420 SND@rpi8:SndZeroService:_queue_sounds:65 - playlist empty and no playback running - stop queueing
+WARNING  2018-01-04,15:56:40.421 SND@rpi8:SndZeroService:_queue_sounds:67 - playlist empty - stopping service
+WARNING  2018-01-04,15:56:40.422 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,15:56:40.423 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,15:56:40.458 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,15:56:40.459 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,15:56:42.424 SND@rpi8:ZeroService:service_stop:129 - stopping service
+WARNING  2018-01-04,15:56:42.426 SND@rpi8:ZeroService:service_stop:136 -    done
+WARNING  2018-01-04,15:56:42.428 SND@rpi8:ZeroService:service_kill:141 -    kill process 933
+WARNING  2018-01-04,15:57:15.250 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'bab523beecaa4787b0e48b9e1bd24731', 'v': 3, 'response_to': b'bab523bdecaa4787b0e48b9e1bd24731'} [...]
+WARNING  2018-01-04,15:57:43.376 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'85c6b7fd87d44c0dab9ab18c71bbeda5', 'v': 3, 'response_to': b'85c6b7fc87d44c0dab9ab18c71bbeda5'} [...]
+WARNING  2018-01-04,15:58:12.427 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,15:58:12.446 CAM@rpi8:CamZeroService:finish:98 -    stopped recording
+WARNING  2018-01-04,15:58:12.457 CAM@rpi8:CamZeroService:finish:95 - stopping recording
+WARNING  2018-01-04,15:58:12.457 CAM@rpi8:CamZeroService:finish:100 -    was not recording
+WARNING  2018-01-04,15:58:31.722 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'927cf969de0048a2b2412a3c5b8049ca', 'v': 3, 'response_to': b'927cf968de0048a2b2412a3c5b8049ca'} [...]
+WARNING  2018-01-04,15:59:29.569 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98i'> _zpc_hb {'message_id': b'28bf656606574fb8a2d0970f86e85f06', 'v': 3, 'response_to': b'28bf656506574fb8a2d0970f86e85f06'} [...]
+ERROR    2018-01-04,15:59:29.575 SND@rpi8:core:_print_traceback:130 -  - (<class 'TypeError'>, TypeError("setup() missing 2 required positional arguments: 'duration' and 'fs'",), <traceback object at 0x623275a8>)
+Traceback (most recent call last):
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/core.py", line 153, in _async_task
+    functor.pattern.process_call(self._context, bufchan, event, functor)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/patterns.py", line 30, in process_call
+    result = functor(*req_event.args)
+  File "/home/ncb/berryconda3/lib/python3.6/site-packages/zerorpc/decorators.py", line 44, in __call__
+    return self._functor(*args, **kargs)
+TypeError: setup() missing 2 required positional arguments: 'duration' and 'fs'
+WARNING  2018-01-04,16:01:16.245 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,16:01:16.246 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,16:02:41.769 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,16:02:41.770 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,16:03:04.563 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,16:03:04.564 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,16:04:36.555 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,16:04:36.556 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,16:05:10.333 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,16:05:10.334 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,16:07:11.244 SND@rpi8:SndZeroService:finish:72 - stopping playback
+WARNING  2018-01-04,16:07:11.246 SND@rpi8:SndZeroService:finish:78 -    stopped playback
+WARNING  2018-01-04,16:07:34.488 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98n'> _zpc_hb {'message_id': b'1551aee18d554e899304eedcf34427c5', 'v': 3, 'response_to': b'1551aee08d554e899304eedcf34427c5'} [...]
+WARNING  2018-01-04,16:07:34.489 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98m'> _zpc_hb {'message_id': b'1551aee28d554e899304eedcf34427c5', 'v': 3, 'response_to': b'1551aedf8d554e899304eedcf34427c5'} [...]
+WARNING  2018-01-04,16:07:42.264 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98m'> _zpc_hb {'message_id': b'1551aee48d554e899304eedcf34427c5', 'v': 3, 'response_to': b'1551aedf8d554e899304eedcf34427c5'} [...]
+WARNING  2018-01-04,16:08:09.245 SND@rpi8:channel:_channel_dispatcher:95 - zerorpc.ChannelMultiplexer, unable to route event: <b'\x00\xe4<\x98n'> _zpc_hb {'message_id': b'1551aee78d554e899304eedcf34427c5', 'v': 3, 'response_to': b'1551aee58d554e899304eedcf34427c5'} [...]
