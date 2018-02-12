@@ -7,7 +7,7 @@ setup(name='ethodrome',
       author='Jan Clemens',
       author_email='clemensjan@googlemail.com',
       license='MIT',
-      packages=find_packages(),
+      packages=find_packages(exclude=['doc','test','config']),
       install_requires=[
           'zerorpc', 'pandas', 'zmq', 'pygame', 'numpy', 'pandas',
       ],

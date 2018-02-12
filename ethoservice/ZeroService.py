@@ -40,7 +40,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.duration = None
 
         self.MOVEFILES_ON_FINISH = False
-        self.targetpath = '/mnt/head/'
+        self.targetpath = '/home/ncb/remote/'
 
     def _init_network_logger(self):
         ctx = zmq.Context()
@@ -110,10 +110,26 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
     def _movefiles(self, sourcepaths, targetpath):
         """move files of rpi - usually called during `finish`"""
+
+        
         for source in sourcepaths:
+            # THIS IS TERRIBLE - probably should be a parameter:
+            targetdir = os.path.split(os.path.split(source)[0])[1]
+            # make this a separate function
             try:
                 self.log.warning("moving {0} to {1}".format(source, targetpath))
-                pass  # os.path.move(source, targetpath)
+                # mount remote
+                try:
+                    os.system("echo 'droso123' | sshfs ncb@192.168.1.2:data /home/jan/remote -o password_stdin")
+                except Exception as e:
+                    print(e)
+
+                # rsync move files
+                try:
+                    os.system("rsync -avhz --remove-source-files {0} remote/{1}/".format(source, targetdir))
+                except Exception as e:
+                    print(e)
+
                 self.log.warning("done moving {0} to {1}".format(source, targetpath))
             except Exception as e:  # TODO: catch specific exception!
                 print(e)

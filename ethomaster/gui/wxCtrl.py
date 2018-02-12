@@ -6,9 +6,9 @@ on init - check running status
 
 import time
 import os
-from etho import config
-import etho.head.clientcaller as clientcaller
-import etho.head.clientmanager as clientmanager
+from ethomaster import config
+import ethomaster.head.clientcaller as clientcaller
+import ethomaster.head.clientmanager as clientmanager
 import wx
 from wxDangerDialog import DangerDialog
 from wxBusyDialog import BusyDialog

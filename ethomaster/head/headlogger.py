@@ -3,7 +3,7 @@ import time
 import zmq
 import logging
 import logging.handlers
-from etho import config
+from ethomaster import config
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import wx
-import etho.head.clientmanager as cm
-from etho.utils.SSHRunner import SSHRunner
-from etho import config
+import ethomaster.head.clientmanager as cm
+from ethomaster.utils.SSHRunner import SSHRunner
+from ethomaster import config
 
 
 

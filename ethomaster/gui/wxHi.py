@@ -1,8 +1,8 @@
 #!/bin/python
 import time
-from etho.head.clientmanager import *
-from etho.utils.SSHRunner import *
-from etho import config
+from ethomaster.head.clientmanager import *
+from ethomaster.utils.SSHRunner import *
+from ethomaster import config
 import wx
 import wxCtrl
 from wxBusyDialog import BusyDialog

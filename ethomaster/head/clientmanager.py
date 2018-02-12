@@ -2,9 +2,9 @@ import platform
 import os
 import concurrent.futures
 
-from etho.head.ZeroClient import ZeroClient
-from etho import config
-from etho.utils.SSHRunner import SSHRunner
+from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster import config
+from ethomaster.utils.SSHRunner import SSHRunner
 from ethoservice.SndZeroService import SND
 from ethoservice.CamZeroService import CAM
 from ethoservice.ThuZeroService import THU

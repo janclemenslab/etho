@@ -57,3 +57,11 @@ pygame: event system does not work since it relies on display system and we can'
 send data via as tuple so we send by value, not by reference. a list of tuples or a tuple of lists won't work - needs to be a tuple of tuples
 
 sudo apt-get install python-rpi.gpio python3-rpi.gpio
+
+[PyDAQmx](https://github.com/clade/PyDAQmx)
+[PyDAQmx docs](https://pythonhosted.org/PyDAQmx/index.html)   
+[DAQmx C API reference](http://zone.ni.com/reference/en-XX/help/370471W-01/TOC3.htm)   
+[phy - possible GUI](https://github.com/kwikteam/phy)   
+[useful wrapper](https://github.com/sjfleming/MultiChannelAnalogIO/blob/master/MultiChannelAnalogIO.py)   
+[another (not so) useful wrapper](https://github.com/frejanordsiek/pynidaqutils)   
+[examples from scipy cookbook](http://scipy-cookbook.readthedocs.io/items/Data_Acquisition_with_NIDAQmx.html)   

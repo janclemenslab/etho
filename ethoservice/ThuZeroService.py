@@ -61,7 +61,7 @@ class THU(BaseZeroService):
             files_to_move = list()
             if self.logfilename is not None:
                 files_to_move.append(self.logfilename)
-            self._movefiles(files_to_move, self.target)
+            self._movefiles(files_to_move, self.targetpath)
 
         self.log.warning('   stopped ')
         if stop_service:

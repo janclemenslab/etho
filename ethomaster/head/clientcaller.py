@@ -1,14 +1,14 @@
 import time
 import numpy as np
 import pandas as pd
-from etho import config
-from etho.head.ZeroClient import ZeroClient
+from ethomaster import config
+from ethomaster.head.ZeroClient import ZeroClient
 from ethoservice.SndZeroService import SND
 from ethoservice.CamZeroService import CAM
 from ethoservice.ThuZeroService import THU
 from ethoservice.OptZeroService import OPT
-from etho.utils.sound import *
-from etho.utils.config import readconfig
+from ethomaster.utils.sound import *
+from ethomaster.utils.config import readconfig
 
 
 def clientcaller(ip_address, playlistfile, protocolfile):

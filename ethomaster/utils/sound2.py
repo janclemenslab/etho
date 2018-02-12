@@ -3,6 +3,7 @@ import pandas as pd
 import scipy.io.wavfile as wav
 import scipy.signal
 
+
 def make_sine(frequency, phase, duration, samplingrate):
     """make sinusoidal from parameters
     Args:

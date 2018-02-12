@@ -6,7 +6,6 @@ import pandas as pd
 from .ZeroService import BaseZeroService
 import zerorpc
 import time
-import os
 
 
 class SND(BaseZeroService):
@@ -68,7 +67,6 @@ class SND(BaseZeroService):
         self.log.warning('playlist empty - stopping service')
         self.finish(stop_service=True)
 
-
     def finish(self, stop_service=False):
         self.log.warning('stopping playback')
         if hasattr(self, '_thread_stopper'):
@@ -82,7 +80,7 @@ class SND(BaseZeroService):
             files_to_move = list()
             if self.logfilename is not None:
                 files_to_move.append(self.logfilename)
-            self._movefiles(files_to_move, self.target)
+            self._movefiles(files_to_move, self.target_path)
 
         if stop_service:
             time.sleep(1)

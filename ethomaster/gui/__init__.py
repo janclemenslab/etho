@@ -1,3 +1,3 @@
 # load global config on import
-from etho.utils.config import readconfig
+from ethomaster.utils.config import readconfig
 config = readconfig()

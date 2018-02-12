@@ -5,7 +5,7 @@ import io
 from PIL import Image
 import zmq
 
-from etho.head.ZeroClient import ZeroClient
+from ethomaster.head.ZeroClient import ZeroClient
 from ethoservice.CamZeroService import CAM
 
 

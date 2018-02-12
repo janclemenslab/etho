@@ -26,6 +26,7 @@ def make_pulse(pulseDur, pulsePau, pulseNumber, pulseDelay, samplingrate):
     x = np.concatenate((np.ones((np.intp(samplingrate * pulseDelay / 1000),)), x))
     return x
 
+
 def build_playlist(soundlist, duration, fs, shuffle=True):
     """block-shuffle playlist and concatenate to duration"""
     totallen = 0
@@ -40,16 +41,18 @@ def build_playlist(soundlist, duration, fs, shuffle=True):
         totallen += len(soundlist[playlist_items[-1]])/fs
     return playlist_items
 
+
 def attenuate(sounds, frequencies, attenuationfactors):
     # sounds = [sound = sound * attenuationfactors[str(frequency)] for sound, frequency in zip(sounds, frequencies)]
     for idx, sound in enumerate(sounds):
         sounds[idx] = sound * float(attenuationfactors[str(frequencies[idx])])
     return sounds
 
-def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250):
-    # load_sounds(playlist, fs, mirrorsound=True, attenuation=None)
-    # attenuation should be dict with string freq values as keys and attenuation values as value
 
+def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250):
+    # load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250)
+    # attenuation should be dict with string freq values as keys and attenuation values as value
+    # LEDamp should be 1 with DAQ
     sounddata = list()
     for name, listitem in playlist.iterrows():
         x = np.zeros((0,1))
@@ -69,6 +72,8 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250):
         else:  # other
             # return time x channels
             wav_rate, x = wav.read(listitem.stimFileName + ".wav")
+            # x = x.astype(np.float32)/32768 # NEEDED ONLY WHEN USING DAQ? OR ALWAYS??
+
             if wav_rate!=fs:  # resample to fs
                 x = scipy.signal.resample(x, np.intp(x.shape[0]/wav_rate*fs), axis=0)
 
@@ -77,18 +82,15 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250):
             x = x * float(attenuation[str(listitem.freq)])
 
         # set_volume
-        x = x * listitem.intensity * 20
-        # x = x.reshape((x.shape[0], 1))
-        # print(x.shape)
+        x = x * listitem.intensity * 20 # "* 20" NOT USED FOR DAQ
+
         # pre/post pend silence
         sample_start = np.intp(listitem.silencePre / 1000 * fs)
         sample_end = np.intp(listitem.silencePost / 1000 * fs)
         sample_sound = x.shape[0]
 
-        x = np.insert(x, 0, np.zeros(
-            (sample_start,)))
-        x = np.insert(x, x.shape[0], np.zeros(
-            (sample_end,)))
+        x = np.insert(x, 0, np.zeros((sample_start,)))
+        x = np.insert(x, x.shape[0], np.zeros((sample_end,)))
 
         x = x.reshape((x.shape[0], 1))
         xLED = np.zeros(x.shape)  # second channel is all zeros unless we mirrorsound
@@ -105,7 +107,6 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250):
             pdur = 5  # ms
             ppau = 5  # ms
             pdel = 0  # ms
-            # LEDamp = 250 #rpi8:2000  # "V" 250
             LEDpattern = make_pulse(pdur, ppau, LEDduration/(pdur+ppau)/fs*1000, pdel, fs)
             xLED[sample_start:sample_start+LEDpattern.shape[0],0] = (LEDpattern-0.5) * LEDamp
         x = np.concatenate((x, xLED), axis=1)  # add LED trace as second channel

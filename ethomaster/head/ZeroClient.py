@@ -1,11 +1,11 @@
 import zerorpc
 import time
-from etho.utils.SSHRunner import SSHRunner
+from ethomaster.utils.SSHRunner import SSHRunner
 import zmq
 import logging
 from zmq.log.handlers import PUBHandler
 import socket
-from etho import config
+from ethomaster import config
 
 
 class ZeroClient(zerorpc.Client):
