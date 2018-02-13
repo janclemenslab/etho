@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import time
+import os
 import zmq
 import logging
 import logging.handlers
@@ -21,8 +22,8 @@ if __name__ == '__main__':
     logger.addHandler(console)
 
     # __ set to-file-logger that creates new log file everyday at midnight
-    file = logging.handlers.TimedRotatingFileHandler(
-        'log/{0}'.format(time.strftime("%Y-%m-%d")), 'midnight', 1)
+    logfilepath = os.path.join(config['HEAD']['loggingfolder'], time.strftime("%Y-%m-%d"))
+    file = logging.handlers.TimedRotatingFileHandler(logfilepath, 'midnight', 1)
     file.suffix = "%Y-%m-%d"  # or anything else that strftime will allow
     # formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
     formatter = logging.Formatter('%(levelname)-8s %(message)s')

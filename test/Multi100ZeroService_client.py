@@ -15,28 +15,26 @@ def main(ip_address, playlistfile, protocolfile):
     prot = readconfig(protocolfile)
     maxDuration = int(prot['NODE']['maxduration'])
 
-
     user_name = config['GENERAL']['user']
     folder_name = config['GENERAL']['folder']
-    daq_server_name = 'python -m {0}'.format(DAQ.__module__)
-    daq_service_port = DAQ.SERVICE_PORT
-    ptg_server_name = 'python -m {0}'.format(PTG.__module__)
-    ptg_service_port = PTG.SERVICE_PORT
 
     # unique file name for video and node-local logs
     filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
-    dirname = 'C:/Users/ncb/'#prot['NODE']['savefolder']#'data/'
+    dirname = 'C:/Users/ncb/data/'
 
     if 'PTG' in prot['NODE']['use_services']:
+        ptg_server_name = 'python -m {0}'.format(PTG.__module__)
+        ptg_service_port = PTG.SERVICE_PORT
+        print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
+
         framerate = prot['PTG']['framerate']
         framewidth = prot['PTG']['framewidth']
         frameheight = prot['PTG']['frameheight']
         # shutterspeed = prot['PTG']['shutterspeed']
 
-        print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
         ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'ptgcam')
         # print(ptg.start_server(ptg_server_name, folder_name, warmup=1))
-        subprocess.Popen('python -m ethoservice.PTGZeroService')
+        subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         ptg.connect("tcp://{0}:{1}".format(ip_address, ptg_service_port))
         print('done')
         ptg.setup('{0}/{1}'.format(dirname, filename), maxDuration + 10)
@@ -45,6 +43,9 @@ def main(ip_address, playlistfile, protocolfile):
         time.sleep(5)
 
     if 'DAQ' in prot['NODE']['use_services']:
+        daq_server_name = 'python -m {0}'.format(DAQ.__module__)
+        daq_service_port = DAQ.SERVICE_PORT
+
         fs = int(prot['DAQ']['samplingrate'])
         shuffle_playback = bool(prot['DAQ']['shuffle'])
         # load playlist, sounds, and enumerate play order
@@ -55,7 +56,7 @@ def main(ip_address, playlistfile, protocolfile):
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pidaq')
         # print(daq.start_server(daq_server_name, folder_name, warmup=1))
-        subprocess.Popen('python -m ethoservice.DAQZeroService')
+        subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         daq.connect("tcp://{0}:{1}".format(ip_address, daq_service_port))
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
@@ -68,5 +69,5 @@ def main(ip_address, playlistfile, protocolfile):
 if __name__ == '__main__':
     ip_address = 'localhost'
     protocolfilename = 'protocols/chain_default.txt'
-    playlistfilename = 'playlists/IPItuneChaining.txt'
+    playlistfilename = 'playlists/IPItune36.txt'
     main(ip_address, playlistfilename, protocolfilename)

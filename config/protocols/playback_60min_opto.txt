@@ -26,26 +26,9 @@ interval:20 # seconds, log temperature and humidity every 20 seconds
 [SND]
 samplingrate:44100 # Hz
 shuffle:False # block-randomize order of stimuli for playback
+LEDamp:250
 
 [OPT]
 pin:3
 blinkinterval:30 # seconds - time between blink onsets
 blinkduration:4 # seconds - duration of blink
-
-[ATTENUATION] # frequency:attenuation factor pairs
-100:3
-200:3
-300:3
-400:2
-500:2
-600:2
-700:2
-800:1
-900:1
-1000:1
-1500:1
-2000:1
-
-[DAQ]
-samplingrate:10000 # Hz
-shuffle:False # block-randomize order of stimuli for playback

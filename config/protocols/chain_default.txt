@@ -18,17 +18,4 @@ shutterspeed:6 # ns=10ms
 [DAQ]
 samplingrate:10000 # Hz
 shuffle:True # block-randomize order of stimuli for playback
-
-[ATTENUATION] # frequency:attenuation factor pairs
-100:3
-200:3
-300:3
-400:2
-500:2
-600:2
-700:2
-800:1
-900:1
-1000:1
-1500:1
-2000:1
+LEDamp:1

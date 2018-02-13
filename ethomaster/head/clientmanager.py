@@ -113,7 +113,10 @@ def get_running_services(host, services=None):
             except Exception as e:
                 test_results[S] = e
             finally:
-                c.close()
+                try:
+                    c.close()
+                except:
+                    pass
     else:
         for S in services:
             test_results[S] = "node offline"

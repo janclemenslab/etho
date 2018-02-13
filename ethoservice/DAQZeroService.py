@@ -4,8 +4,13 @@ from .ZeroService import BaseZeroService  # import super class
 import zerorpc  # for starting service in `main()`
 import time     # for timer
 import threading
-from .utils.IOTask import *
-from .utils.daqtools import *
+try:
+    from .utils.IOTask import *
+    from .utils.daqtools import *
+except Exception as e:
+    print("IGNORE IF RUN ON HEAD")
+    print(e)
+
 from itertools import cycle
 
 
@@ -41,12 +46,13 @@ class DAQ(BaseZeroService):
         self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
 
         self.taskAI = IOTask(cha_name=self.channels_in)
-        self.disp_task = ConcurrentTask(task=plot, comms="pipe")
+        # self.disp_task = ConcurrentTask(task=plot, comms="pipe")
         if self.savefilename is not None: # scope + save
             self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.channels_in)])
-            self.taskAI.data_rec = [self.disp_task, self.save_task]
+            self.taskAI.data_rec = [self.save_task]
+            # self.taskAI.data_rec = [self.disp_task, self.save_task]
         else: # scope only
-            self.taskAI.data_rec = [self.disp_task]
+            self.taskAI.data_rec = []#[self.disp_task]
 
         # threads can be stopped by setting an event: `_thread_stopper.set()`
         # via a timer
@@ -57,7 +63,7 @@ class DAQ(BaseZeroService):
         self._time_started = time.time()
 
         # !!!DAQ - no worker thread required!!!
-        self.disp_task.start()
+        # self.disp_task.start()
         if self.savefilename is not None: # scope + save
             self.save_task.start()
 

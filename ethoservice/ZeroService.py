@@ -33,7 +33,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     SERVICE_NAME = None
 
     def __init__(self, *args, **kwargs):
-        super(BaseZeroService, self).__init__(*args, **kwargs, heartbeat=90)
+        super(BaseZeroService, self).__init__(*args, **kwargs, heartbeat=120)
         self._init_network_logger()
 
         self._time_started = None

@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import scipy.io.wavfile as wav
 import scipy.signal
+import os
 
 
 def make_sine(frequency, phase, duration, samplingrate):
@@ -49,7 +50,7 @@ def attenuate(sounds, frequencies, attenuationfactors):
     return sounds
 
 
-def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250, stimfolder='./'):
+def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250.0, stimfolder='./', cast2int=True):
     # load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250)
     # attenuation should be dict with string freq values as keys and attenuation values as value
     # LEDamp should be 1 with DAQ
@@ -71,18 +72,19 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250, st
                            pulsedelay, fs)
         else:  # other
             # return time x channels
-            wav_rate, x = wav.read(listitem.stimFileName + ".wav")
-            x = x.astype(np.float32)/32768 # to scale to +/-1 NEEDED ONLY WHEN USING DAQ? OR ALWAYS??
-
+            wav_rate, x = wav.read(os.path.join(stimfolder, listitem.stimFileName))
+            x = x.astype(np.float32)/32768
             if wav_rate!=fs:  # resample to fs
-                x = scipy.signal.resample(x, np.intp(x.shape[0]/wav_rate*fs), axis=0)
+                x = scipy.signal.resample_poly(x, int(fs), int(wav_rate), axis=0)
 
         # if `attenuation` arg is provided:
         if attenuation:
+            print(str(listitem.freq))
+            print(float(attenuation[str(listitem.freq)]))
             x = x * float(attenuation[str(listitem.freq)])
 
         # set_volume
-        x = x * listitem.intensity * 20 # "* 20" NOT USED FOR DAQ
+        x = x * float(listitem.intensity)# "* 20" NOT USED FOR DAQ
 
         # pre/post pend silence
         sample_start = np.intp(listitem.silencePre / 1000 * fs)
@@ -108,7 +110,9 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250, st
             ppau = 5  # ms
             pdel = 0  # ms
             LEDpattern = make_pulse(pdur, ppau, LEDduration/(pdur+ppau)/fs*1000, pdel, fs)
-            xLED[sample_start:sample_start+LEDpattern.shape[0],0] = (LEDpattern-0.5) * LEDamp
+            xLED[sample_start:sample_start+LEDpattern.shape[0],0] = (LEDpattern-0.5) * float(LEDamp)
         x = np.concatenate((x, xLED), axis=1)  # add LED trace as second channel
-        sounddata.append(x.astype(np.int16).tolist())
+        if cast2int: # needed for RPI - gets sound as int16 at max range, do not do this for DAQ!!
+            x = x.astype(np.int16);
+        sounddata.append(x.tolist())
     return sounddata

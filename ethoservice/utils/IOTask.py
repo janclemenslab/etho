@@ -139,7 +139,7 @@ def plot(disp_queue):
 
 
 def save(frame_queue, filename, num_channels=1, sizeincrement=100):
-    f = h5py.File(filename + ".h5", "w")
+    f = h5py.File(filename, "w")
 
     dset_samples = f.create_dataset("samples", shape=[sizeincrement, num_channels],
                                     maxshape=[None, num_channels], dtype=np.float64)

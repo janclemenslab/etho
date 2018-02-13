@@ -26,17 +26,17 @@ class OPT(BaseZeroService):
         self.blinkpause = self.LED_blinkinterval-self.LED_blinkduration
         self.LED = gpiozero.LED(self.pin)
 
-        self._thread_stopper = threading.Event() 
+        self._thread_stopper = threading.Event()
         self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service':True})
         self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
-        
+
     def start(self):
         self._time_started = time.time()
         # self.LED.blink(on_time=self.LED_blinkduration, off_time=self.LED_blinkpause, n=10)
-        
+
         # background jobs should be run and controlled via a thread
         self._worker_thread.start()
-        
+
         if self.duration > 0:
             self.log.info('duration {0} seconds'.format(self.duration))
             # will execute FINISH after N seconds
@@ -50,8 +50,9 @@ class OPT(BaseZeroService):
        # turn on LED
         self.LED.blink(on_time=self.LED_blinkduration, off_time=0, n=1)
         self.log.info("blinked")
-             
+
     def finish(self, stop_service=False):
+        self._turn_off() # turn LED of at finish
         self.log.warning('stopping')
         if hasattr(self, '_thread_stopper'):
             self._thread_stopper.set()

@@ -4,7 +4,13 @@ from .ZeroService import BaseZeroService  # import super class
 import zerorpc  # for starting service in `main()`
 import time     # for timer
 import threading
-import flycapture2 as fc2
+
+try:
+    import flycapture2 as fc2
+except Exception as e:
+    print("IGNORE IF RUN ON HEAD")
+    print(e)
+
 import numpy as np
 import h5py
 from ethoservice.utils.common import *
