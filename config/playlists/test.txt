@@ -1,3 +1,3 @@
 stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
-SIN_400_0_4000	1000	1000	0	1.0	400
-SIN_800_0_4000	1000	1000	0	0.5	800
+SIN_400_0_4000	1000	1000	0	0.5	400
+SIN_800_0_4000	1000	1000	0	0.25	800

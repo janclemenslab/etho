@@ -1,7 +1,7 @@
 #!/bin/python
 import wx
 import sys  # for command line args
-from CamPreview import *
+from ethomaster.gui.CamPreview import *
 SIZE = (1000, 500)  # size of preview window
 
 

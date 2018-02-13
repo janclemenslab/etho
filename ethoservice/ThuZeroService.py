@@ -35,6 +35,7 @@ class THU(BaseZeroService):
         self._thread_stopper = threading.Event()  # not sure this is required here - but probably does not hurt
         self._queue_thread = threading.Thread(
             target=self._read_temperature_and_humidity, args=(self._thread_stopper,))
+        self.MOVEFILES_ON_FINISH = True
 
     def start(self):
         self._time_started = time.time()
@@ -57,10 +58,13 @@ class THU(BaseZeroService):
             self._thread_stopper.set()
             time.sleep(1)  # wait for thread to stop
         # clean up code here
+        self.log.warning(self.MOVEFILES_ON_FINISH)
         if self.MOVEFILES_ON_FINISH:
             files_to_move = list()
+            self.log.warning(self.logfilename)
             if self.logfilename is not None:
                 files_to_move.append(self.logfilename)
+            self.log.warning(files_to_move)            
             self._movefiles(files_to_move, self.targetpath)
 
         self.log.warning('   stopped ')

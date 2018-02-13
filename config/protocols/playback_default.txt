@@ -10,12 +10,12 @@ use_services:CAM,THU,SND
 
 # SERVICE specific parameters
 [CAM]
-# all(?) currently unused but probably useful
 framerate:30 # frames per second
 framewidth:1000 # pixels
 frameheight:1000 # pixels
 shutterspeed:10000 # ns=10ms
 annotate_frame_num:False # print frame number in each frame
+# unused but probably useful
 exposuremode:'fixedfps'
 video_denoise:False
 
@@ -31,7 +31,6 @@ blinkduration:4 # seconds - duration of blink
 [SND]
 samplingrate:44100 # Hz
 shuffle:False # block-randomize order of stimuli for playback
-LEDamp:250 # V
 
 [ATTENUATION] # frequency:attenuation factor pairs
 100:3
@@ -46,3 +45,7 @@ LEDamp:250 # V
 1000:1
 1500:1
 2000:1
+
+[DAQ]
+samplingrate:10000 # Hz
+shuffle:False # block-randomize order of stimuli for playback

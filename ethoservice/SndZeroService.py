@@ -75,12 +75,14 @@ class SND(BaseZeroService):
         if pygame.mixer.get_init():
             pygame.mixer.stop()
         self.log.warning('   stopped playback')
-
+        self.log.warning(self.MOVEFILES_ON_FINISH)
         if self.MOVEFILES_ON_FINISH:
             files_to_move = list()
+            self.log.warning(self.logfilename)
             if self.logfilename is not None:
                 files_to_move.append(self.logfilename)
-            self._movefiles(files_to_move, self.target_path)
+            self.log.warning(files_to_move)            
+            self._movefiles(files_to_move, self.targetpath)
 
         if stop_service:
             time.sleep(1)

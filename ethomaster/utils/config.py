@@ -1,4 +1,8 @@
 import configparser
+import pathlib
+import os
+HOME = str(pathlib.Path.home())
+CTRLFILEPATH = os.path.join(HOME, '.ethoconfig.ini') # should be ~/.ethoconfig.ini
 
 def getlist(string, delimiter=',', stripwhitespace=True):
     stringlist = string.split(delimiter)
@@ -6,7 +10,7 @@ def getlist(string, delimiter=',', stripwhitespace=True):
         stringlist = [item.strip() for item in stringlist]
     return stringlist
 
-def readconfig(filename='config.ini'):
+def readconfig(filename=CTRLFILEPATH):
     config = configparser.ConfigParser(inline_comment_prefixes=('#',))
     config.read(filename)
     sections = config.sections()
@@ -27,4 +31,4 @@ def readconfig(filename='config.ini'):
 
 
 if __name__ == '__main__':
-    print(readconfig('config.ini'))
+    print(readconfig())

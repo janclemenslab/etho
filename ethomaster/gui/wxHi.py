@@ -4,8 +4,8 @@ from ethomaster.head.clientmanager import *
 from ethomaster.utils.SSHRunner import *
 from ethomaster import config
 import wx
-import wxCtrl
-from wxBusyDialog import BusyDialog
+import ethomaster.gui.wxCtrl as wxCtrl
+from ethomaster.gui.wxBusyDialog import BusyDialog
 
 
 class Model:

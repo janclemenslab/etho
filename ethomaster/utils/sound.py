@@ -49,7 +49,7 @@ def attenuate(sounds, frequencies, attenuationfactors):
     return sounds
 
 
-def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250):
+def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250, stimfolder='./'):
     # load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250)
     # attenuation should be dict with string freq values as keys and attenuation values as value
     # LEDamp should be 1 with DAQ
@@ -72,7 +72,7 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250):
         else:  # other
             # return time x channels
             wav_rate, x = wav.read(listitem.stimFileName + ".wav")
-            # x = x.astype(np.float32)/32768 # NEEDED ONLY WHEN USING DAQ? OR ALWAYS??
+            x = x.astype(np.float32)/32768 # to scale to +/-1 NEEDED ONLY WHEN USING DAQ? OR ALWAYS??
 
             if wav_rate!=fs:  # resample to fs
                 x = scipy.signal.resample(x, np.intp(x.shape[0]/wav_rate*fs), axis=0)

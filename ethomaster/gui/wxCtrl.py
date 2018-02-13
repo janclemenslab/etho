@@ -1,18 +1,13 @@
-'''
-on init - check running status
-    If running show status - current song, progress etc. - and stop button and preview button
-    If not allow to select playlist, preview and start
-'''
-
 import time
 import os
+import wx
 from ethomaster import config
 import ethomaster.head.clientcaller as clientcaller
 import ethomaster.head.clientmanager as clientmanager
-import wx
-from wxDangerDialog import DangerDialog
-from wxBusyDialog import BusyDialog
-import wxCam
+from ethomaster.gui.wxDangerDialog import DangerDialog
+from ethomaster.gui.wxBusyDialog import BusyDialog
+import ethomaster.gui.wxCam as wxCam
+
 
 def list_path(path='playlists'):
     return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
