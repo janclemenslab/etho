@@ -109,7 +109,7 @@ class CAM(BaseZeroService):
                 files_to_move.append(self.logfilename)
             self.log.warning(files_to_move)
             self._movefiles(files_to_move, self.targetpath)
-
+        self._flush_loggers()
         if stop_service:
             time.sleep(2)
             self.service_stop()

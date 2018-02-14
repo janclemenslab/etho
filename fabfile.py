@@ -1,5 +1,5 @@
 from fabric.api import *
-env.hosts = ['rpi8', 'rpi3']#, 'rpi5', 'rpi6', 'rpi7', 'rpi3', 'rpi9']#,  'rpi4']
+env.hosts = ['rpi8', 'rpi3', 'rpi5', 'rpi6', 'rpi7', 'rpi3', 'rpi9']#,  'rpi4']
 env.user = 'ncb'
 env.warn_only = True
 env.password = 'droso123'
@@ -39,5 +39,6 @@ def killpython():
     run('pkill python')
 
 
-# def set_volume():
-    # run('amixer sset Master 100\%') # 248=100%
+def set_volume():
+    run('amixer sset Master 10\%') # for some reason need to set to <100 first to maximize volume
+    run('amixer sset Master 100\%') # 248=100%

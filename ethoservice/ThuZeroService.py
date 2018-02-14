@@ -68,6 +68,7 @@ class THU(BaseZeroService):
             self._movefiles(files_to_move, self.targetpath)
 
         self.log.warning('   stopped ')
+        self._flush_loggers()
         if stop_service:
             time.sleep(2)
             self.service_stop()

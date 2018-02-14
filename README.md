@@ -4,6 +4,16 @@
 - [ ] present logging information within gui
 - [ ] make gui more responsive through async
 - [ ] make protocols editable so small changes are more easily done (use traisui)
+- [ ] installation instructions (where to copy `.ethoconfig.ini`)
+- [ ] refactor? ethoservice->services, ethomaster->master?
+- [ ] copy ethoservice wiki
+
+## deploy
+pip uninstall ethoservice
+pip install -e .
+
+ - on head only:
+# cp config/deviceconfig/.ethoconfigRPI.ini -> ~/.ethoconfig.ini
 
 ## Services
 - CAM - picamera
