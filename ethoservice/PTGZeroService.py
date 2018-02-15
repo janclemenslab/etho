@@ -122,6 +122,7 @@ class PTG(BaseZeroService):
             self.displayQueue, displayOut = Pipe()
             self.pDisplay = Process(target=disp, args=(displayOut, self.frame_width, self.frame_height))
         else:  # save only - set up SAVE
+            os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
             self.nFrames = int(self.frame_rate * (self.duration + 100))
             self.timestamps = np.zeros((self.nFrames, 6))
             # save camera info

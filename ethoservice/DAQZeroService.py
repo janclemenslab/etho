@@ -48,6 +48,7 @@ class DAQ(BaseZeroService):
         self.taskAI = IOTask(cha_name=self.channels_in)
         # self.disp_task = ConcurrentTask(task=plot, comms="pipe")
         if self.savefilename is not None: # scope + save
+            os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
             self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.channels_in)])
             self.taskAI.data_rec = [self.save_task]
             # self.taskAI.data_rec = [self.disp_task, self.save_task]
