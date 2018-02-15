@@ -142,9 +142,9 @@ def save(frame_queue, filename, num_channels=1, sizeincrement=100):
     f = h5py.File(filename, "w")
 
     dset_samples = f.create_dataset("samples", shape=[sizeincrement, num_channels],
-                                    maxshape=[None, num_channels], dtype=np.float64)
+                                    maxshape=[None, num_channels], dtype=np.float64, compression="gzip")
     dset_systemtime = f.create_dataset("systemtime", shape=[sizeincrement, 1],
-                                       maxshape=[None, 1], dtype=np.float64)
+                                       maxshape=[None, 1], dtype=np.float64, compression="gzip")
     print("opened file \"{0}\".".format(filename))
     framecount = 0
     RUN = True
