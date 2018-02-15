@@ -112,8 +112,8 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         ptg.connect("tcp://{0}:{1}".format(ip_address, ptg_service_port))
         print('done')
-        ptg.setup('{0}/{1}'.format(dirname, filename), maxDuration + 10)
-        ptg.init_local_logger('{0}/{1}_ptg.log'.format(dirname, filename))
+        ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxDuration + 10)
+        ptg.init_local_logger('{0}/{1}/{1}_ptg.log'.format(dirname, filename))
         ptg.start()
         time.sleep(5)
 
@@ -136,8 +136,8 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         daq.connect("tcp://{0}:{1}".format(ip_address, daq_service_port))
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
-        daq.setup('{0}/{1}.h5'.format(dirname, filename), sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs)
-        daq.init_local_logger('{0}/{1}_daq.log'.format(dirname, filename))
+        daq.setup('{0}/{1}/{1}.h5'.format(dirname, filename), sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs)
+        daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
         daq.start()
 
     print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
