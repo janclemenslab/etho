@@ -25,7 +25,7 @@ plt.ion()
 
 
 class IOTask(daq.Task):
-    def __init__(self, dev_name="Dev1", cha_name=["ai0"], data_len=1000, limits=10.0, rate=10000.0):
+    def __init__(self, dev_name="Dev1", cha_name=["ai0"], limits=10.0, rate=10000.0):
         # check inputs
         daq.Task.__init__(self)
         assert isinstance(cha_name, list)
@@ -83,6 +83,7 @@ class IOTask(daq.Task):
                 self._data = next(self.data_gen)  # get data from data generator
                 print(self._data.shape)
             if self.cha_type[0] is "input":
+                # should only read self.num_samples_per_event!! otherwise recordings will be zeropadded for each chunk
                 self.ReadAnalogF64(DAQmx_Val_Auto, 1.0, DAQmx_Val_GroupByScanNumber,
                                    self._data, self.num_samples_per_chan * self.num_channels, daq.byref(self.read), None)
             elif self.cha_type[0] is "output":
@@ -103,9 +104,10 @@ class IOTask(daq.Task):
 
 
 def plot(disp_queue):
-    '''coroutine for plotting
+    """Coroutine for plotting.
+
     fast, realtime as per: https://gist.github.com/pklaus/62e649be55681961f6c4
-    '''
+    """
     plt.ion()
     fig = plt.figure()
     fig.canvas.set_window_title('traces: daq')
@@ -139,8 +141,8 @@ def plot(disp_queue):
 
 
 def save(frame_queue, filename, num_channels=1, sizeincrement=100):
+    """Coroutine for saving data."""
     f = h5py.File(filename, "w")
-
     dset_samples = f.create_dataset("samples", shape=[sizeincrement, num_channels],
                                     maxshape=[None, num_channels], dtype=np.float64, compression="gzip")
     dset_systemtime = f.create_dataset("systemtime", shape=[sizeincrement, 1],
@@ -171,7 +173,6 @@ def save(frame_queue, filename, num_channels=1, sizeincrement=100):
 
 def log(file_name):
     f = open(file_name, 'r')      # open file
-
     try:
         while True:
             message = (yield)  # gets sent variables
@@ -183,7 +184,7 @@ def log(file_name):
 
 @coroutine
 def data(channels=1):
-    '''generator yields next chunk of data for output'''
+    """generator yields next chunk of data for output"""
     # generate all stimuli
     data = list()
     for ii in range(2):
