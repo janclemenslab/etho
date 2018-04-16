@@ -73,18 +73,13 @@ class PTG(BaseZeroService):
     SERVICE_PORT = 4248   # last to digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "PTG"  # short, uppercase, 3-letter ID of the service (equals class name)
 
-    def setup(self, savefilename, duration):
+    def setup(self, savefilename, duration, params):
         self._time_started = None
         self.duration = duration
         self.savefilename = savefilename
 
-        # setup CAMERA
-        frame_rate = 100.0
-        frame_offX = 160
-        frame_offY = 32
-        frame_width = 960
-        frame_height = 960
-        self.cam_id = 0
+        # set up CAMERA - these should be defined in a PARAMS dict
+        self.cam_id = int(params['cam_id'])
 
         # pre-allocate image data structures
         self.im = fc2.Image()  # this will hold the original acquired image
@@ -94,14 +89,21 @@ class PTG(BaseZeroService):
         self.c = fc2.Context()
         self.c.connect(*self.c.get_camera_from_index(self.cam_id))
 
-        self.c.set_format7_configuration(fc2.MODE_0, frame_offX, frame_offY, frame_width, frame_height, fc2.PIXEL_FORMAT_BGR)
+        self.c.set_format7_configuration(fc2.MODE_0, int(params['frame_offx']), int(params['frame_offy']), int(params['frame_width']), int(params['frame_height']), fc2.PIXEL_FORMAT_BGR)
         print(self.c.get_format7_configuration())
 
-        self.c.set_property_abs_value(fc2.FRAME_RATE, frame_rate)
+        self.c.set_property_abs_value(fc2.FRAME_RATE, int(params['frame_rate']))
         print(self.c.get_property(fc2.FRAME_RATE))
 
         self.c.set_trigger_mode(0, True, 0, 0, 14)  # free-running mode
         self.c.set_register(0x12f8, 1)  # set time-stamp register so that time stamps are embedded in frames (SOURCE?)
+
+        self.c.set_property_abs_value(fc2.SHUTTER, float(params['shutter_speed']))
+        self.c.set_property_abs_value(fc2.BRIGHTNESS, float(params['brightness']))
+        self.c.set_property_abs_value(fc2.AUTO_EXPOSURE, float(params['exposure']))
+        # self.c.set_property_abs_value(fc2.SHARPNESS, sharpness)
+        self.c.set_property_abs_value(fc2.GAMMA, float(params['gamma']))
+        self.c.set_property_abs_value(fc2.GAIN, float(params['gain']))
 
         # get one frame to extract actual frame rate and frame size etc.
         self.c.start_capture()
@@ -120,7 +122,7 @@ class PTG(BaseZeroService):
         self.nFrames = int(self.frame_rate * (self.duration + 100))
         if self.savefilename is None:  # display only - set up DISPLAY
             self.displayQueue, displayOut = Pipe()
-            self.pDisplay = Process(target=disp, args=(displayOut, self.frame_width, self.frame_height))
+            self.pDisplay = Process(target=disp, args=(displayOut, self.frame_height, self.frame_width))
         else:  # save only - set up SAVE
             os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
             self.nFrames = int(self.frame_rate * (self.duration + 100))
@@ -135,7 +137,7 @@ class PTG(BaseZeroService):
             h5f.close()
             self.writeQueue = Queue()  # TODO: this should be a Pipe since we always only want to display the last frame
             self.pWrite = Process(target=save,
-                                  args=(self.writeQueue, self.savefilename, self.frame_rate, self.frame_width, self.frame_height))
+                                  args=(self.writeQueue, self.savefilename, self.frame_rate, self.frame_height, self.frame_width))
         # background jobs should be run and controlled via a thread
         # threads can be stopped by setting an event: `_thread_stopper.set()`
         self._thread_stopper = threading.Event()

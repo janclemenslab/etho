@@ -46,10 +46,6 @@ def clientcaller(ip_address, playlistfile, protocolfile):
     if 'CAM' in prot['NODE']['use_services']:
         cam_server_name = 'python -m {0}'.format(CAM.__module__)
         cam_service_port = CAM.SERVICE_PORT
-        framerate = prot['CAM']['framerate']
-        framewidth = prot['CAM']['framewidth']
-        frameheight = prot['CAM']['frameheight']
-        shutterspeed = prot['CAM']['shutterspeed']
 
         print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
         cam = ZeroClient("{0}@{1}".format(user_name, ip_address), 'picam')
@@ -102,17 +98,12 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         ptg_service_port = PTG.SERVICE_PORT
         print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
 
-        framerate = prot['PTG']['framerate']
-        framewidth = prot['PTG']['framewidth']
-        frameheight = prot['PTG']['frameheight']
-        # shutterspeed = prot['PTG']['shutterspeed']
-
         ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'ptgcam')
         # print(ptg.start_server(ptg_server_name, folder_name, warmup=1))
         subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         ptg.connect("tcp://{0}:{1}".format(ip_address, ptg_service_port))
         print('done')
-        ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxDuration + 10)
+        ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxDuration + 10, prot['PTG'])
         ptg.init_local_logger('{0}/{1}/{1}_ptg.log'.format(dirname, filename))
         ptg.start()
         time.sleep(5)
@@ -129,6 +120,11 @@ def clientcaller(ip_address, playlistfile, protocolfile):
                     LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'], cast2int=False)
         playlist_items = build_playlist(sounds, maxDuration, fs, shuffle=shuffle_playback)
 
+        if not isinstance(prot['DAQ']['channels_in'], list):
+            prot['DAQ']['channels_in'] = [prot['DAQ']['channels_in']]
+        if not isinstance(prot['DAQ']['channels_out'], list):
+            prot['DAQ']['channels_out'] = [prot['DAQ']['channels_out']]
+        
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pidaq')
         # print(daq.start_server(daq_server_name, folder_name, warmup=1))
@@ -136,11 +132,12 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         daq.connect("tcp://{0}:{1}".format(ip_address, daq_service_port))
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
-        daq.setup('{0}/{1}/{1}.h5'.format(dirname, filename), sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs)
+        daq.setup('{0}/{1}/{1}_daq.h5'.format(dirname, filename), sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs, prot['DAQ'])
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
         daq.start()
 
     print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
+
 
 if __name__ == '__main__':
     ip_address = 'rpi8'

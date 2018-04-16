@@ -21,13 +21,13 @@ class DAQ(BaseZeroService):
     SERVICE_NAME = "DAQ"  # short, uppercase, 3-letter ID of the service (equals class name)
 
     # def setup(self, savefilename, duration, channels_out=["ao0", "ao1"], channels_in=["ai2", "ai3", "ai0"]):
-    def setup(self, savefilename, sounds, playlist, play_order, duration, fs):
+    def setup(self, savefilename, sounds, playlist, play_order, duration, fs, params):
         self._time_started = None
         self.duration = duration
         self.savefilename = savefilename
         # APPLICATION SPECIFIC SETUP CODE HERE
-        self.channels_out = ["ao0", "ao1"]
-        self.channels_in = ["ai0"]
+        self.channels_out = params['channels_out']  #["ao0", "ao1"]#
+        self.channels_in = params['channels_in']  # ["ai0"]#
 
         self.taskAO = IOTask(cha_name=self.channels_out)
 
@@ -41,7 +41,7 @@ class DAQ(BaseZeroService):
         del sounds
 
         self.taskAO.data_gen = data_playlist(np_sounds, play_order_loop)  # generator function that yields data upon request
-        # self.taskAO.data_gen = data_sine(channels=2)  # generator function that yields data upon request
+
         # Connect AO start to AI start
         self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
 
@@ -56,7 +56,7 @@ class DAQ(BaseZeroService):
             self.taskAI.data_rec = []#[self.disp_task]
 
         # threads can be stopped by setting an event: `_thread_stopper.set()`
-        # via a timer
+        # or via a timer
         if self.duration>0:
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service':True})
 
