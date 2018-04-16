@@ -5,27 +5,27 @@
 user:ncb # default user
 folder:C:/Users/ncb/ # default working directory
 savefolder:C:/Users/ncb/data # this is where the recordings will be saved
-maxduration:3600 # seconds
+maxduration:1800 # seconds
 use_services:PTG,DAQ
 
 # SERVICE specific parameters
 [PTG]
 frame_rate:100 # frames per second
-frame_width:960 # pixels
-frame_height:960 # pixels
-shutter_speed:10 # ns=10ms
-frame_offX:160
-frame_offY:32
+frame_width:480 # pixels
+frame_height:440 # pixels
+shutter_speed:10 # ns=10ms??
+frame_offX:480
+frame_offY:340
 brightness:0.0
 exposure:0.0
 gamma:1.0
-gain:0
+gain:0.0
 cam_id:0
 
 [DAQ]
 samplingrate:10000 # Hz
 shuffle:True # block-randomize order of stimuli for playback
 LEDamp:1
-channels_in:ai0
+channels_in:ai16,ai17,ai18,ai19,ai20,ai21,ai22,ai23,ai24,ai25,ai26,ai27,ai28,ai29,ai30,ai31
 channels_out:ao0,ao1
-limits:10
+limits:5
