@@ -4,34 +4,42 @@ from PyDAQmx.DAQmxCallBack import *
 from PyDAQmx.DAQmxConstants import *
 from PyDAQmx.DAQmxFunctions import *
 
-from .daqtools import *
 import threading
+import sys
 import time
 import numpy as np
 import msvcrt
+import h5py
+import argparse
 
 # callback specific imports
 # import matplotlib
 # matplotlib.use('tkagg')
 import matplotlib.pyplot as plt
-import h5py
-import argparse
 
-import sys
-
+from .daqtools import *
 from .ConcurrentTask import ConcurrentTask
 
 plt.ion()
 
 
 class IOTask(daq.Task):
+    """IOTask does X."""
+
     def __init__(self, dev_name="Dev1", cha_name=["ai0"], limits=10.0, rate=10000.0):
+        """Initialize IOTask.
+
+        ARGUMENTS:
+        dev_name - ni daqmx device name
+        cha_name - list of channels (must be pure - either all ai or ao)
+        limits   - voltage limits
+        rate     - sampling rate
+        """
         # check inputs
         daq.Task.__init__(self)
         assert isinstance(cha_name, list)
 
-        self.read = daq.int32()
-        self.read_float64 = daq.float64()
+        self.samples_read = daq.int32()
         cha_types = {"i": "input", "o": "output"}
         self.cha_type = [cha_types[cha[1]] for cha in cha_name]
         self.cha_name = [dev_name + '/' + ch for ch in cha_name]  # append device name
@@ -45,7 +53,7 @@ class IOTask(daq.Task):
         self.data_rec = None  # called at end of callback
         if self.cha_type[0] is "input":
             self.num_samples_per_chan = 10000
-            self.num_samples_per_event = 1000  # self.num_samples_per_chan*self.num_channels
+            self.num_samples_per_event = 10000  # self.num_samples_per_chan*self.num_channels
             self.CreateAIVoltageChan(self.cha_string, "", DAQmx_Val_RSE, -limits, limits, DAQmx_Val_Volts, None)
             self.AutoRegisterEveryNSamplesEvent(DAQmx_Val_Acquired_Into_Buffer, self.num_samples_per_event, 0)
             self.CfgInputBuffer(self.num_samples_per_chan * self.num_channels * 4)
@@ -66,6 +74,7 @@ class IOTask(daq.Task):
             self.EveryNCallback()  # fill buffer on init
 
     def stop(self):
+        """Stop DAQ."""
         if self.data_gen is not None:
             self._data = self.data_gen.close()  # close data generator
         if self.data_rec is not None:
@@ -74,9 +83,11 @@ class IOTask(daq.Task):
                 data_rec.finish(verbose=True)
                 data_rec.close()
 
-    # FIX: different functions for AI and AO task types instead of in-function switching?
-    #      or maybe pass function handle?
     def EveryNCallback(self):
+        """Called whenever there is data to be read/written from/to the buffer.
+
+        Calls `self.data_gen` or `self.data_rec` for requesting/processing data.
+        """
         with self._data_lock:
             systemtime = time.clock()
             if self.data_gen is not None:
@@ -85,12 +96,13 @@ class IOTask(daq.Task):
             if self.cha_type[0] is "input":
                 # should only read self.num_samples_per_event!! otherwise recordings will be zeropadded for each chunk
                 self.ReadAnalogF64(DAQmx_Val_Auto, 1.0, DAQmx_Val_GroupByScanNumber,
-                                   self._data, self.num_samples_per_chan * self.num_channels, daq.byref(self.read), None)
+                                   self._data, self.num_samples_per_chan * self.num_channels, daq.byref(self.samples_read), None)
+                # only keep samples that were actually read, .value convert c_long to int
+                self._data = self._data[:self.samples_read.value,:]
+
             elif self.cha_type[0] is "output":
-                # self.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByChannel,
-                #                     self._data, daq.byref(self.read), None)
                 self.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
-                                    self._data, daq.byref(self.read), None)
+                                    self._data, daq.byref(self.samples_read), None)
             if self.data_rec is not None:
                 for data_rec in self.data_rec:
                     if self._data is not None:
@@ -99,6 +111,7 @@ class IOTask(daq.Task):
         return 0  # The function should return an integer
 
     def DoneCallback(self, status):
+        """Called when Task is stopped/done."""
         print("Done status", status)
         return 0  # The function should return an integer
 
@@ -106,7 +119,7 @@ class IOTask(daq.Task):
 def plot(disp_queue):
     """Coroutine for plotting.
 
-    fast, realtime as per: https://gist.github.com/pklaus/62e649be55681961f6c4
+    Fast, realtime as per: https://gist.github.com/pklaus/62e649be55681961f6c4
     """
     plt.ion()
     fig = plt.figure()
@@ -142,10 +155,14 @@ def plot(disp_queue):
 
 def save(frame_queue, filename, num_channels=1, sizeincrement=100):
     """Coroutine for saving data."""
+
+    # TODO: save samples for each time stamp, add Fs field
     f = h5py.File(filename, "w")
-    dset_samples = f.create_dataset("samples", shape=[sizeincrement, num_channels],
+    dset_samples = f.create_dataset("samples", shape=[0, num_channels],
                                     maxshape=[None, num_channels], dtype=np.float64, compression="gzip")
     dset_systemtime = f.create_dataset("systemtime", shape=[sizeincrement, 1],
+                                       maxshape=[None, 1], dtype=np.float64, compression="gzip")
+    dset_samplenumber = f.create_dataset("samplenumber", shape=[sizeincrement, 1],
                                        maxshape=[None, 1], dtype=np.float64, compression="gzip")
     print("opened file \"{0}\".".format(filename))
     framecount = 0
@@ -156,6 +173,8 @@ def save(frame_queue, filename, num_channels=1, sizeincrement=100):
             f.flush()
             dset_systemtime.resize(dset_systemtime.shape[
                                    0] + sizeincrement, axis=0)
+            dset_samplenumber.resize(dset_samplenumber.shape[
+                                   0] + sizeincrement, axis=0)
         if frame_systemtime is None:
             print("   stopping save")
             RUN = False
@@ -165,6 +184,7 @@ def save(frame_queue, filename, num_channels=1, sizeincrement=100):
             dset_samples.resize(dset_samples.shape[0] + frame_systemtime[0].shape[0], axis=0)
             dset_samples[-frame_systemtime[0].shape[0]:, :] = frame_systemtime[0]
             dset_systemtime[framecount, :] = frame_systemtime[1]
+            dset_systemtime[framecount, :] = frame_systemtime[0].shape[0]
             framecount += 1
     f.flush()
     f.close()
