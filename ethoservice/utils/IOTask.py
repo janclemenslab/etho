@@ -184,7 +184,7 @@ def save(frame_queue, filename, num_channels=1, sizeincrement=100):
             dset_samples.resize(dset_samples.shape[0] + frame_systemtime[0].shape[0], axis=0)
             dset_samples[-frame_systemtime[0].shape[0]:, :] = frame_systemtime[0]
             dset_systemtime[framecount, :] = frame_systemtime[1]
-            dset_systemtime[framecount, :] = frame_systemtime[0].shape[0]
+            dset_samplenumber[framecount, :] = frame_systemtime[0].shape[0]
             framecount += 1
     f.flush()
     f.close()
