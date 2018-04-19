@@ -11,9 +11,9 @@ use_services:PTG,DAQ
 # SERVICE specific parameters
 [PTG]
 frame_rate:100 # frames per second
-frame_width:960 # pixels
-frame_height:960 # pixels
-shutter_speed:10 # ns=10ms
+frame_width:928 # pixels
+frame_height:940 # pixels
+shutter_speed:7 # ns=10ms
 frame_offX:160
 frame_offY:32
 brightness:0.0
