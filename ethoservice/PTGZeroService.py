@@ -92,7 +92,7 @@ class PTG(BaseZeroService):
         self.c.set_format7_configuration(fc2.MODE_0, int(params['frame_offx']), int(params['frame_offy']), int(params['frame_width']), int(params['frame_height']), fc2.PIXEL_FORMAT_BGR)
         print(self.c.get_format7_configuration())
 
-        self.c.set_property_abs_value(fc2.FRAME_RATE, int(params['frame_rate']))
+        self.c.set_property_abs_value(fc2.FRAME_RATE, float(params['frame_rate']))
         print(self.c.get_property(fc2.FRAME_RATE))
 
         self.c.set_trigger_mode(0, True, 0, 0, 14)  # free-running mode
