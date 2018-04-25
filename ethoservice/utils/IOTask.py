@@ -37,7 +37,8 @@ class IOTask(daq.Task):
         """
         # check inputs
         daq.Task.__init__(self)
-        assert isinstance(cha_name, list)
+        if not isinstance(cha_name, (list, tuple)):
+            raise TypeError(f'`cha_name` is {type(cha_name)}. Should be `list` or `tuple`')
 
         self.samples_read = daq.int32()
         cha_types = {"i": "input", "o": "output"}
