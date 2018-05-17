@@ -47,7 +47,7 @@ def ping(host):
 
 
 class SSHRunner():
-    """manages remote processes
+    """<anages remote processes.
 
     run
     runbg
@@ -133,11 +133,11 @@ class SSHRunner():
         return output.strip().split('\n')[:-1]
 
     def kill(self, pid):
-        '''kill process pid'''
+        """Kill process pid."""
         return self.run('kill {0}\n'.format(pid))
 
     def kill_python(self):
-        '''kill all python processes'''
+        """Kill all python processes."""
         return self.run('pkill python\n')
 
     def kill_service(self, servicename):
@@ -148,15 +148,12 @@ class SSHRunner():
             return None
 
     def get_pid(self, query):
-        '''get pids of all processes partially matching `query`'''
+        """Get pids of all processes partially matching `query`."""
         output = self.run_foreground("source ~/.bash_profile;python -m ethoservice.utils.find_pid {0}".format(query))
         return self._parse_pid(output)
 
-
     def reboot(self, wait=False, timeout=10, wait_interval=0.1):
-        '''
-        reboot host, can `wait` `timeout` seconds for host to come back
-        '''
+        """Reboot host, can `wait` `timeout` seconds for host to come back."""
         output = self.run_fabric('reboot', sudo_run=True, timeout=1)
         if wait:
             time.sleep(2)  # make sure host is down
@@ -173,7 +170,7 @@ class SSHRunner():
         return self.run('ps {0}\n'.format(pid))
 
     def is_running(self, pid):
-        ''' return True if `pid` is in list of running processes'''
+        """Return True if `pid` is in list of running processes."""
         if platform.system().lower() == "windows":
             output = self.run('ps -p {0}\n'.format(pid))
         else:
