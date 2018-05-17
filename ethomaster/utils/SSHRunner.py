@@ -4,8 +4,9 @@ import platform
 import os
 import time
 from subprocess import PIPE, Popen
-from fabric.api import *
+from collections import namedtuple
 
+env = namedtuple('env', '')
 env.hosts = []
 env.user = 'ncb'
 env.warn_only = True
@@ -114,17 +115,6 @@ class SSHRunner():
         except subprocess.TimeoutExpired as e:
             output = e.output + "\n"
         return output
-
-
-    def run_fabric(self, command, sudo_run=False, timeout=2):
-        with settings(hide('running'), timeout=timeout, host_string=self.host):
-            try:
-                if sudo_run:
-                    return sudo(command)
-                else:
-                    return run(command)
-            except Exception as e:
-                    return e
 
     def run_background(self, cmd, timeout=None):
          return self.run("nohup {0}".format(cmd), timeout=timeout)
