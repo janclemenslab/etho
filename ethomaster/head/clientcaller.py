@@ -8,6 +8,7 @@ from ethomaster.head.ZeroClient import ZeroClient
 from ethoservice.SndZeroService import SND
 from ethoservice.CamZeroService import CAM
 from ethoservice.ThuZeroService import THU
+from ethoservice.ThuAZeroService import THUA
 from ethoservice.OptZeroService import OPT
 from ethoservice.DAQZeroService import DAQ
 from ethoservice.PTGZeroService import PTG
@@ -93,6 +94,21 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         opt.init_local_logger('{0}/{1}/{1}_opt.log'.format(dirname, filename))
         opt.start()
 
+    if 'THUA' in prot['NODE']['use_services']:
+        thua_server_name = 'python -m {0}'.format(THUA.__module__)
+        thua_service_port = THUA.SERVICE_PORT
+        print([THUA.SERVICE_PORT, THUA.SERVICE_NAME])
+
+        thua = ZeroClient("{0}@{1}".format(user_name, ip_address), 'thuarduino')
+        # print(thua.start_server(thua_server_name, folder_name, warmup=1))
+        subprocess.Popen(thua_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
+        thua.connect("tcp://{0}:{1}".format(ip_address, thua_service_port))
+        print('done')
+        print(prot['THUA'])
+        thua.setup(prot['THUA']['port'], float(prot['THUA']['interval']), maxDuration + 10)
+        thua.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
+        thua.start()
+        
     if 'PTG' in prot['NODE']['use_services']:
         ptg_server_name = 'python -m {0}'.format(PTG.__module__)
         ptg_service_port = PTG.SERVICE_PORT
@@ -124,7 +140,7 @@ def clientcaller(ip_address, playlistfile, protocolfile):
             prot['DAQ']['channels_in'] = [prot['DAQ']['channels_in']]
         if not isinstance(prot['DAQ']['channels_out'], list):
             prot['DAQ']['channels_out'] = [prot['DAQ']['channels_out']]
-        
+
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pidaq')
         # print(daq.start_server(daq_server_name, folder_name, warmup=1))
@@ -135,6 +151,7 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         daq.setup('{0}/{1}/{1}_daq.h5'.format(dirname, filename), sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs, prot['DAQ'])
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
         daq.start()
+
 
     print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
 
