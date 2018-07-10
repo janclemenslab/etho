@@ -176,7 +176,7 @@ class PTG(BaseZeroService):
                 self.c.retrieve_buffer(self.im)  # get buffer - this blocks until an image is acquired
             except Exception as e:
                 RUN = False
-            t = clock()
+            t = time.time()
             self.frame_interval.update(t - self.last_frame_time)
             self.last_frame_time = t
 
@@ -196,7 +196,7 @@ class PTG(BaseZeroService):
 
             if self.savefilename is not None:
                 ts = self.im.timestamp()  # retrieve time stamp embedded in the frame
-                self.timestamps[frameNumber, :] = (clock(), ts['seconds'], ts['microSeconds'], ts[
+                self.timestamps[frameNumber, :] = (t, ts['seconds'], ts['microSeconds'], ts[
                                         'cycleCount'], ts['cycleOffset'], ts['cycleSeconds'])
                 # ovw.write(BGR)
                 self.writeQueue.put(BGR)
