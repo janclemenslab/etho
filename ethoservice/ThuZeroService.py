@@ -41,7 +41,7 @@ class THU(BaseZeroService):
         self._time_started = time.time()
         self._queue_thread.start()
         if self.duration > 0:
-            self.log.info('duration {0} seconds'.format(self.duration))
+            self.log.info(f'duration {self.duration} seconds')
             # will execute FINISH after N seconds
             self._thread_timer.start()
             self.log.info('finish timer started')
@@ -50,7 +50,10 @@ class THU(BaseZeroService):
         RUN = True
         while RUN and not stop_event.wait(self.delay):
             self.humidity, self.temperature = Adafruit_DHT.read_retry(self.sensor, self.pin)
-            self.log.info('temperature,{0:0.1f},C;humidity,{1:0.1f},%'.format(self.temperature, self.humidity))
+            try:
+                self.log.info(f'temperature,{self.temperature:0.1f},C;humidity,{self.humidity:0.1f}%')
+            except TypeError as e:
+                self.log.warning(f'invalid values for temperature ({self.temperature}C) or humidity ({self.humidity}%).')
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
@@ -77,12 +80,15 @@ class THU(BaseZeroService):
         pass
 
     def is_busy(self):
-        return self._queue_thread.is_alive()  # is this the right why to check whether thread is running?
+        return self._queue_thread.is_alive()  # is this the right way to check whether thread is running?
 
     def info(self):
         if self.is_busy():
             # NOTE: save to access thread variables? need lock or something?
-            return 'temperature,{0:0.1f},C;humidity,{1:0.1f},%'.format(self.temperature, self.humidity)
+            try:
+                return f'temperature,{self.temperature:0.1f},C;humidity,{self.humidity:0.1f}%'
+            except TypeError as e:
+                return f'invalid values for temperature ({self.temperature}C) or humidity ({self.humidity}%).'
         else:
             return None
 
