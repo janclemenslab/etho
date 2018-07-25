@@ -23,7 +23,7 @@ class THU(BaseZeroService):
     def setup(self, pin, delay, duration):
         self.sensor = Adafruit_DHT.DHT22  # type of temperature sensor - make this arg?
         self.pin = pin  # data pin
-        self.delay = delay  # delay between reads
+        self.delay = int(delay)  # delay between reads
         self.duration = duration  # total duration of experiments
 
         # initialize
@@ -42,18 +42,23 @@ class THU(BaseZeroService):
         self._queue_thread.start()
         if self.duration > 0:
             self.log.info(f'duration {self.duration} seconds')
+            self.log.info(f'reading from pin {self.pin} every {self.delay} seconds.')
             # will execute FINISH after N seconds
             self._thread_timer.start()
             self.log.info('finish timer started')
 
     def _read_temperature_and_humidity(self, stop_event):
         RUN = True
-        while RUN and not stop_event.wait(self.delay):
-            self.humidity, self.temperature = Adafruit_DHT.read_retry(self.sensor, self.pin)
+        while RUN:
             try:
-                self.log.info(f'temperature,{self.temperature:0.1f},C;humidity,{self.humidity:0.1f}%')
-            except TypeError as e:
-                self.log.warning(f'invalid values for temperature ({self.temperature}C) or humidity ({self.humidity}%).')
+                self.humidity, self.temperature = Adafruit_DHT.read_retry(self.sensor, self.pin)
+                try:
+                    self.log.info(f'temperature,{self.temperature:0.1f},C;humidity,{self.humidity:0.1f}%')
+                except TypeError as e:
+                    self.log.warning(f'invalid values for temperature ({self.temperature}C) or humidity ({self.humidity}%).')
+                time.sleep(self.delay)
+            except Exception as e:
+                self.log.error(e)
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
@@ -67,7 +72,7 @@ class THU(BaseZeroService):
             self.log.warning(self.logfilename)
             if self.logfilename is not None:
                 files_to_move.append(self.logfilename)
-            self.log.warning(files_to_move)            
+            self.log.warning(files_to_move)
             self._movefiles(files_to_move, self.targetpath)
 
         self.log.warning('   stopped ')
