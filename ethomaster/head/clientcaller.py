@@ -17,7 +17,7 @@ from ethomaster.utils.sound import *
 from ethomaster.utils.config import readconfig
 
 
-def clientcaller(ip_address, playlistfile, protocolfile):
+def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     # load config/protocols
     prot = readconfig(protocolfile)
     print(prot)
@@ -26,7 +26,8 @@ def clientcaller(ip_address, playlistfile, protocolfile):
     folder_name = prot['NODE']['folder']
 
     # unique file name for video and node-local logs
-    filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
+    if filename is None:
+        filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
     dirname = prot['NODE']['savefolder']
     print(filename)
 
