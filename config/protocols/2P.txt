@@ -12,6 +12,7 @@ use_services:PTG,DAQ,THUA
 [DAQ]
 samplingrate:10000 # Hz
 shuffle:True # block-randomize order of stimuli for playback
+display:True
 LEDamp:1
 channels_in:ai3
 channels_out:ao0

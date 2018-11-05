@@ -109,7 +109,7 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         thua.setup(prot['THUA']['port'], float(prot['THUA']['interval']), maxDuration + 10)
         thua.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
         thua.start()
-        
+
     if 'PTG' in prot['NODE']['use_services']:
         ptg_server_name = 'python -m {0}'.format(PTG.__module__)
         ptg_service_port = PTG.SERVICE_PORT
@@ -130,7 +130,7 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         daq_service_port = DAQ.SERVICE_PORT
 
         fs = int(prot['DAQ']['samplingrate'])
-        shuffle_playback = bool(prot['DAQ']['shuffle'])
+        shuffle_playback = eval(prot['DAQ']['shuffle'])
         # load playlist, sounds, and enumerate play order
         playlist = pd.read_table(playlistfile, dtype=None, delimiter='\t')
         sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
@@ -152,7 +152,6 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         daq.setup('{0}/{1}/{1}_daq.h5'.format(dirname, filename), sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs, prot['DAQ'])
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
         daq.start()
-
 
     print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
 
