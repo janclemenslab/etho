@@ -11,11 +11,7 @@ use_services:DAQ
 
 [DAQ]
 samplingrate:10000 # Hz
-<<<<<<< HEAD
 shuffle:False # block-randomize order of stimuli for playback
-=======
-shuffle:True # block-randomize order of stimuli for playback
->>>>>>> cd091ec03e8893e740ad1e7ea18405a02ae34028
 display:True
 LEDamp:1
 channels_in:ai3

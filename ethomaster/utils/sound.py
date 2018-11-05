@@ -82,7 +82,6 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250.0, 
             print(str(listitem.freq))
             print(float(attenuation[str(listitem.freq)]))
             x = x * float(attenuation[str(listitem.freq)])
-
         # set_volume
         x = x * float(listitem.intensity)# "* 20" NOT USED FOR DAQ
 
@@ -96,7 +95,7 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250.0, 
 
         x = x.reshape((x.shape[0], 1))
         xLED = np.zeros(x.shape)  # second channel is all zeros unless we mirrorsound
-        print(x.shape)
+
         if mirrorsound:
             # copy channel for led
             # duration of the LED pattern at least 100ms if possible so it registers in video
@@ -113,6 +112,6 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250.0, 
             xLED[sample_start:sample_start+LEDpattern.shape[0],0] = (LEDpattern-0.5) * float(LEDamp)
         x = np.concatenate((x, xLED), axis=1)  # add LED trace as second channel
         if cast2int: # needed for RPI - gets sound as int16 at max range, do not do this for DAQ!!
-            x = x.astype(np.int16);
+            x = x.astype(np.int16)
         sounddata.append(x.tolist())
     return sounddata

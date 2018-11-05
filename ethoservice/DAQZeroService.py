@@ -48,7 +48,7 @@ class DAQ(BaseZeroService):
         self.taskAI = IOTask(cha_name=self.channels_in)
 
         self.taskAI.data_rec = []
-        if self.savefilename is not None:  # scope + save
+        if self.savefilename is not None:  #  save
             os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
             self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.channels_in)])
             self.taskAI.data_rec.append(self.save_task)
@@ -57,17 +57,14 @@ class DAQ(BaseZeroService):
             self.taskAI.data_rec.append(self.disp_task)
 
         # threads can be stopped by setting an event: `_thread_stopper.set()`
-        # or via a timer
         if self.duration > 0:
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
 
     def start(self):
         self._time_started = time.time()
 
-        # !!!DAQ - no worker thread required!!!
-        # self.disp_task.start()
-        if self.savefilename is not None:  # scope + save
-            self.save_task.start()
+        for task in self.taskAI.data_rec:
+            task.start()
 
         # Arm the AO task
         # It won't start until the start trigger signal arrives from the AI task
@@ -93,7 +90,7 @@ class DAQ(BaseZeroService):
         # clean up code here
 
         # !!! DAQ !!!
-            # stop tasks and properly close callbacks (e.g. flush data to disk and close file)
+        # stop tasks and properly close callbacks (e.g. flush data to disk and close file)
         self.taskAO.StopTask()
         print('\n   stoppedAO')
         self.taskAO.stop()
@@ -101,15 +98,11 @@ class DAQ(BaseZeroService):
         print('\n   stoppedAI')
         self.taskAI.stop()
 
-        try:
-            self.disp_task.close()
-        except:
-            pass
-        if self.savefilename is not None:
+        for task in self.taskAI.data_rec:
             try:
-                self.save_task.close()
-            except:
-                pass
+                task.close()
+            except Exception as e:
+                pass  # print(e)
 
         self.taskAO.ClearTask()
         self.taskAI.ClearTask()
