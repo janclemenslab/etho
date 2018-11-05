@@ -3,16 +3,17 @@
 # node-specific parameters and parameters that apply to all service (e.g. maxduration)
 [NODE]
 user:ncb # default user
-folder:C:/Users/ncb/ # default working directory
-savefolder:C:/Users/ncb/data # this is where the recordings will be saved
-maxduration: 300 # seconds
-use_services:PTG,DAQ,THUA
+folder:C:/Users/Scientifica/ # default working directory
+savefolder:C:/Users/Scientifica/data # this is where the recordings will be saved
+maxduration: 30 # seconds
+use_services:DAQ
 
 
 [DAQ]
 samplingrate:10000 # Hz
-shuffle:True # block-randomize order of stimuli for playback
+shuffle:False # block-randomize order of stimuli for playback
+display:True
 LEDamp:1
 channels_in:ai3
-channels_out:ao0
+channels_out:ao0,ao1
 limits:10
