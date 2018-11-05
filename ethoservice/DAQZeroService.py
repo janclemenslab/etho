@@ -53,7 +53,7 @@ class DAQ(BaseZeroService):
             self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.channels_in)])
             self.taskAI.data_rec.append(self.save_task)
         if 'display' in params and eval(params['display']):
-            self.disp_task = ConcurrentTask(task=plot, comms="pipe")
+            self.disp_task = ConcurrentTask(task=plot, taskinitargs=[len(self.channels_in)], comms="pipe")
             self.taskAI.data_rec.append(self.disp_task)
 
         # threads can be stopped by setting an event: `_thread_stopper.set()`
