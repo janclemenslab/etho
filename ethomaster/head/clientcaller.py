@@ -40,7 +40,7 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         print('done')
         print(prot['THU']['pin'], prot['THU']['interval'], maxDuration)
         thu.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
-        thu.setup(prot['THU']['pin'], prot['THU']['interval'], maxDuration)
+        thu.setup(prot['THU']['pin'], prot['THU']['interval'], maxDuration + 20)
         time.sleep(1)
         thu.start()
 
@@ -78,6 +78,7 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
+        # COMPRESS SOUNDS? use gzip
         snd.setup(sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs)
         snd.start()
 

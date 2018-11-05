@@ -21,6 +21,9 @@ def readconfig(filename=CTRLFILEPATH):
         sectionDict = {}
         for item in sectionList:
             is_list = ',' in item[1]
+            # is_list = item[1].strip().startswith('[') and item[1].strip().endswith(']')
+            # item[1] = item[1].strip()[1:-2]
+
             is_tuple = '(' in item[1] and ')' in item[1]
             if is_list and not is_tuple:
                 sectionDict[item[0]] = getlist(item[1])

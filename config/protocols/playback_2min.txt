@@ -6,7 +6,7 @@ user:ncb # default user
 folder:~/ # default working directory
 savefolder:data/ # this is where the recordings will be saved
 maxduration:120 # seconds
-use_services:CAM,THU,SND
+use_services:THU,CAM,SND
 
 # SERVICE specific parameters
 [CAM]
@@ -26,7 +26,7 @@ interval:20 # seconds, log temperature and humidity every 20 seconds
 [SND]
 samplingrate:44100 # Hz
 shuffle:False # block-randomize order of stimuli for playback
-LEDamp:250
+LEDamp:1500
 
 [OPT]
 pin:3

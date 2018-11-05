@@ -8,28 +8,11 @@ savefolder:C:/Users/ncb/data # this is where the recordings will be saved
 maxduration: 300 # seconds
 use_services:PTG,DAQ,THUA
 
-# SERVICE specific parameters
-[PTG]
-frame_rate:100.0 # frames per second
-frame_width:464 #432 # pixels
-frame_height:456 ##440 # pixels
-shutter_speed:10 # ns=10ms??
-frame_offX:440
-frame_offY:262 #320
-brightness:0.0
-exposure:0.0
-gamma:1.0
-gain:0.0
-cam_id:1
-
-[THUA]
-port:COM3
-interval:10.0
 
 [DAQ]
 samplingrate:10000 # Hz
 shuffle:True # block-randomize order of stimuli for playback
 LEDamp:1
-channels_in:ai16,ai17,ai18,ai19,ai20,ai21,ai22,ai23,ai24,ai25,ai26,ai27,ai28,ai29,ai30,ai31,ai0,ai1
-channels_out:ao0,ao1
-limits:5
+channels_in:ai3
+channels_out:ao0
+limits:10

@@ -1,15 +1,20 @@
 #!/bin/python
 import time
+import wx
+
 from ethomaster.head.clientmanager import *
 from ethomaster.utils.SSHRunner import *
 from ethomaster import config
-import wx
 import ethomaster.gui.wxCtrl as wxCtrl
 from ethomaster.gui.wxBusyDialog import BusyDialog
 
 
+# TODO Run this in background and automatically update gui using pubsub https://wiki.wxpython.org/ModelViewController
 class Model:
     def __init__(self):
+        # this should happen in config!!
+        if isinstance(config['GENERAL']['hosts'], str):
+            config['GENERAL']['hosts'] = [config['GENERAL']['hosts']]
         self.clients = exepool(ping, config['GENERAL']['hosts'])
         print(self.clients)
         self.clients_runningservices = exepool(get_running_services, config['GENERAL']['hosts'])
@@ -20,12 +25,14 @@ class Model:
         print(self.clients)
         self.clients_runningservices = exepool(get_running_services, config['GENERAL']['hosts'])
         print(self.clients_runningservices)
+        # if clients have changed:
+            # pub.sendMessage("clients_changed", clients=self.clients)
+            # view listens to these events and update VUI
+
 
 
 class HelloFrame(wx.Frame):
-    """
-    A Frame that says Hello World
-    """
+    """A Frame that says Hello World."""
 
     def __init__(self, *args, **kw):
         # ensure the parent's __init__ is called
@@ -143,6 +150,7 @@ class HelloFrame(wx.Frame):
 if __name__ == '__main__':
     # When this module is run (not imported) then create the app, the
     # frame, show it, and start the event loop.
+    # import ipdb; ipdb.set_trace()
     app = wx.App()
     frm = HelloFrame(None, title='ethodrome', size=(600, 300))
     frm.Show()

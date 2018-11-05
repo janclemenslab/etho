@@ -36,26 +36,26 @@ def frame_server():
 
 
 class CAM(BaseZeroService):
-    '''
-    PIcamera service
-
+    """PIcamera service.
 
     possible modes:
     http://picamera.readthedocs.io/en/release-1.13/fov.html#sensor-modes
     shortly: if you want to record the full FOV, than 1640x1232 is the limit on width.
     Height is usually not a problem. up to 40fps possible with those settings.
     Camera can do 1280x720@90fps!
-    '''
+    """
 
     LOGGING_PORT = 1442
     SERVICE_PORT = 4242
     SERVICE_NAME = 'CAM'
 
     def setup(self, savefilename, duration, bitrate=10000000, resolution=(1640, 800), framerate=40, shutterspeed=10 * 1000, annotate_frame_num=False):
-        """
-        duration in seconds
-        savefilename - None (preview only)
-        name-value pairs not settable via zerorpc - maybe send via settings dictionary
+        """Initialize recording.
+
+        Args:
+            savefilename - None (preview only)
+            duration in seconds
+            name-value pairs not settable via zerorpc - maybe send via settings dictionary
         """
         self.camera = picamera.PiCamera()
         self.fs = frame_server()
