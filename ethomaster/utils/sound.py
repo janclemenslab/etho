@@ -79,8 +79,7 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250.0, 
 
         # if `attenuation` arg is provided:
         if attenuation:
-            print(str(listitem.freq))
-            print(float(attenuation[str(listitem.freq)]))
+            print(str(listitem.freq), float(attenuation[str(listitem.freq)]))
             x = x * float(attenuation[str(listitem.freq)])
         # set_volume
         x = x * float(listitem.intensity)# "* 20" NOT USED FOR DAQ
