@@ -26,7 +26,7 @@ class DAQ(BaseZeroService):
         self.duration = duration
         self.savefilename = savefilename
         # APPLICATION SPECIFIC SETUP CODE HERE
-        self.channels_out = params['channels_out']  #["ao0", "ao1"]#
+        self.channels_out = params['channels_out']  # ["ao0", "ao1"]#
         self.channels_in = params['channels_in']  # ["ai0"]#
 
         self.taskAO = IOTask(cha_name=self.channels_out)
@@ -46,28 +46,28 @@ class DAQ(BaseZeroService):
         self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
 
         self.taskAI = IOTask(cha_name=self.channels_in)
-        # self.disp_task = ConcurrentTask(task=plot, comms="pipe")
-        if self.savefilename is not None: # scope + save
+
+        self.taskAI.data_rec = []
+        if self.savefilename is not None:  # scope + save
             os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
             self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.channels_in)])
-            self.taskAI.data_rec = [self.save_task]
-            # self.taskAI.data_rec = [self.disp_task, self.save_task]
-        else: # scope only
-            self.taskAI.data_rec = []#[self.disp_task]
+            self.taskAI.data_rec.append(self.save_task)
+        if 'display' in params and eval(params['display']):
+            self.disp_task = ConcurrentTask(task=plot, comms="pipe")
+            self.taskAI.data_rec.append(self.disp_task)
 
         # threads can be stopped by setting an event: `_thread_stopper.set()`
         # or via a timer
-        if self.duration>0:
-            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service':True})
+        if self.duration > 0:
+            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
 
     def start(self):
         self._time_started = time.time()
 
         # !!!DAQ - no worker thread required!!!
         # self.disp_task.start()
-        if self.savefilename is not None: # scope + save
+        if self.savefilename is not None:  # scope + save
             self.save_task.start()
-
 
         # Arm the AO task
         # It won't start until the start trigger signal arrives from the AI task

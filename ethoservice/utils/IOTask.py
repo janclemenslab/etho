@@ -85,7 +85,7 @@ class IOTask(daq.Task):
                 data_rec.close()
 
     def EveryNCallback(self):
-        """Called whenever there is data to be read/written from/to the buffer.
+        """Call whenever there is data to be read/written from/to the buffer.
 
         Calls `self.data_gen` or `self.data_rec` for requesting/processing data.
         """
@@ -111,7 +111,7 @@ class IOTask(daq.Task):
         return 0  # The function should return an integer
 
     def DoneCallback(self, status):
-        """Called when Task is stopped/done."""
+        """Call when Task is stopped/done."""
         print("Done status", status)
         return 0  # The function should return an integer
 
