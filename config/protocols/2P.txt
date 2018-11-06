@@ -1,11 +1,9 @@
-# define defaults - can be overriden in protocols/headers
-
 # node-specific parameters and parameters that apply to all service (e.g. maxduration)
 [NODE]
 user:ncb # default user
 folder:C:/Users/Scientifica/ # default working directory
 savefolder:C:/Users/Scientifica/data # this is where the recordings will be saved
-maxduration: 30 # seconds
+maxduration: -1 # seconds
 use_services:DAQ
 
 
@@ -16,4 +14,5 @@ display:True
 LEDamp:1
 channels_in:ai3
 channels_out:ao0,ao1
+digital_channels_out:port0/line1,port0/line2,port0/line3
 limits:10
