@@ -135,18 +135,14 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         # load playlist, sounds, and enumerate play order
         playlist = pd.read_table(playlistfile, dtype=None, delimiter='\t')
         sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
-<<<<<<< HEAD
-                             LEDamp=prot['DAQ']['ledamp'],
-                             stimfolder=config['HEAD']['stimfolder'], cast2int=False)
-        playlist_items = build_playlist(sounds, maxDuration, fs, shuffle=shuffle_playback)
-=======
-                    LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'],
-                    mirrorsound=True, cast2int=False)
+
+        LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'],
+        mirrorsound=True, cast2int=False)
         playlist_items, totallen = build_playlist(sounds, maxDuration, fs, shuffle=shuffle_playback)
         if maxDuration == -1:
             print(f'setting maxduration from playlist to {totallen}.')
             maxDuration = totallen
->>>>>>> ddf80cd667c6a95d7bb34964cbd493f8d145db2b
+
 
         if not isinstance(prot['DAQ']['channels_in'], list):
             prot['DAQ']['channels_in'] = [prot['DAQ']['channels_in']]
