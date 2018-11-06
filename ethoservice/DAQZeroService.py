@@ -31,15 +31,13 @@ class DAQ(BaseZeroService):
 
         self.taskAO = IOTask(cha_name=self.channels_out)
 
-        # make play_order endless (circular list)
-        play_order_loop = cycle(play_order)
-
         # `sounds` is a python-list of sounds saved as lists (because of 0rpc) - make a list of nparrays
         np_sounds = list()
         for sound in sounds:
             np_sounds.append(np.array(sound, dtype=np.float64))
         del sounds
 
+        play_order_loop = cycle(play_order)
         self.taskAO.data_gen = data_playlist(np_sounds, play_order_loop)  # generator function that yields data upon request
 
         # Connect AO start to AI start
@@ -82,12 +80,11 @@ class DAQ(BaseZeroService):
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
-        # stop thread if necessary
+
         if hasattr(self, '_thread_stopper'):
             self._thread_stopper.set()
         if hasattr(self, '_thread_timer'):
             self._thread_timer.cancel()
-        # clean up code here
 
         # !!! DAQ !!!
         # stop tasks and properly close callbacks (e.g. flush data to disk and close file)
