@@ -1,34 +1,71 @@
 import time
-from etho.head.ZeroClient import ZeroClient
+from ethomaster.head.ZeroClient import ZeroClient
 from ethoservice.NITriggerZeroService import NIT
 import pandas as pd
-from etho import config
-from etho.utils.config import readconfig
+from ethomaster import config
+from ethomaster.utils.config import readconfig
+import numpy as np
+import subprocess
+import defopt
+
+# ip_address = 'localhost'
+# protocolfile = 'protocols/default.txt'
+# playlistfile = 'playlists/IPItuneChaining.txt'
+# #
+# # load config/protocols
+# prot = readconfig(protocolfile)
+# # maxDuration = int(3600)
+#
+#
+# user_name = config['GENERAL']['user']
+# folder_name = config['GENERAL']['folder']
 
 
-ip_address = 'localhost'
-protocolfile = 'protocols/default.txt'
-playlistfile = 'playlists/IPItuneChaining.txt'
+def main(basename: str, filecounter: int):
+    ip_address = 'localhost'
+    port = "/Dev1/port0/line1:3"
+    START = [1, 0, 0]
+    STOP = [0, 1, 0]
+    NEXT = [0, 0, 1]  # or [1, 0, 1]
+    print(basename, filecounter)
+    print([NIT.SERVICE_PORT, NIT.SERVICE_NAME])
+    nit = ZeroClient("{0}".format(ip_address), 'nidaq')
+    try:
+        sp = subprocess.Popen('python -m ethoservice.NITriggerZeroService')
+        nit.connect("tcp://{0}:{1}".format(ip_address, NIT.SERVICE_PORT))
+        print('done')
+        nit.setup(-1, port)
+        # nit.init_local_logger('{0}/{1}_nit.log'.format(dirname, filename))
+        print('sending START')
+        nit.send_trigger(START)
+        print(filecounter)
 
-# load config/protocols
-prot = readconfig(protocolfile)
-maxDuration = int(3600)
+        # NEXT would be sent from within DAQZeroService
+        time.sleep(5)
+        print('sending NEXT')
+        nit.send_trigger(NEXT)
+        filecounter += 1
+        print(filecounter)
+        time.sleep(5)
+        print('sending NEXT')
+        nit.send_trigger(NEXT)
+        filecounter += 1
+        print(filecounter)
+
+        time.sleep(5)
+        print('sending STOP')
+        nit.send_trigger(STOP)
+    except:
+        pass
+    nit.finish()
+
+    nit.stop_server()
+
+    del(nit)
+
+    sp.terminate()
+    sp.kill()
 
 
-user_name = config['GENERAL']['user']
-folder_name = config['GENERAL']['folder']
-
-port="/Dev1/port0/line0:7"
-data=np.array([0, 1, 1, 0, 1, 0, 1, 0], dtype=np.uint8)
-
-print([NIT.SERVICE_PORT, NIT.SERVICE_NAME])
-nit = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq')
-subprocess.Popen('python -m ethoservice.NITZeroService')
-nit.connect("tcp://{0}:{1}".format(ip_address, NIT.SERVICE_PORT))
-print('done')
-print('sending sound data to {0} - may take a while.'.format(ip_address))
-nit.setup(-1)
-nit.init_local_logger('{0}/{1}_daq.log'.format(dirname, filename))
-nit.send(port, data)
-
-nit.finish()
+if __name__ == '__main__':
+    defopt.run(main)
