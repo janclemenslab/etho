@@ -134,7 +134,8 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         # load playlist, sounds, and enumerate play order
         playlist = pd.read_table(playlistfile, dtype=None, delimiter='\t')
         sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
-                    LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'], cast2int=False)
+                             LEDamp=prot['DAQ']['ledamp'],
+                             stimfolder=config['HEAD']['stimfolder'], cast2int=False)
         playlist_items = build_playlist(sounds, maxDuration, fs, shuffle=shuffle_playback)
 
         if not isinstance(prot['DAQ']['channels_in'], list):
