@@ -31,16 +31,21 @@ def make_pulse(pulseDur, pulsePau, pulseNumber, pulseDelay, samplingrate):
 def build_playlist(soundlist, duration, fs, shuffle=True):
     """block-shuffle playlist and concatenate to duration"""
     totallen = 0
-    playlist_items = list()
-    while totallen < duration:
-        if shuffle:
-            # cast to int - otherwise fails since msgpack can't serialize numpy arrays
-            next_item = int(np.random.permutation(len(soundlist))[0])
-        else:
-            next_item = len(playlist_items)%len(soundlist)
-        playlist_items.append(next_item)
-        totallen += len(soundlist[playlist_items[-1]])/fs
-    return playlist_items
+    if duration > 0:
+        playlist_items = list()
+        while totallen < duration:
+            if shuffle:
+                # cast to int - otherwise fails since msgpack can't serialize numpy arrays
+                next_item = int(np.random.permutation(len(soundlist))[0])
+            else:
+                next_item = len(playlist_items)%len(soundlist)
+            playlist_items.append(next_item)
+            totallen += len(soundlist[playlist_items[-1]])/fs
+    elif duration == -1:
+        playlist_items = np.random.permutation(len(soundlist)).tolist()
+        for item in playlist_items:
+            totallen += len(soundlist[item])/fs
+    return playlist_items, totallen
 
 
 def attenuate(sounds, frequencies, attenuationfactors):
