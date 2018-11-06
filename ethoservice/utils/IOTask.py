@@ -81,7 +81,7 @@ class IOTask(daq.Task):
         if self.data_rec is not None:
             for data_rec in self.data_rec:
                 data_rec.send(None)
-                data_rec.finish(verbose=True)
+                data_rec.finish(verbose=True, sleepcycletimeout=2)
                 data_rec.close()
 
     def EveryNCallback(self):
@@ -116,7 +116,7 @@ class IOTask(daq.Task):
         return 0  # The function should return an integer
 
 
-def plot(disp_queue):
+def plot(disp_queue, channels: int=3):
     """Coroutine for plotting.
 
     Fast, realtime as per: https://gist.github.com/pklaus/62e649be55681961f6c4
@@ -124,7 +124,7 @@ def plot(disp_queue):
     plt.ion()
     fig = plt.figure()
     fig.canvas.set_window_title('traces: daq')
-    ax = [fig.add_subplot(311), fig.add_subplot(312), fig.add_subplot(313)]
+    ax = [fig.add_subplot(channels, 1, channel+1) for channel in range(channels)]
     plt.show(False)
     plt.draw()
     fig.canvas.start_event_loop(0.001)  # otherwise plot freezes after 3-4 iterations
@@ -186,12 +186,6 @@ def save(frame_queue, filename, num_channels=1, sizeincrement=100, start_time=No
             dset_samples[-frame.shape[0]:, :] = frame
             dset_systemtime[framecount, :] = systemtime
             dset_samplenumber[framecount, :] = frame.shape[0]
-            # sys.stdout.write("\r   {:1.1f} seconds: saving {} ({})".format(
-            #     frame_systemtime[1]-start_time, frame_systemtime[0].shape, framecount))
-            # dset_samples.resize(dset_samples.shape[0] + frame_systemtime[0].shape[0], axis=0)
-            # dset_samples[-frame_systemtime[0].shape[0]:, :] = frame_systemtime[0]
-            # dset_systemtime[framecount, :] = frame_systemtime[1]
-            # dset_samplenumber[framecount, :] = frame_systemtime[0].shape[0]
             framecount += 1
     f.flush()
     f.close()

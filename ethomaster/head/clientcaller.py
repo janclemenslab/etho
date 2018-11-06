@@ -17,7 +17,7 @@ from ethomaster.utils.sound import *
 from ethomaster.utils.config import readconfig
 
 
-def clientcaller(ip_address, playlistfile, protocolfile):
+def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     # load config/protocols
     prot = readconfig(protocolfile)
     print(prot)
@@ -26,7 +26,8 @@ def clientcaller(ip_address, playlistfile, protocolfile):
     folder_name = prot['NODE']['folder']
 
     # unique file name for video and node-local logs
-    filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
+    if filename is None:
+        filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
     dirname = prot['NODE']['savefolder']
     print(filename)
 
@@ -134,9 +135,18 @@ def clientcaller(ip_address, playlistfile, protocolfile):
         # load playlist, sounds, and enumerate play order
         playlist = pd.read_table(playlistfile, dtype=None, delimiter='\t')
         sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
+<<<<<<< HEAD
                              LEDamp=prot['DAQ']['ledamp'],
                              stimfolder=config['HEAD']['stimfolder'], cast2int=False)
         playlist_items = build_playlist(sounds, maxDuration, fs, shuffle=shuffle_playback)
+=======
+                    LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'],
+                    mirrorsound=True, cast2int=False)
+        playlist_items, totallen = build_playlist(sounds, maxDuration, fs, shuffle=shuffle_playback)
+        if maxDuration == -1:
+            print(f'setting maxduration from playlist to {totallen}.')
+            maxDuration = totallen
+>>>>>>> ddf80cd667c6a95d7bb34964cbd493f8d145db2b
 
         if not isinstance(prot['DAQ']['channels_in'], list):
             prot['DAQ']['channels_in'] = [prot['DAQ']['channels_in']]
@@ -144,13 +154,13 @@ def clientcaller(ip_address, playlistfile, protocolfile):
             prot['DAQ']['channels_out'] = [prot['DAQ']['channels_out']]
 
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
-        daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pidaq')
+        daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq')
         # print(daq.start_server(daq_server_name, folder_name, warmup=1))
         subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         daq.connect("tcp://{0}:{1}".format(ip_address, daq_service_port))
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
-        daq.setup('{0}/{1}/{1}_daq.h5'.format(dirname, filename), sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs, prot['DAQ'])
+        daq.setup('{0}/{1}/{1}_daq_test.h5'.format(dirname, filename), sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs, prot['DAQ'])
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
         daq.start()
 
