@@ -13,8 +13,8 @@ import h5py
 import argparse
 
 # callback specific imports
-# import matplotlib
-# matplotlib.use('tkagg')
+import matplotlib
+matplotlib.use('tkagg')
 import matplotlib.pyplot as plt
 
 from .daqtools import *
@@ -41,24 +41,27 @@ class IOTask(daq.Task):
             raise TypeError(f'`cha_name` is {type(cha_name)}. Should be `list` or `tuple`')
 
         self.samples_read = daq.int32()
-        cha_types = {"i": "input", "o": "output"}
-        self.cha_type = [cha_types[cha[1]] for cha in cha_name]
+        cha_types = {"ai": "analog_input", "ao": "analog_output", 'po': 'digital_output'}
+        self.cha_type = [cha_types[cha[:2]] for cha in cha_name]
+        if len(set(self.cha_type)) > 1:
+            raise ValueError('channels should all be of the same type but are {0}.'.format(set(self.cha_type)))
+
         self.cha_name = [dev_name + '/' + ch for ch in cha_name]  # append device name
         self.cha_string = ", ".join(self.cha_name)
         self.num_channels = len(cha_name)
 
-        clock_source = None  # use internal clock
         # FIX: input and output tasks can have different sizes
         self.callback = None
         self.data_gen = None  # called at start of callback
         self.data_rec = None  # called at end of callback
-        if self.cha_type[0] is "input":
+        if self.cha_type[0] is "analog_input":
             self.num_samples_per_chan = 10000
             self.num_samples_per_event = 10000  # self.num_samples_per_chan*self.num_channels
             self.CreateAIVoltageChan(self.cha_string, "", DAQmx_Val_RSE, -limits, limits, DAQmx_Val_Volts, None)
             self.AutoRegisterEveryNSamplesEvent(DAQmx_Val_Acquired_Into_Buffer, self.num_samples_per_event, 0)
             self.CfgInputBuffer(self.num_samples_per_chan * self.num_channels * 4)
-        elif self.cha_type[0] is "output":
+            clock_source = 'ao/SampleClock'  # None  # use internal clock
+        elif self.cha_type[0] is "analog_output":
             self.num_samples_per_chan = 5000
             self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
             self.CreateAOVoltageChan(self.cha_string, "", -limits, limits, DAQmx_Val_Volts, None)
@@ -66,13 +69,30 @@ class IOTask(daq.Task):
             self.CfgOutputBuffer(self.num_samples_per_chan * self.num_channels * 2)
             # ensures continuous output and avoids collision of old and new data in buffer
             self.SetWriteRegenMode(DAQmx_Val_DoNotAllowRegen)
-        self._data = np.zeros((self.num_samples_per_chan, self.num_channels), dtype=np.float64)  # init empty data array
+            clock_source = 'OnboardClock'  # None  # use internal clock
+        elif self.cha_type[0] is "digital_output":
+            self.num_samples_per_chan = 5000
+            self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
+            self.CreateDOChan(self.cha_string, "", DAQmx_Val_ChanPerLine)
+            self.AutoRegisterEveryNSamplesEvent(DAQmx_Val_Transferred_From_Buffer, self.num_samples_per_event, 0)
+            self.CfgOutputBuffer(self.num_samples_per_chan * self.num_channels * 2)
+            # ensures continuous output and avoids collision of old and new data in buffer
+            self.SetWriteRegenMode(DAQmx_Val_DoNotAllowRegen)
+            clock_source = 'ao/SampleClock'  # None  # use internal clock
+
+        if 'digital' in self. cha_type[0]:
+            self._data = np.zeros((self.num_samples_per_chan, self.num_channels), dtype=np.uint8)  # init empty data array
+        else:
+            self._data = np.zeros((self.num_samples_per_chan, self.num_channels), dtype=np.float64)  # init empty data array
         self.CfgSampClkTiming(clock_source, rate, DAQmx_Val_Rising, DAQmx_Val_ContSamps, self.num_samples_per_chan)
         self.AutoRegisterDoneEvent(0)
         self._data_lock = threading.Lock()
         self._newdata_event = threading.Event()
-        if self.cha_type[0] is "output":
+        if 'output' in self.cha_type[0]:
             self.EveryNCallback()  # fill buffer on init
+
+    def __repr__(self):
+        return '{0}: {1}'.format(self.cha_type[0], self.cha_string)
 
     def stop(self):
         """Stop DAQ."""
@@ -98,11 +118,15 @@ class IOTask(daq.Task):
                 self.ReadAnalogF64(DAQmx_Val_Auto, 1.0, DAQmx_Val_GroupByScanNumber,
                                    self._data, self.num_samples_per_chan * self.num_channels, daq.byref(self.samples_read), None)
                 # only keep samples that were actually read, .value converts c_long to int
-                self._data = self._data[:self.samples_read.value,:]
+                self._data = self._data[:self.samples_read.value, :]
 
-            elif self.cha_type[0] is "output":
+            elif self.cha_type[0] is "analog_output":
                 self.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
                                     self._data, daq.byref(self.samples_read), None)
+            elif self.cha_type[0] is 'digital_output':
+                self.WriteDigitalLines(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
+                                       self._data, daq.byref(self.samples_read), None)
+
             if self.data_rec is not None:
                 for data_rec in self.data_rec:
                     if self._data is not None:
@@ -227,6 +251,16 @@ def data(channels=1):
 
 @coroutine
 def data_playlist(sounds, play_order):
+    """sounds - list of nparrays"""
+    try:
+        while play_order:
+            yield sounds[next(play_order)]
+    except GeneratorExit:
+        print("   cleaning up datagen.")
+
+
+@coroutine
+def data_playlist2(sounds, play_order):
     """sounds - list of nparrays"""
     try:
         while play_order:

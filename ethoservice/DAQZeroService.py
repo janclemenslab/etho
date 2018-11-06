@@ -4,6 +4,7 @@ from .ZeroService import BaseZeroService  # import super class
 import zerorpc  # for starting service in `main()`
 import time     # for timer
 import threading
+import os
 try:
     from .utils.IOTask import *
     from .utils.daqtools import *
@@ -36,15 +37,38 @@ class DAQ(BaseZeroService):
         for sound in sounds:
             np_sounds.append(np.array(sound, dtype=np.float64))
         del sounds
+        # TODO: check if channels in np_sounds[0].shape[-1] matches taskAO.nb_channels
 
         play_order_loop = cycle(play_order)
         self.taskAO.data_gen = data_playlist(np_sounds, play_order_loop)  # generator function that yields data upon request
-
         # Connect AO start to AI start
         self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
+        print(self.taskAO)
+        # DIGITAL OUTPUT
+        if 'digital_channels_out' in params:
+            self.digital_channnels_out = params['digital_channels_out']
+        else:
+            self.digital_channnels_out = None
+        if self.digital_channnels_out:
+            self.taskDO = IOTask(cha_name=params['digital_channels_out'])#self.digital_channels_out)
 
+            # get digital pattern from sounds - duplicate sounds, add next trigger at beginning of each sound
+            np_triggers = list()
+            for sound in np_sounds:
+                this_trigger = np.zeros((sound.shape[0], self.taskDO.num_channels), dtype=np.uint8)
+                # if len(np_triggers) == 0:
+                #     this_trigger[:5, 0] = 1  # START on first
+                # elif len(np_triggers) == len(np_sounds):
+                #     this_trigger[-5:, 1] = 1  # STOP on last
+                # else:
+                #     this_trigger[:5, 2] = 1  # NEXT
+                this_trigger[:5, 2] = 1  # NEXT
+                np_triggers.append(this_trigger.astype(np.uint8))
+            self.taskDO.data_gen = data_playlist(np_triggers, play_order_loop)
+            self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
+            print(self.taskDO)
+        # ANALOG INPUT
         self.taskAI = IOTask(cha_name=self.channels_in)
-
         self.taskAI.data_rec = []
         if self.savefilename is not None:  #  save
             os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
@@ -53,6 +77,7 @@ class DAQ(BaseZeroService):
         if 'display' in params and eval(params['display']):
             self.disp_task = ConcurrentTask(task=plot, taskinitargs=[len(self.channels_in)], comms="pipe")
             self.taskAI.data_rec.append(self.disp_task)
+        print(self.taskAI)
 
         # threads can be stopped by setting an event: `_thread_stopper.set()`
         if self.duration > 0:
@@ -67,6 +92,9 @@ class DAQ(BaseZeroService):
         # Arm the AO task
         # It won't start until the start trigger signal arrives from the AI task
         self.taskAO.StartTask()
+
+        if self.digital_channnels_out:
+            self.taskDO.StartTask()
 
         # Start the AI task
         # This generates the AI start trigger signal and triggers the AO task
@@ -91,6 +119,12 @@ class DAQ(BaseZeroService):
         self.taskAO.StopTask()
         print('\n   stoppedAO')
         self.taskAO.stop()
+
+        if self.digital_channnels_out:
+            self.taskDO.StopTask()
+            print('\n   stoppedDO')
+            self.taskDO.stop()
+
         self.taskAI.StopTask()
         print('\n   stoppedAI')
         self.taskAI.stop()
@@ -102,6 +136,8 @@ class DAQ(BaseZeroService):
                 pass  # print(e)
 
         self.taskAO.ClearTask()
+        if self.digital_channnels_out:
+            self.taskDO.ClearTask()
         self.taskAI.ClearTask()
 
         self.log.warning('   stopped ')
