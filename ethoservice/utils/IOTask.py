@@ -81,7 +81,7 @@ class IOTask(daq.Task):
         if self.data_rec is not None:
             for data_rec in self.data_rec:
                 data_rec.send(None)
-                data_rec.finish(verbose=True)
+                data_rec.finish(verbose=True, sleepcycletimeout=2)
                 data_rec.close()
 
     def EveryNCallback(self):
