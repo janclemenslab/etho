@@ -52,7 +52,10 @@ class ConcurrentTask():
     def close(self):
         self.send(self.taskstopsignal)
         time.sleep(0.5)
-        self._process.terminate()
+        try:
+            self._process.terminate()
+        except AttributeError as e:
+            pass
         time.sleep(0.5)
         self._sender.close()
         del self._process
