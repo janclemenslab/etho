@@ -1,0 +1,12 @@
+# COMMENT
+NODE:x
+  string:ncb
+  bool_binary_false:no
+  bool_string_false:false
+  bool_state_false:off
+  bool_binary_true:yes
+  bool_string_true:true
+  bool_state_true:on
+  integer!!int:43
+  float!!float:2.141
+  list:!!seq '1,2,3,4'
