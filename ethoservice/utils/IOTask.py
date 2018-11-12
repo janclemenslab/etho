@@ -113,7 +113,7 @@ class IOTask(daq.Task):
             systemtime = time.time()
             if self.data_gen is not None:
                 self._data = next(self.data_gen)  # get data from data generator
-            if self.cha_type[0] is "input":
+            if self.cha_type[0] is "analog_input":
                 # should only read self.num_samples_per_event!! otherwise recordings will be zeropadded for each chunk
                 self.ReadAnalogF64(DAQmx_Val_Auto, 1.0, DAQmx_Val_GroupByScanNumber,
                                    self._data, self.num_samples_per_chan * self.num_channels, daq.byref(self.samples_read), None)
@@ -251,16 +251,6 @@ def data(channels=1):
 
 @coroutine
 def data_playlist(sounds, play_order):
-    """sounds - list of nparrays"""
-    try:
-        while play_order:
-            yield sounds[next(play_order)]
-    except GeneratorExit:
-        print("   cleaning up datagen.")
-
-
-@coroutine
-def data_playlist2(sounds, play_order):
     """sounds - list of nparrays"""
     try:
         while play_order:

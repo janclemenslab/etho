@@ -58,10 +58,10 @@ class DAQ(BaseZeroService):
                 this_trigger = np.zeros((sound.shape[0], self.taskDO.num_channels), dtype=np.uint8)
                 # if len(np_triggers) == 0:
                 #     this_trigger[:5, 0] = 1  # START on first
-                # elif len(np_triggers) == len(np_sounds):
-                #     this_trigger[-5:, 1] = 1  # STOP on last
-                # else:
-                #     this_trigger[:5, 2] = 1  # NEXT
+                if len(np_triggers) == len(np_sounds)-1:
+                    this_trigger[-5:, 1] = 1  # STOP on last
+                else:
+                    this_trigger[:5, 2] = 1  # NEXT
                 this_trigger[:5, 2] = 1  # NEXT
                 np_triggers.append(this_trigger.astype(np.uint8))
             self.taskDO.data_gen = data_playlist(np_triggers, play_order_loop)
@@ -116,9 +116,6 @@ class DAQ(BaseZeroService):
 
         # !!! DAQ !!!
         # stop tasks and properly close callbacks (e.g. flush data to disk and close file)
-        self.taskAO.StopTask()
-        print('\n   stoppedAO')
-        self.taskAO.stop()
 
         if self.digital_channnels_out:
             self.taskDO.StopTask()
@@ -129,11 +126,17 @@ class DAQ(BaseZeroService):
         print('\n   stoppedAI')
         self.taskAI.stop()
 
-        for task in self.taskAI.data_rec:
-            try:
-                task.close()
-            except Exception as e:
-                pass  # print(e)
+        # stop this last since this is the trigger/master clock
+        self.taskAO.StopTask()
+        print('\n   stoppedAO')
+        self.taskAO.stop()
+
+        # # maybe this won't be necessary
+        # for task in self.taskAI.data_rec:
+        #     try:
+        #         task.close()
+        #     except Exception as e:
+        #         pass  # print(e)
 
         self.taskAO.ClearTask()
         if self.digital_channnels_out:
@@ -142,7 +145,7 @@ class DAQ(BaseZeroService):
 
         self.log.warning('   stopped ')
         if stop_service:
-            time.sleep(2)
+            time.sleep(1)
             self.service_stop()
 
     def disp(self):
@@ -151,9 +154,16 @@ class DAQ(BaseZeroService):
     def is_busy(self):
         taskIsDoneAI = daq.c_ulong()
         taskIsDoneAO = daq.c_ulong()
-        self.taskAI.IsTaskDone(taskIsDoneAI)
-        self.taskAO.IsTaskDone(taskIsDoneAO)
-        return not bool(taskIsDoneAI) and not bool(taskIsDoneAO)
+        taskCheckFailed = False
+        try:
+            self.taskAI.IsTaskDone(taskIsDoneAI)
+        except daq.InvalidTaskError as e:
+            taskCheckFailed = True
+        try:
+            self.taskAO.IsTaskDone(taskIsDoneAO)
+        except daq.InvalidTaskError as e:
+            taskCheckFailed = True
+        return not bool(taskIsDoneAI) and not bool(taskIsDoneAO) and not taskCheckFailed
 
     def test(self):
         return True
