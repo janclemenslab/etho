@@ -1,6 +1,8 @@
 # Etho: master & service
 
 ## TODO
+- [ ] switch over to yaml for config reading (since this will preserve types)
+- [ ] switch over to new zerorpc and pickle on localhost tasks
 - [ ] present logging information within gui
 - [ ] make gui more responsive through async
 - [ ] make protocols editable so small changes are more easily done (use traisui)
