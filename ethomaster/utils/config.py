@@ -1,8 +1,8 @@
-import configparser
 import pathlib
 import os
 HOME = str(pathlib.Path.home())
-CTRLFILEPATH = os.path.join(HOME, '.ethoconfig.ini') # should be ~/.ethoconfig.ini
+CTRLFILEPATH = os.path.join(HOME, '.ethoconfig.ini') # ~/.ethoconfig.ini
+
 
 def getlist(string, delimiter=',', stripwhitespace=True):
     stringlist = string.split(delimiter)
@@ -10,7 +10,24 @@ def getlist(string, delimiter=',', stripwhitespace=True):
         stringlist = [item.strip() for item in stringlist]
     return stringlist
 
+
 def readconfig(filename=CTRLFILEPATH):
+    if filename.endswith(('.yml', '.yaml')):
+        config = readconfig_yaml(filename)
+    else:
+        config = readconfig_ini(filename)
+    return config
+
+
+def readconfig_yaml(filename):
+    import yaml
+    with open(filename, 'r') as f:
+        config_dict = yaml.load(f.read())
+    return config_dict
+
+
+def readconfig_ini(filename):
+    import configparser
     config = configparser.ConfigParser(inline_comment_prefixes=('#',))
     config.read(filename)
     sections = config.sections()
@@ -31,6 +48,7 @@ def readconfig(filename=CTRLFILEPATH):
                 sectionDict[item[0]] = item[1]
         configDict[section] = sectionDict
     return configDict
+
 
 
 if __name__ == '__main__':
