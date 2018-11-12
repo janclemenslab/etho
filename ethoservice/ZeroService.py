@@ -33,7 +33,9 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     SERVICE_NAME = None
 
     def __init__(self, *args, **kwargs):
-        super(BaseZeroService, self).__init__(*args, **kwargs, heartbeat=120)
+        ctx = zerorpc.Context()
+        ctx.register_serializer(kwargs.pop('serializer', 'default'))
+        super(BaseZeroService, self).__init__(*args, **kwargs, heartbeat=120, context=ctx)
         self._init_network_logger()
 
         self._time_started = None
