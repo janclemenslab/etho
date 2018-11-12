@@ -39,8 +39,7 @@ class DAQ(BaseZeroService):
         del sounds
         # TODO: check if channels in np_sounds[0].shape[-1] matches taskAO.nb_channels
 
-        play_order_loop = cycle(play_order)
-        self.taskAO.data_gen = data_playlist(np_sounds, play_order_loop)  # generator function that yields data upon request
+        self.taskAO.data_gen = data_playlist(np_sounds, play_order)  # generator function that yields data upon request
         # Connect AO start to AI start
         self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
         print(self.taskAO)
@@ -64,7 +63,7 @@ class DAQ(BaseZeroService):
                     this_trigger[:5, 2] = 1  # NEXT
                 this_trigger[:5, 2] = 1  # NEXT
                 np_triggers.append(this_trigger.astype(np.uint8))
-            self.taskDO.data_gen = data_playlist(np_triggers, play_order_loop)
+            self.taskDO.data_gen = data_playlist(np_triggers, play_order)
             self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             print(self.taskDO)
         # ANALOG INPUT
@@ -181,6 +180,7 @@ class DAQ(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(DAQ())  # expose class via zerorpc
+    # s = DAQ(serializer='pickle')  # expose class via zerorpc
+    s = DAQ()  # expose class via zerorpc
     s.bind("tcp://0.0.0.0:{0}".format(DAQ.SERVICE_PORT))  # broadcast on all IPs
     s.run()

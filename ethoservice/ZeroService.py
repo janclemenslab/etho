@@ -32,9 +32,10 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     SERVICE_PORT = None
     SERVICE_NAME = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, serializer='default', **kwargs):
+        self._serializer = serializer
         ctx = zerorpc.Context()
-        ctx.register_serializer(kwargs.pop('serializer', 'default'))
+        ctx.register_serializer(serializer)
         super(BaseZeroService, self).__init__(*args, **kwargs, heartbeat=120, context=ctx)
         self._init_network_logger()
 

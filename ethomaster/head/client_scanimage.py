@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import subprocess
 import defopt
+from itertools import cycle
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
@@ -70,9 +71,10 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     playlist = pd.read_table(playlistfile, dtype=None, delimiter='\t')
     sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
                 LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'],
-                mirrorsound=bool(int(prot['NODE'].get('mirrorsound', 1))), cast2int=False)
+                mirrorsound=bool(int(prot['NODE'].get('mirrorsound', 1))),
+                cast2int=False, aslist=False)
     playlist_items, totallen = build_playlist(sounds, maxDuration, fs, shuffle=shuffle_playback)
-
+    playlist_items = cycle(playlist_items)
     if maxDuration == -1:
         print(f'setting maxduration from playlist to {totallen}.')
         maxDuration = totallen
@@ -81,11 +83,9 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         prot['DAQ']['channels_in'] = [prot['DAQ']['channels_in']]
     if not isinstance(prot['DAQ']['channels_out'], list):
         prot['DAQ']['channels_out'] = [prot['DAQ']['channels_out']]
-
     # send START trigger here
     print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
-    daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq')
-    # print(daq.start_server(daq_server_name, folder_name, warmup=1))
+    daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer='default')
     sp = subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
     daq.connect("tcp://{0}:{1}".format(ip_address, daq_service_port))
     print('done')
@@ -99,10 +99,11 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         daq.init_local_logger('{0}_daq.log'.format(filename))
     # NEXTFILE triggers should be sent during playback
     daq.start()
-
+    t0 = time.clock()
     while daq.is_busy():
         time.sleep(1)
-        print('\rbusy')
+        t1 =time.clock()
+        print(f'   Busy {t1-t0:1.2f} seconds.\r', end='', flush=True)
     # send STOP trigger here
     trigger('STOP')
     print('sent STOP')
