@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='ethodrome',
-      version='0.1',
+      version='0.2',
       description='ethodrome',
       url='http://github.com/janclemenslab/ethodrome',
       author='Jan Clemens',
@@ -9,8 +9,10 @@ setup(name='ethodrome',
       license='MIT',
       packages=find_packages(exclude=['doc','test','config']),
       install_requires=[
-          'zerorpc', 'pandas', 'zmq', 'pygame', 'numpy', 'pandas',
+          'zerorpc', 'pandas', 'pyzmq', 'pygame', 'numpy', 'pandas',
       ],
+      tests_require=['nose'],
+      test_suite='nose.collector',
       extras_require = {
         'rpi camera':  ["picamera[array]"],
         'NI daqmx':  ["pydaqmx"],
