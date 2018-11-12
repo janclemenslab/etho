@@ -144,10 +144,10 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
             maxDuration = totallen
 
 
-        if not isinstance(prot['DAQ']['channels_in'], list):
-            prot['DAQ']['channels_in'] = [prot['DAQ']['channels_in']]
-        if not isinstance(prot['DAQ']['channels_out'], list):
-            prot['DAQ']['channels_out'] = [prot['DAQ']['channels_out']]
+        if not isinstance(prot['DAQ']['analog_chans_in'], list):
+            prot['DAQ']['analog_chans_in'] = [prot['DAQ']['analog_chans_in']]
+        if not isinstance(prot['DAQ']['analog_chans_out'], list):
+            prot['DAQ']['analog_chans_out'] = [prot['DAQ']['analog_chans_out']]
 
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq')

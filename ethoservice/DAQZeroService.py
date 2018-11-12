@@ -33,8 +33,8 @@ class DAQ(BaseZeroService):
         self.duration = duration
         self.savefilename = savefilename
         # APPLICATION SPECIFIC SETUP CODE HERE
-        self.analog_chans_out = analog_chans_out#params['channels_out']  # ["ao0", "ao1"]#
-        self.analog_chans_in = analog_chans_in#params['channels_in']  # ["ai0"]#
+        self.analog_chans_out = analog_chans_out#params['analog_chans_out']  # ["ao0", "ao1"]#
+        self.analog_chans_in = analog_chans_in#params['analog_chans_in']  # ["ai0"]#
         self.digital_chans_out = digital_chans_out
 
         self.taskAO = IOTask(cha_name=self.analog_chans_out)

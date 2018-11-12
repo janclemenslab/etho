@@ -31,6 +31,6 @@ interval:10.0
 samplingrate:10000 # Hz
 shuffle:True # block-randomize order of stimuli for playback
 LEDamp:1
-channels_in:ai0
-channels_out:ao0,ao1
+analog_chans_in:ai0
+analog_chans_out:ao0,ao1
 limits:5
