@@ -38,11 +38,13 @@ def build_playlist(soundlist, duration, fs, shuffle=True):
                 # cast to int - otherwise fails since msgpack can't serialize numpy arrays
                 next_item = int(np.random.permutation(len(soundlist))[0])
             else:
-                next_item = len(playlist_items)%len(soundlist)
+                next_item = len(playlist_items) % len(soundlist)
             playlist_items.append(next_item)
             totallen += len(soundlist[playlist_items[-1]])/fs
     elif duration == -1:
-        playlist_items = np.random.permutation(len(soundlist)).tolist()
+        playlist_items = list(range(len(soundlist)))
+        if shuffle:
+            playlist_items = np.random.permutation(playlist_items).tolist()
         for item in playlist_items:
             totallen += len(soundlist[item])/fs
     return playlist_items, totallen
