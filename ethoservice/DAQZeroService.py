@@ -5,6 +5,8 @@ import zerorpc  # for starting service in `main()`
 import time     # for timer
 import threading
 import os
+import sys
+
 try:
     from .utils.IOTask import *
     from .utils.daqtools import *
@@ -180,7 +182,6 @@ class DAQ(BaseZeroService):
 
 
 if __name__ == '__main__':
-    # s = DAQ(serializer='pickle')  # expose class via zerorpc
-    s = DAQ()  # expose class via zerorpc
+    s = DAQ(serializer=sys.argv[1])  # expose class via zerorpc
     s.bind("tcp://0.0.0.0:{0}".format(DAQ.SERVICE_PORT))  # broadcast on all IPs
     s.run()

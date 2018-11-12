@@ -172,6 +172,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.log.warning("   done")
 
     def service_stop(self):
+        import ipdb; ipdb.set_trace()
         self.log.warning("stopping service")
         try:
             sys.exit(0)  # raises an exception so the finally clause is executed

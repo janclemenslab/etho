@@ -62,7 +62,8 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     # SETUP TRIGGER
     trigger('START')
     print('sent START')
-    daq_server_name = 'python -m {0}'.format(DAQ.__module__)
+    SER = 'pickle'
+    daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
     daq_service_port = DAQ.SERVICE_PORT
 
     fs = int(prot['DAQ']['samplingrate'])
@@ -85,7 +86,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         prot['DAQ']['channels_out'] = [prot['DAQ']['channels_out']]
     # send START trigger here
     print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
-    daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer='default')
+    daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
     sp = subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
     daq.connect("tcp://{0}:{1}".format(ip_address, daq_service_port))
     print('done')
