@@ -2,16 +2,14 @@ import time
 import numpy as np
 import pandas as pd
 import subprocess
+import defopt
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
-
-from ethoservice.DAQZeroService import DAQ
-from ethoservice.NITriggerZeroService import NIT
-
-
 from ethomaster.utils.sound import *
 from ethomaster.utils.config import readconfig
+from ethoservice.DAQZeroService import DAQ
+from ethoservice.NITriggerZeroService import NIT
 
 
 def trigger(trigger_name):
@@ -40,18 +38,24 @@ def trigger(trigger_name):
     sp.kill()
 
 
-def clientcc(ip_address, playlistfile, protocolfile, filename=None):
+def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: str, save: bool=False):
     # load config/protocols
+    print(filename)
+    print(filecounter)
+    print(protocolfile)
+    print(playlistfile)
+    print(save)
     prot = readconfig(protocolfile)
-    print(prot)
     maxDuration = int(prot['NODE']['maxduration'])
     user_name = prot['NODE']['user']
     folder_name = prot['NODE']['folder']
 
+    ip_address = 'localhost'
+
     # unique file name for video and node-local logs
-    if filename is None:
-        filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
-    dirname = prot['NODE']['savefolder']
+    # if filename is None:
+    #     filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
+    # dirname = prot['NODE']['savefolder']
     print(filename)
 
     # SETUP TRIGGER
@@ -78,31 +82,33 @@ def clientcc(ip_address, playlistfile, protocolfile, filename=None):
         prot['DAQ']['channels_out'] = [prot['DAQ']['channels_out']]
 
     # send START trigger here
-    import ipdb; ipdb.set_trace()
     print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
     daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq')
     # print(daq.start_server(daq_server_name, folder_name, warmup=1))
-    subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
+    sp = subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
     daq.connect("tcp://{0}:{1}".format(ip_address, daq_service_port))
     print('done')
     print('sending sound data to {0} - may take a while.'.format(ip_address))
-    daq.setup('{0}/{1}/{1}_daq_test.h5'.format(dirname, filename), sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs, prot['DAQ'])
-    daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
+    if save:
+        daq_save_filename = '{0}_daq_test.h5'.format(filename)
+    else:
+        daq_save_filename = None
+    daq.setup(daq_save_filename, sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs, prot['DAQ'])
+    if save:
+        daq.init_local_logger('{0}_daq.log'.format(filename))
     # NEXTFILE triggers should be sent during playback
     daq.start()
 
-    print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
-
-
+    while daq.is_busy():
+        time.sleep(1)
+        print('\rbusy')
     # send STOP trigger here
-    # trigger('STOP')
-    # print('sent STOP')
+    trigger('STOP')
+    print('sent STOP')
+
+    sp.terminate()
+    sp.kill()
 
 
 if __name__ == '__main__':
-    playlistfolder = config['HEAD']['playlistfolder']
-    protocolfolder = config['HEAD']['protocolfolder']
-    ip_address = 'localhost'
-    protocolfilename = protocolfolder + '/2P.txt'
-    playlistfilename = playlistfolder + '/test.txt'
-    clientcc(ip_address, playlistfilename, protocolfilename)
+    defopt.run(clientcc)
