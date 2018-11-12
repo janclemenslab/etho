@@ -12,7 +12,7 @@ samplingrate:10000 # Hz
 shuffle:False # block-randomize order of stimuli for playback
 display:True
 LEDamp:1
-channels_in:ai3
-channels_out:ao0,ao1
-digital_channels_out:port0/line1,port0/line2,port0/line3
+analog_chans_in:ai3
+analog_chans_out:ao0,ao1
+digital_chans_out:port0/line1,port0/line2,port0/line3
 limits:10

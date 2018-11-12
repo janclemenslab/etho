@@ -6,6 +6,8 @@ import time     # for timer
 import threading
 import os
 import sys
+from typing import Iterable, Sequence
+
 
 try:
     from .utils.IOTask import *
@@ -23,16 +25,19 @@ class DAQ(BaseZeroService):
     SERVICE_PORT = 4249   # last to digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "DAQ"  # short, uppercase, 3-letter ID of the service (equals class name)
 
-    # def setup(self, savefilename, duration, channels_out=["ao0", "ao1"], channels_in=["ai2", "ai3", "ai0"]):
-    def setup(self, savefilename, sounds, playlist, play_order, duration, fs, params):
+    # def setup(self, savefilename, duration, analog_chans_out=["ao0", "ao1"], analog_chans_in=["ai2", "ai3", "ai0"]):
+    def setup(self, savefilename: str=None, sounds: Sequence=[], play_order: Iterable=None,
+              duration: float=-1, fs: int=10000, params,
+              analog_chans_out: Sequence=['ao0'], analog_chans_in: Sequence=None, digital_chans_out: Sequence=None):
         self._time_started = None
         self.duration = duration
         self.savefilename = savefilename
         # APPLICATION SPECIFIC SETUP CODE HERE
-        self.channels_out = params['channels_out']  # ["ao0", "ao1"]#
-        self.channels_in = params['channels_in']  # ["ai0"]#
+        self.analog_chans_out = analog_chans_out#params['channels_out']  # ["ao0", "ao1"]#
+        self.analog_chans_in = analog_chans_in#params['channels_in']  # ["ai0"]#
+        self.digital_chans_out = digital_chans_out
 
-        self.taskAO = IOTask(cha_name=self.channels_out)
+        self.taskAO = IOTask(cha_name=self.analog_chans_out)
 
         # `sounds` is a python-list of sounds saved as lists (because of 0rpc) - make a list of nparrays
         np_sounds = list()
@@ -46,12 +51,8 @@ class DAQ(BaseZeroService):
         self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
         print(self.taskAO)
         # DIGITAL OUTPUT
-        if 'digital_channels_out' in params:
-            self.digital_channnels_out = params['digital_channels_out']
-        else:
-            self.digital_channnels_out = None
-        if self.digital_channnels_out:
-            self.taskDO = IOTask(cha_name=params['digital_channels_out'])#self.digital_channels_out)
+        if self.digital_chans_out:
+            self.taskDO = IOTask(cha_name=self.digital_chans_out)  # self.digital_analog_chans_out)
 
             # get digital pattern from sounds - duplicate sounds, add next trigger at beginning of each sound
             np_triggers = list()
@@ -69,16 +70,17 @@ class DAQ(BaseZeroService):
             self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             print(self.taskDO)
         # ANALOG INPUT
-        self.taskAI = IOTask(cha_name=self.channels_in)
-        self.taskAI.data_rec = []
-        if self.savefilename is not None:  #  save
-            os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
-            self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.channels_in)])
-            self.taskAI.data_rec.append(self.save_task)
-        if 'display' in params and eval(params['display']):
-            self.disp_task = ConcurrentTask(task=plot, taskinitargs=[len(self.channels_in)], comms="pipe")
-            self.taskAI.data_rec.append(self.disp_task)
-        print(self.taskAI)
+        if self.analog_chans_in:
+            self.taskAI = IOTask(cha_name=self.analog_chans_in)
+            self.taskAI.data_rec = []
+            if self.savefilename is not None:  # save
+                os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
+                self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.analog_chans_in)])
+                self.taskAI.data_rec.append(self.save_task)
+            if 'display' in params and eval(params['display']):
+                self.disp_task = ConcurrentTask(task=plot, taskinitargs=[len(self.analog_chans_in)], comms="pipe")
+                self.taskAI.data_rec.append(self.disp_task)
+            print(self.taskAI)
 
         # threads can be stopped by setting an event: `_thread_stopper.set()`
         if self.duration > 0:
@@ -94,7 +96,7 @@ class DAQ(BaseZeroService):
         # It won't start until the start trigger signal arrives from the AI task
         self.taskAO.StartTask()
 
-        if self.digital_channnels_out:
+        if self.digital_chans_out:
             self.taskDO.StartTask()
 
         # Start the AI task
@@ -118,7 +120,7 @@ class DAQ(BaseZeroService):
         # !!! DAQ !!!
         # stop tasks and properly close callbacks (e.g. flush data to disk and close file)
 
-        if self.digital_channnels_out:
+        if self.digital_chans_out:
             self.taskDO.StopTask()
             print('\n   stoppedDO')
             self.taskDO.stop()
@@ -140,7 +142,7 @@ class DAQ(BaseZeroService):
         #         pass  # print(e)
 
         self.taskAO.ClearTask()
-        if self.digital_channnels_out:
+        if self.digital_chans_out:
             self.taskDO.ClearTask()
         self.taskAI.ClearTask()
 
@@ -182,6 +184,10 @@ class DAQ(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = DAQ(serializer=sys.argv[1])  # expose class via zerorpc
+    if len(sys.argv) > 1:
+        ser = sys.argv[1] if
+    else:
+        ser = 'default'
+    s = DAQ(serializer=ser)  # expose class via zerorpc
     s.bind("tcp://0.0.0.0:{0}".format(DAQ.SERVICE_PORT))  # broadcast on all IPs
     s.run()

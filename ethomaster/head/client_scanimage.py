@@ -47,7 +47,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     print(playlistfile)
     print(save)
     prot = readconfig(protocolfile)
-    maxDuration = int(prot['NODE']['maxduration'])
+    maxduration = int(prot['NODE']['maxduration'])
     user_name = prot['NODE']['user']
     folder_name = prot['NODE']['folder']
 
@@ -59,7 +59,6 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     # dirname = prot['NODE']['savefolder']
     print(filename)
 
-    # SETUP TRIGGER
     trigger('START')
     print('sent START')
     SER = 'pickle'
@@ -74,16 +73,18 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
                 LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'],
                 mirrorsound=bool(int(prot['NODE'].get('mirrorsound', 1))),
                 cast2int=False, aslist=False)
-    playlist_items, totallen = build_playlist(sounds, maxDuration, fs, shuffle=shuffle_playback)
-    playlist_items = cycle(playlist_items)
-    if maxDuration == -1:
+    playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
+    if maxduration == -1:
         print(f'setting maxduration from playlist to {totallen}.')
-        maxDuration = totallen
+        maxduration = totallen
+        playlist_items = cycle(playlist_items)  # iter(playlist_items)
+    else:
+        playlist_items = cycle(playlist_items)
 
-    if not isinstance(prot['DAQ']['channels_in'], list):
-        prot['DAQ']['channels_in'] = [prot['DAQ']['channels_in']]
-    if not isinstance(prot['DAQ']['channels_out'], list):
-        prot['DAQ']['channels_out'] = [prot['DAQ']['channels_out']]
+    if not isinstance(prot['DAQ']['analog_chans_in'], list):
+        prot['DAQ']['analog_chans_in'] = [prot['DAQ']['analog_chans_in']]
+    if not isinstance(prot['DAQ']['analog_chans_out'], list):
+        prot['DAQ']['analog_chans_out'] = [prot['DAQ']['analog_chans_out']]
     # send START trigger here
     print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
     daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
@@ -95,16 +96,21 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         daq_save_filename = '{0}_daq_test.h5'.format(filename)
     else:
         daq_save_filename = None
-    daq.setup(daq_save_filename, sounds, playlist.to_msgpack(), playlist_items, maxDuration, fs, prot['DAQ'])
+
+    daq.setup(daq_save_filename, sounds, playlist_items, maxduration, fs,
+              analog_chans_out=prot['DAQ'].get('analog_chans_out', []),
+              analog_chans_in=prot['DAQ'].get('analog_chans_in', []),
+              digital_chans_out=prot['DAQ'].get('digital_chans_out', []))
     if save:
         daq.init_local_logger('{0}_daq.log'.format(filename))
-    # NEXTFILE triggers should be sent during playback
+
     daq.start()
     t0 = time.clock()
     while daq.is_busy():
         time.sleep(1)
-        t1 =time.clock()
+        t1 = time.clock()
         print(f'   Busy {t1-t0:1.2f} seconds.\r', end='', flush=True)
+
     # send STOP trigger here
     trigger('STOP')
     print('sent STOP')
