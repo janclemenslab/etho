@@ -23,7 +23,7 @@ class ZeroClient(zerorpc.Client):
         ctx = zmq.Context()
         ctx.LINGER = 0
         pub = ctx.socket(zmq.PUB)
-        head_ip = config['HEAD']['name']  #'192.168.1.2'  # FIXME: should come from config
+        head_ip = config['HEAD']['name']
         pub.connect('tcp://{0}:{1}'.format(head_ip, self.LOGGING_PORT))
 
         self.log = logging.getLogger()
