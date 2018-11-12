@@ -70,8 +70,9 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     playlist = pd.read_table(playlistfile, dtype=None, delimiter='\t')
     sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
                 LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'],
-                mirrorsound=True, cast2int=False)
+                mirrorsound=bool(int(prot['NODE'].get('mirrorsound', 1))), cast2int=False)
     playlist_items, totallen = build_playlist(sounds, maxDuration, fs, shuffle=shuffle_playback)
+
     if maxDuration == -1:
         print(f'setting maxduration from playlist to {totallen}.')
         maxDuration = totallen
