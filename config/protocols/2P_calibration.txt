@@ -1,0 +1,19 @@
+# node-specific parameters and parameters that apply to all service (e.g. maxduration)
+[NODE]
+user:ncb # default user
+folder:C:/Users/Scientifica/ # default working directory
+savefolder:C:/Users/Scientifica/data # this is where the recordings will be saved
+maxduration: -1 # seconds
+mirrorsound: 0
+use_services:DAQ
+
+
+[DAQ]
+samplingrate:10000 # Hz
+shuffle:False # block-randomize order of stimuli for playback
+display:True
+LEDamp:1
+analog_chans_in:ai3,ai4,ai5
+analog_chans_out:ao1,ao0
+digital_chans_out:port0/line1,port0/line2,port0/line3
+limits:10
