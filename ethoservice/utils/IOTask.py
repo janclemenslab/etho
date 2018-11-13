@@ -60,7 +60,7 @@ class IOTask(daq.Task):
             self.CreateAIVoltageChan(self.cha_string, "", DAQmx_Val_RSE, -limits, limits, DAQmx_Val_Volts, None)
             self.AutoRegisterEveryNSamplesEvent(DAQmx_Val_Acquired_Into_Buffer, self.num_samples_per_event, 0)
             self.CfgInputBuffer(self.num_samples_per_chan * self.num_channels * 4)
-            clock_source = 'ao/SampleClock'  # None  # use internal clock
+            clock_source = 'OnboardClock'#ao/SampleClock'  # None  # use internal clock
         elif self.cha_type[0] is "analog_output":
             self.num_samples_per_chan = 5000
             self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
@@ -69,7 +69,7 @@ class IOTask(daq.Task):
             self.CfgOutputBuffer(self.num_samples_per_chan * self.num_channels * 2)
             # ensures continuous output and avoids collision of old and new data in buffer
             self.SetWriteRegenMode(DAQmx_Val_DoNotAllowRegen)
-            clock_source = 'OnboardClock'  # None  # use internal clock
+            clock_source = 'ai/SampleClock'# 'OnboardClock'  # None  # use internal clock
         elif self.cha_type[0] is "digital_output":
             self.num_samples_per_chan = 5000
             self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
@@ -78,7 +78,7 @@ class IOTask(daq.Task):
             self.CfgOutputBuffer(self.num_samples_per_chan * self.num_channels * 2)
             # ensures continuous output and avoids collision of old and new data in buffer
             self.SetWriteRegenMode(DAQmx_Val_DoNotAllowRegen)
-            clock_source = 'ao/SampleClock'  # None  # use internal clock
+            clock_source = 'ai/SampleClock'  # None  # use internal clock
 
         if 'digital' in self. cha_type[0]:
             self._data = np.zeros((self.num_samples_per_chan, self.num_channels), dtype=np.uint8)  # init empty data array
