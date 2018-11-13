@@ -1,4 +1,0 @@
-stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
-pulseTrain_PDUR16ms_PPAU0ms_PCAR250Hz_TDUR4s.wav	30000	30000	0	10.0	250
-pulseTrain_PDUR16ms_PPAU20ms_PCAR250Hz_TDUR4s.wav	30000	30000	0	10.0	250	
-pulseTrain_PDUR16ms_PPAU80ms_PCAR250Hz_TDUR4s.wav	30000	30000	0	10.0	250
