@@ -1,2 +1,0 @@
-stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
-SIN_150_0_4000	60000	60000	0	2.5	150
