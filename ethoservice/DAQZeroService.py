@@ -27,7 +27,7 @@ class DAQ(BaseZeroService):
 
     # def setup(self, savefilename, duration, analog_chans_out=["ao0", "ao1"], analog_chans_in=["ai2", "ai3", "ai0"]):
     def setup(self, savefilename: str=None, sounds: Sequence=[], play_order: Iterable=None,
-              duration: float=-1, fs: int=10000, params,
+              duration: float=-1, fs: int=10000, display: bool=False,
               analog_chans_out: Sequence=['ao0'], analog_chans_in: Sequence=None, digital_chans_out: Sequence=None):
         self._time_started = None
         self.duration = duration
@@ -77,7 +77,7 @@ class DAQ(BaseZeroService):
                 os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
                 self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.analog_chans_in)])
                 self.taskAI.data_rec.append(self.save_task)
-            if 'display' in params and eval(params['display']):
+            if display:
                 self.disp_task = ConcurrentTask(task=plot, taskinitargs=[len(self.analog_chans_in)], comms="pipe")
                 self.taskAI.data_rec.append(self.disp_task)
             print(self.taskAI)
@@ -120,7 +120,7 @@ class DAQ(BaseZeroService):
         # !!! DAQ !!!
         # stop tasks and properly close callbacks (e.g. flush data to disk and close file)
 
-        if self.digital_chans_out:
+        if hasattr(self, 'digital_chans_out') and self.digital_chans_out:
             self.taskDO.StopTask()
             print('\n   stoppedDO')
             self.taskDO.stop()
@@ -185,7 +185,7 @@ class DAQ(BaseZeroService):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        ser = sys.argv[1] if
+        ser = sys.argv[1]
     else:
         ser = 'default'
     s = DAQ(serializer=ser)  # expose class via zerorpc
