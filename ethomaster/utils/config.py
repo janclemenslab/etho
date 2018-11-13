@@ -1,7 +1,7 @@
 import pathlib
 import os
 HOME = str(pathlib.Path.home())
-CTRLFILEPATH = os.path.join(HOME, '.ethoconfig.ini') # ~/.ethoconfig.ini
+CTRLFILEPATH = os.path.join(HOME, 'ethoconfig.ini') # ~/.ethoconfig.ini
 
 
 def getlist(string, delimiter=',', stripwhitespace=True):
