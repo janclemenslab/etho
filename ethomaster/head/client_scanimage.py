@@ -74,6 +74,20 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
                 mirrorsound=bool(int(prot['NODE'].get('mirrorsound', 1))),
                 cast2int=False, aslist=False)
     playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
+    # THIS SHOULD HAPPEN OUTSIDE OF THE SERVICE!!
+    # get digital pattern from analog_data_out - duplicate analog_data_out, add next trigger at beginning of each sound
+    triggers = list()
+    for sound in sounds:
+        this_trigger = np.zeros((sound.shape[0], len(prot['DAQ'].get('digital_chans_out', []))), dtype=np.uint8)
+        # if len(np_triggers) == 0:
+        #     this_trigger[:5, 0] = 1  # START on first
+        if len(triggers) == len(sounds)-1:
+            this_trigger[-5:, 1] = 1  # STOP on last
+        else:
+            this_trigger[:5, 2] = 1  # NEXT
+        this_trigger[:5, 2] = 1  # NEXT
+        triggers.append(this_trigger.astype(np.uint8))
+
     if maxduration == -1:
         print(f'setting maxduration from playlist to {totallen}.')
         maxduration = totallen
@@ -97,10 +111,12 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     else:
         daq_save_filename = None
 
-    daq.setup(daq_save_filename, sounds, playlist_items, maxduration, fs, eval(prot['DAQ']['display']),
+    daq.setup(daq_save_filename, playlist_items, maxduration, fs, eval(prot['DAQ']['display']),
               analog_chans_out=prot['DAQ'].get('analog_chans_out', []),
               analog_chans_in=prot['DAQ'].get('analog_chans_in', []),
-              digital_chans_out=prot['DAQ'].get('digital_chans_out', []))
+              digital_chans_out=prot['DAQ'].get('digital_chans_out', []),
+              analog_data_out=sounds,
+              digital_data_out=triggers)
     if save:
         daq.init_local_logger('{0}_daq.log'.format(filename))
 
