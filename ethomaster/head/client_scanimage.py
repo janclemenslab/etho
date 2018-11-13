@@ -111,7 +111,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     else:
         daq_save_filename = None
 
-    daq.setup(daq_save_filename, playlist_items, maxduration, fs, eval(prot['DAQ']['display']),
+    daq.setup(daq_save_filename, playlist_items, maxduration, fs, eval(prot['DAQ'].get('display', 'False')),
               analog_chans_out=prot['DAQ'].get('analog_chans_out', []),
               analog_chans_in=prot['DAQ'].get('analog_chans_in', []),
               digital_chans_out=prot['DAQ'].get('digital_chans_out', []),
