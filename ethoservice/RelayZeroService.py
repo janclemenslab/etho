@@ -10,13 +10,12 @@ except Exception as e:
     print(e)
 
 
-
 class REL(BaseZeroService):
-'''
-toggle relay using gpiozero library
-very hacky since the relay cannot be toggled (requires 5V GPIO, not 3.3V as in rpi).
-so we turn on the relay by initializing the pin, and turn it off by de-initializing it
-'''
+    '''
+    toggle relay using gpiozero library
+    very hacky since the relay cannot be toggled (requires 5V GPIO, not 3.3V as in rpi).
+    so we turn on the relay by initializing the pin, and turn it off by de-initializing it
+    '''
     LOGGING_PORT = 1447
     SERVICE_PORT = 4247
     SERVICE_NAME = 'REL'
