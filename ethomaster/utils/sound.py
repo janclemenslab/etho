@@ -178,6 +178,7 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation=None,
         xx = [x.reshape((x.shape[0], 1)) for x in xx]
 
         x = np.concatenate(xx, axis=1)
+        # TODO: move these backend-specific things out of this function
         if cast2int:  # needed for RPI - gets sound as int16 at max range, do not do this for DAQ!!
             x = x.astype(np.int16)
         if aslist:
