@@ -50,7 +50,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     maxduration = int(prot['NODE']['maxduration'])
     user_name = prot['NODE']['user']
     folder_name = prot['NODE']['folder']
-
+    SER = 'pickle'
     ip_address = 'localhost'
 
     # unique file name for video and node-local logs
@@ -61,9 +61,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
 
     trigger('START')
     print('sent START')
-    SER = 'pickle'
     daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
-    daq_service_port = DAQ.SERVICE_PORT
 
     fs = int(prot['DAQ']['samplingrate'])
     shuffle_playback = eval(prot['DAQ']['shuffle'])
@@ -74,7 +72,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
                 mirrorsound=bool(int(prot['NODE'].get('mirrorsound', 1))),
                 cast2int=False, aslist=False)
     playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
-    # THIS SHOULD HAPPEN OUTSIDE OF THE SERVICE!!
+
     # get digital pattern from analog_data_out - duplicate analog_data_out, add next trigger at beginning of each sound
     triggers = list()
     for sound in sounds:
@@ -99,11 +97,11 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         prot['DAQ']['analog_chans_in'] = [prot['DAQ']['analog_chans_in']]
     if not isinstance(prot['DAQ']['analog_chans_out'], list):
         prot['DAQ']['analog_chans_out'] = [prot['DAQ']['analog_chans_out']]
-    # send START trigger here
+
     print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
     daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
     sp = subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
-    daq.connect("tcp://{0}:{1}".format(ip_address, daq_service_port))
+    daq.connect("tcp://{0}:{1}".format(ip_address, DAQ.SERVICE_PORT))
     print('done')
     print('sending sound data to {0} - may take a while.'.format(ip_address))
     if save:
