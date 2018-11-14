@@ -1,21 +1,19 @@
 # Etho: master & service
 
 ## TODO
-- [ ] switch over to yaml for config reading (since this will preserve types)
+- [.] switch over to yaml for config reading (since this will preserve types)
 - [ ] switch over to new zerorpc and pickle on localhost tasks
 - [ ] present logging information within gui
 - [ ] make gui more responsive through async
 - [ ] make protocols editable so small changes are more easily done (use traisui)
-- [ ] installation instructions (where to copy `.ethoconfig.ini`)
+- [x] installation instructions (where to copy `.ethoconfig.ini`)
 - [ ] refactor? ethoservice->services, ethomaster->master?
-- [ ] copy ethoservice wiki
+- [x] copy ethoservice wiki
 
 ## deploy
-pip uninstall ethoservice
-pip install -e .
-
- - on head only:
-# cp config/deviceconfig/.ethoconfigRPI.ini -> ~/.ethoconfig.ini
+- `pip install git+http://github.com/janclemenslab/ethodrome.git`
+- [node setup](https://github.com/janclemenslab/ethoservice/wiki/Node-setup)
+- [head setup](https://github.com/janclemenslab/ethoservice/wiki/Head-setup)
 
 ## Services
 - CAM - picamera
@@ -26,4 +24,4 @@ pip install -e .
 
 ## Documentation
 - [service description](https://github.com/janclemenslab/ethoservice/wiki/Services)
-- [node setup](https://github.com/janclemenslab/ethoservice/wiki/Node-setup)
+- 
