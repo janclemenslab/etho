@@ -15,6 +15,7 @@ from contextlib import contextmanager
 
 image_extensions = ['.bmp', '.jpg', '.jpeg', '.png', '.tif', '.tiff', '.pbm', '.pgm', '.ppm']
 
+
 class Bunch(object):
     def __init__(self, **kw):
         self.__dict__.update(kw)

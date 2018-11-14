@@ -57,7 +57,7 @@ def attenuate(sounds, frequencies, attenuationfactors):
     return sounds
 
 
-def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250.0, stimfolder='./', cast2int=True):
+def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250.0, stimfolder='./', cast2int=True, aslist=True):
     # load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250)
     # attenuation should be dict with string freq values as keys and attenuation values as value
     # LEDamp should be 1 with DAQ
@@ -119,5 +119,7 @@ def load_sounds(playlist, fs, mirrorsound=True, attenuation=None, LEDamp=250.0, 
         x = np.concatenate((x, xLED), axis=1)  # add LED trace as second channel
         if cast2int: # needed for RPI - gets sound as int16 at max range, do not do this for DAQ!!
             x = x.astype(np.int16)
-        sounddata.append(x.tolist())
+        if aslist:
+            x = x.tolist()
+        sounddata.append(x)
     return sounddata

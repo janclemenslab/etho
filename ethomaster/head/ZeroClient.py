@@ -10,10 +10,12 @@ from ethomaster import config
 
 class ZeroClient(zerorpc.Client):
 
-    def __init__(self, ssh_address, service_name='CLIENT', logging_port='1460'):
+    def __init__(self, ssh_address, service_name='CLIENT', logging_port='1460', serializer='default'):
         self.SERVICE_NAME = service_name
         self.LOGGING_PORT = logging_port
-        super(ZeroClient, self).__init__(timeout=180, heartbeat=90)
+        ctx = zerorpc.Context()
+        ctx.register_serializer(serializer)
+        super(ZeroClient, self).__init__(timeout=180, heartbeat=90, context=ctx)
         self._init_network_logger()
         # for interacting with server process
         self.sr = SSHRunner(ssh_address)
