@@ -11,8 +11,7 @@ from typing import Iterable, Sequence
 
 try:
     from .utils.IOTask import *
-    from .utils.daqtools import *
-except Exception as e:
+except ImportError as e:
     print("IGNORE IF RUN ON HEAD")
     print(e)
 
