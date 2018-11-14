@@ -15,11 +15,22 @@ from contextlib import contextmanager
 
 image_extensions = ['.bmp', '.jpg', '.jpeg', '.png', '.tif', '.tiff', '.pbm', '.pgm', '.ppm']
 
+
 class Bunch(object):
     def __init__(self, **kw):
         self.__dict__.update(kw)
     def __str__(self):
         return str(self.__dict__)
+
+
+def coroutine(func):
+    """ decorator that auto-initializes (calls `next(None)`) coroutines"""
+    def start(*args, **kwargs):
+        cr = func(*args, **kwargs)
+        next(cr)
+        return cr
+    return start
+
 
 def splitfn(fn):
     path, fn = os.path.split(fn)

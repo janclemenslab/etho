@@ -17,7 +17,7 @@ import matplotlib
 matplotlib.use('tkagg')
 import matplotlib.pyplot as plt
 
-from .daqtools import *
+from .common import coroutine
 from .ConcurrentTask import ConcurrentTask
 
 plt.ion()
