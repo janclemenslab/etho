@@ -129,15 +129,15 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation=None,
                 token = [float(item) for item in token]
                 pulsedur, pulsepause, pulsenumber, pulsedelay = token[:4]
                 x = make_pulse(pulsedur, pulsepause, pulsenumber, pulsedelay, fs)
-            elif stimName == 'MIRROR_LED':
+            elif stimName == 'MIRROR_LED':  # this channel contains a pulse train which mirrors the sound from another channel
                 mirror_led_channel.append(stimIdx)  # mirror led
-            else:  # other
+            elif stimName:  # other
                 # return time x channels
                 wav_rate, x = wav.read(os.path.join(stimfolder, stimName))
                 x = x.astype(np.float32)/32768
                 if wav_rate != fs:  # resample to fs
                     x = scipy.signal.resample_poly(x, int(fs), int(wav_rate), axis=0)
-
+                    
             # if `attenuation` arg is provided:
             if attenuation:
                 x = x * float(attenuation[str(listitem.freq)])
