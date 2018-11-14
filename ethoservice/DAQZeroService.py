@@ -134,17 +134,20 @@ class DAQ(BaseZeroService):
         pass
 
     def is_busy(self):
-        taskIsDoneAI = daq.c_ulong()
-        taskIsDoneAO = daq.c_ulong()
         taskCheckFailed = False
+
+        taskIsDoneAI = daq.c_ulong()
         try:
             self.taskAI.IsTaskDone(taskIsDoneAI)
         except daq.InvalidTaskError as e:
             taskCheckFailed = True
+
+        taskIsDoneAO = daq.c_ulong()
         try:
             self.taskAO.IsTaskDone(taskIsDoneAO)
         except daq.InvalidTaskError as e:
             taskCheckFailed = True
+
         return not bool(taskIsDoneAI) and not bool(taskIsDoneAO) and not taskCheckFailed
 
     def test(self):
@@ -152,7 +155,6 @@ class DAQ(BaseZeroService):
 
     def cleanup(self):
         self.finish()
-        # your code here
         return True
 
     def info(self):
