@@ -8,16 +8,13 @@ import threading
 import sys
 import time
 import numpy as np
-import msvcrt
 import h5py
-import argparse
 
 # callback specific imports
 import matplotlib
 matplotlib.use('tkagg')
 import matplotlib.pyplot as plt
 
-from .common import coroutine
 from .ConcurrentTask import ConcurrentTask
 
 plt.ion()
@@ -225,6 +222,15 @@ def log(file_name):
     except GeneratorExit:
         print("   closing file \"{0}\".".format(file_name))
         f.close()  # close file
+
+
+def coroutine(func):
+    """ decorator that auto-initializes (calls `next(None)`) coroutines"""
+    def start(*args, **kwargs):
+        cr = func(*args, **kwargs)
+        next(cr)
+        return cr
+    return start
 
 
 @coroutine

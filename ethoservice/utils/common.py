@@ -22,16 +22,6 @@ class Bunch(object):
     def __str__(self):
         return str(self.__dict__)
 
-
-def coroutine(func):
-    """ decorator that auto-initializes (calls `next(None)`) coroutines"""
-    def start(*args, **kwargs):
-        cr = func(*args, **kwargs)
-        next(cr)
-        return cr
-    return start
-
-
 def splitfn(fn):
     path, fn = os.path.split(fn)
     name, ext = os.path.splitext(fn)
