@@ -1,7 +1,13 @@
 import pathlib
 import os
+
+# find_global_config_file():
 HOME = str(pathlib.Path.home())
-CTRLFILEPATH = os.path.join(HOME, 'ethoconfig.ini') # ~/.ethoconfig.ini
+GLOBALCONFIGFILEPATH = os.path.join(HOME, 'ethoconfig.yml')
+if not os.path.exists(GLOBALCONFIGFILEPATH):
+    GLOBALCONFIGFILEPATH = os.path.join(HOME, 'ethoconfig.ini') # ~/ethoconfig.ini
+if not os.path.exists(GLOBALCONFIGFILEPATH):
+    raise FileNotFoundError('no config file found. should be ~/ethoconfig.yml or ~/ethoconfig.yml')
 
 
 def getlist(string, delimiter=',', stripwhitespace=True):
@@ -11,7 +17,7 @@ def getlist(string, delimiter=',', stripwhitespace=True):
     return stringlist
 
 
-def readconfig(filename=CTRLFILEPATH):
+def readconfig(filename=GLOBALCONFIGFILEPATH):
     if filename.endswith(('.yml', '.yaml')):
         config = readconfig_yaml(filename)
     else:
