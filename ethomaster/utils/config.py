@@ -54,8 +54,3 @@ def readconfig_ini(filename):
                 sectionDict[item[0]] = item[1]
         configDict[section] = sectionDict
     return configDict
-
-
-
-if __name__ == '__main__':
-    print(readconfig())
