@@ -46,30 +46,25 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     print(protocolfile)
     print(playlistfile)
     print(save)
-    prot = readconfig(protocolfile)
-    maxduration = int(prot['NODE']['maxduration'])
-    user_name = prot['NODE']['user']
-    folder_name = prot['NODE']['folder']
-    SER = 'pickle'
-    ip_address = 'localhost'
 
-    # unique file name for video and node-local logs
-    # if filename is None:
-    #     filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
-    # dirname = prot['NODE']['savefolder']
-    print(filename)
+    if protocolfile.partition('.')[-1] not in ['yml', 'yaml']:
+        raise ValueError('protocol must be a yaml file (end in yml or yaml).')
+
+    prot = readconfig(protocolfile)
+    maxduration = prot['NODE']['maxduration']
+    SER = prot['NODE']['serializer']
+    ip_address = 'localhost'
 
     trigger('START')
     print('sent START')
     daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
 
-    fs = int(prot['DAQ']['samplingrate'])
-    shuffle_playback = eval(prot['DAQ']['shuffle'])
+    fs = prot['DAQ']['samplingrate']
     # load playlist, sounds, and enumerate play order
     playlist = parse_table(playlistfile)#pd.read_table(playlistfile, dtype=None, delimiter='\t')
     sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
-                LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'])
-    playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
+                LEDamp=prot['DAQ']['led_amp'], stimfolder=config['HEAD']['stimfolder'])
+    playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle= prot['DAQ']['shuffle'])
 
     # get digital pattern from analog_data_out - duplicate analog_data_out, add next trigger at beginning of each sound
     triggers = list()
@@ -91,13 +86,8 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     else:
         playlist_items = cycle(playlist_items)
 
-    if not isinstance(prot['DAQ']['analog_chans_in'], list):
-        prot['DAQ']['analog_chans_in'] = [prot['DAQ']['analog_chans_in']]
-    if not isinstance(prot['DAQ']['analog_chans_out'], list):
-        prot['DAQ']['analog_chans_out'] = [prot['DAQ']['analog_chans_out']]
-
     print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
-    daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
+    daq = ZeroClient(ip_address, 'nidaq', serializer=SER)
     sp = subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
     daq.connect("tcp://{0}:{1}".format(ip_address, DAQ.SERVICE_PORT))
     print('done')
@@ -107,7 +97,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     else:
         daq_save_filename = None
 
-    daq.setup(daq_save_filename, playlist_items, maxduration, fs, eval(prot['DAQ'].get('display', 'False')),
+    daq.setup(daq_save_filename, playlist_items, maxduration, fs, prot['DAQ'].get('display', 'False'),
               analog_chans_out=prot['DAQ'].get('analog_chans_out', []),
               analog_chans_in=prot['DAQ'].get('analog_chans_in', []),
               digital_chans_out=prot['DAQ'].get('digital_chans_out', []),
