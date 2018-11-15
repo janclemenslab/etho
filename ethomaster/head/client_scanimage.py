@@ -7,7 +7,7 @@ from itertools import cycle
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
-from ethomaster.utils.sound import *
+from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 from ethomaster.utils.config import readconfig
 from ethoservice.DAQZeroService import DAQ
 from ethoservice.NITriggerZeroService import NIT
@@ -66,11 +66,9 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     fs = int(prot['DAQ']['samplingrate'])
     shuffle_playback = eval(prot['DAQ']['shuffle'])
     # load playlist, sounds, and enumerate play order
-    playlist = pd.read_table(playlistfile, dtype=None, delimiter='\t')
+    playlist = parse_table(playlistfile)#pd.read_table(playlistfile, dtype=None, delimiter='\t')
     sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
-                LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'],
-                mirrorsound=bool(int(prot['NODE'].get('mirrorsound', 1))),
-                cast2int=False, aslist=False)
+                LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'])
     playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
     # get digital pattern from analog_data_out - duplicate analog_data_out, add next trigger at beginning of each sound
