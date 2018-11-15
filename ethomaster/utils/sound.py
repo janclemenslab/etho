@@ -19,7 +19,9 @@ def parse_cell(cell, dtype: Callable=None) -> List:
     return token
 
 
-def parse_table(table: Union[pd.DataFrame, str], dtypes: List[Callable]=[], normalize: bool=True) -> pd.DataFrame:
+def parse_table(table: Union[pd.DataFrame, str],
+                dtypes: List[Callable] = [str, float, float, float, float, float, str],
+                normalize: bool = True) -> pd.DataFrame:
     """Parse table to desired types.
 
     Args:
@@ -137,10 +139,10 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation=None,
                 x = x.astype(np.float32)/32768
                 if wav_rate != fs:  # resample to fs
                     x = scipy.signal.resample_poly(x, int(fs), int(wav_rate), axis=0)
-                    
+
             # if `attenuation` arg is provided:
             if attenuation:
-                x = x * float(attenuation[str(listitem.freq)])
+                x = x * float(attenuation[str(listitem.freq[stimIdx])])
             # set_volume
             if len(x):
                 x = x * float(listitem.intensity[stimIdx])  # "* 20" NOT USED FOR DAQ
