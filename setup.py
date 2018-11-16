@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='ethodrome',
-      version='0.2',
+      version='0.3',
       description='ethodrome',
       url='http://github.com/janclemenslab/ethodrome',
       author='Jan Clemens',
