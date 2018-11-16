@@ -3,7 +3,7 @@ import threading
 from .ZeroService import BaseZeroService
 import zerorpc
 import time
-import threading
+import sys
 try:
     import Adafruit_DHT
 except Exception as e:
@@ -107,6 +107,10 @@ class THU(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(THU())
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = THU(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(THU.SERVICE_PORT))
     s.run()

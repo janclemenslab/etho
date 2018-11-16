@@ -6,7 +6,7 @@ import time
 import threading
 import serial
 from collections import namedtuple
-
+import sys
 
 class THUA(BaseZeroService):
     '''
@@ -98,6 +98,10 @@ class THUA(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(THUA())
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = THUA(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(THUA.SERVICE_PORT))
     s.run()

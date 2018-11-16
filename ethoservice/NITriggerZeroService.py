@@ -4,7 +4,7 @@ from .ZeroService import BaseZeroService  # import super class
 import zerorpc  # for starting service in `main()`
 import time    # for timer
 import threading
-
+import sys
 import PyDAQmx as daq
 import numpy as np
 
@@ -68,6 +68,10 @@ class NIT(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(NIT())  # expose class via zerorpc
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = NIT(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(NIT.SERVICE_PORT))  # broadcast on all IPs
     s.run()

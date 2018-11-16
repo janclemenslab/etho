@@ -12,6 +12,7 @@ import zerorpc
 import time
 import zmq
 import os
+import sys
 
 
 def frame_server():
@@ -141,6 +142,10 @@ class CAM(BaseZeroService):
 
 if __name__ == '__main__':
     # expose as ZeroService
-    s = zerorpc.Server(CAM())
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = CAM(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(CAM.SERVICE_PORT))
     s.run()

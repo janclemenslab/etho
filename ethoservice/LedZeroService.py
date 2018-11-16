@@ -4,6 +4,7 @@ from .ZeroService import BaseZeroService
 import zerorpc
 import RPi.GPIO as GPIO
 import time
+import sys
 
 
 class LED(BaseZeroService):
@@ -69,6 +70,10 @@ class LED(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(LED())
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = LED(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(LED.SERVICE_PORT))
     s.run()

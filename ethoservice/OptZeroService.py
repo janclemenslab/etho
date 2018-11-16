@@ -4,6 +4,7 @@ from .ZeroService import BaseZeroService
 import zerorpc
 import time
 from datetime import datetime
+import sys
 
 try:
     import gpiozero
@@ -102,6 +103,10 @@ class OPT(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(OPT())
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = OPT(serializer=sys)
     s.bind("tcp://0.0.0.0:{0}".format(OPT.SERVICE_PORT))
     s.run()

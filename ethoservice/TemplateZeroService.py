@@ -4,6 +4,7 @@ from .ZeroService import BaseZeroService  # import super class
 import zerorpc # for starting service in `main()`
 import time    # for timer
 import threading
+import sys
 
 
 class TMP(BaseZeroService):
@@ -80,6 +81,10 @@ class TMP(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(TMP())  # expose class via zerorpc
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = TMP(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(TMP.SERVICE_PORT))  # broadcast on all IPs
     s.run()

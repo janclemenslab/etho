@@ -6,6 +6,7 @@ import pandas as pd
 from .ZeroService import BaseZeroService
 import zerorpc
 import time
+import sys
 
 
 class SND(BaseZeroService):
@@ -28,14 +29,10 @@ class SND(BaseZeroService):
 
         self.log.info(pygame.mixer.get_init())
         # np arrays -> pygame sndarrays
-        self.playlist = pd.read_msgpack(playlist)
+        self.playlist = playlist
         self.log.info('playlist')
         self.log.info(self.playlist.to_csv())
-        self.soundlist = list()
-        for np_sound in np_sounds:
-            this_sound = pygame.sndarray.make_sound(np.array(np_sound))
-            this_sound.set_volume(1.0)
-            self.soundlist.append(this_sound)
+        self.soundlist = np_sounds
 
         self.playlist_items = playlist_items
         self._thread_stopper = threading.Event()
@@ -81,7 +78,7 @@ class SND(BaseZeroService):
             self.log.warning(self.logfilename)
             if self.logfilename is not None:
                 files_to_move.append(self.logfilename)
-            self.log.warning(files_to_move)            
+            self.log.warning(files_to_move)
             self._movefiles(files_to_move, self.targetpath)
         self._flush_loggers()
         if stop_service:
@@ -112,6 +109,10 @@ class SND(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(SND())
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = SND(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(SND.SERVICE_PORT))
     s.run()

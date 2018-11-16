@@ -4,7 +4,7 @@ from .ZeroService import BaseZeroService  # import super class
 import zerorpc  # for starting service in `main()`
 import time     # for timer
 import threading
-
+import sys
 try:
     import flycapture2 as fc2
 except Exception as e:
@@ -259,6 +259,10 @@ class PTG(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(PTG())  # expose class via zerorpc
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = PTG(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(PTG.SERVICE_PORT))  # broadcast on all IPs
     s.run()
