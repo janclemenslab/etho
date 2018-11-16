@@ -107,7 +107,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         thua.connect("tcp://{0}:{1}".format(ip_address, THUA.SERVICE_PORT))
         print('done')
         print(prot['THUA'])
-        thua.setup(prot['THUA']['port'], float(prot['THUA']['interval']), maxduration + 10)
+        thua.setup(prot['THUA']['port'], prot['THUA']['interval'], maxduration + 10)
         thua.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
         thua.start()
 
@@ -127,7 +127,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     if 'DAQ' in prot['NODE']['use_services']:
         daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
 
-        fs = int(prot['DAQ']['samplingrate'])
+        fs = prot['DAQ']['samplingrate']
         shuffle_playback = prot['DAQ']['shuffle']
         playlist = parse_table(playlistfile)
         sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
@@ -143,15 +143,15 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         daq_save_filename = '{0}/{1}/{1}_daq_test.h5'.format(dirname, filename)
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
-        # print(daq.start_server(daq_server_name, folder_name, warmup=1))
+
         subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         daq.connect("tcp://{0}:{1}".format(ip_address, DAQ.SERVICE_PORT))
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
-        # daq.setup(daq_save_filename, sounds, playlist.to_msgpack(), playlist_items, maxduration, fs, prot['DAQ'])
-        daq.setup(daq_save_filename, playlist_items, maxduration, fs, prot['DAQ'].get('display', 'False'),
-                  analog_chans_out=prot['DAQ'].get('analog_chans_out', []),
-                  analog_chans_in=prot['DAQ'].get('analog_chans_in', []),
+
+        daq.setup(daq_save_filename, playlist_items, maxduration, fs, prot['DAQ']['display'],
+                  analog_chans_out=prot['DAQ']['analog_chans_out'],
+                  analog_chans_in=prot['DAQ']['analog_chans_in'],
                   analog_data_out=sounds)
 
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
