@@ -18,12 +18,18 @@ def getlist(string, delimiter=',', stripwhitespace=True):
     return stringlist
 
 
+def defaultify(d):
+    if not isinstance(d, dict):
+        return d
+    return defaultdict(lambda: None, {k: defaultify(v) for k, v in d.items()})
+
+
 def readconfig(filename=GLOBALCONFIGFILEPATH):
     if filename.endswith(('.yml', '.yaml')):
         config = readconfig_yaml(filename)
     else:
         config = readconfig_ini(filename)
-    return defaultdict(lambda:None, config.items())
+    return defaultify(config)
 
 
 def readconfig_yaml(filename):
