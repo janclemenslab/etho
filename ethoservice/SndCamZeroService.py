@@ -7,7 +7,7 @@ from .ZeroService import BaseZeroService
 from .ZeroService.CamZeroService import CAM
 import zerorpc
 import time
-
+import sys
 
 class SCM(SoundZeroService):
 
@@ -48,6 +48,10 @@ class SCM(SoundZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(SCM())
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = SCM(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(SCM.SERVICE_PORT))
     s.run()

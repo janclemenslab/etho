@@ -1,18 +1,18 @@
 import time
-from etho.head.ZeroClient import ZeroClient
+from ethomaster.head.ZeroClient import ZeroClient
 from ethoservice.ThuZeroService import THU
-from etho import config
+from ethomaster import config
 
 
-ip_address = 'rpi8'
-ssh_address = '{0}@rpi8'.format(config['GENERAL']['user'])
-thu_server_name = 'python -m {0}'.format(THU.__module__)
+ser = 'pickle'
+ip_address = 'rpi5'
+ssh_address = '{0}@rpi5'.format(config['GENERAL']['user'])
+thu_server_name = 'python -m {0} {1}'.format(THU.__module__, ser)
 folder_name = config['GENERAL']['folder']
-thu_service_port = THU.SERVICE_PORT
 
-thu = ZeroClient(ssh_address)
+thu = ZeroClient(ssh_address, serializer=ser)
 thu.start_server(thu_server_name, folder_name, warmup=1)
-thu.connect("tcp://{0}:{1}".format(ip_address, thu_service_port))
+thu.connect("tcp://{0}:{1}".format(ip_address, THU.SERVICE_PORT))
 print([THU.SERVICE_PORT, THU.SERVICE_NAME])
 
 

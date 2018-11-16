@@ -6,6 +6,9 @@ from itertools import cycle
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster.utils.config import readconfig
+from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
+
 from ethoservice.SndZeroService import SND
 from ethoservice.CamZeroService import CAM
 from ethoservice.ThuZeroService import THU
@@ -14,18 +17,15 @@ from ethoservice.OptZeroService import OPT
 from ethoservice.DAQZeroService import DAQ
 from ethoservice.PTGZeroService import PTG
 
-from ethomaster.utils.sound import *
-from ethomaster.utils.config import readconfig
-
 
 def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     # load config/protocols
     prot = readconfig(protocolfile)
     print(prot)
-    maxduration = int(prot['NODE']['maxduration'])
+    maxduration = prot['NODE']['maxduration']
     user_name = prot['NODE']['user']
     folder_name = prot['NODE']['folder']
-    SER = 'pickle'
+    SER = prot['NODE']['serializer']
 
     # unique file name for video and node-local logs
     if filename is None:
@@ -34,12 +34,11 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     print(filename)
 
     if 'THU' in prot['NODE']['use_services']:
-        thu_server_name = 'python -m {0}'.format(THU.__module__)
-        thu_service_port = THU.SERVICE_PORT
+        thu_server_name = 'python -m {0} {1}'.format(THU.__module__, SER)
         print([THU.SERVICE_PORT, THU.SERVICE_NAME])
-        thu = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pithu')
+        thu = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pithu', serializer=SER)
         print(thu.start_server(thu_server_name, folder_name, warmup=1))
-        thu.connect("tcp://{0}:{1}".format(ip_address, thu_service_port))
+        thu.connect("tcp://{0}:{1}".format(ip_address,  THU.SERVICE_PORT))
         print('done')
         print(prot['THU']['pin'], prot['THU']['interval'], maxduration)
         thu.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
@@ -48,13 +47,11 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         thu.start()
 
     if 'CAM' in prot['NODE']['use_services']:
-        cam_server_name = 'python -m {0}'.format(CAM.__module__)
-        cam_service_port = CAM.SERVICE_PORT
-
+        cam_server_name = 'python -m {0} {1}'.format(CAM.__module__, SER)
         print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
-        cam = ZeroClient("{0}@{1}".format(user_name, ip_address), 'picam')
+        cam = ZeroClient("{0}@{1}".format(user_name, ip_address), 'picam', serializer=SER)
         print(cam.start_server(cam_server_name, folder_name, warmup=1))
-        cam.connect("tcp://{0}:{1}".format(ip_address, cam_service_port))
+        cam.connect("tcp://{0}:{1}".format(ip_address, CAM.SERVICE_PORT))
         print('done')
         cam.init_local_logger('{0}/{1}/{1}_cam.log'.format(dirname, filename))
         cam.setup('{0}/{1}/{1}.h264'.format(dirname, filename), maxduration + 10)
@@ -63,35 +60,35 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         time.sleep(5)
 
     if 'SND' in prot['NODE']['use_services']:
-        snd_server_name = 'python -m {0}'.format(SND.__module__)
-        snd_service_port = SND.SERVICE_PORT
-        fs = int(prot['SND']['samplingrate'])
-        shuffle_playback = bool(prot['SND']['shuffle'])
+        snd_server_name = 'python -m {0} {1}'.format(SND.__module__, SER)
+        fs = prot['SND']['samplingrate']
+        shuffle_playback = prot['SND']['shuffle']
+
         # load playlist, sounds, and enumerate play order
-        playlist = pd.read_table(playlistfile, dtype=None, delimiter='\t')
+        playlist = parse_table(playlistfile)
         print(config)
         sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
                     LEDamp=prot['SND']['ledamp'], stimfolder=config['HEAD']['stimfolder'])
+
+        # TODO: cast to int and scale up!!!
         playlist_items = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
         print([SND.SERVICE_PORT, SND.SERVICE_NAME])
-        snd = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pisnd')
+        snd = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pisnd', serializer=SER)
         print(snd.start_server(snd_server_name, folder_name, warmup=1))
-        snd.connect("tcp://{0}:{1}".format(ip_address, snd_service_port))
+        snd.connect("tcp://{0}:{1}".format(ip_address, SND.SERVICE_PORT))
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
-        # COMPRESS SOUNDS? use gzip
-        snd.setup(sounds, playlist.to_msgpack(), playlist_items, maxduration, fs)
+        snd.setup(sounds, playlist, playlist_items, maxduration, fs)
         snd.start()
 
     if 'OPT' in prot['NODE']['use_services']:
-        opt_server_name = 'python -m {0}'.format(OPT.__module__)
-        opt_service_port = OPT.SERVICE_PORT
+        opt_server_name = 'python -m {0} {1}'.format(OPT.__module__, SER)
         print([OPT.SERVICE_PORT, OPT.SERVICE_NAME])
-        opt = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt')
+        opt = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt', serializer=SER)
         print(opt.start_server(opt_server_name, folder_name, warmup=1))
-        opt.connect("tcp://{0}:{1}".format(ip_address, opt_service_port))
+        opt.connect("tcp://{0}:{1}".format(ip_address,  OPT.SERVICE_PORT))
         print('done')
         print(prot['OPT']['pin'], prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'], maxduration)
         opt.setup(prot['OPT']['pin'], maxduration, prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'])
@@ -99,29 +96,25 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         opt.start()
 
     if 'THUA' in prot['NODE']['use_services']:
-        thua_server_name = 'python -m {0}'.format(THUA.__module__)
-        thua_service_port = THUA.SERVICE_PORT
+        thua_server_name = 'python -m {0} {1}'.format(THUA.__module__, SER)
         print([THUA.SERVICE_PORT, THUA.SERVICE_NAME])
 
         thua = ZeroClient("{0}@{1}".format(user_name, ip_address), 'thuarduino')
-        # print(thua.start_server(thua_server_name, folder_name, warmup=1))
         subprocess.Popen(thua_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        thua.connect("tcp://{0}:{1}".format(ip_address, thua_service_port))
+        thua.connect("tcp://{0}:{1}".format(ip_address, THUA.SERVICE_PORT))
         print('done')
         print(prot['THUA'])
-        thua.setup(prot['THUA']['port'], float(prot['THUA']['interval']), maxduration + 10)
+        thua.setup(prot['THUA']['port'], prot['THUA']['interval'], maxduration + 10)
         thua.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
         thua.start()
 
     if 'PTG' in prot['NODE']['use_services']:
-        ptg_server_name = 'python -m {0}'.format(PTG.__module__)
-        ptg_service_port = PTG.SERVICE_PORT
+        ptg_server_name = 'python -m {0} {1}'.format(PTG.__module__, SER)
         print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
 
         ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'ptgcam')
-        # print(ptg.start_server(ptg_server_name, folder_name, warmup=1))
         subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        ptg.connect("tcp://{0}:{1}".format(ip_address, ptg_service_port))
+        ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
         print('done')
         ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, prot['PTG'])
         ptg.init_local_logger('{0}/{1}/{1}_ptg.log'.format(dirname, filename))
@@ -130,16 +123,12 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
     if 'DAQ' in prot['NODE']['use_services']:
         daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
-        daq_service_port = DAQ.SERVICE_PORT
 
-        fs = int(prot['DAQ']['samplingrate'])
-        shuffle_playback = eval(prot['DAQ']['shuffle'])
-        # load playlist, sounds, and enumerate play order
-        playlist = pd.read_table(playlistfile, dtype=None, delimiter='\t')
+        fs = prot['DAQ']['samplingrate']
+        shuffle_playback = prot['DAQ']['shuffle']
+        playlist = parse_table(playlistfile)
         sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
-                             LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'],
-                             mirrorsound=bool(int(prot['NODE'].get('mirrorsound', 1))),
-                             cast2int=False, aslist=False)
+                             LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'])
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
         if maxduration == -1:
             print(f'setting maxduration from playlist to {totallen}.')
@@ -148,25 +137,19 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         else:
             playlist_items = cycle(playlist_items)
 
-        if not isinstance(prot['DAQ']['analog_chans_in'], list):
-            prot['DAQ']['analog_chans_in'] = [prot['DAQ']['analog_chans_in']]
-        if not isinstance(prot['DAQ']['analog_chans_out'], list):
-            prot['DAQ']['analog_chans_out'] = [prot['DAQ']['analog_chans_out']]
-
         daq_save_filename = '{0}/{1}/{1}_daq_test.h5'.format(dirname, filename)
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
-        # print(daq.start_server(daq_server_name, folder_name, warmup=1))
+
         subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        daq.connect("tcp://{0}:{1}".format(ip_address, daq_service_port))
+        daq.connect("tcp://{0}:{1}".format(ip_address, DAQ.SERVICE_PORT))
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
-        # daq.setup(daq_save_filename, sounds, playlist.to_msgpack(), playlist_items, maxduration, fs, prot['DAQ'])
-        daq.setup(daq_save_filename, playlist_items, maxduration, fs, eval(prot['DAQ'].get('display', 'False')),
-                  analog_chans_out=prot['DAQ'].get('analog_chans_out', []),
-                  analog_chans_in=prot['DAQ'].get('analog_chans_in', []),
-                  analog_data_out=sounds)
 
+        daq.setup(daq_save_filename, playlist_items, maxduration, fs, prot['DAQ']['display'],
+                  analog_chans_out=prot['DAQ']['analog_chans_out'],
+                  analog_chans_in=prot['DAQ']['analog_chans_in'],
+                  analog_data_out=sounds)
 
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
         daq.start()

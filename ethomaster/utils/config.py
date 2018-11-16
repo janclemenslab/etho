@@ -1,22 +1,38 @@
 import pathlib
 import os
+from collections import defaultdict
+
+# Find global config file
 HOME = str(pathlib.Path.home())
-CTRLFILEPATH = os.path.join(HOME, 'ethoconfig.ini') # ~/.ethoconfig.ini
+GLOBALCONFIGFILEPATH = os.path.join(HOME, 'ethoconfig.yml')
+if not os.path.exists(GLOBALCONFIGFILEPATH):
+    GLOBALCONFIGFILEPATH = os.path.join(HOME, 'ethoconfig.ini') # ~/ethoconfig.ini
+if not os.path.exists(GLOBALCONFIGFILEPATH):
+    raise FileNotFoundError('no config file found. should be ~/ethoconfig.yml or ~/ethoconfig.yml')
 
 
 def getlist(string, delimiter=',', stripwhitespace=True):
+    """Parse [...] or (...) wrapped strings in ini file to a list or tuple."""
     stringlist = string.split(delimiter)
     if stripwhitespace:
         stringlist = [item.strip() for item in stringlist]
     return stringlist
 
 
-def readconfig(filename=CTRLFILEPATH):
+def defaultify(d, defaultfactory=lambda: None):
+    """Convert nested dict to defaultdict."""
+    if not isinstance(d, dict):
+        return d
+    return defaultdict(defaultfactory, {k: defaultify(v) for k, v in d.items()})
+
+
+def readconfig(filename=GLOBALCONFIGFILEPATH):
+    """Read ini or yaml config file, defaults to reading the global config."""
     if filename.endswith(('.yml', '.yaml')):
         config = readconfig_yaml(filename)
     else:
         config = readconfig_ini(filename)
-    return config
+    return defaultify(config)
 
 
 def readconfig_yaml(filename):
@@ -38,9 +54,6 @@ def readconfig_ini(filename):
         sectionDict = {}
         for item in sectionList:
             is_list = ',' in item[1]
-            # is_list = item[1].strip().startswith('[') and item[1].strip().endswith(']')
-            # item[1] = item[1].strip()[1:-2]
-
             is_tuple = '(' in item[1] and ')' in item[1]
             if is_list and not is_tuple:
                 sectionDict[item[0]] = getlist(item[1])
@@ -48,8 +61,3 @@ def readconfig_ini(filename):
                 sectionDict[item[0]] = item[1]
         configDict[section] = sectionDict
     return configDict
-
-
-
-if __name__ == '__main__':
-    print(readconfig())

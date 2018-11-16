@@ -3,6 +3,7 @@ import threading
 from .ZeroService import BaseZeroService
 import zerorpc
 import time
+import sys
 try:
     import gpiozero
 except Exception as e:
@@ -80,6 +81,10 @@ class REL(BaseZeroService):
 
 
 if __name__ == '__main__':
-    s = zerorpc.Server(REL())
+    if len(sys.argv) > 1:
+        ser = sys.argv[1]
+    else:
+        ser = 'default'
+    s = REL(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(REL.SERVICE_PORT))
     s.run()
