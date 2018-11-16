@@ -66,6 +66,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
                          attenuation=config['ATTENUATION'],
                          LEDamp=prot['DAQ']['led_amp'],
                          stimfolder=config['HEAD']['stimfolder'])
+    sounds = [sound.astype(np.float64) for sound in sounds]
     playlist_items, totallen = build_playlist(sounds, maxduration, fs,
                                               shuffle=prot['DAQ']['shuffle'])
 

@@ -129,6 +129,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         playlist = parse_table(playlistfile)
         sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
                              LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'])
+        sounds = [sound.astype(np.float64) for sound in sounds]
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
         if maxduration == -1:
             print(f'setting maxduration from playlist to {totallen}.')
