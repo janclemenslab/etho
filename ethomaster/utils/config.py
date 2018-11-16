@@ -2,7 +2,7 @@ import pathlib
 import os
 from collections import defaultdict
 
-# find_global_config_file():
+# Find global config file
 HOME = str(pathlib.Path.home())
 GLOBALCONFIGFILEPATH = os.path.join(HOME, 'ethoconfig.yml')
 if not os.path.exists(GLOBALCONFIGFILEPATH):
@@ -12,19 +12,22 @@ if not os.path.exists(GLOBALCONFIGFILEPATH):
 
 
 def getlist(string, delimiter=',', stripwhitespace=True):
+    """Parse [...] or (...) wrapped strings in ini file to a list or tuple."""
     stringlist = string.split(delimiter)
     if stripwhitespace:
         stringlist = [item.strip() for item in stringlist]
     return stringlist
 
 
-def defaultify(d):
+def defaultify(d, defaultfactory=lambda: None):
+    """Convert nested dict to defaultdict."""
     if not isinstance(d, dict):
         return d
-    return defaultdict(lambda: None, {k: defaultify(v) for k, v in d.items()})
+    return defaultdict(defaultfactory, {k: defaultify(v) for k, v in d.items()})
 
 
 def readconfig(filename=GLOBALCONFIGFILEPATH):
+    """Read ini or yaml config file, defaults to reading the global config."""
     if filename.endswith(('.yml', '.yaml')):
         config = readconfig_yaml(filename)
     else:
@@ -51,9 +54,6 @@ def readconfig_ini(filename):
         sectionDict = {}
         for item in sectionList:
             is_list = ',' in item[1]
-            # is_list = item[1].strip().startswith('[') and item[1].strip().endswith(']')
-            # item[1] = item[1].strip()[1:-2]
-
             is_tuple = '(' in item[1] and ')' in item[1]
             if is_list and not is_tuple:
                 sectionDict[item[0]] = getlist(item[1])
