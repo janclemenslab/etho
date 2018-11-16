@@ -34,12 +34,11 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     print(filename)
 
     if 'THU' in prot['NODE']['use_services']:
-        thu_server_name = 'python -m {0}'.format(THU.__module__)
-        thu_service_port = THU.SERVICE_PORT
+        thu_server_name = 'python -m {0} {1}'.format(THU.__module__, SER)
         print([THU.SERVICE_PORT, THU.SERVICE_NAME])
-        thu = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pithu')
+        thu = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pithu', serializer=SER)
         print(thu.start_server(thu_server_name, folder_name, warmup=1))
-        thu.connect("tcp://{0}:{1}".format(ip_address, thu_service_port))
+        thu.connect("tcp://{0}:{1}".format(ip_address,  THU.SERVICE_PORT))
         print('done')
         print(prot['THU']['pin'], prot['THU']['interval'], maxduration)
         thu.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
@@ -48,13 +47,11 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         thu.start()
 
     if 'CAM' in prot['NODE']['use_services']:
-        cam_server_name = 'python -m {0}'.format(CAM.__module__)
-        cam_service_port = CAM.SERVICE_PORT
-
+        cam_server_name = 'python -m {0} {1}'.format(CAM.__module__, SER)
         print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
-        cam = ZeroClient("{0}@{1}".format(user_name, ip_address), 'picam')
+        cam = ZeroClient("{0}@{1}".format(user_name, ip_address), 'picam', serializer=SER)
         print(cam.start_server(cam_server_name, folder_name, warmup=1))
-        cam.connect("tcp://{0}:{1}".format(ip_address, cam_service_port))
+        cam.connect("tcp://{0}:{1}".format(ip_address, CAM.SERVICE_PORT))
         print('done')
         cam.init_local_logger('{0}/{1}/{1}_cam.log'.format(dirname, filename))
         cam.setup('{0}/{1}/{1}.h264'.format(dirname, filename), maxduration + 10)
@@ -63,35 +60,35 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         time.sleep(5)
 
     if 'SND' in prot['NODE']['use_services']:
-        snd_server_name = 'python -m {0}'.format(SND.__module__)
-        snd_service_port = SND.SERVICE_PORT
-        fs = int(prot['SND']['samplingrate'])
-        shuffle_playback = bool(prot['SND']['shuffle'])
+        snd_server_name = 'python -m {0} {1}'.format(SND.__module__, SER)
+        fs = prot['SND']['samplingrate']
+        shuffle_playback = prot['SND']['shuffle']
+
         # load playlist, sounds, and enumerate play order
-        playlist = pd.read_table(playlistfile, dtype=None, delimiter='\t')
+        playlist = parse_table(playlistfile)
         print(config)
         sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
                     LEDamp=prot['SND']['ledamp'], stimfolder=config['HEAD']['stimfolder'])
+
+        # TODO: cast to int and scale up!!!
         playlist_items = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
         print([SND.SERVICE_PORT, SND.SERVICE_NAME])
-        snd = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pisnd')
+        snd = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pisnd', serializer=SER)
         print(snd.start_server(snd_server_name, folder_name, warmup=1))
-        snd.connect("tcp://{0}:{1}".format(ip_address, snd_service_port))
+        snd.connect("tcp://{0}:{1}".format(ip_address, SND.SERVICE_PORT))
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
-        # COMPRESS SOUNDS? use gzip
-        snd.setup(sounds, playlist.to_msgpack(), playlist_items, maxduration, fs)
+        snd.setup(sounds, playlist, playlist_items, maxduration, fs)
         snd.start()
 
     if 'OPT' in prot['NODE']['use_services']:
-        opt_server_name = 'python -m {0}'.format(OPT.__module__)
-        opt_service_port = OPT.SERVICE_PORT
+        opt_server_name = 'python -m {0} {1}'.format(OPT.__module__, SER)
         print([OPT.SERVICE_PORT, OPT.SERVICE_NAME])
-        opt = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt')
+        opt = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt', serializer=SER)
         print(opt.start_server(opt_server_name, folder_name, warmup=1))
-        opt.connect("tcp://{0}:{1}".format(ip_address, opt_service_port))
+        opt.connect("tcp://{0}:{1}".format(ip_address,  OPT.SERVICE_PORT))
         print('done')
         print(prot['OPT']['pin'], prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'], maxduration)
         opt.setup(prot['OPT']['pin'], maxduration, prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'])
@@ -99,7 +96,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         opt.start()
 
     if 'THUA' in prot['NODE']['use_services']:
-        thua_server_name = 'python -m {0}'.format(THUA.__module__, SER)
+        thua_server_name = 'python -m {0} {1}'.format(THUA.__module__, SER)
         print([THUA.SERVICE_PORT, THUA.SERVICE_NAME])
 
         thua = ZeroClient("{0}@{1}".format(user_name, ip_address), 'thuarduino')
@@ -112,7 +109,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         thua.start()
 
     if 'PTG' in prot['NODE']['use_services']:
-        ptg_server_name = 'python -m {0}'.format(PTG.__module__, SER)
+        ptg_server_name = 'python -m {0} {1}'.format(PTG.__module__, SER)
         print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
 
         ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'ptgcam')
