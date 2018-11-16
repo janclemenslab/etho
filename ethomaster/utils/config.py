@@ -1,5 +1,6 @@
 import pathlib
 import os
+from collections import defaultdict
 
 # find_global_config_file():
 HOME = str(pathlib.Path.home())
@@ -22,7 +23,7 @@ def readconfig(filename=GLOBALCONFIGFILEPATH):
         config = readconfig_yaml(filename)
     else:
         config = readconfig_ini(filename)
-    return config
+    return defaultdict(lambda:None, config.items())
 
 
 def readconfig_yaml(filename):
