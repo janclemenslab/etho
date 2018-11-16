@@ -15,7 +15,7 @@
 - [ ] make gui more responsive through async
 - [ ] make protocols editable so small changes are more easily done (use traisui)
 - [ ] refactor? ethoservice->services, ethomaster->master?
-- [.] switch over to yaml for config reading (since this will preserve types)
+- [x] switch over to yaml for config reading (since this will preserve types)
 - [x] installation instructions (where to copy `.ethoconfig.ini`)
 - [x] copy ethoservice wiki
 - [x] switch over to new zerorpc and pickle on localhost tasks
