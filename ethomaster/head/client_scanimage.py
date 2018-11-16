@@ -1,6 +1,5 @@
 import time
 import numpy as np
-import pandas as pd
 import subprocess
 import defopt
 from itertools import cycle
@@ -9,6 +8,7 @@ from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 from ethomaster.utils.config import readconfig
+
 from ethoservice.DAQZeroService import DAQ
 from ethoservice.NITriggerZeroService import NIT
 
@@ -52,6 +52,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
 
     prot = readconfig(protocolfile)
     maxduration = prot['NODE']['maxduration']
+    fs = prot['DAQ']['samplingrate']
     SER = prot['NODE']['serializer']
     ip_address = 'localhost'
 
@@ -59,24 +60,23 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     print('sent START')
     daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
 
-    fs = prot['DAQ']['samplingrate']
     # load playlist, sounds, and enumerate play order
-    playlist = parse_table(playlistfile)#pd.read_table(playlistfile, dtype=None, delimiter='\t')
-    sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
-                LEDamp=prot['DAQ']['led_amp'], stimfolder=config['HEAD']['stimfolder'])
-    playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle= prot['DAQ']['shuffle'])
+    playlist = parse_table(playlistfile)
+    sounds = load_sounds(playlist, fs,
+                         attenuation=config['ATTENUATION'],
+                         LEDamp=prot['DAQ']['led_amp'],
+                         stimfolder=config['HEAD']['stimfolder'])
+    playlist_items, totallen = build_playlist(sounds, maxduration, fs,
+                                              shuffle=prot['DAQ']['shuffle'])
 
-    # get digital pattern from analog_data_out - duplicate analog_data_out, add next trigger at beginning of each sound
+    # get digital pattern from analog_data_out - duplicate analog_data_out,
     triggers = list()
     for sound in sounds:
-        this_trigger = np.zeros((sound.shape[0], len(prot['DAQ'].get('digital_chans_out', []))), dtype=np.uint8)
-        # if len(np_triggers) == 0:
-        #     this_trigger[:5, 0] = 1  # START on first
-        if len(triggers) == len(sounds)-1:
-            this_trigger[-5:, 1] = 1  # STOP on last
-        else:
-            this_trigger[:5, 2] = 1  # NEXT
-        this_trigger[:5, 2] = 1  # NEXT
+        nb_digital_chans_out = len(prot['DAQ']['digital_chans_out'])
+        this_trigger = np.zeros((sound.shape[0], nb_digital_chans_out), dtype=np.uint8)
+        this_trigger[:5, 2] = 1  # add NEXT trigger at beginning of each sound,
+        if len(triggers) == len(sounds) - 1:  # add STOP trigger at end of last sound
+            this_trigger[-5:, 1] = 1
         triggers.append(this_trigger.astype(np.uint8))
 
     if maxduration == -1:
@@ -97,10 +97,10 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     else:
         daq_save_filename = None
 
-    daq.setup(daq_save_filename, playlist_items, maxduration, fs, prot['DAQ'].get('display', 'False'),
-              analog_chans_out=prot['DAQ'].get('analog_chans_out', []),
-              analog_chans_in=prot['DAQ'].get('analog_chans_in', []),
-              digital_chans_out=prot['DAQ'].get('digital_chans_out', []),
+    daq.setup(daq_save_filename, playlist_items, maxduration, fs, prot['DAQ']['display'],
+              analog_chans_out=prot['DAQ']['analog_chans_out'],
+              analog_chans_in=prot['DAQ']['analog_chans_in'],
+              digital_chans_out=prot['DAQ']['digital_chans_out'],
               analog_data_out=sounds,
               digital_data_out=triggers)
     if save:
