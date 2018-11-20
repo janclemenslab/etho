@@ -1,6 +1,6 @@
-from typing import Callable, List, Union
+from typing import Callable, List, Union, Dict
 import os
-
+import random
 import numpy as np
 import pandas as pd
 import scipy.io.wavfile as wav
@@ -111,7 +111,20 @@ def build_playlist(soundlist, duration, fs, shuffle=True):
     return playlist_items, totallen
 
 
-def load_sounds(playlist: pd.DataFrame, fs: float, attenuation=None,
+def shuffled_cycle(iterable):
+    # cycle('ABCD') --> A B C D A B C D A B C D ...
+    saved = []
+    random.shuffle(list(iterable))  # in-place shuffle
+    for element in iterable:
+        yield element
+        saved.append(element)
+    while saved:
+        random.shuffle(saved)  # in-place shuffle
+        for element in saved:
+              yield element
+
+
+def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, float]=None,
                 LEDamp: float=1.0, stimfolder: str='./', cast2int: bool=False, aslist: bool=False):
     sounddata = []
     for row_name, listitem in playlist.iterrows():
