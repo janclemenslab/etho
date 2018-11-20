@@ -5,7 +5,12 @@ import zerorpc  # for starting service in `main()`
 import time    # for timer
 import threading
 import sys
-import PyDAQmx as daq
+try:
+    import PyDAQmx as daq
+except ImportError as e:
+    print('IGNORE IF ON HEAD')
+    print(e)
+
 import numpy as np
 
 

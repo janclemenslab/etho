@@ -6,7 +6,7 @@ from itertools import cycle
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
-from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
+from ethomaster.utils.sound import parse_table, load_sounds, build_playlist, shuffled_cycle
 from ethomaster.utils.config import readconfig
 
 from ethoservice.DAQZeroService import DAQ
@@ -39,7 +39,7 @@ def trigger(trigger_name):
     sp.kill()
 
 
-def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: str, save: bool=False):
+def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: str, save: bool=False, shuffle: bool=False):
     # load config/protocols
     print(filename)
     print(filecounter)
@@ -83,9 +83,10 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     if maxduration == -1:
         print(f'setting maxduration from playlist to {totallen}.')
         maxduration = totallen
-        playlist_items = cycle(playlist_items)  # iter(playlist_items)
+    if shuffle:
+        playlist_items = shuffled_cycle(playlist_items)  # iter(playlist_items)
     else:
-        playlist_items = cycle(playlist_items)
+        playlist_items = cycle(playlist_items)  # iter(playlist_items)
 
     print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
     daq = ZeroClient(ip_address, 'nidaq', serializer=SER)
