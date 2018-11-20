@@ -30,8 +30,8 @@ def trigger(trigger_name):
         # nit.init_local_logger('{0}/{1}_nit.log'.format(dirname, filename))
         print('sending START')
         nit.send_trigger(trigger_types[trigger_name])
-    except:
-        pass
+    except Exception as e:
+        print(e)
     nit.finish()
     nit.stop_server()
     del(nit)
@@ -55,9 +55,9 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     fs = prot['DAQ']['samplingrate']
     SER = prot['NODE']['serializer']
     ip_address = 'localhost'
-
     trigger('START')
     print('sent START')
+
     daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
 
     # load playlist, sounds, and enumerate play order
@@ -76,7 +76,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         nb_digital_chans_out = len(prot['DAQ']['digital_chans_out'])
         this_trigger = np.zeros((sound.shape[0], nb_digital_chans_out), dtype=np.uint8)
         this_trigger[:5, 2] = 1  # add NEXT trigger at beginning of each sound,
-        if len(triggers) == len(sounds) - 1:  # add STOP trigger at end of last sound
+        if len(triggers) == len(sounds):  # add STOP trigger at end of last sound
             this_trigger[-5:, 1] = 1
         triggers.append(this_trigger.astype(np.uint8))
 
@@ -113,8 +113,8 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         time.sleep(1)
         t1 = time.clock()
         print(f'   Busy {t1-t0:1.2f} seconds.\r', end='', flush=True)
-
     # send STOP trigger here
+    time.sleep(1)
     trigger('STOP')
     print('sent STOP')
 
