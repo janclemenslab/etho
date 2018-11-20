@@ -6,7 +6,7 @@ from itertools import cycle
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
-from ethomaster.utils.sound import parse_table, load_sounds, build_playlist, shuffled_cycle
+from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 from ethomaster.utils.shuffled_cycle import shuffled_cycle
 from ethomaster.utils.config import readconfig
 
@@ -40,19 +40,22 @@ def trigger(trigger_name):
     sp.kill()
 
 
-def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: str, save: bool=False, shuffle: bool=False):
+def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: str,
+             save: bool=False, shuffle: bool=False, loop: bool=False):
     # load config/protocols
     print(filename)
     print(filecounter)
     print(protocolfile)
     print(playlistfile)
-    print(save)
+    print('save', save)
+    print('shuffle', shuffle)
+    print('loop', loop)
 
     if protocolfile.partition('.')[-1] not in ['yml', 'yaml']:
         raise ValueError('protocol must be a yaml file (end in yml or yaml).')
 
     prot = readconfig(protocolfile)
-    maxduration = prot['NODE']['maxduration']
+    # maxduration = prot['NODE']['maxduration']
     fs = prot['DAQ']['samplingrate']
     SER = prot['NODE']['serializer']
     ip_address = 'localhost'
@@ -68,6 +71,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
                          LEDamp=prot['DAQ']['led_amp'],
                          stimfolder=config['HEAD']['stimfolder'])
     sounds = [sound.astype(np.float64) for sound in sounds]
+    maxduration = -1
     playlist_items, totallen = build_playlist(sounds, maxduration, fs,
                                               shuffle=prot['DAQ']['shuffle'])
 
@@ -81,9 +85,13 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
             this_trigger[-5:, 1] = 1
         triggers.append(this_trigger.astype(np.uint8))
 
-    if maxduration == -1:
+    if not loop:
         print(f'setting maxduration from playlist to {totallen}.')
         maxduration = totallen
+    else:
+        print(f'endless playback.')
+        maxduration = -1
+
     if shuffle:
         playlist_items = shuffled_cycle(playlist_items, shuffle='block')  # iter(playlist_items)
     else:
