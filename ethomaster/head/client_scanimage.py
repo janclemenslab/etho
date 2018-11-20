@@ -41,15 +41,16 @@ def trigger(trigger_name):
 
 
 def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: str,
-             save: bool=False, shuffle: bool=False, loop: bool=False):
+             save: bool=False, shuffle: bool=False, loop: bool=False, selected_stim: int=None):
     # load config/protocols
     print(filename)
     print(filecounter)
     print(protocolfile)
     print(playlistfile)
-    print('save', save)
-    print('shuffle', shuffle)
-    print('loop', loop)
+    print('save:', save)
+    print('shuffle:', shuffle)
+    print('loop:', loop)
+    print('selected stim:', selected_stim)
 
     if protocolfile.partition('.')[-1] not in ['yml', 'yaml']:
         raise ValueError('protocol must be a yaml file (end in yml or yaml).')
@@ -66,6 +67,9 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
 
     # load playlist, sounds, and enumerate play order
     playlist = parse_table(playlistfile)
+    if selected_stim:
+        playlist = playlist.iloc[selected_stim-1:selected_stim]
+    print(playlist)
     sounds = load_sounds(playlist, fs,
                          attenuation=config['ATTENUATION'],
                          LEDamp=prot['DAQ']['led_amp'],
