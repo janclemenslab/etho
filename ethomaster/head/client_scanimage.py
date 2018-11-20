@@ -7,6 +7,7 @@ from itertools import cycle
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist, shuffled_cycle
+from ethomaster.utils.shuffled_cycle import shuffled_cycle
 from ethomaster.utils.config import readconfig
 
 from ethoservice.DAQZeroService import DAQ
@@ -84,7 +85,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         print(f'setting maxduration from playlist to {totallen}.')
         maxduration = totallen
     if shuffle:
-        playlist_items = shuffled_cycle(playlist_items)  # iter(playlist_items)
+        playlist_items = shuffled_cycle(playlist_items, shuffle='block')  # iter(playlist_items)
     else:
         playlist_items = cycle(playlist_items)  # iter(playlist_items)
 
