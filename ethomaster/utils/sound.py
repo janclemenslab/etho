@@ -10,6 +10,7 @@ import scipy.signal
 def parse_cell(cell, dtype: Callable=None) -> List:
     """Cast cell to desired type and wrap into list."""
     if isinstance(cell, str):
+        cell = cell.strip()
         token = cell.lstrip('[').rstrip(']').split(',')
         token = [tok.strip() for tok in token]
         if dtype:
@@ -32,7 +33,6 @@ def parse_table(table: Union[pd.DataFrame, str],
     """
     if isinstance(table, str):
         table = pd.read_table(table, dtype=None, delimiter='\t')
-
     tb = table.values
     for row, row_values in enumerate(tb):
         for col, cell in enumerate(row_values):
