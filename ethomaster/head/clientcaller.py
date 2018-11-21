@@ -138,7 +138,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         else:
             playlist_items = cycle(playlist_items)
 
-        daq_save_filename = '{0}/{1}/{1}_daq_test.h5'.format(dirname, filename)
+        daq_save_filename = '{0}/{1}/{1}_daq.h5'.format(dirname, filename)
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
 
