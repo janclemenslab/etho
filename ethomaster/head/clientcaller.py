@@ -98,8 +98,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     if 'THUA' in prot['NODE']['use_services']:
         thua_server_name = 'python -m {0} {1}'.format(THUA.__module__, SER)
         print([THUA.SERVICE_PORT, THUA.SERVICE_NAME])
-
-        thua = ZeroClient("{0}@{1}".format(user_name, ip_address), 'thuarduino')
+        thua = ZeroClient("{0}@{1}".format(user_name, ip_address), 'thuarduino', serializer=SER)
         subprocess.Popen(thua_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         thua.connect("tcp://{0}:{1}".format(ip_address, THUA.SERVICE_PORT))
         print('done')
@@ -111,12 +110,14 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     if 'PTG' in prot['NODE']['use_services']:
         ptg_server_name = 'python -m {0} {1}'.format(PTG.__module__, SER)
         print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
+        import ipdb; ipdb.set_trace()
 
-        ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'ptgcam')
+        ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'ptgcam', serializer=SER)
         subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
         print('done')
-        ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, prot['PTG'])
+        cam_params = dict(prot['PTG'])
+        ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
         ptg.init_local_logger('{0}/{1}/{1}_ptg.log'.format(dirname, filename))
         ptg.start()
         time.sleep(5)
