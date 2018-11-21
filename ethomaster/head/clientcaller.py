@@ -153,7 +153,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         if not isinstance(prot['DAQ']['analog_chans_out'], list):
             prot['DAQ']['analog_chans_out'] = [prot['DAQ']['analog_chans_out']]
 
-        daq_save_filename = '{0}/{1}/{1}_daq_test.h5'.format(dirname, filename)
+        daq_save_filename = '{0}/{1}/{1}_daq.h5'.format(dirname, filename)
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
         # print(daq.start_server(daq_server_name, folder_name, warmup=1))
