@@ -64,6 +64,7 @@ class IOTask(daq.Task):
             self.CreateAOVoltageChan(self.cha_string, "", -limits, limits, DAQmx_Val_Volts, None)
             self.AutoRegisterEveryNSamplesEvent(DAQmx_Val_Transferred_From_Buffer, self.num_samples_per_event, 0)
             self.CfgOutputBuffer(self.num_samples_per_chan * self.num_channels * 2)
+            # self.CfgOutputBuffer(self.num_samples_per_chan)
             # ensures continuous output and avoids collision of old and new data in buffer
             self.SetWriteRegenMode(DAQmx_Val_DoNotAllowRegen)
             clock_source = 'ai/SampleClock'# 'OnboardClock'  # None  # use internal clock
@@ -86,7 +87,16 @@ class IOTask(daq.Task):
         self._data_lock = threading.Lock()
         self._newdata_event = threading.Event()
         if 'output' in self.cha_type[0]:
-            self.EveryNCallback()  # fill buffer on init
+            # if self.cha_type[0] is "analog_output":
+            #     self._data = np.zeros((self.num_samples_per_chan * self.num_channels * 2, self.num_channels)).astype(np.float64)
+            #     self.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
+            #                         self._data, daq.byref(self.samples_read), None)
+            # elif self.cha_type[0] is 'digital_output':
+            #     self._data = np.zeros((self.num_samples_per_chan * self.num_channels * 2, self.num_channels)).astype(np.uint8)
+            #     self.WriteDigitalLines(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
+            #                            self._data, daq.byref(self.samples_read), None)
+            self.EveryNCallback()
+
 
     def __repr__(self):
         return '{0}: {1}'.format(self.cha_type[0], self.cha_string)
@@ -258,8 +268,17 @@ def data(channels=1):
 @coroutine
 def data_playlist(sounds, play_order):
     """sounds - list of nparrays"""
+    first_run = True
     try:
         while play_order:
-            yield sounds[next(play_order)]
+            # duplicate first stim - otherwise we miss the first in the playlist
+            if first_run:
+                pp = 0
+                first_run = False
+            else:
+                pp = next(play_order)
+            stim = sounds[pp]
+            print('stim', pp, np.max(stim))
+            yield stim
     except GeneratorExit:
         print("   cleaning up datagen.")
