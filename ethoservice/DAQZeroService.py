@@ -6,6 +6,7 @@ import time     # for timer
 import threading
 import os
 import sys
+import copy
 from typing import Iterable, Sequence
 
 
@@ -43,13 +44,13 @@ class DAQ(BaseZeroService):
             self.taskAO = IOTask(cha_name=self.analog_chans_out)
             if analog_data_out[0].shape[-1] is not len(self.analog_chans_out):
                 raise ValueError(f'Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]}).')
-            self.taskAO.data_gen = data_playlist(analog_data_out, play_order)  # generator function that yields data upon request
+            self.taskAO.data_gen = data_playlist(analog_data_out, copy.deepcopy(play_order))  # generator function that yields data upon request
             self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             print(self.taskAO)
         # DIGITAL OUTPUT
         if self.digital_chans_out:
             self.taskDO = IOTask(cha_name=self.digital_chans_out)
-            self.taskDO.data_gen = data_playlist(digital_data_out, play_order)
+            self.taskDO.data_gen = data_playlist(digital_data_out, copy.deepcopy(play_order))
             self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             print(self.taskDO)
         # ANALOG INPUT
