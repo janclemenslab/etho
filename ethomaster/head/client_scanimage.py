@@ -100,7 +100,6 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         playlist_items = shuffled_cycle(playlist_items, shuffle='block')  # iter(playlist_items)
     else:
         playlist_items = cycle(playlist_items)  # iter(playlist_items)
-
     print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
     daq = ZeroClient(ip_address, 'nidaq', serializer=SER)
     sp = subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
@@ -111,8 +110,9 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         daq_save_filename = '{0}_daq_test.h5'.format(filename)
     else:
         daq_save_filename = None
-
-    daq.setup(daq_save_filename, playlist_items, maxduration, fs, prot['DAQ']['display'],
+    print(daq_save_filename)
+    daq.setup(daq_save_filename, playlist_items, playlist,
+              maxduration, fs, prot['DAQ']['display'],
               analog_chans_out=prot['DAQ']['analog_chans_out'],
               analog_chans_in=prot['DAQ']['analog_chans_in'],
               digital_chans_out=prot['DAQ']['digital_chans_out'],

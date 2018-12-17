@@ -266,7 +266,7 @@ def data(channels=1):
 
 
 @coroutine
-def data_playlist(sounds, play_order):
+def data_playlist(sounds, play_order, ):
     """sounds - list of nparrays"""
     first_run = True
     try:
@@ -278,7 +278,36 @@ def data_playlist(sounds, play_order):
             else:
                 pp = next(play_order)
             stim = sounds[pp]
-            print('stim', pp, np.max(stim))
+            # print('stim', pp, np.max(stim))
+            yield stim
+    except GeneratorExit:
+        print("   cleaning up datagen.")
+
+
+@coroutine
+def data_playlist_logging(sounds, play_order, playlist_info=None, logger=None):
+    """sounds - list of nparrays"""
+    first_run = True
+    run_cnt = 0
+    playlist_cnt = 0
+    try:
+        while play_order:
+            run_cnt += 1
+            print(run_cnt)
+            # duplicate first stim - otherwise we miss the first in the playlist
+            if first_run:
+                pp = 0
+                first_run = False
+                print(f'{run_cnt}: WARMUP PHASE - not logging stim {pp}.')
+            else:
+                pp = next(play_order)
+                playlist_cnt += 1
+                print(f'{run_cnt}: consuming playlist: {pp}')
+                if playlist_info is not None:
+                    print(f'{playlist_cnt}: {playlist_info.loc[pp].stimFileName}')
+                    if logger:
+                        logger.info(f'{playlist_cnt}: {playlist_info.loc[pp].stimFileName}')
+            stim = sounds[pp]
             yield stim
     except GeneratorExit:
         print("   cleaning up datagen.")
