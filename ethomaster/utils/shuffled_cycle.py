@@ -30,7 +30,7 @@ class shuffled_cycle(cycle):
         """Return next item in iterator."""
         self._pos = (self._pos+1) % len(self._it)  # wrap index
         if self._shuffle is 'block':
-            if self._pos==0:
+            if self._pos == 0:
                 random.shuffle(self._it)  # in-place shuffle the iterator
             idx = self._pos
         elif self._shuffle is 'full':
@@ -38,3 +38,8 @@ class shuffled_cycle(cycle):
         # else:
         #     idx = self._pos
         return self._it[idx]
+
+    def __deepcopy__(self, memo=None):
+        cp = shuffled_cycle(self._it, shuffle=self._shuffle)
+        cp._pos = self._pos
+        return cp
