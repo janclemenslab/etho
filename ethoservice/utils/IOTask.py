@@ -87,14 +87,6 @@ class IOTask(daq.Task):
         self._data_lock = threading.Lock()
         self._newdata_event = threading.Event()
         if 'output' in self.cha_type[0]:
-            # if self.cha_type[0] is "analog_output":
-            #     self._data = np.zeros((self.num_samples_per_chan * self.num_channels * 2, self.num_channels)).astype(np.float64)
-            #     self.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
-            #                         self._data, daq.byref(self.samples_read), None)
-            # elif self.cha_type[0] is 'digital_output':
-            #     self._data = np.zeros((self.num_samples_per_chan * self.num_channels * 2, self.num_channels)).astype(np.uint8)
-            #     self.WriteDigitalLines(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
-            #                            self._data, daq.byref(self.samples_read), None)
             self.EveryNCallback()
 
 
@@ -161,24 +153,31 @@ def plot(disp_queue, channels: int=3):
     fig.canvas.start_event_loop(0.001)  # otherwise plot freezes after 3-4 iterations
     bgrd = [fig.canvas.copy_from_bbox(this_ax.bbox) for this_ax in ax]
     points = [this_ax.plot(np.arange(10000), np.zeros((10000, 1)))[0] for this_ax in ax] # init plot content
+    [this_ax.set_ylim(-5, 5) for this_ax in ax] # init plot content
+
     RUN = True
     while RUN:
-        if disp_queue.poll(0.1):
-            data = disp_queue.recv()
-            if data is not None:
-                # print("    plotting {0}".format(data[0].shape))
-                # for chn in range(data[0].shape[1]):
-                for chn in range(data[0].shape[1]):#range(0, 3):
-                    fig.canvas.restore_region(bgrd[chn])  # restore background
-                    points[chn].set_data(np.arange(10000), data[0][:10000, chn])
-                    ax[chn].draw_artist(points[chn])           # redraw just the points
-                    fig.canvas.blit(ax[chn].bbox)         # fill in the axes rectangle
-                    ax[chn].relim()
-                    ax[chn].autoscale_view()                 # rescale the y-axis
-                fig.canvas.draw()
-                fig.canvas.flush_events()
-            else:
-                RUN = False
+        try:
+            if disp_queue.poll(0.1):
+                data = disp_queue.recv()
+                if data is not None:
+                    # print("    plotting {0}".format(data[0].shape))
+                    # for chn in range(data[0].shape[1]):
+                    nb_samples = data[0].shape[0]
+                    x = np.arange(nb_samples)
+                    for cnt, chn in enumerate([0, 1, 2, 3, 4]):
+                        fig.canvas.restore_region(bgrd[cnt])  # restore background
+                        points[cnt].set_data(x, data[0][:nb_samples, chn])
+                        ax[cnt].draw_artist(points[cnt])  # redraw just the points
+                        fig.canvas.blit(ax[cnt].bbox)  # fill in the axes rectangle
+                        # ax[cnt].relim()
+                        # ax[cnt].autoscale_view()                 # rescale the y-axis
+                    fig.canvas.draw()
+                    fig.canvas.flush_events()
+                else:
+                    RUN = False
+        except Exception as e:
+                print(e)
     # clean up
     print("   closing plot")
     plt.close(fig)
@@ -266,26 +265,7 @@ def data(channels=1):
 
 
 @coroutine
-def data_playlist(sounds, play_order, ):
-    """sounds - list of nparrays"""
-    first_run = True
-    try:
-        while play_order:
-            # duplicate first stim - otherwise we miss the first in the playlist
-            if first_run:
-                pp = 0
-                first_run = False
-            else:
-                pp = next(play_order)
-            stim = sounds[pp]
-            # print('stim', pp, np.max(stim))
-            yield stim
-    except GeneratorExit:
-        print("   cleaning up datagen.")
-
-
-@coroutine
-def data_playlist_logging(sounds, play_order, playlist_info=None, logger=None):
+def data_playlist(sounds, play_order, playlist_info=None, logger=None, name='standard'):
     """sounds - list of nparrays"""
     first_run = True
     run_cnt = 0
@@ -293,21 +273,26 @@ def data_playlist_logging(sounds, play_order, playlist_info=None, logger=None):
     try:
         while play_order:
             run_cnt += 1
-            print(run_cnt)
             # duplicate first stim - otherwise we miss the first in the playlist
             if first_run:
                 pp = 0
                 first_run = False
-                print(f'{run_cnt}: WARMUP PHASE - not logging stim {pp}.')
             else:
                 pp = next(play_order)
                 playlist_cnt += 1
-                print(f'{run_cnt}: consuming playlist: {pp}')
                 if playlist_info is not None:
-                    print(f'{playlist_cnt}: {playlist_info.loc[pp].stimFileName}')
+                    msg = _format_playlist(playlist_info.loc[pp], playlist_cnt)
+                    print(f'\n{msg}')
                     if logger:
-                        logger.info(f'{playlist_cnt}: {playlist_info.loc[pp].stimFileName}')
+                        logger.info(msg)
             stim = sounds[pp]
             yield stim
     except GeneratorExit:
-        print("   cleaning up datagen.")
+        print(f"   {name} cleaning up datagen.")
+
+
+def _format_playlist(playlist, cnt):
+    string = f'cnt: {cnt}, '
+    for key, val in playlist.items():
+        string += f'{key}: {val}, '
+    return string
