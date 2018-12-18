@@ -107,7 +107,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     print('done')
     print('sending sound data to {0} - may take a while.'.format(ip_address))
     if save:
-        daq_save_filename = '{0}_daq_test.h5'.format(filename)
+        daq_save_filename = '{0}_daq.h5'.format(filename)
     else:
         daq_save_filename = None
     print(daq_save_filename)
