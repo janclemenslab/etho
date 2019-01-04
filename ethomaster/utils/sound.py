@@ -53,7 +53,8 @@ def normalize_table(table: pd.DataFrame) -> pd.DataFrame:
     for row, row_values in enumerate(tb):
         nchans = len(row_values[0])         # 1. get n stim channels from len(stimFileName)
         for col, cell in enumerate(row_values[1:]):
-            tb[row, col+1] = [cell[0]]*nchans        # 2. fill remaining cols to match len(stimFileName)
+            if len(cell) < nchans:
+                tb[row, col+1] = [cell[0]]*nchans        # 2. fill remaining cols to match len(stimFileName)
     df = pd.DataFrame(tb, columns=table.columns)
     return df
 
