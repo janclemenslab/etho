@@ -292,7 +292,7 @@ def data_playlist(sounds, play_order, playlist_info=None, logger=None, name='sta
 
 
 def _format_playlist(playlist, cnt):
-    string = f'cnt: {cnt}, '
+    string = f'cnt: {cnt}; '
     for key, val in playlist.items():
         string += f'{key}: {val}; '
     return string
