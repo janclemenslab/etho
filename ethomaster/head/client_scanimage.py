@@ -3,12 +3,13 @@ import numpy as np
 import subprocess
 import defopt
 from itertools import cycle
+import yaml
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 from ethomaster.utils.shuffled_cycle import shuffled_cycle
-from ethomaster.utils.config import readconfig
+from ethomaster.utils.config import readconfig, saveconfig
 
 from ethoservice.DAQZeroService import DAQ
 from ethoservice.NITriggerZeroService import NIT
@@ -117,9 +118,12 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
               analog_chans_in=prot['DAQ']['analog_chans_in'],
               digital_chans_out=prot['DAQ']['digital_chans_out'],
               analog_data_out=sounds,
-              digital_data_out=triggers)
+              digital_data_out=triggers,
+              metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']})
     if save:
         daq.init_local_logger('{0}_daq.log'.format(filename))
+        # dump protocol file as yaml
+        saveconfig('{0}_prot.yml'.format(filename), prot)
 
     daq.start()
     t0 = time.clock()
