@@ -183,17 +183,24 @@ def plot(disp_queue, channels: int=3):
     plt.close(fig)
 
 
-def save(frame_queue, filename, num_channels=1, sizeincrement=100, start_time=None):
+def save(frame_queue, filename, num_channels=1, attrs=None, sizeincrement=100, start_time=None):
     """Coroutine for saving data."""
-
-    # TODO: save samples for each time stamp, add Fs field
     f = h5py.File(filename, "w")
+
+    if attrs is not None:
+        for key, val in attrs.items():
+            try:
+                f.attrs[key] = val
+            except (NameError, TypeError):
+                f.attrs[key] = str(val)
+            f.flush()
+
     dset_samples = f.create_dataset("samples", shape=[0, num_channels],
                                     maxshape=[None, num_channels], dtype=np.float64, compression="gzip")
     dset_systemtime = f.create_dataset("systemtime", shape=[sizeincrement, 1],
                                        maxshape=[None, 1], dtype=np.float64, compression="gzip")
     dset_samplenumber = f.create_dataset("samplenumber", shape=[sizeincrement, 1],
-                                       maxshape=[None, 1], dtype=np.float64, compression="gzip")
+                                         maxshape=[None, 1], dtype=np.float64, compression="gzip")
     print("opened file \"{0}\".".format(filename))
     framecount = 0
     RUN = True
