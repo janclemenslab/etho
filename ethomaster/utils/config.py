@@ -23,7 +23,18 @@ def defaultify(d, defaultfactory=lambda: None):
     """Convert nested dict to defaultdict."""
     if not isinstance(d, dict):
         return d
-    return defaultdict(defaultfactory, {k: defaultify(v) for k, v in d.items()})
+    return defaultdict(defaultfactory, {k: defaultify(v, defaultfactory) for k, v in d.items()})
+
+def undefaultify(d):
+    if not isinstance(d, dict):
+        return d
+    return {k: undefaultify(v) for k, v in d.items()}
+
+def saveconfig(filename, prot):
+    import yaml
+    prot = undefaultify(prot)
+    with open(filename, 'w') as f:
+        yaml.dump(prot, f)
 
 
 def readconfig(filename=GLOBALCONFIGFILEPATH):
