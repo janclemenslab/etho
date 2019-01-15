@@ -5,6 +5,7 @@ import threading
 import os
 import sys
 import copy
+import yaml
 from typing import Iterable, Sequence
 try:
     from .utils.IOTask import *
@@ -24,7 +25,7 @@ class DAQ(BaseZeroService):
     def setup(self, savefilename: str=None, play_order: Iterable=None, playlist_info=None,
               duration: float=-1, fs: int=10000, display: bool=False,
               analog_chans_out: Sequence=['ao0'], analog_chans_in: Sequence=None, digital_chans_out: Sequence=None,
-              analog_data_out: Sequence=None, digital_data_out: Sequence=None):
+              analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata=None):
         self._time_started = None
         self.duration = duration
         self.savefilename = savefilename
@@ -55,7 +56,8 @@ class DAQ(BaseZeroService):
             self.taskAI.data_rec = []
             if self.savefilename is not None:  # save
                 os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
-                self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.analog_chans_in)])
+                attrs = {'rate': fs, 'analog_chans_in': analog_chans_in, **metadata}
+                self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.analog_chans_in), attrs])
                 self.taskAI.data_rec.append(self.save_task)
             if display:
                 self.disp_task = ConcurrentTask(task=plot, taskinitargs=[len(self.analog_chans_in)], comms="pipe")
