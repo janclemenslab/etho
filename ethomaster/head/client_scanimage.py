@@ -87,7 +87,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         this_trigger = np.zeros((sound.shape[0], nb_digital_chans_out), dtype=np.uint8)
         this_trigger[:5, 2] = 1  # add NEXT trigger at beginning of each sound,
         if len(triggers) == 0:  # add START trigger to beginning of FIRST sound
-            this_trigger[5:, 0] = 1
+            this_trigger[:5, 0] = 1
         if len(triggers) == len(sounds):  # add STOP trigger at end of last sound
             this_trigger[-5:, 1] = 1
         triggers.append(this_trigger.astype(np.uint8))
