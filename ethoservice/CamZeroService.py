@@ -50,7 +50,8 @@ class CAM(BaseZeroService):
     SERVICE_PORT = 4242
     SERVICE_NAME = 'CAM'
 
-    def setup(self, savefilename, duration, bitrate=10000000, resolution=(1640, 800), framerate=40, shutterspeed=10 * 1000, annotate_frame_num=False):
+    # def setup(self, savefilename, duration, bitrate=10000000, resolution=(1640, 800), framerate=40, shutterspeed=10 * 1000, annotate_frame_num=False):
+    def setup(self, savefilename, duration, bitrate=10000000, resolution=(1640, 922), framerate=40, shutterspeed=10 * 1000, annotate_frame_num=False):
         """Initialize recording.
 
         Args:
@@ -64,7 +65,8 @@ class CAM(BaseZeroService):
         self.camera.resolution = resolution
         self.camera.framerate = framerate  # fps
         self.camera.shutter_speed = shutterspeed  # us
-        # as framenumber in frame <-display timestamp!!
+        self.camera.zoom = [0, 0.1, 1.0, 1]
+       # as framenumber in frame <-display timestamp!!
         self.camera.annotate_frame_num = annotate_frame_num
         self.duration = duration
         self.bitrate = bitrate
