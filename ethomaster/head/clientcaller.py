@@ -37,10 +37,13 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         thu_server_name = 'python -m {0} {1}'.format(THU.__module__, SER)
         print([THU.SERVICE_PORT, THU.SERVICE_NAME])
         thu = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pithu', serializer=SER)
-        print(thu.start_server(thu_server_name, folder_name, warmup=1))
+        print(' starting server:', end='')
+        ret = thu.start_server(thu_server_name, folder_name, warmup=1)
+        print(f'{"success" if ret else "FAILED"}.')
         thu.connect("tcp://{0}:{1}".format(ip_address,  THU.SERVICE_PORT))
         print('done')
         print(prot['THU']['pin'], prot['THU']['interval'], maxduration)
+
         thu.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
         thu.setup(prot['THU']['pin'], prot['THU']['interval'], maxduration + 20)
         time.sleep(1)
@@ -50,7 +53,9 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         cam_server_name = 'python -m {0} {1}'.format(CAM.__module__, SER)
         print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
         cam = ZeroClient("{0}@{1}".format(user_name, ip_address), 'picam', serializer=SER)
-        print(cam.start_server(cam_server_name, folder_name, warmup=1))
+        print(' starting server:', end='')
+        ret = cam.start_server(cam_server_name, folder_name, warmup=1)
+        print(f'{"success" if ret else "FAILED"}.')
         cam.connect("tcp://{0}:{1}".format(ip_address, CAM.SERVICE_PORT))
         print('done')
         cam.init_local_logger('{0}/{1}/{1}_cam.log'.format(dirname, filename))
@@ -66,21 +71,23 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
         # load playlist, sounds, and enumerate play order
         playlist = parse_table(playlistfile)
-        print(config)
         sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
-                    LEDamp=prot['SND']['ledamp'], stimfolder=config['HEAD']['stimfolder'])
+                             LEDamp=prot['SND']['ledamp'],
+                             stimfolder=config['HEAD']['stimfolder'],
+                             cast2int=True)
 
-        # TODO: cast to int and scale up!!!
-        playlist_items = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
+        playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
         print([SND.SERVICE_PORT, SND.SERVICE_NAME])
         snd = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pisnd', serializer=SER)
-        print(snd.start_server(snd_server_name, folder_name, warmup=1))
+        print(' starting server:', end='')
+        ret = snd.start_server(snd_server_name, folder_name, warmup=1)
+        print(f'{"success" if ret else "FAILED"}.')
         snd.connect("tcp://{0}:{1}".format(ip_address, SND.SERVICE_PORT))
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
-        snd.setup(sounds, playlist, playlist_items, maxduration, fs)
+        snd.setup(sounds, playlist, playlist_items, totallen, fs)
         snd.start()
 
     if 'OPT' in prot['NODE']['use_services']:
