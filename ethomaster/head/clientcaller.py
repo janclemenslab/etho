@@ -40,8 +40,9 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print(' starting server:', end='')
         ret = thu.start_server(thu_server_name, folder_name, warmup=1)
         print(f'{"success" if ret else "FAILED"}.')
+        print(' connecting to server:', end='')
         thu.connect("tcp://{0}:{1}".format(ip_address,  THU.SERVICE_PORT))
-        print('done')
+        print(f'{"success" if ret else "FAILED"}.')
         print(prot['THU']['pin'], prot['THU']['interval'], maxduration)
 
         thu.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
