@@ -34,7 +34,7 @@ def main(ip_address):
     print(thu.progress())
     thu.start()
     cnt = 0
-    while cnt<maxduration-2:
+    while cnt < maxduration-2:
         print(thu.info())
         time.sleep(1)
         cnt += 1
