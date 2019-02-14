@@ -7,6 +7,7 @@ import ethomaster.head.clientmanager as clientmanager
 from ethomaster.gui.wxDangerDialog import DangerDialog
 from ethomaster.gui.wxBusyDialog import BusyDialog
 import ethomaster.gui.wxCam as wxCam
+import ethomaster.gui.ThuPreview as ThuPreview
 
 
 def list_path(path='playlists'):
@@ -37,6 +38,9 @@ class Frame(wx.Frame):
         bCamPreview = wx.Button(self, label='cam preview')
         self.Bind(wx.EVT_BUTTON, self.OnClickCamPreview, bCamPreview)
 
+        bThuPreview = wx.Button(self, label='check temp&hum')
+        self.Bind(wx.EVT_BUTTON, self.OnClickThuPreview, bThuPreview)
+
         bDanger = wx.Button(self, label='DANGER')
         self.Bind(wx.EVT_BUTTON, self.OnClickDanger, bDanger)
 
@@ -46,6 +50,7 @@ class Frame(wx.Frame):
         sizer.Add(bStart, 0, 0, 0)
         sizer.Add(bStatus, 0, 0, 0)
         sizer.Add(bCamPreview, 0, 0, 0)
+        sizer.Add(bThuPreview, 0, 0, 0)
         sizer.Add(bDanger, 0, 0, 0)
         self.SetSizer(sizer)
 
@@ -82,7 +87,6 @@ class Frame(wx.Frame):
             else:
                 # handle dialog being cancelled or ended by some other button
                 pass
-
     # The dialog is automatically destroyed on exit from the context manager
 
     def OnClickCamPreview(self, event):
@@ -92,6 +96,10 @@ class Frame(wx.Frame):
             # connect to CAM service and preview
         # else:
             # start and connect service and preview
+
+    def OnClickThuPreview(self, event):
+        ThuPreview.main(self.host)
+
     def OnClickDanger(self, event):
         with DangerDialog(self.host, None, title=self.host) as dlg:
             if dlg.ShowModal() == wx.ID_CLOSE:
