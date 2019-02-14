@@ -175,10 +175,13 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.log.warning("stopping service")
         try:
             sys.exit(0)  # raises an exception so the finally clause is executed
-        except Exception:
+        except Exception as e:
             pass
         finally:
-            self.stop()
+            try:
+                self.stop()
+            except Exception as e:
+                print(e)
             self.log.warning("   done")
             self._flush_loggers()
             self.service_kill()
