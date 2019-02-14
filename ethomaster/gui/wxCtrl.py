@@ -50,6 +50,7 @@ class Frame(wx.Frame):
         sizer.Add(bStart, 0, 0, 0)
         sizer.Add(bStatus, 0, 0, 0)
         sizer.Add(bCamPreview, 0, 0, 0)
+        sizer.Add(bThuPreview, 0, 0, 0)
         sizer.Add(bDanger, 0, 0, 0)
         self.SetSizer(sizer)
 
