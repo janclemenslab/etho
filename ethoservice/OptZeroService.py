@@ -61,12 +61,6 @@ class OPT(BaseZeroService):
             self._thread_timer.cancel()
         self._turn_off()
         self.log.warning('   stopped ')
-        if self.MOVEFILES_ON_FINISH:
-            files_to_move = list()
-            if self.logfilename is not None:
-                files_to_move.append(self.logfilename)
-            self._movefiles(files_to_move, self.target)
-
         if stop_service:
             self.service_stop()
 

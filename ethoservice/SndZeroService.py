@@ -38,7 +38,6 @@ class SND(BaseZeroService):
         self._thread_stopper = threading.Event()
         self._queue_thread = threading.Thread(
             target=self._queue_sounds, args=(self._thread_stopper,))
-        self.MOVEFILES_ON_FINISH = True
 
     def start(self):
         self._time_started = time.time()
@@ -72,14 +71,6 @@ class SND(BaseZeroService):
         if pygame.mixer.get_init():
             pygame.mixer.stop()
         self.log.warning('   stopped playback')
-        self.log.warning(self.MOVEFILES_ON_FINISH)
-        if self.MOVEFILES_ON_FINISH:
-            files_to_move = list()
-            self.log.warning(self.logfilename)
-            if self.logfilename is not None:
-                files_to_move.append(self.logfilename)
-            self.log.warning(files_to_move)
-            self._movefiles(files_to_move, self.targetpath)
         self._flush_loggers()
         if stop_service:
             time.sleep(1)

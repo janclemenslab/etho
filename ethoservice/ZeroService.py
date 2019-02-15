@@ -42,8 +42,6 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self._time_started = None
         self.duration = None
 
-        self.MOVEFILES_ON_FINISH = False
-        self.targetpath = '/home/ncb/remote/'
 
     def _init_network_logger(self):
         ctx = zmq.Context()
@@ -110,42 +108,6 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     def _flush_loggers(self):
         for handler in self.log.handlers:
             handler.flush()
-
-    def _movefiles(self, sourcepaths, targetpath):
-        """move files of rpi - usually called during `finish`"""
-
-        self.log.error(sourcepaths)
-        self.log.error(targetpath)
-
-        # mount remote
-        # CHECK FOR .REMOTE.TXT - if not there try - mount
-        if ~os.path.isfile('/home/ncb/remote/.REMOTE.TXT'):
-            try:
-                self.log.error("echo 'droso123' | sshfs ncb@192.168.1.2:data /home/ncb/remote -o password_stdin")
-                self.log.error(os.system("echo 'droso123' | sshfs ncb@192.168.1.2:data /home/ncb/remote -o password_stdin"))
-            except Exception as e:
-                print(e)
-                self.log.error(e)
-
-        if os.path.isfile('/home/ncb/remote/.REMOTE.TXT'):
-            for source in sourcepaths:
-                # THIS IS TERRIBLE - probably should be a parameter:
-                targetdir = os.path.split(os.path.split(source)[0])[1]
-                # make this a separate function
-                try:
-                    self.log.warning("moving {0} to {1}".format(source, targetpath))
-                    # rsync move files
-                    try:
-                        self.log.error("rsync -avhz --remove-source-files {0} /home/ncb/remote/{1}/".format(source, targetdir))
-                        self.log.error(os.system("rsync -avhz --remove-source-files {0} /home/ncb/remote/{1}/".format(source, targetdir)))
-                    except Exception as e:
-                        self.log.error(e)
-
-                    self.log.warning("done moving {0} to {1}".format(source, targetpath))
-                except Exception as e:  # TODO: catch specific exception!
-                    self.log.error(e)
-        else:
-            self.log.warning('remote not mounted - skipping.')
 
     def _time_elapsed(self):
         if self._time_started is None:

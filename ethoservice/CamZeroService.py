@@ -78,7 +78,6 @@ class CAM(BaseZeroService):
             os.makedirs(os.path.dirname(savefilename), exist_ok=True)
             self.format = None
         self._time_started = None
-        self.MOVEFILES_ON_FINISH = True
 
     def start(self):
         self.log.info('starting recording')
@@ -103,15 +102,6 @@ class CAM(BaseZeroService):
             self.log.warning("   stopped recording")
         else:
             self.log.warning("   was not recording")
-        self.log.warning(self.MOVEFILES_ON_FINISH)
-        if self.MOVEFILES_ON_FINISH:
-            files_to_move = list()
-            if self.savefilename is not '/dev/null':
-                files_to_move.append(self.savefilename)
-            if self.logfilename is not None:
-                files_to_move.append(self.logfilename)
-            self.log.warning(files_to_move)
-            self._movefiles(files_to_move, self.targetpath)
         self._flush_loggers()
         if stop_service:
             time.sleep(2)
