@@ -10,7 +10,7 @@ def main(ip_address):
     # load config/protocols
     # prot = readconfig(protocolfile)
     # print(prot)
-    maxduration = 1000  # int(prot['NODE']['maxduration'])
+    maxduration = 7  # int(prot['NODE']['maxduration'])
     user_name = 'ncb'  # prot['NODE']['user']
     folder_name = '~/'  # prot['NODE']['folder']
     SER = 'pickle'
@@ -33,11 +33,14 @@ def main(ip_address):
     time.sleep(1)
     print(thu.progress())
     thu.start()
-    while thu.is_busy():
-        print(thu.progress())
+    cnt = 0
+    while cnt < maxduration-2:
+        print(thu.info())
         time.sleep(1)
-
+        cnt += 1
+    print('done')
     thu.finish()
+    print('finished')
 
 
 if __name__ == '__main__':
