@@ -32,7 +32,11 @@ class SND(BaseZeroService):
         self.playlist = playlist
         self.log.info('playlist')
         self.log.info(self.playlist.to_csv())
-        self.soundlist = np_sounds
+        self.soundlist = list()
+        for np_sound in np_sounds:
+            this_sound = pygame.sndarray.make_sound(np.array(np_sound))
+            this_sound.set_volume(1.0)
+            self.soundlist.append(this_sound)
 
         self.playlist_items = playlist_items
         self._thread_stopper = threading.Event()
