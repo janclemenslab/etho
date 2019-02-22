@@ -56,11 +56,13 @@ class SND(BaseZeroService):
 
     def _queue_sounds(self, stop_event):
         RUN = True
+        playlist_cnt = -1
         while RUN and not stop_event.wait(0.1):
             if self.chan1.get_queue() is None and self.playlist_items:
                 self._queue_next()
-                self.log.info(
-                    self.playlist.iloc[self.current_item].to_csv().replace('\n',';'))
+                playlist_cnt += 1
+                msg = _format_playlist(self.playlist.iloc[self.current_item], playlist_cnt)
+                self.log.info(msg)
             if not self.playlist_items and not self.is_busy():
                 self.log.warning('playlist empty and no playback running - stop queueing')
                 RUN = False
@@ -101,6 +103,13 @@ class SND(BaseZeroService):
             return self.playlist.iloc[self.current_item].to_msgpack()
         else:
             return None
+
+
+def _format_playlist(playlist, cnt):
+    string = f'cnt: {cnt}; '
+    for key, val in playlist.items():
+        string += f'{key}: {val}; '
+    return string
 
 
 if __name__ == '__main__':

@@ -52,7 +52,7 @@ class THU(BaseZeroService):
             try:
                 self.humidity, self.temperature = Adafruit_DHT.read_retry(self.sensor, self.pin)
                 try:
-                    self.log.info(f'temperature,{self.temperature:0.1f},C;humidity,{self.humidity:0.1f}%')
+                    self.log.info(f'temperature: {self.temperature:0.1f}; humidity: {self.humidity:0.1f}')
                 except TypeError as e:
                     self.log.warning(f'invalid values for temperature ({self.temperature}C) or humidity ({self.humidity}%).')
                 time.sleep(self.delay)
@@ -64,7 +64,7 @@ class THU(BaseZeroService):
         if hasattr(self, '_thread_stopper'):
             self._thread_stopper.set()
             time.sleep(1)  # wait for thread to stop
-        
+
         self.log.warning('   stopped ')
         self._flush_loggers()
         if stop_service:
