@@ -32,22 +32,21 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     SERVICE_PORT = None
     SERVICE_NAME = None
 
-    def __init__(self, *args, serializer='default', **kwargs):
+    def __init__(self, *args, serializer='default', head_ip='192.168.1.1', **kwargs):
         self._serializer = serializer
         ctx = zerorpc.Context()
         ctx.register_serializer(serializer)
         super(BaseZeroService, self).__init__(*args, **kwargs, heartbeat=120, context=ctx)
-        self._init_network_logger()
+        self._init_network_logger(head_ip)
 
         self._time_started = None
         self.duration = None
 
 
-    def _init_network_logger(self):
+    def _init_network_logger(self, head_ip):
         ctx = zmq.Context()
         ctx.LINGER = 0
         pub = ctx.socket(zmq.PUB)
-        head_ip = '192.168.1.2'   # FIXME: this shold come from config
         pub.connect('tcp://{0}:{1}'.format(head_ip, self.LOGGING_PORT))
         self.log = logging.getLogger()
         self.log.setLevel(logging.DEBUG)
