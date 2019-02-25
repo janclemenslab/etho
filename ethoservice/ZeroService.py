@@ -67,7 +67,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df)}
 
         handler = PUBHandler(pub)
-        handler.setLevel(logging.WARNING)  # catch only important messages
+        handler.setLevel(logging.INFO)  # catch only important messages
         handler.formatters = formatters
         self.log.addHandler(handler)
         # log to local file - init empty
