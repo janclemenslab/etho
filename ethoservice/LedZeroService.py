@@ -15,8 +15,8 @@ class LED(BaseZeroService):
     maybe split protocol - one effector LED (red and green - map to two GPIO ports)
                          - one IR LED for logging/synchronization
     """
-    LOGGING_PORT = 1446
-    SERVICE_PORT = 4246
+    LOGGING_PORT = 1453
+    SERVICE_PORT = 4253
     SERVICE_NAME = 'LED'
 
     def setup(self, pin_out, pin_frequency, pin_dc, duration):

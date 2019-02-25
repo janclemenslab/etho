@@ -13,8 +13,8 @@ class THUA(BaseZeroService):
     Temperature and Humidity sensor. connect to rpi via arduino. or directly to rpi if possible
     try DHT22 and https://github.com/adafruit/Adafruit_Python_DHT
     '''
-    LOGGING_PORT = 1446
-    SERVICE_PORT = 4246
+    LOGGING_PORT = 1454
+    SERVICE_PORT = 4254
     SERVICE_NAME = 'THUA'
 
     def setup(self, comport, delay, duration):
