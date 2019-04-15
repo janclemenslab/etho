@@ -2,12 +2,12 @@
 
 ## deploy
 - `pip install git+http://github.com/janclemenslab/ethodrome.git`
-- [Node setup](https://github.com/janclemenslab/ethoservice/wiki/Node-setup)
-- [Head setup](https://github.com/janclemenslab/ethoservice/wiki/Head-setup)
+- [Node setup](https://github.com/janclemenslab/ethodrome/wiki/Node-setup)
+- [Head setup](https://github.com/janclemenslab/ethodrome/wiki/Head-setup)
 
 ## Documentation
-- [Services](https://github.com/janclemenslab/ethoservice/wiki/Services)
-- [Playlists](https://github.com/janclemenslab/ethoservice/wiki/Playlists)
+- [Services](https://github.com/janclemenslab/ethodrome/wiki/Services)
+- [Playlists](https://github.com/janclemenslab/ethodrome/wiki/Playlists)
 - [Configuration files](https://github.com/janclemenslab/ethoconfig)
 
 ## TODO
