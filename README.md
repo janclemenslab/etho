@@ -9,6 +9,7 @@
 - [Services](https://github.com/janclemenslab/ethodrome/wiki/Services)
 - [Playlists](https://github.com/janclemenslab/ethodrome/wiki/Playlists)
 - [Configuration files](https://github.com/janclemenslab/ethoconfig)
+- Calibration of [sound](https://github.com/janclemenslab/ethodrome/wiki/Calibrating-sound-intensity) and [optogenetics](https://github.com/janclemenslab/ethodrome/wiki/Calibrating-LED-light-intensity-for-optogenetics).
 
 ## TODO
 - [ ] present logging information within gui
