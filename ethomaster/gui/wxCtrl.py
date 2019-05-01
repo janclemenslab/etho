@@ -115,4 +115,4 @@ def main(host):
 
 
 if __name__ == '__main__':
-    main(host='rpi3')
+    main(host='localhost')
