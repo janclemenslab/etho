@@ -118,8 +118,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     if 'PTG' in prot['NODE']['use_services']:
         ptg_server_name = 'python -m {0} {1}'.format(PTG.__module__, SER)
         print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
-        import ipdb; ipdb.set_trace()
-
         ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'ptgcam', serializer=SER)
         subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
@@ -147,6 +145,15 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         else:
             playlist_items = cycle(playlist_items)
 
+        # TODO: catch errors if channel numbers are inconsistent - sounds[ii].shape[-1] should be nb_analog+nb_digital
+        if prot['DAQ']['digital_chans_out'] is not None:
+            nb_digital_chans_out = len(prot['DAQ']['digital_chans_out'])
+            digital_data = [snd[:,-nb_digital_chans_out].astype(np.uint8) for snd in sounds]
+            analog_data = [snd[:,:nb_digital_chans_out+1] for snd in sounds]  # remove digital traces from stimset
+        else:
+            digital_data = None
+            analog_data = sounds
+
         daq_save_filename = '{0}/{1}/{1}_daq.h5'.format(dirname, filename)
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
@@ -156,11 +163,14 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
 
-        daq.setup(daq_save_filename, playlist_items, maxduration, fs, prot['DAQ']['display'],
-                  analog_chans_out=prot['DAQ']['analog_chans_out'],
-                  analog_chans_in=prot['DAQ']['analog_chans_in'],
-                  analog_data_out=sounds)
-
+        daq.setup(daq_save_filename, playlist_items, playlist,
+              maxduration, fs, prot['DAQ']['display'],
+              analog_chans_out=prot['DAQ']['analog_chans_out'],
+              analog_chans_in=prot['DAQ']['analog_chans_in'],
+              digital_chans_out=prot['DAQ']['digital_chans_out'],
+              analog_data_out=analog_data,
+              digital_data_out=digital_data,
+              metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']})
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
         daq.start()
 
