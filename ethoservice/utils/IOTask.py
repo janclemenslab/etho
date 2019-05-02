@@ -139,7 +139,7 @@ class IOTask(daq.Task):
         return 0  # The function should return an integer
 
 
-def plot(disp_queue, channels: int=3):
+def plot(disp_queue, nb_channels: int):
     """Coroutine for plotting.
 
     Fast, realtime as per: https://gist.github.com/pklaus/62e649be55681961f6c4
@@ -147,7 +147,7 @@ def plot(disp_queue, channels: int=3):
     plt.ion()
     fig = plt.figure()
     fig.canvas.set_window_title('traces: daq')
-    ax = [fig.add_subplot(channels, 1, channel+1) for channel in range(channels)]
+    ax = [fig.add_subplot(nb_channels, 1, channel+1) for channel in range(nb_channels)]
     plt.show(False)
     plt.draw()
     fig.canvas.start_event_loop(0.001)  # otherwise plot freezes after 3-4 iterations
@@ -161,11 +161,9 @@ def plot(disp_queue, channels: int=3):
             if disp_queue.poll(0.1):
                 data = disp_queue.recv()
                 if data is not None:
-                    # print("    plotting {0}".format(data[0].shape))
-                    # for chn in range(data[0].shape[1]):
                     nb_samples = data[0].shape[0]
                     x = np.arange(nb_samples)
-                    for cnt, chn in enumerate([0, 1, 2, 3, 4]):
+                    for cnt, chn in enumerate(range(nb_channels)):
                         fig.canvas.restore_region(bgrd[cnt])  # restore background
                         points[cnt].set_data(x, data[0][:nb_samples, chn])
                         ax[cnt].draw_artist(points[cnt])  # redraw just the points
