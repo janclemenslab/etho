@@ -25,7 +25,7 @@ class DAQ(BaseZeroService):
     def setup(self, savefilename: str=None, play_order: Iterable=None, playlist_info=None,
               duration: float=-1, fs: int=10000, display: bool=False,
               analog_chans_out: Sequence=['ao0'], analog_chans_in: Sequence=None, digital_chans_out: Sequence=None,
-              analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata=None):
+              analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={}):
         self._time_started = None
         self.duration = duration
         self.savefilename = savefilename
