@@ -8,23 +8,28 @@ import socket
 import time
 import os
 
-class BaseZeroService(abc.ABC, zerorpc.Server):
-    """Allows serving the extending class via zerorpc.
 
-    Abstract base class for all 0services
+class BaseZeroService(abc.ABC, zerorpc.Server):
+    """Define abstract base class for all 0services.
 
     Derivations need to change/implement the following properties/methods:
-    LOGGING_PORT -
-    SERVICE_PORT -
-    SERVICE_NAME -
-    is_busy -
-    cleanup -
-    test - test functionality of the class
+    LOGGING_PORT: network port over which to publish log message
+    SERVICE_PORT: network port over for communication with head
+    SERVICE_NAME: unique, three-letter identifier for the service
+    is_busy: indicates whether service is running (True/False)
+    cleanup: called when finishing/shutting down the service release hardware, close files etc
+    test - test functionality of the class (?)
+
+    Optional:
+    setup
+    start
 
     Global functionality:
     server_start/server_stop
     progress -
     ping - check if server is alive (response with "pong")
+    init_local_logger(self, logfilename)
+
     """
 
     # TODO: make more robust - add exceptions/try-catch
@@ -32,7 +37,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     SERVICE_PORT = None
     SERVICE_NAME = None
 
-    def __init__(self, *args, serializer='default', head_ip='192.168.1.1', **kwargs):
+    def __init__(self, *args, serializer: str = 'default', head_ip: str = '192.168.1.1', **kwargs):
         self._serializer = serializer
         ctx = zerorpc.Context()
         ctx.register_serializer(serializer)
@@ -42,14 +47,22 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self._time_started = None
         self.duration = None
 
+    def _init_network_logger(self, head_ip: str = '192.168.1.1', log_level: str = logging.INFO):
+        """Initialize logger that publishes messages over the network format.
 
-    def _init_network_logger(self, head_ip):
+        For live display of messages on head node (see ethomaster.head.headlogger).
+        Args:
+            head_ip: IP address to publish to (defaults to '192.168.1.1')
+            lob_level: (defaults to logging.INFO)
+        """
+
+        # setup connection - publish to head_ip via LOGGIN_PORT
         ctx = zmq.Context()
         ctx.LINGER = 0
         pub = ctx.socket(zmq.PUB)
         pub.connect('tcp://{0}:{1}'.format(head_ip, self.LOGGING_PORT))
         self.log = logging.getLogger()
-        self.log.setLevel(logging.DEBUG)
+        self.log.setLevel(log_level)
 
         # get host name or IP to append to message
         self.hostname = socket.gethostname()
@@ -65,11 +78,13 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             logging.ERROR: logging.Formatter(prefix + body + " - %(exc_info)s\n", datefmt=df),
             logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df)}
 
+        # setup log handler which publishe all log messages to the network
         handler = PUBHandler(pub)
-        handler.setLevel(logging.INFO)  # catch only important messages
+        handler.setLevel(log_level)  # catch only important messages
         handler.formatters = formatters
         self.log.addHandler(handler)
-        # log to local file - init empty
+
+        # initialize attributes for log to local file (should be in __init__)
         self.logfilename = None
         self.filelogger = None
 
@@ -105,6 +120,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.log.addHandler(self.filelogger)
 
     def _flush_loggers(self):
+        """Make sure all log messages are sent/saved."""
         for handler in self.log.handlers:
             handler.flush()
 
@@ -126,13 +142,19 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.log.info('pong')
         return "pong"
 
-    def service_start(self, ip_address="tcp://0.0.0.0"):
+    def service_start(self, ip_address: str = "tcp://0.0.0.0"):
+        """Start service.
+
+        Args:
+            ip_address: "tcp://0.0.0.0"
+        """
         self.log.warning("starting starting")
         self.bind(ip_address + ":" + self.SERVICE_PORT)
         self.run()
         self.log.warning("   done")
 
     def service_stop(self):
+        """Stop service."""
         self.log.warning("stopping service")
         try:
             sys.exit(0)  # raises an exception so the finally clause is executed
