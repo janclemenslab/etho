@@ -17,18 +17,14 @@ class Model:
             config['GENERAL']['hosts'] = [config['GENERAL']['hosts']]
         self.clients = exepool(ping, config['GENERAL']['hosts'])
         print(self.clients)
-        self.clients_runningservices = exepool(get_running_services, config['GENERAL']['hosts'])
-        print(self.clients_runningservices)
-
+       
     def rescan(self):
+        print('RESCANNING - listing clients:')
         self.clients = exepool(ping, config['GENERAL']['hosts'])
         print(self.clients)
+        print('RESCANNING - listing running services:')
         self.clients_runningservices = exepool(get_running_services, config['GENERAL']['hosts'])
         print(self.clients_runningservices)
-        # if clients have changed:
-            # pub.sendMessage("clients_changed", clients=self.clients)
-            # view listens to these events and update VUI
-
 
 
 class HelloFrame(wx.Frame):
@@ -39,9 +35,6 @@ class HelloFrame(wx.Frame):
         super(HelloFrame, self).__init__(*args, **kw)
 
         self.model = Model()
-
-        # create a panel in the frame
-        # pnl = wx.Panel(self)
 
         # create a menu bar
         self.makeMenuBar()
@@ -64,15 +57,10 @@ class HelloFrame(wx.Frame):
             panelButton.name = key
             # set color based on online status
             panelButton.SetBackgroundColour(colors[self.model.clients[key]])
-            panelButton.SetToolTip(wx.ToolTip(
-                str(self.model.clients_runningservices[key])))
             self.Bind(wx.EVT_BUTTON, self.OnClick, panelButton)
             # add info text next to button
-            panelText = wx.StaticText(self, wx.ID_ANY, str(
-                self.model.clients_runningservices[key]))
             # loyout button and text next to each other
             sizerHorz.Add(panelButton, 0, wx.ALL, 1)
-            sizerHorz.Add(panelText, 1, wx.ALL | wx.EXPAND, 1)
             # now add button+text
             topSizer.Add(sizerHorz, 0, wx.ALL | wx.EXPAND, 1)
         self.SetSizer(topSizer)
@@ -152,6 +140,6 @@ if __name__ == '__main__':
     # frame, show it, and start the event loop.
     # import ipdb; ipdb.set_trace()
     app = wx.App()
-    frm = HelloFrame(None, title='ethodrome', size=(600, 300))
+    frm = HelloFrame(None, title='ethodrome', size=(100, 300))
     frm.Show()
     app.MainLoop()
