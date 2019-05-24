@@ -21,7 +21,7 @@ class OPT(BaseZeroService):
 
     def setup(self, pin, duration, LED_blinkinterval, LED_blinkduration):
         self.pin = int(pin)  # data pin
-        self.duration =float(duration)  # total duration of experiments
+        self.duration = float(duration)  # total duration of experiments
         self.LED_blinkinterval = float(LED_blinkinterval)
         self.LED_blinkduration = float(LED_blinkduration)
         self.blinkpause = self.LED_blinkinterval-self.LED_blinkduration
@@ -53,7 +53,7 @@ class OPT(BaseZeroService):
         self.log.info("blinked")
 
     def finish(self, stop_service=False):
-        self._turn_off() # turn LED of at finish
+        self._turn_off() # turn LED off at finish
         self.log.warning('stopping')
         if hasattr(self, '_thread_stopper'):
             self._thread_stopper.set()
@@ -101,6 +101,6 @@ if __name__ == '__main__':
         ser = sys.argv[1]
     else:
         ser = 'default'
-    s = OPT(serializer=sys)
+    s = OPT(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(OPT.SERVICE_PORT))
     s.run()
