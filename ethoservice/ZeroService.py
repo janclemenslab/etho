@@ -7,6 +7,8 @@ from zmq.log.handlers import PUBHandler
 import socket
 import time
 import os
+import subprocess
+from ethoservice.utils.common import *
 
 
 class BaseZeroService(abc.ABC, zerorpc.Server):
@@ -157,24 +159,25 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         """Stop service."""
         self.log.warning("stopping service")
         try:
-            sys.exit(0)  # raises an exception so the finally clause is executed
+            self.stop()
         except Exception as e:
-            pass
-        finally:
-            try:
-                self.stop()
-            except Exception as e:
-                print(e)
-            self.log.warning("   done")
-            self._flush_loggers()
-            self.service_kill()
+            print(e)
+        self.log.warning("   done")
+        self._flush_loggers()
+        self.service_kill()
 
     def service_kill(self):
         self.log.warning('   kill process {0}'.format(self._getpid()))
-        # os.kill(os.getpid())  # DOES NOT WORK - WHY?
-        os.system('kill {0}'.format(self._getpid()))
-
+        if iswin():
+            # run this in subprocess so the function returns - running this via os.system(...) will kill the process but not return 
+            subprocess.Popen('taskkill /F /PID {0}'.format(self._getpid()))
+        else:
+            os.system('kill {0}'.format(self._getpid()))
+        
     def _getpid(self):
+        return os.getpid()
+
+    def getpid(self):
         return os.getpid()
 
     def __del__(self):
