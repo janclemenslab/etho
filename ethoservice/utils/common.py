@@ -3,7 +3,7 @@
 '''
 This module contains some common routines used by other samples.
 '''
-
+from sys import platform
 import numpy as np
 import cv2
 
@@ -222,3 +222,15 @@ def draw_keypoints(vis, keypoints, color = (0, 255, 255)):
     for kp in keypoints:
             x, y = kp.pt
             cv2.circle(vis, (int(x), int(y)), 2, color)
+
+
+def islinux():
+    return p == "linux" or platform == "linux2"
+
+
+def ismac():
+    return platform == "darwin"
+
+
+def iswin():
+    return platform == "win32"
