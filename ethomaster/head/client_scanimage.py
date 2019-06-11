@@ -12,6 +12,7 @@ from ethomaster.utils.shuffled_cycle import shuffled_cycle
 from ethomaster.utils.config import readconfig, saveconfig
 
 from ethoservice.DAQZeroService import DAQ
+from ethoservice.PTGZeroService import PTG
 from ethoservice.NITriggerZeroService import NIT
 
 
@@ -61,10 +62,6 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     fs = prot['DAQ']['samplingrate']
     SER = prot['NODE']['serializer']
     ip_address = 'localhost'
-    # trigger('START')
-    # print('sent START')
-
-    daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
 
     # load playlist, sounds, and enumerate play order
     playlist = parse_table(playlistfile)
@@ -79,18 +76,22 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     maxduration = -1
     playlist_items, totallen = build_playlist(sounds, maxduration, fs,
                                               shuffle=prot['DAQ']['shuffle'])
-
-    # get digital pattern from analog_data_out - duplicate analog_data_out,
+    #
+    nb_digital_chans_out = len(prot['DAQ']['digital_chans_out'])
+    nb_analog_chans_out = len(prot['DAQ']['analog_chans_out'])
     triggers = list()
-    for sound in sounds:
-        nb_digital_chans_out = len(prot['DAQ']['digital_chans_out'])
+    for cnt, sound in enumerate(sounds):
         this_trigger = np.zeros((sound.shape[0], nb_digital_chans_out), dtype=np.uint8)
         this_trigger[:5, 2] = 1  # add NEXT trigger at beginning of each sound,
         if len(triggers) == 0:  # add START trigger to beginning of FIRST sound
             this_trigger[:5, 0] = 1
         if len(triggers) == len(sounds):  # add STOP trigger at end of last sound
             this_trigger[-5:, 1] = 1
+        # split off trailing digital channels and cast to uint8?
+        for chn in range(3, nb_digital_chans_out):
+            this_trigger[:, chn] = sound[:, nb_analog_chans_out + chn - 3]
         triggers.append(this_trigger.astype(np.uint8))
+        sounds[cnt] = sound[:, :nb_analog_chans_out]
 
     if not loop:
         print(f'setting maxduration from playlist to {totallen}.')
@@ -103,9 +104,25 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         playlist_items = shuffled_cycle(playlist_items, shuffle='block')  # iter(playlist_items)
     else:
         playlist_items = cycle(playlist_items)  # iter(playlist_items)
+
+    # SETUP CAM
+    if 'PTG' in prot['NODE']['use_services']:
+        ptg_server_name = 'python -m {0} {1}'.format(PTG.__module__, SER)
+        print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
+        ptg = ZeroClient(ip_address, 'ptgcam', serializer=SER)
+        ptg_sp = subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
+        ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
+        print('done')
+        cam_params = dict(prot['PTG'])
+        ptg.setup(filename, -1, cam_params)
+        ptg.init_local_logger('{0}_ptg.log'.format(filename))
+
+    # SETUP DAQ
     print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
+    daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
     daq = ZeroClient(ip_address, 'nidaq', serializer=SER)
-    sp = subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
+    daq_sp = subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
+
     daq.connect("tcp://{0}:{1}".format(ip_address, DAQ.SERVICE_PORT))
     print('done')
     print('sending sound data to {0} - may take a while.'.format(ip_address))
@@ -127,19 +144,28 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         # dump protocol file as yaml
         saveconfig('{0}_prot.yml'.format(filename), prot)
 
+    # START PROCESSES
+    if 'PTG' in prot['NODE']['use_services']:
+        ptg.start()
     daq.start()
+
+    # MONITOR PROGRESS
     t0 = time.clock()
-    while daq.is_busy():
-        time.sleep(1)
+    while daq.is_busy(ai=True, ao=False):
+        time.sleep(0.5)
         t1 = time.clock()
         print(f'   Busy {t1-t0:1.2f} seconds.\r', end='', flush=True)
-    # send STOP trigger here
-    time.sleep(1)
+    print(f'   Finished after {t1-t0:1.2f} seconds.')
+    # send STOP trigger
+    print(f'   DAQ finished after {t1-t0:1.2f} seconds')
+    time.sleep(2)  # wait for daq process to free resources
     trigger('STOP')
-    print('sent STOP')
+    print('    sent STOP to scientifica')
 
-    sp.terminate()
-    sp.kill()
+    # STOP PROCESSES
+    if 'PTG' in prot['NODE']['use_services']:
+        print('    terminate PTG process')
+        ptg.finish(stop_service=True)
 
 
 if __name__ == '__main__':
