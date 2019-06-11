@@ -89,7 +89,6 @@ class DAQ(BaseZeroService):
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
-
         if hasattr(self, '_thread_stopper'):
             self._thread_stopper.set()
         if hasattr(self, '_thread_timer'):
@@ -125,27 +124,32 @@ class DAQ(BaseZeroService):
 
         self.log.warning('   stopped ')
         if stop_service:
-            time.sleep(1)
+            time.sleep(0.5)
             self.service_stop()
 
     def disp(self):
         pass
 
-    def is_busy(self):
+    def is_busy(self, ai=True, ao=True):
         taskCheckFailed = False
 
         taskIsDoneAI = daq.c_ulong()
-        try:
-            self.taskAI.IsTaskDone(taskIsDoneAI)
-        except daq.InvalidTaskError as e:
-            taskCheckFailed = True
-
         taskIsDoneAO = daq.c_ulong()
-        try:
-            self.taskAO.IsTaskDone(taskIsDoneAO)
-        except daq.InvalidTaskError as e:
-            taskCheckFailed = True
-
+        if ai:
+            try:
+                self.taskAI.IsTaskDone(taskIsDoneAI)
+            except daq.InvalidTaskError as e:
+                taskCheckFailed = True
+        else:
+            taskIsDoneAI = 0
+        if ao:
+            try:
+                self.taskAO.IsTaskDone(taskIsDoneAO)
+            except daq.InvalidTaskError as e:
+                taskCheckFailed = True
+        else:
+            taskIsDoneAO = 0
+        
         return not bool(taskIsDoneAI) and not bool(taskIsDoneAO) and not taskCheckFailed
 
     def test(self):
