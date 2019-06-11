@@ -150,11 +150,18 @@ def plot(disp_queue, nb_channels: int):
     ax = [fig.add_subplot(nb_channels, 1, channel+1) for channel in range(nb_channels)]
     plt.show(False)
     plt.draw()
-    fig.canvas.start_event_loop(0.001)  # otherwise plot freezes after 3-4 iterations
+    fig.canvas.start_event_loop(0.01)  # otherwise plot freezes after 3-4 iterations
     bgrd = [fig.canvas.copy_from_bbox(this_ax.bbox) for this_ax in ax]
-    points = [this_ax.plot(np.arange(10000), np.zeros((10000, 1)))[0] for this_ax in ax] # init plot content
+    points = [this_ax.plot(np.arange(10000), np.zeros((10000, 1)), linewidth=0.4)[0] for this_ax in ax] # init plot content
     [this_ax.set_ylim(-5, 5) for this_ax in ax] # init plot content
-
+    [this_ax.set_xlim(0, 10000) for this_ax in ax] # init plot content
+    for cnt, ax2 in enumerate(fig.get_axes()[::-1]):
+        ax2.label_outer()
+        ax2.spines['top'].set_visible(False)
+        ax2.spines['right'].set_visible(False)
+        # if cnt>0:
+        #     ax2.spines['bottom'].set_visible(False)
+            
     RUN = True
     while RUN:
         try:
@@ -168,8 +175,6 @@ def plot(disp_queue, nb_channels: int):
                         points[cnt].set_data(x, data[0][:nb_samples, chn])
                         ax[cnt].draw_artist(points[cnt])  # redraw just the points
                         fig.canvas.blit(ax[cnt].bbox)  # fill in the axes rectangle
-                        # ax[cnt].relim()
-                        # ax[cnt].autoscale_view()                 # rescale the y-axis
                     fig.canvas.draw()
                     fig.canvas.flush_events()
                 else:
