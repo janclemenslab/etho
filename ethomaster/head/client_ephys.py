@@ -105,8 +105,8 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         daq.finish()
     print(f'   Finished after {t1-t0:1.2f} seconds.')
     time.sleep(1)
-    # sp.terminate()
-    # sp.kill()
+    sp.terminate()
+    sp.kill()
     print('DONE.')
 
 if __name__ == '__main__':
