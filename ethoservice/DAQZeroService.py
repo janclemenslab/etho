@@ -96,12 +96,18 @@ class DAQ(BaseZeroService):
 
         # stop tasks and properly close callbacks (e.g. flush data to disk and close file)
         if hasattr(self, 'digital_chans_out') and self.digital_chans_out:
-            self.taskDO.StopTask()
+            try:
+                self.taskDO.StopTask()
+            except GenStoppedToPreventRegenOfOldSamplesError as e:
+                pass
             print('\n   stoppedDO')
             self.taskDO.stop()
 
         if hasattr(self, 'analog_chans_out') and self.analog_chans_out:
-            self.taskAO.StopTask()
+            try:
+                self.taskAO.StopTask()
+            except GenStoppedToPreventRegenOfOldSamplesError as e:
+                pass
             print('\n   stoppedAO')
             self.taskAO.stop()
 
@@ -149,7 +155,7 @@ class DAQ(BaseZeroService):
                 taskCheckFailed = True
         else:
             taskIsDoneAO = 0
-        
+
         return not bool(taskIsDoneAI) and not bool(taskIsDoneAO) and not taskCheckFailed
 
     def test(self):
