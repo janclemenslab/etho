@@ -75,7 +75,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     sounds = [sound.astype(np.float64) for sound in sounds]
     maxduration = -1
     playlist_items, totallen = build_playlist(sounds, maxduration, fs,
-                                              shuffle=prot['DAQ']['shuffle'])
+                                              shuffle=shuffle)
     #
     nb_digital_chans_out = len(prot['DAQ']['digital_chans_out'])
     nb_analog_chans_out = len(prot['DAQ']['analog_chans_out'])
@@ -96,14 +96,14 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     if not loop:
         print(f'setting maxduration from playlist to {totallen}.')
         maxduration = totallen
+        playlist_items = iter(playlist_items)
     else:
         print(f'endless playback.')
         maxduration = -1
-
-    if shuffle:
-        playlist_items = shuffled_cycle(playlist_items, shuffle='block')  # iter(playlist_items)
-    else:
-        playlist_items = cycle(playlist_items)  # iter(playlist_items)
+        if shuffle:
+            playlist_items = shuffled_cycle(playlist_items, shuffle='block')
+        else:
+            playlist_items = cycle(playlist_items)  # iter(playlist_items)
 
     # SETUP CAM
     if 'PTG' in prot['NODE']['use_services']:
