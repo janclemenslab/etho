@@ -23,7 +23,7 @@ class DAQ(BaseZeroService):
 
     # def setup(self, savefilename, duration, analog_chans_out=["ao0", "ao1"], analog_chans_in=["ai2", "ai3", "ai0"]):
     def setup(self, savefilename: str=None, play_order: Iterable=None, playlist_info=None,
-              duration: float=-1, fs: int=10000, display: bool=False,
+              duration: float=-1, fs: int=10000, display=False,
               analog_chans_out: Sequence=['ao0'], analog_chans_in: Sequence=None, digital_chans_out: Sequence=None,
               analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={}):
         self._time_started = None
@@ -60,7 +60,7 @@ class DAQ(BaseZeroService):
                 self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.analog_chans_in), attrs])
                 self.taskAI.data_rec.append(self.save_task)
             if display:
-                self.disp_task = ConcurrentTask(task=plot, taskinitargs=[len(self.analog_chans_in)], comms="pipe")
+                self.disp_task = ConcurrentTask(task=plot, taskinitargs=[display], comms="pipe")
                 self.taskAI.data_rec.append(self.disp_task)
             print(self.taskAI)
 
