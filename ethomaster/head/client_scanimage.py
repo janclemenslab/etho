@@ -147,6 +147,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     # START PROCESSES
     if 'PTG' in prot['NODE']['use_services']:
         ptg.start()
+        time.sleep(3)  # give cam a headstart so we don't miss the beginning of the daq/ca recording
     daq.start()
 
     # MONITOR PROGRESS
