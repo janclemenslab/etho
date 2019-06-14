@@ -108,10 +108,15 @@ class IOTask(daq.Task):
 
         Calls `self.data_gen` or `self.data_rec` for requesting/processing data.
         """
+        # for clean teardown, catch PyDAQmx.DAQmxFunctions.GenStoppedToPreventRegenOfOldSamplesError
         with self._data_lock:
             systemtime = time.time()
             if self.data_gen is not None:
-                self._data = next(self.data_gen)  # get data from data generator
+                try:
+                    self._data = next(self.data_gen)  # get data from data generator
+                except StopIteration:
+                    self._data = None
+
             if self.cha_type[0] is "analog_input":
                 # should only read self.num_samples_per_event!! otherwise recordings will be zeropadded for each chunk
                 self.ReadAnalogF64(DAQmx_Val_Auto, 1.0, DAQmx_Val_GroupByScanNumber,
@@ -119,10 +124,10 @@ class IOTask(daq.Task):
                 # only keep samples that were actually read, .value converts c_long to int
                 self._data = self._data[:self.samples_read.value, :]
 
-            elif self.cha_type[0] is "analog_output":
+            elif self.cha_type[0] is "analog_output" and self._data is not None:
                 self.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
                                     self._data, daq.byref(self.samples_read), None)
-            elif self.cha_type[0] is 'digital_output':
+            elif self.cha_type[0] is 'digital_output' and self._data is not None:
                 self.WriteDigitalLines(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
                                        self._data, daq.byref(self.samples_read), None)
 
@@ -139,21 +144,28 @@ class IOTask(daq.Task):
         return 0  # The function should return an integer
 
 
-def plot(disp_queue, nb_channels: int):
+def plot(disp_queue, channels_to_plot):
     """Coroutine for plotting.
 
     Fast, realtime as per: https://gist.github.com/pklaus/62e649be55681961f6c4
     """
+    nb_channels = len(channels_to_plot)
+
     plt.ion()
     fig = plt.figure()
     fig.canvas.set_window_title('traces: daq')
     ax = [fig.add_subplot(nb_channels, 1, channel+1) for channel in range(nb_channels)]
     plt.show(False)
     plt.draw()
-    fig.canvas.start_event_loop(0.001)  # otherwise plot freezes after 3-4 iterations
+    fig.canvas.start_event_loop(0.01)  # otherwise plot freezes after 3-4 iterations
     bgrd = [fig.canvas.copy_from_bbox(this_ax.bbox) for this_ax in ax]
-    points = [this_ax.plot(np.arange(10000), np.zeros((10000, 1)))[0] for this_ax in ax] # init plot content
+    points = [this_ax.plot(np.arange(10000), np.zeros((10000, 1)), linewidth=0.4)[0] for this_ax in ax] # init plot content
     [this_ax.set_ylim(-5, 5) for this_ax in ax] # init plot content
+    [this_ax.set_xlim(0, 10000) for this_ax in ax] # init plot content
+    for cnt, ax2 in enumerate(fig.get_axes()[::-1]):
+        ax2.label_outer()
+        ax2.spines['top'].set_visible(False)
+        ax2.spines['right'].set_visible(False)
 
     RUN = True
     while RUN:
@@ -163,13 +175,11 @@ def plot(disp_queue, nb_channels: int):
                 if data is not None:
                     nb_samples = data[0].shape[0]
                     x = np.arange(nb_samples)
-                    for cnt, chn in enumerate(range(nb_channels)):
+                    for cnt, chn in enumerate(channels_to_plot):
                         fig.canvas.restore_region(bgrd[cnt])  # restore background
                         points[cnt].set_data(x, data[0][:nb_samples, chn])
                         ax[cnt].draw_artist(points[cnt])  # redraw just the points
                         fig.canvas.blit(ax[cnt].bbox)  # fill in the axes rectangle
-                        # ax[cnt].relim()
-                        # ax[cnt].autoscale_view()                 # rescale the y-axis
                     fig.canvas.draw()
                     fig.canvas.flush_events()
                 else:
@@ -248,28 +258,6 @@ def coroutine(func):
 
 
 @coroutine
-def data(channels=1):
-    """generator yields next chunk of data for output"""
-    # generate all stimuli
-    data = list()
-    for ii in range(2):
-        # t = np.arange(0, 1, 1.0 / max(100.0 ** ii, 100))
-        # tmp = np.tile(0.2 * np.sin(5000 * t).astype(np.float64), (channels, 1)).T
-
-        # simple ON/OFF pattern
-        tmp = 0 * ii * np.zeros((channels, 10000)).astype(np.float64).T
-        data.append(np.ascontiguousarray(tmp))  # `ascont...` necessary since `.T` messes up internal array format
-    count = 0  # init counter
-    try:
-        while True:
-            count += 1
-            # print("{0}: generating {1}".format(count, data[(count-1) % len(data)].shape))
-            yield 0*data[(count - 1) % len(data)]
-    except GeneratorExit:
-        print("   cleaning up datagen.")
-
-
-@coroutine
 def data_playlist(sounds, play_order, playlist_info=None, logger=None, name='standard'):
     """sounds - list of nparrays"""
     first_run = True
@@ -292,7 +280,7 @@ def data_playlist(sounds, play_order, playlist_info=None, logger=None, name='sta
                         logger.info(msg)
             stim = sounds[pp]
             yield stim
-    except GeneratorExit:
+    except (GeneratorExit, StopIteration):
         print(f"   {name} cleaning up datagen.")
 
 

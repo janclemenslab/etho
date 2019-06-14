@@ -16,6 +16,18 @@ class Struct():
         pass
 
 
+def islinux():
+    return platform == "linux" or platform == "linux2"
+
+
+def ismac():
+    return platform == "darwin"
+
+
+def iswin():
+    return platform == "win32"
+
+
 def getlist(string, delimiter=',', stripwhitespace=True):
     stringlist = string.split(delimiter)
     if stripwhitespace:

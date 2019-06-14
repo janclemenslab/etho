@@ -39,7 +39,6 @@ def disp(displayQueue, frame_width, frame_height, poll_timeout=0.01):
                 break
             cv2.imshow('display', image)
             cv2.waitKey(1)
-            continue
     print("closing display")
     cv2.destroyWindow('display')
 
@@ -61,7 +60,6 @@ def save(writeQueue, file_name, frame_rate, frame_width, frame_height):
             RUN = False
             break
         ovw.write(image)
-        continue
     print("closing video writer")
     ovw.release()
     ovw = None
@@ -234,7 +232,7 @@ class PTG(BaseZeroService):
 
         self.log.warning('   stopped ')
         if stop_service:
-            time.sleep(2)
+            time.sleep(0.5)
             self.service_stop()
 
     def disp(self):
