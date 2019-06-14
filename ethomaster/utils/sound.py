@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import scipy.io.wavfile as wav
 import scipy.signal
+import h5py
 
 
 def parse_cell(cell, dtype: Callable=None) -> List:
@@ -54,7 +55,7 @@ def normalize_table(table: pd.DataFrame) -> pd.DataFrame:
         nchans = len(row_values[0])         # 1. get n stim channels from len(stimFileName)
         for col, cell in enumerate(row_values[1:]):
             if len(cell) < nchans:
-                tb[row, col+1] = [cell[0]]*nchans        # 2. fill remaining cols to match len(stimFileName)
+                tb[row, col + 1] = [cell[0]] * nchans        # 2. fill remaining cols to match len(stimFileName)
     df = pd.DataFrame(tb, columns=table.columns)
     return df
 
@@ -102,13 +103,13 @@ def build_playlist(soundlist, duration, fs, shuffle=True):
             else:
                 next_item = len(playlist_items) % len(soundlist)
             playlist_items.append(next_item)
-            totallen += len(soundlist[playlist_items[-1]])/fs
+            totallen += len(soundlist[playlist_items[-1]]) / fs
     elif duration == -1:
         playlist_items = list(range(len(soundlist)))
         if shuffle:
             playlist_items = np.random.permutation(playlist_items).tolist()
         for item in playlist_items:
-            totallen += len(soundlist[item])/fs
+            totallen += len(soundlist[item]) / fs
     return playlist_items, totallen
 
 
@@ -117,7 +118,7 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, floa
     sounddata = []
     for row_name, listitem in playlist.iterrows():
         mirror_led_channel = []
-        xx = [None]*len(listitem.stimFileName)
+        xx = [None] * len(listitem.stimFileName)
         for stimIdx, stimName in enumerate(listitem.stimFileName):
             x = np.zeros((0, 1))
             if stimName[:3] == 'SIN':  # SIN_FREQ_PHASE_DURATION
@@ -134,12 +135,17 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, floa
                 x = make_pulse(pulsedur, pulsepause, pulsenumber, pulsedelay, fs)
             elif stimName == 'MIRROR_LED':  # this channel contains a pulse train which mirrors the sound from another channel
                 mirror_led_channel.append(stimIdx)  # mirror led
-            elif stimName:  # other
+            elif stimName.endswith('.wav'):  # WAV file
                 # return time x channels
                 wav_rate, x = wav.read(os.path.join(stimfolder, stimName))
-                x = x.astype(np.float32)/32768
+                x = x.astype(np.float32) / 32768
                 if wav_rate != fs:  # resample to fs
                     x = scipy.signal.resample_poly(x, int(fs), int(wav_rate), axis=0)
+            elif stimName.endswith('.h5'):  # HDF5 file
+                with h5py.File(os.path.join(stimfolder, stimName), 'r') as f:
+                    x = f['stimulus'][:].astype(np.float32)
+            else:
+                x = None
 
             # if `attenuation` arg is provided:
             if attenuation:
@@ -166,18 +172,18 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, floa
             # set to minimal duration
             LEDduration = np.max((sample_sound, minLEDduration))
             # prevent overflow (if 100ms exceeds duration of sound)
-            LEDduration = np.min((xLED.shape[0]-sample_start, LEDduration))
+            LEDduration = np.min((xLED.shape[0] - sample_start, LEDduration))
             # parameters of the LED pattern
             pdur = 5  # ms
             ppau = 5  # ms
             pdel = 0  # ms
-            LEDpattern = make_pulse(pdur, ppau, LEDduration/(pdur+ppau)/fs*1000, pdel, fs)
-            xLED[sample_start:sample_start+LEDpattern.shape[0],0] = (LEDpattern-0.5) * float(LEDamp)
+            LEDpattern = make_pulse(pdur, ppau, LEDduration / (pdur + ppau) / fs * 1000, pdel, fs)
+            xLED[sample_start:sample_start + LEDpattern.shape[0], 0] = (LEDpattern - 0.5) * float(LEDamp)
             xx[chan] = xLED
 
         # make sure each channel in xx has the same length
         max_len = max([len(ii) for ii in xx])
-        xx = [np.insert(ii, ii.shape[0], np.zeros((max_len - len(ii),)))  for ii in xx]
+        xx = [np.insert(ii, ii.shape[0], np.zeros((max_len - len(ii),))) for ii in xx]
         xx = [x.reshape((x.shape[0], 1)) for x in xx]
 
         x = np.concatenate(xx, axis=1)
