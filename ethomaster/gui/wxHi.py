@@ -17,8 +17,8 @@ class Model:
             config['GENERAL']['hosts'] = [config['GENERAL']['hosts']]
         self.clients = exepool(ping, config['GENERAL']['hosts'])
         print(self.clients)
-        self.clients_runningservices = exepool(get_running_services, config['GENERAL']['hosts'])
-        print(self.clients_runningservices)
+        # self.clients_runningservices = exepool(get_running_services, config['GENERAL']['hosts'])
+        # print(self.clients_runningservices)
 
     def rescan(self):
         self.clients = exepool(ping, config['GENERAL']['hosts'])
@@ -118,9 +118,10 @@ class HelloFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem)
 
     def OnRescan(self, event):
-        self.PushStatusText('rescanning clients')
-        self.model.rescan()
-        self.PopStatusText()
+        pass
+        # self.PushStatusText('rescanning clients')
+        # self.model.rescan()
+        # self.PopStatusText()
 
     def OnClick(self, event):
         self.PushStatusText('configure {0}'.format(
