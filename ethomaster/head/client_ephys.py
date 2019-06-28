@@ -93,7 +93,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
         daq.init_local_logger('{0}_daq.log'.format(filename))
         # dump protocol file as yaml
         saveconfig('{0}_prot.yml'.format(filename), prot)
-        np.save(f'{filename}_sounds.npy', sounds)
+
     daq.start()
     t0 = time.clock()
     try:
@@ -102,6 +102,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
             t1 = time.clock()
             print(f'   Busy {t1-t0:1.2f} seconds.\r', end='', flush=True)
     except zerorpc.exceptions.RemoteError as e:
+        time.sleep(1.0)  # make sure we catch the last AI callback
         daq.finish()
     print(f'   Finished after {t1-t0:1.2f} seconds.')
     time.sleep(1)
