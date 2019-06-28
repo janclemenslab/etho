@@ -43,6 +43,32 @@ def disp(displayQueue, frame_width, frame_height, poll_timeout=0.01):
     cv2.destroyWindow('display')
 
 
+def disp_fast(displayQueue, frame_width, frame_height, poll_timeout=0.01):
+    from pyqtgraph.Qt import QtGui
+    import pyqtgraph as pg
+    from pyqtgraph.widgets.RawImageWidget import RawImageWidget
+    pg.setConfigOption('background', 'w')
+    pg.setConfigOption('leftButtonPan', False)
+
+    # set up window and subplots
+    app = QtGui.QApplication([])
+    win = RawImageWidget(scaled=True)
+    win.resize(frame_width, frame_height)
+    win.show()
+    app.processEvents()
+    RUN = True
+    while RUN:
+        if displayQueue.poll(poll_timeout):
+            image = displayQueue.recv()  # TODO: should be none blocking (block=False) just in case, need to catch empyt queue exception
+            if image is None:
+                print('stopping display thread')
+                RUN = False
+                break
+            win.setImage(image)
+            app.processEvents()
+    print("closing display")
+
+
 def save(writeQueue, file_name, frame_rate, frame_width, frame_height):
     print("setting up video writer")
     ovw = cv2.VideoWriter()
@@ -120,7 +146,7 @@ class PTG(BaseZeroService):
         self.nFrames = int(self.frame_rate * (self.duration + 100))
         if self.savefilename is None:  # display only - set up DISPLAY
             self.displayQueue, displayOut = Pipe()
-            self.pDisplay = Process(target=disp, args=(displayOut, self.frame_height, self.frame_width))
+            self.pDisplay = Process(target=disp_fast, args=(displayOut, self.frame_height, self.frame_width))
         else:  # save only - set up SAVE
             os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
             self.nFrames = int(self.frame_rate * (self.duration + 100))
@@ -136,6 +162,7 @@ class PTG(BaseZeroService):
             self.writeQueue = Queue()  # TODO: this should be a Pipe since we always only want to display the last frame
             self.pWrite = Process(target=save,
                                   args=(self.writeQueue, self.savefilename, self.frame_rate, self.frame_height, self.frame_width))
+
         # background jobs should be run and controlled via a thread
         # threads can be stopped by setting an event: `_thread_stopper.set()`
         self._thread_stopper = threading.Event()
@@ -153,6 +180,7 @@ class PTG(BaseZeroService):
             self.pDisplay.start()
         else:
             self.pWrite.start()
+            # self.pDisplay.start()
 
         self._time_started = time.time()
         # background jobs should be run and controlled via a thread
@@ -196,8 +224,9 @@ class PTG(BaseZeroService):
                 ts = self.im.timestamp()  # retrieve time stamp embedded in the frame
                 self.timestamps[frameNumber, :] = (t, ts['seconds'], ts['microSeconds'], ts[
                                         'cycleCount'], ts['cycleOffset'], ts['cycleSeconds'])
-                # ovw.write(BGR)
                 self.writeQueue.put(BGR)
+            else:
+                self.displayQueue.send(BGR)
             frameNumber = frameNumber + 1
             if frameNumber == self.nFrames:
                 print('max number of frames reached - stopping')
