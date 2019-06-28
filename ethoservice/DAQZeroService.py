@@ -60,7 +60,7 @@ class DAQ(BaseZeroService):
                 self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.analog_chans_in), attrs])
                 self.taskAI.data_rec.append(self.save_task)
             if display:
-                self.disp_task = ConcurrentTask(task=plot, taskinitargs=[display], comms="pipe")
+                self.disp_task = ConcurrentTask(task=plot_fast, taskinitargs=[display], comms="pipe")
                 self.taskAI.data_rec.append(self.disp_task)
             print(self.taskAI)
 
