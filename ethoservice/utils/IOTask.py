@@ -8,16 +8,8 @@ import threading
 import sys
 import time
 import numpy as np
-import h5py
-
-# callback specific imports
-import matplotlib
-matplotlib.use('tkagg')
-import matplotlib.pyplot as plt
 
 from .ConcurrentTask import ConcurrentTask
-
-plt.ion()
 
 
 class IOTask(daq.Task):
@@ -57,7 +49,7 @@ class IOTask(daq.Task):
             self.CreateAIVoltageChan(self.cha_string, "", DAQmx_Val_RSE, -limits, limits, DAQmx_Val_Volts, None)
             self.AutoRegisterEveryNSamplesEvent(DAQmx_Val_Acquired_Into_Buffer, self.num_samples_per_event, 0)
             self.CfgInputBuffer(self.num_samples_per_chan * self.num_channels * 4)
-            clock_source = 'OnboardClock'#ao/SampleClock'  # None  # use internal clock
+            clock_source = 'OnboardClock'  # ao/SampleClock'  # None  # use internal clock
         elif self.cha_type[0] is "analog_output":
             self.num_samples_per_chan = 5000
             self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
@@ -67,7 +59,7 @@ class IOTask(daq.Task):
             # self.CfgOutputBuffer(self.num_samples_per_chan)
             # ensures continuous output and avoids collision of old and new data in buffer
             self.SetWriteRegenMode(DAQmx_Val_DoNotAllowRegen)
-            clock_source = 'ai/SampleClock'# 'OnboardClock'  # None  # use internal clock
+            clock_source = 'ai/SampleClock'  # 'OnboardClock'  # None  # use internal clock
         elif self.cha_type[0] is "digital_output":
             self.num_samples_per_chan = 5000
             self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
@@ -88,7 +80,6 @@ class IOTask(daq.Task):
         self._newdata_event = threading.Event()
         if 'output' in self.cha_type[0]:
             self.EveryNCallback()
-
 
     def __repr__(self):
         return '{0}: {1}'.format(self.cha_type[0], self.cha_string)
@@ -145,23 +136,27 @@ class IOTask(daq.Task):
 
 
 def plot(disp_queue, channels_to_plot):
-    """Coroutine for plotting.
+    """Coroutine for plotting with matplotlib (not so fast).
 
     Fast, realtime as per: https://gist.github.com/pklaus/62e649be55681961f6c4
     """
+    import matplotlib
+    matplotlib.use('tkagg')
+    import matplotlib.pyplot as plt
+    plt.ion()
+
     nb_channels = len(channels_to_plot)
 
-    plt.ion()
     fig = plt.figure()
     fig.canvas.set_window_title('traces: daq')
-    ax = [fig.add_subplot(nb_channels, 1, channel+1) for channel in range(nb_channels)]
+    ax = [fig.add_subplot(nb_channels, 1, channel + 1) for channel in range(nb_channels)]
     plt.show(False)
     plt.draw()
     fig.canvas.start_event_loop(0.01)  # otherwise plot freezes after 3-4 iterations
     bgrd = [fig.canvas.copy_from_bbox(this_ax.bbox) for this_ax in ax]
-    points = [this_ax.plot(np.arange(10000), np.zeros((10000, 1)), linewidth=0.4)[0] for this_ax in ax] # init plot content
-    [this_ax.set_ylim(-5, 5) for this_ax in ax] # init plot content
-    [this_ax.set_xlim(0, 10000) for this_ax in ax] # init plot content
+    points = [this_ax.plot(np.arange(10000), np.zeros((10000, 1)), linewidth=0.4)[0] for this_ax in ax]  # init plot content
+    [this_ax.set_ylim(-5, 5) for this_ax in ax]  # init plot content
+    [this_ax.set_xlim(0, 10000) for this_ax in ax]  # init plot content
     for cnt, ax2 in enumerate(fig.get_axes()[::-1]):
         ax2.label_outer()
         ax2.spines['top'].set_visible(False)
@@ -185,14 +180,57 @@ def plot(disp_queue, channels_to_plot):
                 else:
                     RUN = False
         except Exception as e:
-                print(e)
+            print(e)
     # clean up
     print("   closing plot")
     plt.close(fig)
 
 
+def plot_fast(disp_queue, channels_to_plot):
+    """Coroutine for plotting using pyqtgraph (FAST!!)."""
+    from pyqtgraph.Qt import QtGui
+    import pyqtgraph as pg
+    pg.setConfigOption('background', 'w')
+    pg.setConfigOption('leftButtonPan', False)
+
+    nb_channels = len(channels_to_plot)
+
+    # set up window and subplots
+    app = QtGui.QApplication([])
+    win = pg.GraphicsWindow(title="DAQ")
+    win.resize(1000, 100 * nb_channels)
+    p = []
+    for chan in range(nb_channels):
+        w = win.addPlot(y=np.zeros((10_000,)))
+        w.setXRange(0, 10_000, padding=0)
+        w.setYRange(-5, 5)
+        w.setMouseEnabled(x=False, y=False)
+        w.enableAutoRange('xy', False)
+        p.append(w.plot(pen='k'))
+        win.nextRow()
+
+    app.processEvents()
+    RUN = True
+    while RUN:
+        try:
+            if disp_queue.poll(0.1):
+                data = disp_queue.recv()
+                if data is not None:
+                    for plot, chan in zip(p, channels_to_plot):
+                        plot.setData(data[0][:, chan])
+                    app.processEvents()
+                else:
+                    RUN = False
+        except Exception as e:
+            print(e)
+    # clean up
+    print("   closing plot.")
+
+
 def save(frame_queue, filename, num_channels=1, attrs=None, sizeincrement=100, start_time=None):
     """Coroutine for saving data."""
+    import h5py
+
     f = h5py.File(filename, "w")
 
     if attrs is not None:
@@ -226,7 +264,7 @@ def save(frame_queue, filename, num_channels=1, attrs=None, sizeincrement=100, s
             if start_time is None:
                 start_time = systemtime
             sys.stdout.write("\r   {:1.1f} seconds: saving {} ({})".format(
-                             systemtime-start_time, frame.shape, framecount))
+                             systemtime - start_time, frame.shape, framecount))
             dset_samples.resize(dset_samples.shape[0] + frame.shape[0], axis=0)
             dset_samples[-frame.shape[0]:, :] = frame
             dset_systemtime[framecount, :] = systemtime
