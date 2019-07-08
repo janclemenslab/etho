@@ -63,7 +63,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         cam.setup('{0}/{1}/{1}.h264'.format(dirname, filename), maxduration + 10)
         time.sleep(1)
         cam.start()
-        time.sleep(5)
+        cam_start_time = time.time() # time.sleep(5)
 
     if 'SND' in prot['NODE']['use_services']:
         snd_server_name = 'python -m {0} {1}'.format(SND.__module__, SER)
@@ -89,7 +89,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print('sending sound data to {0} - may take a while.'.format(ip_address))
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
         snd.setup(sounds, playlist, playlist_items, totallen, fs)
-        snd.start()
 
     if 'OPT' in prot['NODE']['use_services']:
         opt_server_name = 'python -m {0} {1}'.format(OPT.__module__, SER)
@@ -101,7 +100,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print(prot['OPT']['pin'], prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'], maxduration)
         opt.setup(prot['OPT']['pin'], maxduration, prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'])
         opt.init_local_logger('{0}/{1}/{1}_opt.log'.format(dirname, filename))
-        opt.start()
 
     if 'THUA' in prot['NODE']['use_services']:
         thua_server_name = 'python -m {0} {1}'.format(THUA.__module__, SER)
@@ -173,6 +171,20 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
               metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']})
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
         daq.start()
+
+
+    if 'CAM' in prot['NODE']['use_services']:
+        # make sure 5seconds have elapsed
+        while time.time() - cam_start_time <= 5:
+            time.sleep(0.01)
+        print(f'   {time.time() - cam_start_time:1.2f} seconds elapsed. Ready to start SND and/or OPT.')
+
+    if 'SND' in prot['NODE']['use_services']:
+        snd.start()
+        print('   SND started.')
+    if 'OPT' in prot['NODE']['use_services']:
+        opt.start()
+        print('   OPT started.')
 
     print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
 
