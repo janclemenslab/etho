@@ -16,6 +16,18 @@ class Struct():
         pass
 
 
+def islinux():
+    return platform == "linux" or platform == "linux2"
+
+
+def ismac():
+    return platform == "darwin"
+
+
+def iswin():
+    return platform == "win32"
+
+
 def getlist(string, delimiter=',', stripwhitespace=True):
     stringlist = string.split(delimiter)
     if stripwhitespace:
@@ -123,9 +135,10 @@ def get_running_services(host, services=None):
 
     return test_results
 
+
 def kill_service(host, service):
     user = config['GENERAL']['user']
-    pid = get_service_Pid(host, service)
+    pid = get_service_pid(host, service)
     sr = SSHRunner("{0}@{1}".format(user, host))
     sr.kill(pid)
 
@@ -134,7 +147,7 @@ def kill_all_services(host):
     user = config['GENERAL']['user']
     sr = SSHRunner("{0}@{1}".format(user, host))
     for service in config['GENERAL']['services']:
-        pid = get_service_Pid(host, service)
+        pid = get_service_pid(host, service)
         sr.kill(pid)
 
 

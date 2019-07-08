@@ -23,7 +23,7 @@ class DAQ(BaseZeroService):
 
     # def setup(self, savefilename, duration, analog_chans_out=["ao0", "ao1"], analog_chans_in=["ai2", "ai3", "ai0"]):
     def setup(self, savefilename: str=None, play_order: Iterable=None, playlist_info=None,
-              duration: float=-1, fs: int=10000, display: bool=False,
+              duration: float=-1, fs: int=10000, display=False,
               analog_chans_out: Sequence=['ao0'], analog_chans_in: Sequence=None, digital_chans_out: Sequence=None,
               analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={}):
         self._time_started = None
@@ -60,7 +60,7 @@ class DAQ(BaseZeroService):
                 self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.analog_chans_in), attrs])
                 self.taskAI.data_rec.append(self.save_task)
             if display:
-                self.disp_task = ConcurrentTask(task=plot, taskinitargs=[len(self.analog_chans_in)], comms="pipe")
+                self.disp_task = ConcurrentTask(task=plot_fast, taskinitargs=[display], comms="pipe")
                 self.taskAI.data_rec.append(self.disp_task)
             print(self.taskAI)
 
@@ -89,7 +89,6 @@ class DAQ(BaseZeroService):
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
-
         if hasattr(self, '_thread_stopper'):
             self._thread_stopper.set()
         if hasattr(self, '_thread_timer'):
@@ -97,12 +96,18 @@ class DAQ(BaseZeroService):
 
         # stop tasks and properly close callbacks (e.g. flush data to disk and close file)
         if hasattr(self, 'digital_chans_out') and self.digital_chans_out:
-            self.taskDO.StopTask()
+            try:
+                self.taskDO.StopTask()
+            except GenStoppedToPreventRegenOfOldSamplesError as e:
+                pass
             print('\n   stoppedDO')
             self.taskDO.stop()
 
         if hasattr(self, 'analog_chans_out') and self.analog_chans_out:
-            self.taskAO.StopTask()
+            try:
+                self.taskAO.StopTask()
+            except GenStoppedToPreventRegenOfOldSamplesError as e:
+                pass
             print('\n   stoppedAO')
             self.taskAO.stop()
 
@@ -125,26 +130,31 @@ class DAQ(BaseZeroService):
 
         self.log.warning('   stopped ')
         if stop_service:
-            time.sleep(1)
+            time.sleep(0.5)
             self.service_stop()
 
     def disp(self):
         pass
 
-    def is_busy(self):
+    def is_busy(self, ai=True, ao=True):
         taskCheckFailed = False
 
         taskIsDoneAI = daq.c_ulong()
-        try:
-            self.taskAI.IsTaskDone(taskIsDoneAI)
-        except daq.InvalidTaskError as e:
-            taskCheckFailed = True
-
         taskIsDoneAO = daq.c_ulong()
-        try:
-            self.taskAO.IsTaskDone(taskIsDoneAO)
-        except daq.InvalidTaskError as e:
-            taskCheckFailed = True
+        if ai:
+            try:
+                self.taskAI.IsTaskDone(taskIsDoneAI)
+            except daq.InvalidTaskError as e:
+                taskCheckFailed = True
+        else:
+            taskIsDoneAI = 0
+        if ao:
+            try:
+                self.taskAO.IsTaskDone(taskIsDoneAO)
+            except daq.InvalidTaskError as e:
+                taskCheckFailed = True
+        else:
+            taskIsDoneAO = 0
 
         return not bool(taskIsDoneAI) and not bool(taskIsDoneAO) and not taskCheckFailed
 
