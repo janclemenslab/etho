@@ -172,16 +172,22 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
         daq.start()
 
-
     if 'CAM' in prot['NODE']['use_services']:
         # make sure 5seconds have elapsed
         while time.time() - cam_start_time <= 5:
             time.sleep(0.01)
-        print(f'   {time.time() - cam_start_time:1.2f} seconds elapsed. Ready to start SND and/or OPT.')
+        print(f'   {time.time() - cam_start_time:1.4f} seconds elapsed. Ready to start SND and/or OPT.')
 
     if 'SND' in prot['NODE']['use_services']:
+        time0 = time.time()
         snd.start()
+        print(f'waited {time.time() - time0:1.4f} seconds.')
         print('   SND started.')
+        time0 = time.time()
+        while not snd.is_busy():
+            time.sleep(0.001)
+        print(f'waited {time.time() - time0:1.4f} seconds.')
+
     if 'OPT' in prot['NODE']['use_services']:
         opt.start()
         print('   OPT started.')
