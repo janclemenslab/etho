@@ -24,7 +24,7 @@ class DAQ(BaseZeroService):
     # def setup(self, savefilename, duration, analog_chans_out=["ao0", "ao1"], analog_chans_in=["ai2", "ai3", "ai0"]):
     def setup(self, savefilename: str=None, play_order: Iterable=None, playlist_info=None,
               duration: float=-1, fs: int=10000, display=False,
-              analog_chans_out: Sequence=['ao0'], analog_chans_in: Sequence=None, digital_chans_out: Sequence=None,
+              analog_chans_out: Sequence=None, analog_chans_in: Sequence=['ai0'], digital_chans_out: Sequence=None,
               analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={}):
         self._time_started = None
         self.duration = duration
@@ -36,7 +36,7 @@ class DAQ(BaseZeroService):
 
         # ANALOG OUTPUT
         if self.analog_chans_out:
-            self.taskAO = IOTask(cha_name=self.analog_chans_out)
+            self.taskAO = IOTask(cha_name=self.analog_chans_out, rate=fs)
             if analog_data_out[0].shape[-1] is not len(self.analog_chans_out):
                 raise ValueError(f'Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]}).')
             play_order_new = copy.deepcopy(play_order)
@@ -45,14 +45,14 @@ class DAQ(BaseZeroService):
             print(self.taskAO)
         # DIGITAL OUTPUT
         if self.digital_chans_out:
-            self.taskDO = IOTask(cha_name=self.digital_chans_out)
+            self.taskDO = IOTask(cha_name=self.digital_chans_out, rate=fs)
             play_order_new = copy.deepcopy(play_order)
             self.taskDO.data_gen = data_playlist(digital_data_out, play_order_new, name='DO')
             self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             print(self.taskDO)
         # ANALOG INPUT
         if self.analog_chans_in:
-            self.taskAI = IOTask(cha_name=self.analog_chans_in)
+            self.taskAI = IOTask(cha_name=self.analog_chans_in, rate=fs)
             self.taskAI.data_rec = []
             if self.savefilename is not None:  # save
                 os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
@@ -74,7 +74,9 @@ class DAQ(BaseZeroService):
             task.start()
 
         # Arm the output tasks - won't start until the AI start is triggered
-        self.taskAO.StartTask()
+        if self.analog_chans_out:
+            self.taskAO.StartTask()
+
         if self.digital_chans_out:
             self.taskDO.StartTask()
 
@@ -122,8 +124,9 @@ class DAQ(BaseZeroService):
             except Exception as e:
                 pass  # print(e)
 
+        if self.analog_chans_out:
+            self.taskAO.ClearTask()
 
-        self.taskAO.ClearTask()
         if self.digital_chans_out:
             self.taskDO.ClearTask()
         self.taskAI.ClearTask()
@@ -140,7 +143,8 @@ class DAQ(BaseZeroService):
         taskCheckFailed = False
 
         taskIsDoneAI = daq.c_ulong()
-        taskIsDoneAO = daq.c_ulong()
+        if self.analog_chans_out:
+            taskIsDoneAO = daq.c_ulong()
         if ai:
             try:
                 self.taskAI.IsTaskDone(taskIsDoneAI)
@@ -148,7 +152,7 @@ class DAQ(BaseZeroService):
                 taskCheckFailed = True
         else:
             taskIsDoneAI = 0
-        if ao:
+        if ao and self.analog_chans_out:
             try:
                 self.taskAO.IsTaskDone(taskIsDoneAO)
             except daq.InvalidTaskError as e:
