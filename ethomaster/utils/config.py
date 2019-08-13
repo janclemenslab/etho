@@ -49,7 +49,7 @@ def readconfig(filename=GLOBALCONFIGFILEPATH):
 def readconfig_yaml(filename):
     import yaml
     with open(filename, 'r') as f:
-        config_dict = yaml.load(f.read())
+        config_dict = yaml.load(f.read(), Loader=yaml.FullLoader)
     return config_dict
 
 
