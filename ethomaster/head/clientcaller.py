@@ -73,7 +73,14 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
         # load playlist, sounds, and enumerate play order
         playlist = parse_table(playlistfile)
-        sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
+
+        if ip_address in config['ATTENUATION']:  # use node specific attenuation data
+            attenuation = config['ATTENUATION'][ip_address]
+            print(f'using attenuation data specific to {ip_address}.')
+        else:
+            attenuation = config['ATTENUATION']
+
+        sounds = load_sounds(playlist, fs, attenuation=attenuation,
                              LEDamp=prot['SND']['ledamp'],
                              stimfolder=config['HEAD']['stimfolder'],
                              cast2int=True)
@@ -137,8 +144,16 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
             daq_save_folder = dirname
         fs = prot['DAQ']['samplingrate']
         shuffle_playback = prot['DAQ']['shuffle']
+
         playlist = parse_table(playlistfile)
-        sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
+
+        if ip_address in config['ATTENUATION']:  # use node specific attenuation data
+            attenuation = config['ATTENUATION'][ip_address]
+            print(f'using attenuation data specific to {ip_address}.')
+        else:
+            attenuation = config['ATTENUATION']
+
+        sounds = load_sounds(playlist, fs, attenuation=attenuation,
                              LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'])
         sounds = [sound.astype(np.float64) for sound in sounds]
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
