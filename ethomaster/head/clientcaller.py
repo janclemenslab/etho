@@ -95,7 +95,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print([OPT.SERVICE_PORT, OPT.SERVICE_NAME])
         opt = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt', serializer=SER)
         print(opt.start_server(opt_server_name, folder_name, warmup=1))
-        opt.connect("tcp://{0}:{1}".format(ip_address,  OPT.SERVICE_PORT))
+        opt.connect("tcp://{0}:{1}".format(ip_address, OPT.SERVICE_PORT))
         print('done')
         print(prot['OPT']['pin'], prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'], maxduration)
         opt.setup(prot['OPT']['pin'], maxduration, prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'])
@@ -146,8 +146,8 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         # TODO: catch errors if channel numbers are inconsistent - sounds[ii].shape[-1] should be nb_analog+nb_digital
         if prot['DAQ']['digital_chans_out'] is not None:
             nb_digital_chans_out = len(prot['DAQ']['digital_chans_out'])
-            digital_data = [snd[:,-nb_digital_chans_out].astype(np.uint8) for snd in sounds]
-            analog_data = [snd[:,:nb_digital_chans_out+1] for snd in sounds]  # remove digital traces from stimset
+            digital_data = [snd[:, -nb_digital_chans_out].astype(np.uint8) for snd in sounds]
+            analog_data = [snd[:, :nb_digital_chans_out + 1] for snd in sounds]  # remove digital traces from stimset
         else:
             digital_data = None
             analog_data = sounds
