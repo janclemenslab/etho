@@ -72,7 +72,12 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
         # load playlist, sounds, and enumerate play order
         playlist = parse_table(playlistfile)
-        sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
+        if ip_address in config['ATTENUATION']:  # use node specific attenuation data
+            attenuation = config['ATTENUATION'][ip_address]
+        else:
+            attenuation = config['ATTENUATION']
+
+        sounds = load_sounds(playlist, fs, attenuation=attenuation,
                              LEDamp=prot['SND']['ledamp'],
                              stimfolder=config['HEAD']['stimfolder'],
                              cast2int=True)
