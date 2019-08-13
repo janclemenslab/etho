@@ -2,6 +2,7 @@ import time
 import numpy as np
 import pandas as pd
 import subprocess
+import logging
 from itertools import cycle
 
 from ethomaster import config
@@ -128,7 +129,12 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
     if 'DAQ' in prot['NODE']['use_services']:
         daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
-
+        if prot['DAQ']['run_locally']:
+            print('   Running DAQ job locally.')
+            ip_address = 'localhost'
+            daq_save_folder = 'C:/Users/ncb/data'
+        else:
+            daq_save_folder = dirname
         fs = prot['DAQ']['samplingrate']
         shuffle_playback = prot['DAQ']['shuffle']
         playlist = parse_table(playlistfile)
@@ -146,13 +152,12 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         # TODO: catch errors if channel numbers are inconsistent - sounds[ii].shape[-1] should be nb_analog+nb_digital
         if prot['DAQ']['digital_chans_out'] is not None:
             nb_digital_chans_out = len(prot['DAQ']['digital_chans_out'])
-            digital_data = [snd[:,-nb_digital_chans_out].astype(np.uint8) for snd in sounds]
-            analog_data = [snd[:,:nb_digital_chans_out+1] for snd in sounds]  # remove digital traces from stimset
+            digital_data = [snd[:, -nb_digital_chans_out].astype(np.uint8) for snd in sounds]
+            analog_data = [snd[:, :nb_digital_chans_out+1] for snd in sounds]  # remove digital traces from stimset
         else:
             digital_data = None
             analog_data = sounds
-
-        daq_save_filename = '{0}/{1}/{1}_daq.h5'.format(dirname, filename)
+        daq_save_filename = '{0}/{1}/{1}_daq.h5'.format(daq_save_folder, filename)
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
 
@@ -169,8 +174,9 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
               analog_data_out=analog_data,
               digital_data_out=digital_data,
               metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']})
-        daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
+        daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(daq_save_folder, filename))
         daq.start()
+        logging.info('DAQ started')
 
     if 'CAM' in prot['NODE']['use_services']:
         # make sure 5seconds have elapsed
