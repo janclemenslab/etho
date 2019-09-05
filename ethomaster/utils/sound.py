@@ -148,14 +148,14 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, floa
                         x = f[stim_key][:].astype(np.float32)
                     except KeyError as e:
                         print(e)
-            else:
-                x = None
+            # else:
+            #     x = None
 
             # if `attenuation` arg is provided:
-            if x is not None and attenuation:
+            if attenuation:
                 x = x * float(attenuation[listitem.freq[stimIdx]])
             # set_volume
-            if x is not None and len(x):
+            if len(x):
                 x = x * float(listitem.intensity[stimIdx])  # "* 20" NOT USED FOR DAQ
 
                 # pre/post pend silence
