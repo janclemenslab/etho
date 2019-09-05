@@ -114,7 +114,8 @@ def build_playlist(soundlist, duration, fs, shuffle=True):
 
 
 def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, float]=None,
-                LEDamp: float=1.0, stimfolder: str='./', cast2int: bool=False, aslist: bool=False):
+                LEDamp: float=1.0, stimfolder: str='./', cast2int: bool=False, aslist: bool=False,
+                stim_key: str = 'stimulus'):
     sounddata = []
     for row_name, listitem in playlist.iterrows():
         mirror_led_channel = []
@@ -143,12 +144,15 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, floa
                     x = scipy.signal.resample_poly(x, int(fs), int(wav_rate), axis=0)
             elif stimName.endswith('.h5'):  # HDF5 file
                 with h5py.File(os.path.join(stimfolder, stimName), 'r') as f:
-                    x = f['stimulus'][:].astype(np.float32)
+                    try:
+                        x = f[stim_key][:].astype(np.float32)
+                    except KeyError as e:
+                        print(e)
             else:
                 x = None
 
             # if `attenuation` arg is provided:
-            if attenuation:
+            if attenuation and x is not None:
                 x = x * float(attenuation[listitem.freq[stimIdx]])
             # set_volume
             if len(x):
