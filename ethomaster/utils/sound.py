@@ -152,10 +152,10 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, floa
                 x = None
 
             # if `attenuation` arg is provided:
-            if attenuation and x is not None:
+            if x is not None and attenuation:
                 x = x * float(attenuation[listitem.freq[stimIdx]])
             # set_volume
-            if len(x):
+            if x is not None and len(x):
                 x = x * float(listitem.intensity[stimIdx])  # "* 20" NOT USED FOR DAQ
 
                 # pre/post pend silence
