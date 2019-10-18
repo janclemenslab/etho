@@ -17,7 +17,7 @@ except Exception as e:
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class OPT2(BaseZeroService):
-    """"Service for controlling multiple LEDs (via GPIO pins) on raspberry pi.""""
+    """Service for controlling multiple LEDs (via GPIO pins) on raspberry pi."""
     
 
     # TODO: update both ports to avoid collisions with existing services - but should be okay since we won't use OPT and OPT at the same time
