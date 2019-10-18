@@ -8,7 +8,7 @@ import logging
 from datetime import datetime
 import sys
 try:
-    from .utils.delay_pwmled import Delayed_PWMLED
+    from .utils.delay_pwmled import Delay_PWMLED
     import gpiozero
 except Exception as e:
     print("IGNORE IF RUN ON HEAD")
@@ -41,7 +41,7 @@ class OPT2(BaseZeroService):
                 blink_amps ([type]): [description]
         """
         self.pins = [int(pin) for pin in pins]
-        self.LEDs = [Delayed_PWMLED(pin, initial_value=0, frequency=1000) for pin in self.pins]  # try to set frequency to 1000
+        self.LEDs = [Delay_PWMLED(pin, initial_value=0, frequency=1000) for pin in self.pins]  # try to set frequency to 1000
         
         self.duration = float(duration)  # total duration of experiments
         self.LED_blinkinterval = blink_pers  # common clock for all pins - [trials,]
