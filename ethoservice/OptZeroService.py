@@ -5,6 +5,8 @@ import zerorpc
 import time
 from datetime import datetime
 import sys
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 
 try:
     import gpiozero
@@ -13,6 +15,7 @@ except Exception as e:
     print(e)
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class OPT(BaseZeroService):
 
     LOGGING_PORT = 1452

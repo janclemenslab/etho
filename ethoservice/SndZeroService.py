@@ -7,8 +7,11 @@ from .ZeroService import BaseZeroService
 import zerorpc
 import time
 import sys
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class SND(BaseZeroService):
 
     LOGGING_PORT = 1443

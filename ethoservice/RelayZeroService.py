@@ -4,6 +4,8 @@ from .ZeroService import BaseZeroService
 import zerorpc
 import time
 import sys
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 try:
     import gpiozero
 except Exception as e:
@@ -11,6 +13,7 @@ except Exception as e:
     print(e)
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class REL(BaseZeroService):
     '''
     toggle relay using gpiozero library
