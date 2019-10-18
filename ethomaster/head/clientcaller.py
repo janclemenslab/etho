@@ -56,6 +56,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
         cam = ZeroClient("{0}@{1}".format(user_name, ip_address), 'picam', serializer=SER)
         print(' starting server:', end='')
+        time.sleep(2)
         ret = cam.start_server(cam_server_name, folder_name, warmup=1)
         print(f'{"success" if ret else "FAILED"}.')
         cam.connect("tcp://{0}:{1}".format(ip_address, CAM.SERVICE_PORT))
