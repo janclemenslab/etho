@@ -5,7 +5,7 @@ import wx
 from ethomaster.head.clientmanager import *
 from ethomaster.utils.SSHRunner import *
 from ethomaster import config
-import ethomaster.gui.wxCtrl as wxCtrl
+import ethomaster.gui.wxCtrl_rpi as wxCtrl_rpi
 from ethomaster.gui.wxBusyDialog import BusyDialog
 
 
@@ -116,8 +116,7 @@ class HelloFrame(wx.Frame):
     def OnClick(self, event):
         self.PushStatusText('configure {0}'.format(
             event.GetEventObject().name))
-        # wxCam.main(event.GetEventObject().name)
-        wxCtrl.main(event.GetEventObject().name)
+        wxCtrl_rpi.main(event.GetEventObject().name)
         try:
             self.PopStatusText()
         except:
