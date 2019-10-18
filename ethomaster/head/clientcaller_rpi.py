@@ -159,7 +159,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         opt2_server_name = 'python -m {0} {1}'.format(OPT2.__module__, SER)
         print([OPT2.SERVICE_PORT, OPT2.SERVICE_NAME])
         opt2 = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt', serializer=SER)
-        # print(opt2.start_server(opt2_server_name, folder_name, warmup=1))
+        print(opt2.start_server(opt2_server_name, folder_name, warmup=1))
         opt2.connect("tcp://{0}:{1}".format(ip_address,  OPT2.SERVICE_PORT))
         print('done')
         print(*prot['OPT2'], maxduration)
