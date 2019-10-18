@@ -1,23 +1,10 @@
 import gpiozero
-# from gpiozero.threads import GPIOThread
-
-# MOVE THIS TO NEW MODULE in utils
-# from threading import Lock
 from itertools import repeat, cycle, chain
-# from colorzero import Color
-# from collections import OrderedDict
-# try:
-#     from math import log2
-# except ImportError:
-#     from .compat import log2
+from .log_exceptions import for_all_methods, log_exceptions
+import logging
 
-# from .exc import OutputDeviceBadValue, GPIOPinMissing
-# from .devices import GPIODevice, Device, CompositeDevice
-# from .mixins import SourceMixin
-
-# from .tones import Tone
-
-class Delayed_PWMLED(gpiozero.PWMLED):
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+class Delay_PWMLED(gpiozero.PWMLED):
 
     def __init__(self, pin=None, active_high=True, initial_value=0, frequency=100, pin_factory=None):
         super().__init__(pin, active_high, initial_value, frequency, pin_factory)
