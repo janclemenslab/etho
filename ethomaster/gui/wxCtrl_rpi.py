@@ -8,7 +8,7 @@ from ethomaster.gui.wxDangerDialog import DangerDialog
 from ethomaster.gui.wxBusyDialog import BusyDialog
 import ethomaster.gui.wxCam as wxCam
 import ethomaster.gui.ThuPreview as ThuPreview
-
+from multiprocessing import Process
 
 def list_path(path='playlists'):
     return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
@@ -31,7 +31,7 @@ class Frame(wx.Frame):
 
         bStart = wx.Button(self, label='start selected')
         self.Bind(wx.EVT_BUTTON, self.OnClickStart, bStart)
-
+        self.bStart = bStart
         bStatus = wx.Button(self, label='status')
         self.Bind(wx.EVT_BUTTON, self.OnClickStatus, bStatus)
 
@@ -76,11 +76,22 @@ class Frame(wx.Frame):
             args = (self.host, os.path.join(self.playlistfolder, playlistName),
                                os.path.join(self.protocolfolder, protocolName))
             print(message)
-            BusyDialog(self, size=(300,150)).run(clientcaller.clientcaller, args, message=message)
+            # check node status before starting??
+            self.bStart.Disable()
+            try:
+                # or start this as independent process?
+                p = Process(target=clientcaller.clientcaller, args=args)
+                p.start()
+                # clientcaller.clientcaller(*args)
+                while ret is None:
+                    ret = p.join(timeout=1)
+            except:
+                pass
+            finally:
+                self.bStart.Enable()
+            # BusyDialog(self, size=(300,150)).run(clientcaller.clientcaller, args, message=message)
         else:
             print('no controlf file selected')
-        # check node status before starting??
-        # CALL: startRecording(selectedItemString)
 
     def OnClickStatus(self, event):
         with BusyDialog(self) as dlg:
@@ -91,15 +102,10 @@ class Frame(wx.Frame):
             else:
                 # handle dialog being cancelled or ended by some other button
                 pass
-    # The dialog is automatically destroyed on exit from the context manager
 
     def OnClickCamPreview(self, event):
         print("if running - start cam service and preview, otherwise connect to running service and preview")
         wxCam.main(self.host)
-        # if running
-            # connect to CAM service and preview
-        # else:
-            # start and connect service and preview
 
     def OnClickThuPreview(self, event):
         ThuPreview.main(self.host)
