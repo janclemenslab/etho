@@ -8,7 +8,7 @@ from itertools import cycle
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
 from ethomaster.utils.config import readconfig
-from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
+from ethomaster.utils.sound import parse_table, load_sounds, build_playlist, select_channels_from_playlist, parse_pulse_parameters
 
 from ethoservice.SndZeroService import SND
 from ethoservice.CamZeroService import CAM
@@ -34,6 +34,9 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
     dirname = prot['NODE']['savefolder']
     print(filename)
+
+    # load playlist
+    playlist = parse_table(playlistfile)
 
     if 'THU' in prot['NODE']['use_services']:
         thu_server_name = 'python -m {0} {1}'.format(THU.__module__, SER)
@@ -72,10 +75,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         snd_server_name = 'python -m {0} {1}'.format(SND.__module__, SER)
         fs = prot['SND']['samplingrate']
         shuffle_playback = prot['SND']['shuffle']
-
-        # load playlist, sounds, and enumerate play order
-        playlist = parse_table(playlistfile)
-
+        
         if ip_address in config['ATTENUATION']:  # use node specific attenuation data
             attenuation = config['ATTENUATION'][ip_address]
             print(f'using attenuation data specific to {ip_address}.')
@@ -84,16 +84,13 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
             print(f'using global attenuation data (for {ip_address}).')
         print(attenuation)
         
-        # do this only for the first two channels - sound and sync LED, all remaining channels are OPTO pins
-        # need yo remove these opto channels from the playlist pased to load_sounds
-        # sound_playlist.stimFilenames
-        sound_playlist = playlist.copy()
-        sound_playlist.stimFileName = [stimFileName[:2] for stimFileName in sound_playlist.stimFileName]
+        channels_to_keep = prot['SND']['playlist_channels']
+        print(f"   selecting channels {channels_to_keep} for SND from playlist.")
+        sound_playlist = select_channels_from_playlist(playlist, channels_to_keep)
         sounds = load_sounds(sound_playlist, fs, attenuation=attenuation,
                              LEDamp=prot['SND']['ledamp'],
                              stimfolder=config['HEAD']['stimfolder'],
                              cast2int=True)
-        # do this for all channels - 
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
         print([SND.SERVICE_PORT, SND.SERVICE_NAME])
@@ -119,42 +116,20 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         opt.init_local_logger('{0}/{1}/{1}_opt.log'.format(dirname, filename))
 
     if 'OPT2' in prot['NODE']['use_services']:
-        # parse playlists
-
-        # extract blink duration, pulse dur/pau/num from the playlist - make list for each trial
-        # def name(playlist, playlist_items) -> blink_*:
-       
-        nb_rows = playlist.shape[0]
-        nb_led = len(prot['OPT2']['pin'])   # max over rows of len(stimFileNames) - 2
-        blink_durs = np.zeros((nb_rows, nb_led), dtype=np.int)
-        blink_paus = np.zeros_like(blink_durs)
-        blink_nums = np.zeros_like(blink_durs)
-        blink_dels = np.zeros_like(blink_durs)
-        blink_amps = np.zeros_like(blink_durs)
-        for index, row in playlist.iterrows():
-            pdurs, ppaus, pnums, pdels = [],[],[],[]
-
-            for stim_num, stim_amp in enumerate(row.intensity[2:]):
-                blink_amps[index, stim_num] = stim_amp
-            for stim_num, stim in enumerate(row.stimFileName[2:]):
-                if stim.startswith('PUL'):
-                    blink_durs[index, stim_num], blink_paus[index, stim_num], blink_nums[index, stim_num], blink_dels[index, stim_num] = [int(token) for token in stim.split('_')[1:]]
-        blink_pers = np.array([sound.shape[0] / fs for sound in sounds ]) # determined by sound duration for each trial
-
-        # now make the blink_* lists into np.arrays and create full playlist by using playlist_items as index
-        # make this a pd.DataFrame?
-        blink_durs = blink_durs[playlist_items, :]/1000
-        blink_paus = blink_paus[playlist_items, :]/1000
-        blink_nums = blink_nums[playlist_items, :]
-        blink_dels = blink_dels[playlist_items, :]/1000
-        blink_amps = blink_amps[playlist_items, :]
-        blink_pers = blink_pers[playlist_items]
-        # blink_params = pd.DataFrame({'duration': blink_durs, 
-        #                              'pause': blink_paus,
-        #                              'number': blink_nums,
-        #                              'delay': blink_dels,
-        #                              'amplitude': blink_amps,
-        #                              'period': blink_pers})
+        channels_to_keep = prot['OPT2']['playlist_channels']
+        print(f"   selecting channels {channels_to_keep} for OPT2 from playlist.")
+        opto_playlist = select_channels_from_playlist(playlist, channels_to_keep)
+        
+        print(f"   parsing pulse parameters from playlist.")
+        pulse_params = parse_pulse_parameters(opto_playlist, sounds, fs)
+        pulse_params = pulse_params.loc[playlist_items, :]
+    
+        blink_durs = pulse_params.duration.tolist()
+        blink_paus = pulse_params.pause.tolist()
+        blink_nums = pulse_params.number.tolist()
+        blink_dels = pulse_params.delay.tolist()
+        blink_amps = pulse_params.amplitude.tolist()
+        blink_pers = pulse_params.trial_period.tolist()
 
         opt2_server_name = 'python -m {0} {1}'.format(OPT2.__module__, SER)
         print([OPT2.SERVICE_PORT, OPT2.SERVICE_NAME])
@@ -195,6 +170,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
 if __name__ == '__main__':
     ip_address = 'rpi8'
-    protocolfilename = 'protocols/default.txt'
-    playlistfilename = 'playlists/sine_short.txt'
+    protocolfilename = '../ethoconfig/protocols/playback_5min_multiOpto2.yml'
+    playlistfilename = '../ethoconfig/playlists/IPItune_test_multiOpto.txt'
     clientcaller(ip_address, playlistfilename, protocolfilename)
