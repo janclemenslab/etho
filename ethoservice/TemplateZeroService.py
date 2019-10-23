@@ -5,8 +5,12 @@ import zerorpc # for starting service in `main()`
 import time    # for timer
 import threading
 import sys
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 
 
+# decorate all methods in the class so that exceptions are properly logged
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class TMP(BaseZeroService):
 
     LOGGING_PORT = 1443  # set this to range 1420-1460
