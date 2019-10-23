@@ -13,6 +13,7 @@ class ZeroClient(zerorpc.Client):
     def __init__(self, ssh_address, service_name='CLIENT', logging_port='1460', serializer='default'):
         self.SERVICE_NAME = service_name
         self.LOGGING_PORT = logging_port
+
         ctx = zerorpc.Context()
         ctx.register_serializer(serializer)
         super(ZeroClient, self).__init__(timeout=180, heartbeat=90, context=ctx)
@@ -51,22 +52,22 @@ class ZeroClient(zerorpc.Client):
         self.log.addHandler(handler)
 
     def start_server(self, server_name, folder_name='.', warmup=2, timeout=5):
-        self.log.info('starting')
+        self.log.info(f'   {self.SERVICE_NAME} starting')
         # cmd = "source ~/.bash_profile;cd {0};nohup {1}".format(
         #     folder_name, server_name)
         cmd = "source ~/.bash_profile;cd {0};nohup {1}".format(
             folder_name, server_name)
         self.pid = self.sr.run_and_get_pid(cmd, timeout=timeout)
-        self.log.info('warmup')
+        self.log.info(f'   {self.SERVICE_NAME} warmup')
         time.sleep(warmup)  # wait for server to warm up
-        self.log.info('done')
+        self.log.info(f'   {self.SERVICE_NAME} done')
         return self.is_running_server()
 
     def stop_server(self):
-        self.log.info('finish and cleanup')
+        self.log.info(f'   {self.SERVICE_NAME} finish and cleanup')
         self.finish()
         self.cleanup()
-        self.log.info('killing')
+        self.log.info(f'   {self.SERVICE_NAME} killing')
         if self.is_running_server():
             self.sr.kill(self.pid)
         return not self.is_running_server()
