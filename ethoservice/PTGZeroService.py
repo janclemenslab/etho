@@ -103,15 +103,15 @@ class PTG(BaseZeroService):
         self.savefilename = savefilename
 
         # set up CAMERA - these should be defined in a PARAMS dict
-        self.cam_id = int(params['cam_id'])
+        self.cam_serialnumber = int(params['cam_serialnumber'])
 
         # pre-allocate image data structures
         self.im = fc2.Image()  # this will hold the original acquired image
         self.imRGB = fc2.Image()  # this will hold the image after conversion to RGB
 
-        print("setting up camera " + str(self.cam_id))
+        print("setting up camera " + str(self.cam_serialnumber))
         self.c = fc2.Context()
-        self.c.connect(*self.c.get_camera_from_index(self.cam_id))
+        self.c.connect(*self.c.get_camera_from_serialnumber(self.cam_serialnumber))
 
         self.c.set_format7_configuration(fc2.MODE_0, int(params['frame_offx']), int(params['frame_offy']), int(params['frame_width']), int(params['frame_height']), fc2.PIXEL_FORMAT_BGR)
         print(self.c.get_format7_configuration())
