@@ -15,7 +15,8 @@ from .ConcurrentTask import ConcurrentTask
 class IOTask(daq.Task):
     """IOTask does X."""
 
-    def __init__(self, dev_name="Dev1", cha_name=["ai0"], limits=10.0, rate=10000.0):
+    def __init__(self, dev_name="Dev1", cha_name=["ai0"], limits=10.0, rate=10000.0,
+                 nb_inputsamples_per_cycle=None):
         """Initialize IOTask.
 
         ARGUMENTS:
@@ -38,14 +39,16 @@ class IOTask(daq.Task):
         self.cha_name = [dev_name + '/' + ch for ch in cha_name]  # append device name
         self.cha_string = ", ".join(self.cha_name)
         self.num_channels = len(cha_name)
-
+        if nb_inputsamples_per_cycle is None:
+            nb_inputsamples_per_cycle = int(rate)
+            
         # FIX: input and output tasks can have different sizes
         self.callback = None
         self.data_gen = None  # called at start of callback
         self.data_rec = None  # called at end of callback
         if self.cha_type[0] is "analog_input":
-            self.num_samples_per_chan = 10000
-            self.num_samples_per_event = 10000  # self.num_samples_per_chan*self.num_channels
+            self.num_samples_per_chan = nb_inputsamples_per_cycle
+            self.num_samples_per_event = nb_inputsamples_per_cycle  # self.num_samples_per_chan*self.num_channels
             self.CreateAIVoltageChan(self.cha_string, "", DAQmx_Val_RSE, -limits, limits, DAQmx_Val_Volts, None)
             self.AutoRegisterEveryNSamplesEvent(DAQmx_Val_Acquired_Into_Buffer, self.num_samples_per_event, 0)
             self.CfgInputBuffer(self.num_samples_per_chan * self.num_channels * 4)
@@ -273,6 +276,52 @@ def save(frame_queue, filename, num_channels=1, attrs=None, sizeincrement=100, s
     f.flush()
     f.close()
     print("   closed file \"{0}\".".format(filename))
+
+def process(frame_queue):
+    """Coroutine for rt processing of data."""
+    print("   started RT processing")
+    # init digital output - turn on if any channel crosses threshold
+    from ethomaster.head.ZeroClient import ZeroClient
+    from ethoservice.NITriggerZeroService import NIT
+    import subprocess
+
+    ip_address = 'localhost'
+    port = "/Dev1/port0/line8:9"  # maps to P0.0 and P0.1 on the amplifier box
+    trigger_types = {'START': [1, 1],
+                     'STOP': [0, 0],
+                    }
+    print([NIT.SERVICE_PORT, NIT.SERVICE_NAME])
+    nit = ZeroClient("{0}".format(ip_address), 'nidaq')
+    sp = subprocess.Popen('python -m ethoservice.NITriggerZeroService')
+    nit.connect("tcp://{0}:{1}".format(ip_address, NIT.SERVICE_PORT))
+    nit.setup(-1, port)
+    # nit.init_local_logger('{0}/{1}/{1}_nit.log'.format(daq_save_folder, filename))
+    started = False
+    thres = 3.5
+    RUN = True
+    while RUN:
+        content = frame_queue.get()
+        if content is not None:
+            data, systemtime = content
+            peak_values = np.max(np.abs(data[:,:16]), axis=0)
+            peak_crossing_channels = np.where(peak_values > thres)[0]
+            if not started and len(peak_crossing_channels):
+                print('   sending START')
+                nit.send_trigger(trigger_types['START'], duration=None)
+                started = True
+            elif started and not len(peak_crossing_channels):
+                print('   sending STOP')
+                nit.send_trigger(trigger_types['STOP'], duration=None)
+                started = False
+            elif started:
+                print('   RUNNING')
+    print("   stopped RT processing")
+
+    nit.finish()
+    nit.stop_server()
+    del(nit)
+    sp.terminate()
+    sp.kill()
 
 
 def log(file_name):
