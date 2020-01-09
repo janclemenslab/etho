@@ -17,13 +17,18 @@ class IOTask(daq.Task):
 
     def __init__(self, dev_name="Dev1", cha_name=["ai0"], limits=10.0, rate=10000.0,
                  nb_inputsamples_per_cycle=None):
-        """Initialize IOTask.
-
-        ARGUMENTS:
-        dev_name - ni daqmx device name
-        cha_name - list of channels (must be pure - either all ai or ao)
-        limits   - voltage limits
-        rate     - sampling rate
+        """[summary]
+        
+        Args:
+            dev_name (str, optional): [description]. Defaults to "Dev1".
+            cha_name (list, optional): [description]. Defaults to ["ai0"].
+            limits (float, optional): [description]. Defaults to 10.0.
+            rate (float, optional): [description]. Defaults to 10000.0.
+            nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
+        
+        Raises:
+            TypeError: [description]
+            ValueError: [description]
         """
         # check inputs
         daq.Task.__init__(self)

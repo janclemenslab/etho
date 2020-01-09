@@ -27,6 +27,27 @@ class DAQ(BaseZeroService):
               nb_inputsamples_per_cycle=None,
               analog_chans_out: Sequence=None, analog_chans_in: Sequence=['ai0'], digital_chans_out: Sequence=None,
               analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={}):
+        """[summary]
+        
+        Args:
+            savefilename (str, optional): [description]. Defaults to None.
+            play_order (Iterable, optional): [description]. Defaults to None.
+            playlist_info ([type], optional): [description]. Defaults to None.
+            duration (float, optional): [description]. Defaults to -1.
+            fs (int, optional): [description]. Defaults to 10000.
+            display (bool, optional): [description]. Defaults to False.
+            realtime (bool, optional): [description]. Defaults to False.
+            nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
+            analog_chans_out (Sequence, optional): [description]. Defaults to None.
+            analog_chans_in (Sequence, optional): [description]. Defaults to ['ai0'].
+            digital_chans_out (Sequence, optional): [description]. Defaults to None.
+            analog_data_out (Sequence, optional): [description]. Defaults to None.
+            digital_data_out (Sequence, optional): [description]. Defaults to None.
+            metadata (dict, optional): [description]. Defaults to {}.
+        
+        Raises:
+            ValueError: [description]
+        """
         self._time_started = None
         self.duration = duration
         self.savefilename = savefilename
