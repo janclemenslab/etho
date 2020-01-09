@@ -35,15 +35,14 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     """
 
     # TODO: make more robust - add exceptions/try-catch
-    DEFAULT_LOGGING_PORT = None  # network port used for publishing log messages
-    DEFAULT_SERVICE_PORT = None  # network port for communicating with the head
+    LOGGING_PORT = None  # network port used for publishing log messages
+    SERVICE_PORT = None  # network port for communicating with the head
     SERVICE_NAME = None
 
     def __init__(self, *args, serializer: str = 'default', head_ip: str = '192.168.1.1',
-                 logging_port: int = None, service_port: int = None,
                  **kwargs):
         """[summary]
-        
+
         Args:
             serializer (str, optional): [description]. Defaults to 'default'.
             head_ip (str, optional): [description]. Defaults to '192.168.1.1'.
@@ -51,16 +50,12 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             service_port (int, optional): [description]. Defaults to None.
         """
 
-        if logging_port is None:
-            self.LOGGING_PORT = self.DEFAULT_LOGGING_PORT
-        if service_port is None:
-            self.SERVICE_PORT = self.DEFAULT_SERVICE_PORT
-        
+
         self._serializer = serializer
         ctx = zerorpc.Context()
         ctx.register_serializer(self._serializer)
         super(BaseZeroService, self).__init__(*args, **kwargs, heartbeat=120, context=ctx)
-        
+
         self._init_network_logger(head_ip)
 
         self._time_started = None
@@ -186,11 +181,11 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     def service_kill(self):
         self.log.warning('   kill process {0}'.format(self._getpid()))
         if iswin():
-            # run this in subprocess so the function returns - running this via os.system(...) will kill the process but not return 
+            # run this in subprocess so the function returns - running this via os.system(...) will kill the process but not return
             subprocess.Popen('taskkill /F /PID {0}'.format(self._getpid()))
         else:
             os.system('kill {0}'.format(self._getpid()))
-        
+
     def _getpid(self):
         return os.getpid()
 

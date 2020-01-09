@@ -19,16 +19,16 @@ class OPT2(BaseZeroService):
     Uses [gpiozero](https://gpiozero.readthedocs.io) to control LEDs via (via GPIO pins).
     Individual LEDs can be controlled with independent temporal patterns and amplitudes."""
 
-    DEFAULT_LOGGING_PORT = 1452
-    DEFAULT_SERVICE_PORT = 4252
+    LOGGING_PORT = 1452
+    SERVICE_PORT = 4252
     SERVICE_NAME = 'OPT2'
 
     def setup(self, pins, duration, blink_pers, blink_durs, blink_paus, blink_nums, blink_dels, blink_amps):
         """Setup up service
-        
+
         Args:
             pins (List[int]): list of pin numbers
-            duration ([type]): duration (in seconds) the service should run            
+            duration ([type]): duration (in seconds) the service should run
             blink_pers ([type]): List [trials,] of trial periods (=durations)
             Lists [trials, number of pins]:
                 blink_durs ([type]): [description]
@@ -39,7 +39,7 @@ class OPT2(BaseZeroService):
         """
         self.pins = [int(pin) for pin in pins]
         self.LEDs = [Delay_PWMLED(pin, initial_value=0, frequency=1000) for pin in self.pins]  # try to set frequency to 1000
-        
+
         self.duration = float(duration)  # total duration of experiments
         self.LED_blinkinterval = blink_pers  # common clock for all pins - [trials,]
 
@@ -58,7 +58,7 @@ class OPT2(BaseZeroService):
             self._thread_timer = threading.Timer(interval=self.duration, function=self.finish, kwargs={'stop_service': True})
         self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
 
-    
+
     def start(self):
         self._time_started = time.time()
 
@@ -70,7 +70,7 @@ class OPT2(BaseZeroService):
             # will execute FINISH after N seconds
             self._thread_timer.start()
             self.log.info('finish timer started')
-    
+
     def _worker(self, stop_event):
         # schedule next execution - waits self.LED_blinkinterval seconds before running the _worker function again
         if not stop_event.is_set():

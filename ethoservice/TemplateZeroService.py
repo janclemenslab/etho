@@ -13,8 +13,8 @@ import logging
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class TMP(BaseZeroService):
 
-    DEFAULT_LOGGING_PORT = 1443  # set this to range 1420-1460
-    DEFAULT_SERVICE_PORT = 4243  # last two digits match logging port - but start with "42" instead of "14"
+    LOGGING_PORT = 1443  # set this to range 1420-1460
+    SERVICE_PORT = 4243  # last two digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "TMP" # short, uppercase, 3-letter ID of the service (must equal class name)
 
     def setup(self, duration):
