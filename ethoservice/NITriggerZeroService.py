@@ -37,8 +37,9 @@ class NIT(BaseZeroService):
         self.log.info('sending {data} on {port}')
         data = np.array(data, dtype=np.uint8)
         self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, data, None, None)
-        time.sleep(duration)
-        self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, 0*data, None, None)
+        if duration is not None:
+            time.sleep(duration)
+            self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, 0*data, None, None)
         self.log.info('   success.')
 
     def start(self):
