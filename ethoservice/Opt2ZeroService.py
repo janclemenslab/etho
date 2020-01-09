@@ -9,22 +9,19 @@ from datetime import datetime
 import sys
 try:
     from .utils.delay_pwmled import Delay_PWMLED
-    import gpiozero
-except Exception as e:
+except ModuleNotFoundError as e:
     print("IGNORE IF RUN ON HEAD")
-    print(e)
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class OPT2(BaseZeroService):
-    """Service for controlling multiple LEDs (via GPIO pins) on raspberry pi."""
-    
+    """Service for controlling multiple LEDs on raspberry pi.
+    Uses [gpiozero](https://gpiozero.readthedocs.io) to control LEDs via (via GPIO pins).
+    Individual LEDs can be controlled with independent temporal patterns and amplitudes."""
 
-    # TODO: update both ports to avoid collisions with existing services - but should be okay since we won't use OPT and OPT at the same time
-    LOGGING_PORT = 1452
-    SERVICE_PORT = 4252
+    DEFAULT_LOGGING_PORT = 1452
+    DEFAULT_SERVICE_PORT = 4252
     SERVICE_NAME = 'OPT2'
-
 
     def setup(self, pins, duration, blink_pers, blink_durs, blink_paus, blink_nums, blink_dels, blink_amps):
         """Setup up service
@@ -57,7 +54,8 @@ class OPT2(BaseZeroService):
         self._turn_off()  # make sure LED is off at start of experiment
         self.trial = -1
         self._thread_stopper = threading.Event()
-        self._thread_timer = threading.Timer(interval=self.duration, function=self.finish, kwargs={'stop_service': True})
+        if duration > 0:
+            self._thread_timer = threading.Timer(interval=self.duration, function=self.finish, kwargs={'stop_service': True})
         self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
 
     
@@ -80,8 +78,8 @@ class OPT2(BaseZeroService):
             threading.Timer(interval=self.LED_blinkinterval[self.trial], function=self._worker, args=[stop_event]).start()
             # turn on LED
             for led, dur, pau, num, amp, dely in zip(self.LEDs, self.LED_blinkduration[self.trial], self.LED_blinkpause[self.trial], self.LED_blinknumber[self.trial], self.LED_blinkamplitude[self.trial], self.LED_blinkdelay[self.trial]):
-                led.value = amp
-                led.blink(on_time=dur, off_time=pau, initial_delay=dely, n=num)
+                led.value = amp  # set amp (PWM duty cycle)
+                led.blink(on_time=dur, off_time=pau, initial_delay=dely, n=num)  # set temporal pattern
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
@@ -97,7 +95,6 @@ class OPT2(BaseZeroService):
         #     self._worker_thread.join()
         self.log.info('turning off LED')
         self._turn_off()
-        # self.log.info(f'   LED is lit: {self.LED.is_lit}.')
         self.log.warning('   stopped ')
         if stop_service:
             self.service_stop()
@@ -141,5 +138,5 @@ if __name__ == '__main__':
     else:
         ser = 'default'
     s = OPT2(serializer=ser)
-    s.bind("tcp://0.0.0.0:{0}".format(OPT2.SERVICE_PORT))
+    s.bind("tcp://0.0.0.0:{0}".format(s.SERVICE_PORT))
     s.run()
