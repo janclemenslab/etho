@@ -23,7 +23,8 @@ class DAQ(BaseZeroService):
 
     # def setup(self, savefilename, duration, analog_chans_out=["ao0", "ao1"], analog_chans_in=["ai2", "ai3", "ai0"]):
     def setup(self, savefilename: str=None, play_order: Iterable=None, playlist_info=None,
-              duration: float=-1, fs: int=10000, display=False,
+              duration: float=-1, fs: int=10000, display=False, realtime=False, 
+              nb_inputsamples_per_cycle=None,
               analog_chans_out: Sequence=None, analog_chans_in: Sequence=['ai0'], digital_chans_out: Sequence=None,
               analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={}):
         self._time_started = None
@@ -52,7 +53,8 @@ class DAQ(BaseZeroService):
             print(self.taskDO)
         # ANALOG INPUT
         if self.analog_chans_in:
-            self.taskAI = IOTask(cha_name=self.analog_chans_in, rate=fs)
+            self.taskAI = IOTask(cha_name=self.analog_chans_in, rate=fs, 
+                                 nb_inputsamples_per_cycle=nb_inputsamples_per_cycle)
             self.taskAI.data_rec = []
             if self.savefilename is not None:  # save
                 os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
@@ -62,6 +64,9 @@ class DAQ(BaseZeroService):
             if display:
                 self.disp_task = ConcurrentTask(task=plot_fast, taskinitargs=[display], comms="pipe")
                 self.taskAI.data_rec.append(self.disp_task)
+            if realtime:
+                self.proc_task = ConcurrentTask(task=process, comms="queue")
+                self.taskAI.data_rec.append(self.proc_task)
             print(self.taskAI)
 
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
