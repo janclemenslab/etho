@@ -5,27 +5,35 @@ import zerorpc  # for starting service in `main()`
 import time    # for timer
 import threading
 import sys
+import numpy as np
+
 try:
     import PyDAQmx as daq
 except ImportError as e:
     print('IGNORE IF ON HEAD')
     print(e)
 
-import numpy as np
-
 
 class NIT(BaseZeroService):
+    """[summary]"""
 
     LOGGING_PORT = 1450  # set this to range 1420-1460
-    SERVICE_PORT = 4250  # last to digits match logging port - but start with "42" instead of "14"
+    SERVICE_PORT = 4250  # last to digits match logging output_channels - but start with "42" instead of "14"
     SERVICE_NAME = "NIT"  # short, uppercase, 3-letter ID of the service (equals class name)
 
-    def setup(self, duration, port):
+    def setup(self, duration, output_channels):
+        """Setup the trigger service (intiates the digital output channels).
+        
+        Args:
+            duration (float): Unused - kept to keep the interface same across services [description]
+            output_channels (str): , e.g. "/dev1/port0/line0:1"
+        """
         self._time_started = None
         self.duration = float(duration)
 
         self.task = daq.Task()
-        self.task.CreateDOChan(port, "", daq.DAQmx_Val_ChanForAllLines)
+        self.task.CreateDOChan(output_channels, "", daq.DAQmx_Val_ChanForAllLines)
+        self.nb_channels = None  # TODO: get nb_channels from task obhect
         self.task.StartTask()
 
         # APPLICATION SPECIFIC SETUP CODE HERE
@@ -33,13 +41,24 @@ class NIT(BaseZeroService):
         # background jobs should be run and controlled via a thread
         # threads can be stopped by setting an event: `_thread_stopper.set()`
 
-    def send_trigger(self, data, duration=0.0001):
-        self.log.info('sending {data} on {port}')
-        data = np.array(data, dtype=np.uint8)
-        self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, data, None, None)
+    def send_trigger(self, state, duration=0.0001):
+        """Set the digital output channels to specified state.
+        
+        Args:
+            state ([type]): [description]
+            duration (float, optional): How long the trigger state should last (in seconds). 
+                                        Will reset to all 0 after the duration.
+                                        If None will return immediatelly and keep the trigger state permanent.
+                                        Defaults to 0.0001.
+        """
+        # if len(state) != self.nb_channels: 
+        #     raise ValueError(f"State vector should have same length as the number of digital output channels. Is {len(state)}, should be {'x'}.")
+        self.log.info('sending {state} on {output_channels}')
+        state = np.array(state, dtype=np.uint8)
+        self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, state, None, None)
         if duration is not None:
-            time.sleep(duration)
-            self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, 0*data, None, None)
+            time.sleep(duration)  # alternatively could  return immediately using a threaded timer
+            self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, 0*state, None, None)
         self.log.info('   success.')
 
     def start(self):
@@ -49,11 +68,6 @@ class NIT(BaseZeroService):
         self.log.warning('stopping')
         self.task.StopTask()
 
-        # stop thread if necessary
-        if hasattr(self, '_thread_stopper'):
-            self._thread_stopper.set()
-        if hasattr(self, '_thread_timer'):
-            self._thread_timer.cancel()
         # clean up code here
         self.log.warning('   stopped ')
         # mode log file and savefilename
