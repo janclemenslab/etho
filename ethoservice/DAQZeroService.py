@@ -86,7 +86,7 @@ class DAQ(BaseZeroService):
                 self.disp_task = ConcurrentTask(task=plot_fast, taskinitargs=[display], comms="pipe")
                 self.taskAI.data_rec.append(self.disp_task)
             if realtime:
-                self.proc_task = ConcurrentTask(task=process, comms="queue")
+                self.proc_task = ConcurrentTask(task=process_analog, comms="queue")
                 self.taskAI.data_rec.append(self.proc_task)
             print(self.taskAI)
 
