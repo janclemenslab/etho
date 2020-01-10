@@ -235,7 +235,7 @@ def plot_fast(disp_queue, channels_to_plot):
     print("   closing plot.")
 
 
-def save(frame_queue, filename, num_channels=1, attrs=None, sizeincrement=100, start_time=None):
+def save(sample_queue, filename, num_channels=1, attrs=None, sizeincrement=100, start_time=None):
     """Coroutine for saving data."""
     import h5py
 
@@ -259,7 +259,7 @@ def save(frame_queue, filename, num_channels=1, attrs=None, sizeincrement=100, s
     framecount = 0
     RUN = True
     while RUN:
-        frame_systemtime = frame_queue.get()
+        frame_systemtime = sample_queue.get()
         if framecount % sizeincrement == sizeincrement - 1:
             f.flush()
             dset_systemtime.resize(dset_systemtime.shape[0] + sizeincrement, axis=0)
@@ -282,7 +282,7 @@ def save(frame_queue, filename, num_channels=1, attrs=None, sizeincrement=100, s
     f.close()
     print("   closed file \"{0}\".".format(filename))
 
-def process(frame_queue):
+def process_digital(sample_queue):
     """Coroutine for rt processing of data."""
     print("   started RT processing")
     # init digital output - turn on if any channel crosses threshold
@@ -304,9 +304,14 @@ def process(frame_queue):
     started = False
     thres = 3.5
     RUN = True
+
     while RUN:
-        content = frame_queue.get()
-        if content is not None:
+        # if sample_queue.poll(0.001):
+            # content = sample_queue.recv()
+        content = sample_queue.get()
+        if content is None:
+            RUN = False
+        else: 
             data, systemtime = content
             peak_values = np.max(np.abs(data[:,:16]), axis=0)
             peak_crossing_channels = np.where(peak_values > thres)[0]
@@ -322,6 +327,54 @@ def process(frame_queue):
                 print('   RUNNING')
     print("   stopped RT processing")
 
+    nit.finish()
+    nit.stop_server()
+    del(nit)
+    sp.terminate()
+    sp.kill()
+
+
+def process_analog(sample_queue):
+    """Coroutine for rt processing of data."""
+    print("   started RT processing")
+    # init digital output - turn on if any channel crosses threshold
+    from ethomaster.head.ZeroClient import ZeroClient
+    from ethoservice.ANAZeroService import ANA
+    import subprocess
+
+    ip_address = 'localhost'
+    
+    print([ANA.SERVICE_PORT, ANA.SERVICE_NAME])
+    nit = ZeroClient("{0}".format(ip_address), 'nidaq')
+    sp = subprocess.Popen('python -m ethoservice.ANAZeroService')
+    nit.connect("tcp://{0}:{1}".format(ip_address, ANA.SERVICE_PORT))
+    nit.setup(-1, 0)
+    # nit.init_local_logger('{0}/{1}/{1}_nit.log'.format(daq_save_folder, filename))
+    started = False
+    thres = 3.5
+    RUN = True
+    # TODO make this use LIFO queue with maxsize 1
+    while RUN:
+        # if sample_queue.poll(0.001):
+        #     content = sample_queue.recv()
+        content = sample_queue.get()
+        if content is None:
+            RUN = False
+            break
+        else: 
+            data, systemtime = content
+            peak_values = np.max(np.abs(data[:,:16]), axis=0)
+            peak_crossing_channels = np.where(peak_values > thres)[0]
+            if not started and len(peak_crossing_channels):
+                print('   sending START')
+                nit.send_trigger(2, duration=1)
+                started = True
+            elif started and not len(peak_crossing_channels):
+                nit.send_trigger(0, duration=None)
+                started = False
+    print("   stopped RT processing")
+
+    nit.send_trigger(0, duration=None)
     nit.finish()
     nit.stop_server()
     del(nit)
