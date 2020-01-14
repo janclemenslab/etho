@@ -1,32 +1,130 @@
-from multiprocessing import Process, Queue, Pipe
+from multiprocessing import Process
+import multiprocessing as mp
 import time
 import sys
+import numpy as np
+import ctypes
+
+
+class SharedNumpyArray:
+    """Class for sharing a numpy array between processes.
+
+    Contains functions for synchronized read/write access and a staleness indicator.
+    """
+
+    def __init__(self, shape, ctype=ctypes.c_double):
+        """[summary]
+
+        Args:
+            shape (tuple/list-like): [description]
+            ctype ([type], optional): Data type of the numpy array. Defaults to ctypes.c_double (is np.float64).
+        """
+        self.shape = shape  # need to know shape before hand since the array has to be initialized at init
+        self.qsize = 0  # for interface compatibility with Queues and Pipes
+
+        # indicator whether the current array values are "fresh"
+        # stale is set to False upon `put` and to True on `get`
+        self._stale = mp.RawValue('b', True)
+
+        # common lock to sync read/write access
+        self._lock = mp.Lock()
+
+        with self._lock:
+            # create array in shared memory segment
+            self._shared_array_base = mp.RawArray(ctype, int(np.prod(self.shape)))
+
+            # convert to numpy array vie ctypeslib
+            self._shared_array = np.ctypeslib.as_array(self._shared_array_base)
+
+            # do a reshape for correct shape
+            # Returns a masked array containing the same data, but with a new shape.
+            # The result is a view on the original array
+            self._shared_array = self._shared_array.reshape(self.shape)
+
+    @property
+    def stale(self):
+        """Thread safe access to whether or not the current array values have been get-ed already."""
+        with self._lock:
+            return self._stale.value
+
+    def poll(self):
+        """Returns true if the array has been update since the last put."""
+        return not self.stale
+
+    def get(self, block=True):
+        """Returns array values. Block is unsed and their for interface consistency with Queue."""
+        with self._lock:
+            self._stale.value = True
+            return self._shared_array
+
+    def put(self, data):
+        """Update the values in the shared array."""
+        with self._lock:
+            self._shared_array[:] = data
+            self._stale.value = False
+
+
+def Pipe():
+    def get(receiver, block=True, timeout=0.001, empty_value=None):
+        if block:
+            timeout = None
+        if receiver.poll(timeout):
+            return receiver.recv()
+        else:
+            return empty_value
+
+    sender, receiver = mp.Pipe()
+    sender.put = sender.send  # monky patch Pipe sender to have put method
+    sender.qsize = 0  # for interface compatibility with Queue
+
+    receiver.get = get
+    receiver.qsize = 0
+
+    return sender, receiver
 
 
 class ConcurrentTask():
     """
     - tasks should stop when being sent None
     TODO
-    - maybe the tasks should implement a defined interfact/communication protocol (sending `None` stops the task etc., START and STOP s)
+    - maybe the tasks should implement a defined interface/communication protocol (sending `None` stops the task etc., START and STOP s)
     - the task objects should provide information about appropriate communication (e.g. `taskstopsignals`) and maybe even the communication channel (pipe vs queue). Maybe implement abstraction with a common interface for pipe, queue, zmq??
     """
-    def __init__(self, task, taskinitargs=[], comms='queue', taskstopsignal=None):
+    def __init__(self, task, taskinitargs=[], comms='queue', taskstopsignal=None, maxsize=0):
+        """[summary]
+
+        Args:
+            task ([type]): [description]
+            taskinitargs (list, optional): [description]. Defaults to [].
+            comms (str, optional): [description]. Defaults to 'queue'.
+            taskstopsignal ([type], optional): [description]. Defaults to None.
+            maxsize (int, optional): [description]. Defaults to 0.
+
+        Raises:
+            ValueError: [description]
+        """
         self.comms = comms
         self.taskstopsignal = taskstopsignal
         if self.comms == "pipe":
             self._sender, self._receiver = Pipe()
         elif self.comms == "queue":
-            self._sender = Queue()
+            self._sender = mp.Queue(maxsize)
             self._receiver = self._sender
+        elif self.comms == "array":
+            self._sender = SharedNumpyArray(maxsize)
+            self._receiver = self._sender
+        else:
+            raise ValueError('wrong comms')
 
         taskinitargs.insert(0, self._receiver)  # prepend queue, i.e. sink end of pipe or end of queue
         self._process = Process(target=task, args=tuple(taskinitargs))
 
     def send(self, data):
-        if self.comms == "queue":
-            self._sender.put(data)
-        elif self.comms == "pipe":
-            self._sender.send(data)
+        self._sender.put(data)
+        # if self.comms == "queue" or self.comms == "array":
+        #     self._sender.put(data)
+        # elif self.comms == "pipe":
+        #     self._sender.send(data)
 
     def start(self):
         self._process.start()
@@ -54,7 +152,7 @@ class ConcurrentTask():
         time.sleep(0.5)
         try:
             self._process.terminate()
-        except AttributeError as e:
+        except AttributeError:
             pass
         time.sleep(0.5)
         self._sender.close()
