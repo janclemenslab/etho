@@ -21,31 +21,39 @@ class SharedNumpyArray:
         """
         self.shape = shape  # need to know shape before hand since the array has to be initialized at init
         self.qsize = 0  # for interface compatibility with Queues and Pipes
-
+        self.first = True
         # indicator whether the current array values are "fresh"
         # stale is set to False upon `put` and to True on `get`
         self._stale = mp.RawValue('b', True)
+        # add one more RawValue for system_time?
 
         # common lock to sync read/write access
         self._lock = mp.Lock()
+        # will be the np representation of the base array - need to convert from base array
+        # on both ends for updates to propagate - see _asnp()
+        self._shared_array = None  
 
         with self._lock:
             # create array in shared memory segment
             self._shared_array_base = mp.RawArray(ctype, int(np.prod(self.shape)))
-
-            # convert to numpy array vie ctypeslib
-            self._shared_array = np.ctypeslib.as_array(self._shared_array_base)
-
-            # do a reshape for correct shape
-            # Returns a masked array containing the same data, but with a new shape.
-            # The result is a view on the original array
-            self._shared_array = self._shared_array.reshape(self.shape)
 
     @property
     def stale(self):
         """Thread safe access to whether or not the current array values have been get-ed already."""
         with self._lock:
             return self._stale.value
+
+    def _asnp(self):
+        if self._shared_array is None:  
+            # need to get the np array from the underlying base array on both ends, but
+            # only once - we detect first access by setting _array_base=None at init.
+            # convert to numpy array vie ctypeslib
+            self._shared_array = np.ctypeslib.as_array(self._shared_array_base)
+            # do a reshape for correct shape
+            # Returns a masked array containing the same data, but with a new shape.
+            # The result is a view on the original array
+            self._shared_array = self._shared_array.reshape(self.shape)
+        return self._shared_array
 
     def poll(self):
         """Returns true if the array has been update since the last put."""
@@ -55,12 +63,13 @@ class SharedNumpyArray:
         """Returns array values. Block is unsed and their for interface consistency with Queue."""
         with self._lock:
             self._stale.value = True
-            return self._shared_array
+            return self._asnp()
 
     def put(self, data):
         """Update the values in the shared array."""
         with self._lock:
-            self._shared_array[:] = data
+            self._shared_array = self._asnp()
+            self._shared_array[:] = data[0][:]
             self._stale.value = False
 
 
