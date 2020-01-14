@@ -310,7 +310,7 @@ def process_digital(sample_queue):
             # content = sample_queue.recv()
         content = sample_queue.get()
         if content is None:
-            RUN = False
+            pass #RUN = False
         else: 
             data, systemtime = content
             peak_values = np.max(np.abs(data[:,:16]), axis=0)
@@ -353,25 +353,30 @@ def process_analog(sample_queue):
     started = False
     thres = 3.5
     RUN = True
-    # TODO make this use LIFO queue with maxsize 1
+
     while RUN:
-        # if sample_queue.poll(0.001):
-        #     content = sample_queue.recv()
-        content = sample_queue.get()
-        if content is None:
-            RUN = False
-            break
-        else: 
-            data, systemtime = content
-            peak_values = np.max(np.abs(data[:,:16]), axis=0)
-            peak_crossing_channels = np.where(peak_values > thres)[0]
-            if not started and len(peak_crossing_channels):
-                print('   sending START')
-                nit.send_trigger(2, duration=1)
-                started = True
-            elif started and not len(peak_crossing_channels):
-                nit.send_trigger(0, duration=None)
-                started = False
+        if sample_queue.poll():
+            print('pre', sample_queue.stale)
+            data = sample_queue.get()
+            print('post', sample_queue.stale)
+            # content = sample_queue.get()
+            if data is None:
+                # print('none')
+                pass  # RUN = False
+                # break
+            else: 
+                # data, systemtime = content
+                print(data.shape)
+                peak_values = np.max(np.abs(data[:,:16]), axis=0)
+                print(peak_values)
+                peak_crossing_channels = np.where(peak_values > thres)[0]
+                if not started and len(peak_crossing_channels):
+                    print('   sending START')
+                    nit.send_trigger(2, duration=1)
+                    started = True
+                elif started and not len(peak_crossing_channels):
+                    nit.send_trigger(0, duration=None)
+                    started = False
     print("   stopped RT processing")
 
     nit.send_trigger(0, duration=None)
