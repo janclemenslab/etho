@@ -429,38 +429,45 @@ def process_dss(sample_queue):
     print('preparing network')
     # init network
     import tensorflow as tf
-    from dss.utils import load_model_and_params
+    import dss.utils
+    import dss.event_utils
     # config = tf.ConfigProto(intra_op_parallelism_threads=4,
     #             inter_op_parallelism_threads=2,
     #             device_count={"CPU": 4, "GPU": nb_gpu})
 
     # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations1024/20191109_074320'
     model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations4096/20191108_235948'
-    model, params = load_model_and_params(model_save_name)
-    model.predict(np.zeros((1, 4096, 16)))
+    model, params = dss.utilsload_model_and_params(model_save_name)
+    model.predict(np.zeros((1, 4096, 16)))  # use model.input_shape
     RUN = True
     print('DONE DONE DONE')
     
     while RUN:
         if sample_queue.poll():
             data = sample_queue.get()
-            data = data[:,:16]
-            # content = sample_queue.get()
             if data is None:
-                # print('none')
                 pass  # RUN = False
                 # break
             else: 
                 # TODO: save raw data, filtered data and prediction to file...
+                data = data[:, :16]
                 dset_raw.append(data)
                 data = ss.sosfiltfilt(sos_bp, data, axis=0).astype(np.float16)
                 dset_pre.append(data)
                 batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
                 prediction = model.predict(batch)
-                dset_post.append(prediction[0,...])
-                labels = np.argmax(prediction[0,...], axis=-1)
-                vibrations_present = np.any(labels==1)
-                
+                dset_post.append(prediction[0, ...])
+                # old:
+                labels = np.argmax(prediction[0, ...], axis=-1)
+                vibrations_present = np.any(labels == 1)
+
+                # use this to detect vibration pulses:
+                # buffer = 20 # exclude first 10 or so samples?
+                # pulsetimes_pred, pulsetimes_pred_confidence = dss.event_utils.detect_events(prediction[0, buffer:-buffer, 1], thres=0.5, min_dist=200)
+                # pulsetimes_pred = pulsetimes_pred / 10_000
+                # print(pulsetimes_pred)
+                # vibrations_present = len(pulsetimes_pred)
+
                 if not started and vibrations_present:
                     print('   sending START')
                     nit.send_trigger(2, duration=1)
@@ -468,6 +475,7 @@ def process_dss(sample_queue):
                 elif started and not vibrations_present:
                     nit.send_trigger(0, duration=None)
                     started = False
+                    
     print("   stopped RT processing")
     f.close()
     nit.send_trigger(0, duration=None)
