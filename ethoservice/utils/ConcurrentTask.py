@@ -76,6 +76,9 @@ class SharedNumpyArray:
             self._shared_array[:] = data[0][:]
             self._stale.value = False
 
+    def close(self):
+        del(self)
+
 
 def Pipe():
     def get(receiver, block=True, timeout=0.001, empty_value=None):
@@ -96,7 +99,7 @@ def Pipe():
     return sender, receiver
 
 
-def Queue(maxsize=None):
+def Queue(maxsize=0):
     sender = mp.Queue(maxsize)
     sender.send = sender.put
     receiver = sender

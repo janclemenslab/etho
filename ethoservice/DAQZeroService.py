@@ -89,9 +89,9 @@ class DAQ(BaseZeroService):
                 self.disp_task = ConcurrentTask(task=plot_fast, taskinitargs=[display], comms="pipe")
                 self.taskAI.data_rec.append(self.disp_task)
             if realtime:
-                self.proc_task = ConcurrentTask(task=process_analog, comms="array", maxsize=(100, 18))
+                self.proc_task = ConcurrentTask(task=process_analog, comms="array", 
+                                                comms_kwargs={'shape': (nb_inputsamples_per_cycle, len(analog_chans_in))})
                 self.taskAI.data_rec.append(self.proc_task)
-            print(self.taskAI)
 
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
