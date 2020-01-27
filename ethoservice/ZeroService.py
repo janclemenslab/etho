@@ -8,15 +8,15 @@ import socket
 import time
 import os
 import subprocess
-from ethoservice.utils.common import *
+from ethoservice.utils.common import iswin
 
 
 class BaseZeroService(abc.ABC, zerorpc.Server):
     """Define abstract base class for all 0services.
 
     Derivations need to change/implement the following properties/methods:
-    LOGGING_PORT: network port over which to publish log message
-    SERVICE_PORT: network port over for communication with head
+    LOGGING_PORT: network port for publishing log messages
+    SERVICE_PORT: network port for communication with the head
     SERVICE_NAME: unique, three-letter identifier for the service
     is_busy: indicates whether service is running (True/False)
     cleanup: called when finishing/shutting down the service release hardware, close files etc
@@ -35,15 +35,27 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     """
 
     # TODO: make more robust - add exceptions/try-catch
-    LOGGING_PORT = None
-    SERVICE_PORT = None
+    LOGGING_PORT = None  # network port used for publishing log messages
+    SERVICE_PORT = None  # network port for communicating with the head
     SERVICE_NAME = None
 
-    def __init__(self, *args, serializer: str = 'default', head_ip: str = '192.168.1.1', **kwargs):
+    def __init__(self, *args, serializer: str = 'default', head_ip: str = '192.168.1.1',
+                 **kwargs):
+        """[summary]
+
+        Args:
+            serializer (str, optional): [description]. Defaults to 'default'.
+            head_ip (str, optional): [description]. Defaults to '192.168.1.1'.
+            logging_port (int, optional): [description]. Defaults to None.
+            service_port (int, optional): [description]. Defaults to None.
+        """
+
+
         self._serializer = serializer
         ctx = zerorpc.Context()
-        ctx.register_serializer(serializer)
+        ctx.register_serializer(self._serializer)
         super(BaseZeroService, self).__init__(*args, **kwargs, heartbeat=120, context=ctx)
+
         self._init_network_logger(head_ip)
 
         self._time_started = None
@@ -169,11 +181,11 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     def service_kill(self):
         self.log.warning('   kill process {0}'.format(self._getpid()))
         if iswin():
-            # run this in subprocess so the function returns - running this via os.system(...) will kill the process but not return 
+            # run this in subprocess so the function returns - running this via os.system(...) will kill the process but not return
             subprocess.Popen('taskkill /F /PID {0}'.format(self._getpid()))
         else:
             os.system('kill {0}'.format(self._getpid()))
-        
+
     def _getpid(self):
         return os.getpid()
 

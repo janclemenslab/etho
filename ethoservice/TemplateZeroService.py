@@ -14,8 +14,8 @@ import logging
 class TMP(BaseZeroService):
 
     LOGGING_PORT = 1443  # set this to range 1420-1460
-    SERVICE_PORT = 4243  # last to digits match logging port - but start with "42" instead of "14"
-    SERVICE_NAME = "TMP" # short, uppercase, 3-letter ID of the service (equals class name)
+    SERVICE_PORT = 4243  # last two digits match logging port - but start with "42" instead of "14"
+    SERVICE_NAME = "TMP" # short, uppercase, 3-letter ID of the service (must equal class name)
 
     def setup(self, duration):
         self._time_started = None
@@ -30,8 +30,7 @@ class TMP(BaseZeroService):
         if self.duration>0:
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service':True})
         #
-        self._worker_thread = threading.Thread(
-            target=self._worker, args=(self._thread_stopper,))
+        self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
 
     def start(self):
         self._time_started = time.time()
@@ -47,7 +46,7 @@ class TMP(BaseZeroService):
     def _worker(self, stop_event):
         RUN = True
         while RUN and not stop_event.wait(0.1):
-            pass # APPLICATION SPECIFIC SETUP CODE HERE
+            pass # APPLICATION SPECIFIC RUN CODE HERE
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
@@ -90,5 +89,5 @@ if __name__ == '__main__':
     else:
         ser = 'default'
     s = TMP(serializer=ser)
-    s.bind("tcp://0.0.0.0:{0}".format(TMP.SERVICE_PORT))  # broadcast on all IPs
+    s.bind("tcp://0.0.0.0:{0}".format(s.SERVICE_PORT))  # broadcast on all IPs
     s.run()

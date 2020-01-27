@@ -183,7 +183,10 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print('sending sound data to {0} - may take a while.'.format(ip_address))
 
         daq.setup(daq_save_filename, playlist_items, playlist,
-              maxduration, fs, prot['DAQ']['display'],
+              maxduration, fs,
+              display=prot['DAQ']['display'],
+              realtime=prot['DAQ']['realtime'],
+              nb_inputsamples_per_cycle=prot['DAQ']['nb_inputsamples_per_cycle'],
               analog_chans_out=prot['DAQ']['analog_chans_out'],
               analog_chans_in=prot['DAQ']['analog_chans_in'],
               digital_chans_out=prot['DAQ']['digital_chans_out'],
