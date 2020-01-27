@@ -57,6 +57,8 @@ class OPT2(BaseZeroService):
         if duration > 0:
             self._thread_timer = threading.Timer(interval=self.duration, function=self.finish, kwargs={'stop_service': True})
         self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
+        for led in self.LEDs:
+            led.blink(on_time=0.1, off_time=0, initial_delay=0, value=0, n=1)
 
 
     def start(self):
@@ -78,8 +80,9 @@ class OPT2(BaseZeroService):
             threading.Timer(interval=self.LED_blinkinterval[self.trial], function=self._worker, args=[stop_event]).start()
             # turn on LED
             for led, dur, pau, num, amp, dely in zip(self.LEDs, self.LED_blinkduration[self.trial], self.LED_blinkpause[self.trial], self.LED_blinknumber[self.trial], self.LED_blinkamplitude[self.trial], self.LED_blinkdelay[self.trial]):
-                led.value = amp  # set amp (PWM duty cycle)
-                led.blink(on_time=dur, off_time=pau, initial_delay=dely, n=num)  # set temporal pattern
+                logging.info(f'{led}, {dur}, {pau}, {num}, {amp}, {dely}')
+                # led.value = amp
+                led.blink(on_time=dur, off_time=pau, initial_delay=dely, value=amp, n=num)
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')

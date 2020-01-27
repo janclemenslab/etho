@@ -10,7 +10,7 @@ class Delay_PWMLED(gpiozero.PWMLED):
         super().__init__(pin, active_high, initial_value, frequency, pin_factory)
 
     
-    def blink(self, on_time=1, off_time=1, initial_delay=0, n=None, background=True):
+    def blink(self, on_time=1, off_time=1, initial_delay=0, n=None, value=1, background=True):
         """
         Make the device turn on and off repeatedly.
 
@@ -27,6 +27,10 @@ class Delay_PWMLED(gpiozero.PWMLED):
         :param n:
             Number of times to blink; :data:`None` (the default) means forever.
 
+        :type value: int or None
+        :param  value:
+            value between 0 and 1 setting the duty cycle during the on phase. Defaults to 1 (full power).
+
         :param bool background:
             If :data:`True` (the default), start a background thread to
             continue blinking and return immediately. If :data:`False`, only
@@ -36,7 +40,7 @@ class Delay_PWMLED(gpiozero.PWMLED):
         self._stop_blink()
         self._blink_thread = gpiozero.threads.GPIOThread(
             target=self._blink_device,
-            args=(on_time, off_time, initial_delay, n)
+            args=(on_time, off_time, initial_delay, n, value)
         )
         self._blink_thread.start()
         if not background:
@@ -45,9 +49,9 @@ class Delay_PWMLED(gpiozero.PWMLED):
 
 
     def _blink_device(
-            self, on_time, off_time, initial_delay=0, n=1, fps=25):
+            self, on_time, off_time, initial_delay=0, n=1, value=1, fps=25):
         sequence = []
-        sequence.append((1, on_time))
+        sequence.append((value, on_time))
         sequence.append((0, off_time))
         sequence = (
                 cycle(sequence) if n is None else
