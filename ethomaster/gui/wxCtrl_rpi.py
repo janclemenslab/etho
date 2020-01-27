@@ -77,7 +77,7 @@ class Frame(wx.Frame):
                                os.path.join(self.protocolfolder, protocolName))
             print(message)
             # check node status before starting??
-            self.bStart.Disable()
+            # self.bStart.Disable()
             try:
                 # or start this as independent process?
                 p = Process(target=clientcaller.clientcaller, args=args)
@@ -88,7 +88,7 @@ class Frame(wx.Frame):
             except:
                 pass
             finally:
-                self.bStart.Enable()
+                pass# self.bStart.Enable()
             # BusyDialog(self, size=(300,150)).run(clientcaller.clientcaller, args, message=message)
         else:
             print('no controlf file selected')
