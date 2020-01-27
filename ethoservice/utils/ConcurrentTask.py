@@ -31,8 +31,9 @@ class SharedNumpyArray:
         self._lock = mp.Lock()
         # will be the np representation of the base array - need to convert from base array
         # on both ends for updates to propagate - see _asnp()
-        self._shared_array = None  
+        self._shared_array = None  # initialize with None to mark as not yet created
 
+        # add one more RawValue for system_time?
         with self._lock:
             # create array in shared memory segment
             self._shared_array_base = mp.RawArray(ctype, int(np.prod(self.shape)))
@@ -44,7 +45,7 @@ class SharedNumpyArray:
             return self._stale.value
 
     def _asnp(self):
-        if self._shared_array is None:  
+        if self._shared_array is None:
             # need to get the np array from the underlying base array on both ends, but
             # only once - we detect first access by setting _array_base=None at init.
             # convert to numpy array vie ctypeslib
@@ -67,6 +68,9 @@ class SharedNumpyArray:
 
     def put(self, data):
         """Update the values in the shared array."""
+        if data is None:
+            return
+
         with self._lock:
             self._shared_array = self._asnp()
             self._shared_array[:] = data[0][:]
@@ -92,6 +96,20 @@ def Pipe():
     return sender, receiver
 
 
+def Queue(maxsize=None):
+    sender = mp.Queue(maxsize)
+    sender.send = sender.put
+    receiver = sender
+    return sender, receiver
+
+
+def NumpyArray(shape=(1,)):
+    sender = SharedNumpyArray(shape)
+    sender.send = sender.put
+    receiver = sender
+    return sender, receiver
+
+
 class ConcurrentTask():
     """
     - tasks should stop when being sent None
@@ -99,7 +117,7 @@ class ConcurrentTask():
     - maybe the tasks should implement a defined interface/communication protocol (sending `None` stops the task etc., START and STOP s)
     - the task objects should provide information about appropriate communication (e.g. `taskstopsignals`) and maybe even the communication channel (pipe vs queue). Maybe implement abstraction with a common interface for pipe, queue, zmq??
     """
-    def __init__(self, task, taskinitargs=[], comms='queue', taskstopsignal=None, maxsize=0):
+    def __init__(self, task, taskinitargs=[], comms='queue', taskstopsignal=None, comms_kwargs={}):
         """[summary]
 
         Args:
@@ -115,28 +133,25 @@ class ConcurrentTask():
         self.comms = comms
         self.taskstopsignal = taskstopsignal
         if self.comms == "pipe":
-            self._sender, self._receiver = Pipe()
+            self._sender, self._receiver = Pipe(**comms_kwargs)
         elif self.comms == "queue":
-            self._sender = mp.Queue(maxsize)
-            self._receiver = self._sender
+            self._sender, self._receiver = Queue(**comms_kwargs)
         elif self.comms == "array":
-            self._sender = SharedNumpyArray(maxsize)
-            self._receiver = self._sender
+            self._sender, self._receiver = NumpyArray(**comms_kwargs)
         else:
-            raise ValueError('wrong comms')
+            raise ValueError(f'Unknown comms type {comms} - allowed values are "pipe", "queue", "array"')
+
+        self.send = self._sender.send
 
         taskinitargs.insert(0, self._receiver)  # prepend queue, i.e. sink end of pipe or end of queue
         self._process = Process(target=task, args=tuple(taskinitargs))
+        self.start = self._process.start
 
-    def send(self, data):
-        self._sender.put(data)
-        # if self.comms == "queue" or self.comms == "array":
-        #     self._sender.put(data)
-        # elif self.comms == "pipe":
-        #     self._sender.send(data)
+    # def send(self, data):
+    #     self._sender.send(data)
 
-    def start(self):
-        self._process.start()
+    # def start(self):
+    #     self._process.start()
 
     def finish(self, verbose=False, sleepduration=1, sleepcycletimeout=5, maxsleepcycles=100000000):
         if self.comms == "queue":
