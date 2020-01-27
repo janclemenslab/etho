@@ -434,9 +434,10 @@ def process_dss(sample_queue):
     #             inter_op_parallelism_threads=2,
     #             device_count={"CPU": 4, "GPU": nb_gpu})
 
-    model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations1024/20191109_074320'
+    # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations1024/20191109_074320'
+    model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations4096/20191108_235948'
     model, params = load_model_and_params(model_save_name)
-    model.predict(np.zeros((1, 1024, 16)))
+    model.predict(np.zeros((1, 4096, 16)))
     RUN = True
     print('DONE DONE DONE')
     
