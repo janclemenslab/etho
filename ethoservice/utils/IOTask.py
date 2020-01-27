@@ -203,7 +203,7 @@ def plot_fast(disp_queue, channels_to_plot, nb_samples=10_000):
 
     nb_channels = len(channels_to_plot)
     if nb_samples is None:
-    nb_samples = 10_000
+        nb_samples = 10_000
     # set up window and subplots
     app = QtGui.QApplication([])
     win = pg.GraphicsWindow(title="DAQ")
