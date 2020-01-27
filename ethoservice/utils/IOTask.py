@@ -194,7 +194,7 @@ def plot(disp_queue, channels_to_plot):
     plt.close(fig)
 
 
-def plot_fast(disp_queue, channels_to_plot):
+def plot_fast(disp_queue, channels_to_plot, nb_samples=10_000):
     """Coroutine for plotting using pyqtgraph (FAST!!)."""
     from pyqtgraph.Qt import QtGui
     import pyqtgraph as pg
@@ -202,11 +202,12 @@ def plot_fast(disp_queue, channels_to_plot):
     pg.setConfigOption('leftButtonPan', False)
 
     nb_channels = len(channels_to_plot)
+    if nb_samples is None:
     nb_samples = 10_000
     # set up window and subplots
     app = QtGui.QApplication([])
     win = pg.GraphicsWindow(title="DAQ")
-    win.resize(1000, 100 * nb_channels)
+    win.resize(1000, min(100 * nb_channels, 1000))
     p = []
     for chan in range(nb_channels):
         w = win.addPlot(y=np.zeros((nb_samples,)))
