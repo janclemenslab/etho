@@ -95,7 +95,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
 
     if not loop:
         print(f'setting maxduration from playlist to {totallen}.')
-        maxduration = totallen
+        maxduration = totallen + 4
         playlist_items = iter(playlist_items)
     else:
         print(f'endless playback.')
