@@ -5,8 +5,11 @@ import zerorpc
 import RPi.GPIO as GPIO
 import time
 import sys
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class LED(BaseZeroService):
     """
     LED control

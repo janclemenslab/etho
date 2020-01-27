@@ -3,7 +3,7 @@ import numpy as np
 import subprocess
 import defopt
 from itertools import cycle
-import yaml
+import os
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
@@ -54,8 +54,8 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     print('loop:', loop)
     print('selected stim:', selected_stim)
 
-    if protocolfile.partition('.')[-1] not in ['yml', 'yaml']:
-        raise ValueError('protocol must be a yaml file (end in yml or yaml).')
+    if os.path.splitext(protocolfile)[-1] not in ['.yml', '.yaml']:
+        raise ValueError('Protocol must be a yaml file (end in .yml or .yaml). Is ' + protocolfile + ' and ends in ' + os.path.splitext(protocolfile) + '.')
 
     prot = readconfig(protocolfile)
     # maxduration = prot['NODE']['maxduration']
@@ -66,7 +66,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     # load playlist, sounds, and enumerate play order
     playlist = parse_table(playlistfile)
     if selected_stim:
-        playlist = playlist.iloc[selected_stim-1:selected_stim]
+        playlist = playlist.iloc[selected_stim - 1:selected_stim]
     print(playlist)
     sounds = load_sounds(playlist, fs,
                          attenuation=config['ATTENUATION'],

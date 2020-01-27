@@ -5,6 +5,8 @@ import zerorpc  # for starting service in `main()`
 import time     # for timer
 import threading
 import sys
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 try:
     import flycapture2 as fc2
 except Exception as e:
@@ -25,8 +27,9 @@ import sys
 # import argparse
 
 
-
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 def disp(displayQueue, frame_width, frame_height, poll_timeout=0.01):
+    logging.info("setting up disp")
     cv2.namedWindow('display')
     cv2.resizeWindow('display', frame_width, frame_height)
     RUN = True
@@ -34,19 +37,48 @@ def disp(displayQueue, frame_width, frame_height, poll_timeout=0.01):
         if displayQueue.poll(poll_timeout):
             image = displayQueue.recv()  # TODO: should be none blocking (block=False) just in case, need to catch empyt queue exception
             if image is None:
-                print('stopping display thread')
+                logging.info('stopping display thread')
                 RUN = False
                 break
             cv2.imshow('display', image)
             cv2.waitKey(1)
-    print("closing display")
+    logging.info("closing display")
     cv2.destroyWindow('display')
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+def disp_fast(displayQueue, frame_width, frame_height, poll_timeout=0.01):
+    logging.info("setting up disp_fast")
+    from pyqtgraph.Qt import QtGui
+    import pyqtgraph as pg
+    from pyqtgraph.widgets.RawImageWidget import RawImageWidget
+    pg.setConfigOption('background', 'w')
+    pg.setConfigOption('leftButtonPan', False)
+
+    # set up window and subplots
+    app = QtGui.QApplication([])
+    win = RawImageWidget(scaled=True)
+    win.resize(frame_width, frame_height)
+    win.show()
+    app.processEvents()
+    RUN = True
+    while RUN:
+        if displayQueue.poll(poll_timeout):
+            image = displayQueue.recv()  # TODO: should be none blocking (block=False) just in case, need to catch empyt queue exception
+            if image is None:
+                logging.info('stopping display thread')
+                RUN = False
+                break
+            win.setImage(image)
+            app.processEvents()
+    logging.info("closing display")
+
+
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 def save(writeQueue, file_name, frame_rate, frame_width, frame_height):
-    print("setting up video writer")
+    logging.info("setting up video writer")
     ovw = cv2.VideoWriter()
-    print("   saving to " + file_name + '.h264')
+    logging.info("   saving to " + file_name + '.h264')
     ovw.open(file_name + '.avi', cv2.VideoWriter_fourcc(*'x264'),
              frame_rate, (frame_width, frame_height), True)
     # ovw.open(file_name + '.h264', cv2.CAP_INTEL_MFX, cv2.VideoWriter_fourcc(*'H264'),
@@ -56,15 +88,16 @@ def save(writeQueue, file_name, frame_rate, frame_width, frame_height):
         # if writeQueue.poll(0.01):
         image = writeQueue.get()  # get new frame
         if image is None:
-            print('stopping WRITE thread')
+            logging.info('stopping WRITE thread')
             RUN = False
             break
         ovw.write(image)
-    print("closing video writer")
+    logging.info("closing video writer")
     ovw.release()
     ovw = None
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class PTG(BaseZeroService):
 
     LOGGING_PORT = 1448   # set this to range 1420-1460
@@ -77,15 +110,15 @@ class PTG(BaseZeroService):
         self.savefilename = savefilename
 
         # set up CAMERA - these should be defined in a PARAMS dict
-        self.cam_id = int(params['cam_id'])
+        self.cam_serialnumber = int(params['cam_serialnumber'])
 
         # pre-allocate image data structures
         self.im = fc2.Image()  # this will hold the original acquired image
         self.imRGB = fc2.Image()  # this will hold the image after conversion to RGB
 
-        print("setting up camera " + str(self.cam_id))
+        print("setting up camera " + str(self.cam_serialnumber))
         self.c = fc2.Context()
-        self.c.connect(*self.c.get_camera_from_index(self.cam_id))
+        self.c.connect(*self.c.get_camera_from_serialnumber(self.cam_serialnumber))
 
         self.c.set_format7_configuration(fc2.MODE_0, int(params['frame_offx']), int(params['frame_offy']), int(params['frame_width']), int(params['frame_height']), fc2.PIXEL_FORMAT_BGR)
         print(self.c.get_format7_configuration())
@@ -120,7 +153,7 @@ class PTG(BaseZeroService):
         self.nFrames = int(self.frame_rate * (self.duration + 100))
         if self.savefilename is None:  # display only - set up DISPLAY
             self.displayQueue, displayOut = Pipe()
-            self.pDisplay = Process(target=disp, args=(displayOut, self.frame_height, self.frame_width))
+            self.pDisplay = Process(target=disp_fast, args=(displayOut, self.frame_height, self.frame_width))
         else:  # save only - set up SAVE
             os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
             self.nFrames = int(self.frame_rate * (self.duration + 100))
@@ -136,6 +169,7 @@ class PTG(BaseZeroService):
             self.writeQueue = Queue()  # TODO: this should be a Pipe since we always only want to display the last frame
             self.pWrite = Process(target=save,
                                   args=(self.writeQueue, self.savefilename, self.frame_rate, self.frame_height, self.frame_width))
+
         # background jobs should be run and controlled via a thread
         # threads can be stopped by setting an event: `_thread_stopper.set()`
         self._thread_stopper = threading.Event()
@@ -153,6 +187,7 @@ class PTG(BaseZeroService):
             self.pDisplay.start()
         else:
             self.pWrite.start()
+            # self.pDisplay.start()
 
         self._time_started = time.time()
         # background jobs should be run and controlled via a thread
@@ -196,8 +231,9 @@ class PTG(BaseZeroService):
                 ts = self.im.timestamp()  # retrieve time stamp embedded in the frame
                 self.timestamps[frameNumber, :] = (t, ts['seconds'], ts['microSeconds'], ts[
                                         'cycleCount'], ts['cycleOffset'], ts['cycleSeconds'])
-                # ovw.write(BGR)
                 self.writeQueue.put(BGR)
+            else:
+                self.displayQueue.send(BGR)
             frameNumber = frameNumber + 1
             if frameNumber == self.nFrames:
                 print('max number of frames reached - stopping')

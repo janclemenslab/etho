@@ -3,7 +3,6 @@ import numpy as np
 import subprocess
 import defopt
 from itertools import cycle
-import yaml
 import os
 import zerorpc
 
@@ -28,9 +27,8 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     print('loop:', loop)
     print('selected stim:', selected_stim)
 
-    if protocolfile.partition('.')[-1] not in ['yml', 'yaml']:
-        print(protocolfile.partition('.')[-1])
-        raise ValueError('protocol must be a yaml file (end in yml or yaml).')
+    if os.path.splitext(protocolfile)[-1] not in ['.yml', '.yaml']:
+        raise ValueError('Protocol must be a yaml file (end in .yml or .yaml). Is ' + protocolfile + ' and ends in ' + os.path.splitext(protocolfile) + '.')
 
     prot = readconfig(protocolfile)
     # maxduration = prot['NODE']['maxduration']
@@ -43,7 +41,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     # load playlist, sounds, and enumerate play order
     playlist = parse_table(playlistfile)
     if selected_stim:
-        playlist = playlist.iloc[selected_stim-1:selected_stim]
+        playlist = playlist.iloc[selected_stim - 1:selected_stim]
     print(playlist)
     sounds = load_sounds(playlist, fs,
                          attenuation=config['ATTENUATION'],
@@ -101,7 +99,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
             time.sleep(0.5)
             t1 = time.clock()
             print(f'   Busy {t1-t0:1.2f} seconds.\r', end='', flush=True)
-    except zerorpc.exceptions.RemoteError as e:
+    except zerorpc.exceptions.RemoteError:
         time.sleep(1.0)  # make sure we catch the last AI callback
         daq.finish()
     print(f'   Finished after {t1-t0:1.2f} seconds.')
@@ -109,6 +107,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     sp.terminate()
     sp.kill()
     print('DONE.')
+
 
 if __name__ == '__main__':
     defopt.run(clientcc)

@@ -60,6 +60,63 @@ def normalize_table(table: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def select_channels_from_playlist(playlist, channels_to_keep):
+    """[summary]
+    
+    Args:
+        playlist ([type]): [description]
+        channels_to_keep ([type]): [description]
+    
+    Returns:
+        [type]: [description]
+    """
+    playlist_new = playlist.copy()
+    for col_name, col_data in playlist_new.iteritems():
+        for row_name, row_data in col_data.iteritems():
+            if isinstance(row_data, (list, tuple)):
+                playlist_new.set_value(row_name, col_name, [row_data[channel] for channel in channels_to_keep])
+            if isinstance(row_data, np.ndarray):
+                playlist_new.set_value(row_name, col_name, np.array(row_data)[channels_to_keep])
+    return playlist_new
+
+
+def parse_pulse_parameters(playlist, sounds, fs):
+    """[summary]
+
+    Args:
+        playlist ([type]): [description]
+        sounds ([type]): list of np.arrays, the length of which  determines the trial period
+        fs (float): sampling rate for translating nb_samples in sounds to seconds
+    
+    Returns:
+        [type]: [description]
+    """
+    
+    nb_led = len(playlist.stimFileName[0]) # max over rows of len(stimFileNames) - 2
+    blink_durs = np.zeros((nb_led, ), dtype=np.int)
+    blink_paus = np.zeros_like(blink_durs)
+    blink_nums = np.zeros_like(blink_durs)
+    blink_dels = np.zeros_like(blink_durs)
+    blink_amps = np.zeros_like(blink_durs)
+    pulse_params = pd.DataFrame(columns=['duration', 'pause', 'number', 'delay', 'amplitude', 'trial_period'])
+    for index, row in playlist.iterrows():
+        
+        for stim_num, stim_amp in enumerate(row.intensity):
+            blink_amps[stim_num] = stim_amp
+        pulse_params.loc[index, 'amplitude'] = row.intensity
+
+        for stim_num, stim in enumerate(row.stimFileName):
+            if stim.startswith('PUL'):
+                dur, pau, num, dey = [int(token) for token in stim.split('_')[1:]]
+                blink_durs[stim_num], blink_paus[stim_num], blink_nums[stim_num], blink_dels[stim_num] = [int(token) for token in stim.split('_')[1:]]
+        pulse_params.loc[index, 'duration'] = blink_durs / 1000
+        pulse_params.loc[index, 'pause'] = blink_paus / 1000
+        pulse_params.loc[index, 'number'] = blink_nums
+        pulse_params.loc[index, 'delay'] = blink_dels / 1000
+        pulse_params.loc[index, 'trial_period'] = sounds[index].shape[0] / fs
+    return pulse_params
+
+
 def make_sine(frequency: float, phase: float, duration: float, samplingrate: float) -> np.array:
     """Make sinusoidal from parameters.
 
@@ -114,7 +171,8 @@ def build_playlist(soundlist, duration, fs, shuffle=True):
 
 
 def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, float]=None,
-                LEDamp: float=1.0, stimfolder: str='./', cast2int: bool=False, aslist: bool=False):
+                LEDamp: float=1.0, stimfolder: str='./', cast2int: bool=False, aslist: bool=False,
+                stim_key: str = 'stimulus'):
     sounddata = []
     for row_name, listitem in playlist.iterrows():
         mirror_led_channel = []
@@ -143,9 +201,12 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, floa
                     x = scipy.signal.resample_poly(x, int(fs), int(wav_rate), axis=0)
             elif stimName.endswith('.h5'):  # HDF5 file
                 with h5py.File(os.path.join(stimfolder, stimName), 'r') as f:
-                    x = f['stimulus'][:].astype(np.float32)
-            else:
-                x = None
+                    try:
+                        x = f[stim_key][:].astype(np.float32)
+                    except KeyError as e:
+                        print(e)
+            # else:
+            #     x = None
 
             # if `attenuation` arg is provided:
             if attenuation:

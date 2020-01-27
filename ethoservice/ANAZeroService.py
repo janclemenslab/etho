@@ -10,18 +10,21 @@ from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 try:
     import PyDAQmx as daq
+    from PyDAQmx.DAQmxCallBack import *
+    from PyDAQmx.DAQmxConstants import *
+    from PyDAQmx.DAQmxFunctions import *
 except ImportError as e:
     print('IGNORE IF ON HEAD')
     print(e)
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
-class NIT(BaseZeroService):
+class ANA(BaseZeroService):
     """[summary]"""
 
-    LOGGING_PORT = 1450  # set this to range 1420-1460
-    SERVICE_PORT = 4250  # last to digits match logging output_channels - but start with "42" instead of "14"
-    SERVICE_NAME = "NIT"  # short, uppercase, 3-letter ID of the service (equals class name)
+    LOGGING_PORT = 1451  # set this to range 1420-1460
+    SERVICE_PORT = 4251  # last to digits match logging output_channels - but start with "42" instead of "14"
+    SERVICE_NAME = "ANA"  # short, uppercase, 3-letter ID of the service (equals class name)
 
     def setup(self, duration, output_channels):
         """Setup the trigger service (intiates the digital output channels).
@@ -32,17 +35,21 @@ class NIT(BaseZeroService):
         """
         self._time_started = None
         self.duration = float(duration)
+        
+        self.samples_read = daq.int32()
+        dev_name = '/Dev1'
+        cha_name = ['ao2', 'ao3']
+        self.cha_name = [dev_name + '/' + ch for ch in cha_name]  # append device name
+        self.cha_string = ", ".join(self.cha_name)
+        self.num_channels = len(cha_name)
+        self.num_samples_per_chan = 10_000
+        self._data = np.ones((self.num_samples_per_chan, self.num_channels), dtype=np.float64)  # init empty data array
 
+        limits = 10
         self.task = daq.Task()
-        self.task.CreateDOChan(output_channels, "", daq.DAQmx_Val_ChanForAllLines)
-        self.nb_channels = None  # TODO: get nb_channels from task obhect
+        self.task.CreateAOVoltageChan(self.cha_string, "", -limits, limits, DAQmx_Val_Volts, None)
         self.task.StartTask()
-
-        # APPLICATION SPECIFIC SETUP CODE HERE
-
-        # background jobs should be run and controlled via a thread
-        # threads can be stopped by setting an event: `_thread_stopper.set()`
-
+        
     def send_trigger(self, state, duration=0.0001):
         """Set the digital output channels to specified state.
         
@@ -56,11 +63,12 @@ class NIT(BaseZeroService):
         # if len(state) != self.nb_channels: 
         #     raise ValueError(f"State vector should have same length as the number of digital output channels. Is {len(state)}, should be {'x'}.")
         self.log.info('sending {state} on {output_channels}')
-        state = np.array(state, dtype=np.uint8)
-        self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, state, None, None)
+        self.task.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
+                                    self._data * state, daq.byref(self.samples_read), None)
         if duration is not None:
             time.sleep(duration)  # alternatively could  return immediately using a threaded timer
-            self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, 0*state, None, None)
+            self.task.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
+                                     self._data * 0, daq.byref(self.samples_read), None)
         self.log.info('   success.')
 
     def start(self):
@@ -94,6 +102,6 @@ if __name__ == '__main__':
         ser = sys.argv[1]
     else:
         ser = 'default'
-    s = NIT(serializer=ser)
-    s.bind("tcp://0.0.0.0:{0}".format(NIT.SERVICE_PORT))  # broadcast on all IPs
+    s = ANA(serializer=ser)
+    s.bind("tcp://0.0.0.0:{0}".format(ANA.SERVICE_PORT))  # broadcast on all IPs
     s.run()

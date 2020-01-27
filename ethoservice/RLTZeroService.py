@@ -17,40 +17,18 @@ except ImportError as e:
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
-class DAQ(BaseZeroService):
+class RLT(BaseZeroService):
     '''Bundles and synchronizes analog/digital input and output tasks.'''
 
-    LOGGING_PORT = 1449   # set this to range 1420-1460
-    SERVICE_PORT = 4249   # last to digits match logging port - but start with "42" instead of "14"
-    SERVICE_NAME = "DAQ"  # short, uppercase, 3-letter ID of the service (equals class name)
+    LOGGING_PORT = 1455   # set this to range 1420-1460
+    SERVICE_PORT = 4255   # last to digits match logging port - but start with "42" instead of "14"
+    SERVICE_NAME = "RLT"  # short, uppercase, 3-letter ID of the service (equals class name)
 
     # def setup(self, savefilename, duration, analog_chans_out=["ao0", "ao1"], analog_chans_in=["ai2", "ai3", "ai0"]):
     def setup(self, savefilename: str=None, play_order: Iterable=None, playlist_info=None,
-              duration: float=-1, fs: int=10000, display=False, realtime=False, 
-              nb_inputsamples_per_cycle=None,
+              duration: float=-1, fs: int=10000, display=False,
               analog_chans_out: Sequence=None, analog_chans_in: Sequence=['ai0'], digital_chans_out: Sequence=None,
               analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={}):
-        """[summary]
-        
-        Args:
-            savefilename (str, optional): [description]. Defaults to None.
-            play_order (Iterable, optional): [description]. Defaults to None.
-            playlist_info ([type], optional): [description]. Defaults to None.
-            duration (float, optional): [description]. Defaults to -1.
-            fs (int, optional): [description]. Defaults to 10000.
-            display (bool, optional): [description]. Defaults to False.
-            realtime (bool, optional): [description]. Defaults to False.
-            nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
-            analog_chans_out (Sequence, optional): [description]. Defaults to None.
-            analog_chans_in (Sequence, optional): [description]. Defaults to ['ai0'].
-            digital_chans_out (Sequence, optional): [description]. Defaults to None.
-            analog_data_out (Sequence, optional): [description]. Defaults to None.
-            digital_data_out (Sequence, optional): [description]. Defaults to None.
-            metadata (dict, optional): [description]. Defaults to {}.
-        
-        Raises:
-            ValueError: [description]
-        """
         self._time_started = None
         self.duration = duration
         self.savefilename = savefilename
@@ -77,8 +55,7 @@ class DAQ(BaseZeroService):
             print(self.taskDO)
         # ANALOG INPUT
         if self.analog_chans_in:
-            self.taskAI = IOTask(cha_name=self.analog_chans_in, rate=fs, 
-                                 nb_inputsamples_per_cycle=nb_inputsamples_per_cycle)
+            self.taskAI = IOTask(cha_name=self.analog_chans_in, rate=fs)
             self.taskAI.data_rec = []
             if self.savefilename is not None:  # save
                 os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
@@ -86,12 +63,9 @@ class DAQ(BaseZeroService):
                 self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.analog_chans_in), attrs])
                 self.taskAI.data_rec.append(self.save_task)
             if display:
-                self.disp_task = ConcurrentTask(task=plot_fast, taskinitargs=[display, nb_inputsamples_per_cycle], comms="pipe")
+                self.disp_task = ConcurrentTask(task=plot_fast, taskinitargs=[display], comms="pipe")
                 self.taskAI.data_rec.append(self.disp_task)
-            if realtime:
-                self.proc_task = ConcurrentTask(task=process_dss, comms="array", 
-                                                comms_kwargs={'shape': (nb_inputsamples_per_cycle, len(analog_chans_in))})
-                self.taskAI.data_rec.append(self.proc_task)
+            print(self.taskAI)
 
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})

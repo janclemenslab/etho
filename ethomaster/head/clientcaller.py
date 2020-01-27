@@ -2,6 +2,7 @@ import time
 import numpy as np
 import pandas as pd
 import subprocess
+import logging
 from itertools import cycle
 
 from ethomaster import config
@@ -55,6 +56,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
         cam = ZeroClient("{0}@{1}".format(user_name, ip_address), 'picam', serializer=SER)
         print(' starting server:', end='')
+        time.sleep(2)
         ret = cam.start_server(cam_server_name, folder_name, warmup=1)
         print(f'{"success" if ret else "FAILED"}.')
         cam.connect("tcp://{0}:{1}".format(ip_address, CAM.SERVICE_PORT))
@@ -63,7 +65,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         cam.setup('{0}/{1}/{1}.h264'.format(dirname, filename), maxduration + 10)
         time.sleep(1)
         cam.start()
-        time.sleep(5)
+        cam_start_time = time.time() # time.sleep(5)
 
     if 'SND' in prot['NODE']['use_services']:
         snd_server_name = 'python -m {0} {1}'.format(SND.__module__, SER)
@@ -72,7 +74,14 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
         # load playlist, sounds, and enumerate play order
         playlist = parse_table(playlistfile)
-        sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
+
+        if ip_address in config['ATTENUATION']:  # use node specific attenuation data
+            attenuation = config['ATTENUATION'][ip_address]
+            print(f'using attenuation data specific to {ip_address}.')
+        else:
+            attenuation = config['ATTENUATION']
+
+        sounds = load_sounds(playlist, fs, attenuation=attenuation,
                              LEDamp=prot['SND']['ledamp'],
                              stimfolder=config['HEAD']['stimfolder'],
                              cast2int=True)
@@ -89,7 +98,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print('sending sound data to {0} - may take a while.'.format(ip_address))
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
         snd.setup(sounds, playlist, playlist_items, totallen, fs)
-        snd.start()
 
     if 'OPT' in prot['NODE']['use_services']:
         opt_server_name = 'python -m {0} {1}'.format(OPT.__module__, SER)
@@ -101,7 +109,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print(prot['OPT']['pin'], prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'], maxduration)
         opt.setup(prot['OPT']['pin'], maxduration, prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'])
         opt.init_local_logger('{0}/{1}/{1}_opt.log'.format(dirname, filename))
-        opt.start()
 
     if 'THUA' in prot['NODE']['use_services']:
         thua_server_name = 'python -m {0} {1}'.format(THUA.__module__, SER)
@@ -130,11 +137,24 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
     if 'DAQ' in prot['NODE']['use_services']:
         daq_server_name = 'python -m {0} {1}'.format(DAQ.__module__, SER)
-
+        if prot['DAQ']['run_locally']:
+            print('   Running DAQ job locally.')
+            ip_address = 'localhost'
+            daq_save_folder = 'C:/Users/ncb/data'
+        else:
+            daq_save_folder = dirname
         fs = prot['DAQ']['samplingrate']
         shuffle_playback = prot['DAQ']['shuffle']
+
         playlist = parse_table(playlistfile)
-        sounds = load_sounds(playlist, fs, attenuation=config['ATTENUATION'],
+
+        if ip_address in config['ATTENUATION']:  # use node specific attenuation data
+            attenuation = config['ATTENUATION'][ip_address]
+            print(f'using attenuation data specific to {ip_address}.')
+        else:
+            attenuation = config['ATTENUATION']
+
+        sounds = load_sounds(playlist, fs, attenuation=attenuation,
                              LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'])
         sounds = [sound.astype(np.float64) for sound in sounds]
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
@@ -148,13 +168,12 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         # TODO: catch errors if channel numbers are inconsistent - sounds[ii].shape[-1] should be nb_analog+nb_digital
         if prot['DAQ']['digital_chans_out'] is not None:
             nb_digital_chans_out = len(prot['DAQ']['digital_chans_out'])
-            digital_data = [snd[:,-nb_digital_chans_out].astype(np.uint8) for snd in sounds]
-            analog_data = [snd[:,:nb_digital_chans_out+1] for snd in sounds]  # remove digital traces from stimset
+            digital_data = [snd[:, -nb_digital_chans_out].astype(np.uint8) for snd in sounds]
+            analog_data = [snd[:, :nb_digital_chans_out+1] for snd in sounds]  # remove digital traces from stimset
         else:
             digital_data = None
             analog_data = sounds
-
-        daq_save_filename = '{0}/{1}/{1}_daq.h5'.format(dirname, filename)
+        daq_save_filename = '{0}/{1}/{1}_daq.h5'.format(daq_save_folder, filename)
         print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
         daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
 
@@ -164,15 +183,39 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print('sending sound data to {0} - may take a while.'.format(ip_address))
 
         daq.setup(daq_save_filename, playlist_items, playlist,
-              maxduration, fs, prot['DAQ']['display'],
+              maxduration, fs,
+              display=prot['DAQ']['display'],
+              realtime=prot['DAQ']['realtime'],
+              nb_inputsamples_per_cycle=prot['DAQ']['nb_inputsamples_per_cycle'],
               analog_chans_out=prot['DAQ']['analog_chans_out'],
               analog_chans_in=prot['DAQ']['analog_chans_in'],
               digital_chans_out=prot['DAQ']['digital_chans_out'],
               analog_data_out=analog_data,
               digital_data_out=digital_data,
               metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']})
-        daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(dirname, filename))
+        daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(daq_save_folder, filename))
         daq.start()
+        logging.info('DAQ started')
+
+    if 'CAM' in prot['NODE']['use_services']:
+        # make sure 5seconds have elapsed
+        while time.time() - cam_start_time <= 5:
+            time.sleep(0.01)
+        print(f'   {time.time() - cam_start_time:1.4f} seconds elapsed. Ready to start SND and/or OPT.')
+
+    if 'SND' in prot['NODE']['use_services']:
+        time0 = time.time()
+        snd.start()
+        print(f'waited {time.time() - time0:1.4f} seconds.')
+        print('   SND started.')
+        time0 = time.time()
+        while not snd.is_busy():
+            time.sleep(0.001)
+        print(f'waited {time.time() - time0:1.4f} seconds.')
+
+    if 'OPT' in prot['NODE']['use_services']:
+        opt.start()
+        print('   OPT started.')
 
     print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
 

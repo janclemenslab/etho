@@ -5,7 +5,7 @@ import wx
 from ethomaster.head.clientmanager import *
 from ethomaster.utils.SSHRunner import *
 from ethomaster import config
-import ethomaster.gui.wxCtrl as wxCtrl
+import ethomaster.gui.wxCtrl_rpi as wxCtrl_rpi
 from ethomaster.gui.wxBusyDialog import BusyDialog
 
 
@@ -21,13 +21,85 @@ class Model:
         # print(self.clients_runningservices)
 
     def rescan(self):
+        print('RESCANNING - listing clients:')
         self.clients = exepool(ping, config['GENERAL']['hosts'])
         print(self.clients)
-        self.clients_runningservices = exepool(get_running_services, config['GENERAL']['hosts'])
-        print(self.clients_runningservices)
-        # if clients have changed:
-            # pub.sendMessage("clients_changed", clients=self.clients)
-            # view listens to these events and update VUI
+        print('RESCANNING - listing running services:')
+        # self.clients_runningservices = exepool(get_running_services, config['GENERAL']['hosts'])
+        # print(self.clients_runningservices)
+
+
+
+from threading import Thread
+import wx
+from pubsub import pub
+# from wx.lib.pubsub import pub
+import time
+import logging
+import time
+import zmq
+import logging
+import logging.handlers
+from ethomaster import config
+
+
+class WorkThread(Thread):
+
+    def __init__(self):
+        """Init Worker Thread Class."""
+        Thread.__init__(self)
+        self.stop_work_thread = 0
+        
+        logger = logging.getLogger('')
+        logger.setLevel(logging.INFO)
+        # __ to console logger
+        console = logging.StreamHandler()
+        # console.setLevel(logging.DEBUG)
+        # formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+        formatter = logging.Formatter('%(levelname)-8s %(message)s')
+        # tell the handler to use this format
+        console.setFormatter(formatter)
+        console.setLevel(logging.INFO)
+        # add handler to logger
+        logger.addHandler(console)
+       
+        # subscribe to all logging ports
+        logging_ports = range(int(config['LOGGER']['portrange'][0]), int(config['LOGGER']['portrange'][1]))
+        ctx = zmq.Context()
+        sub = ctx.socket(zmq.SUB)
+        sub.setsockopt_string(zmq.SUBSCRIBE, '')
+        for port in logging_ports:
+            sub.bind('tcp://0.0.0.0:{0}'.format(port))
+        self.sub = sub
+        self.logger = logger
+        self.start()  # start the thread
+        self.val = 0
+    
+    def run(self):
+        print('LISTENING FOR MESSAGES')
+
+        while True:
+            if self.stop_work_thread == 1:
+                break
+            self.val += 1
+            # logger publishes logger as multipart: [level, message]
+            try:
+                level, message = self.sub.recv_multipart(zmq.NOBLOCK)
+                # get level-appropriate logging function
+                # log = getattr(self.logger, level.decode('utf8').lower())
+                # log(message.decode('utf8').rstrip())
+                wx.CallAfter(pub.sendMessage, "update", step=message.decode('utf8').rstrip())
+            except zmq.error.Again as e:
+                pass
+            time.sleep(.01)
+
+            # wx.CallAfter(pub.sendMessage, "update", step=self.val)
+        wx.CallAfter(pub.sendMessage, "finish")
+        return
+
+    def stop(self):
+        self.stop_work_thread = 1
+
 
 
 
@@ -40,9 +112,6 @@ class HelloFrame(wx.Frame):
 
         self.model = Model()
 
-        # create a panel in the frame
-        # pnl = wx.Panel(self)
-
         # create a menu bar
         self.makeMenuBar()
 
@@ -50,10 +119,21 @@ class HelloFrame(wx.Frame):
         self.CreateStatusBar()
         self.SetStatusText("ethodrome")
 
+        self.logger = wx.TextCtrl(self,size=(1000, 2000), style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_DONTWRAP)
+        font1 = wx.Font(8, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Consolas')
+        self.logger.SetFont(font1)
+
         # text
         self.makeButtonPanel()
 
+        self.logger.Clear()
+        pub.subscribe(self.onUpdate, "update")
+        pub.subscribe(self.onFinish, "finish")
+        self.work = WorkThread()
+    
+
     def makeButtonPanel(self):
+        masterSizer = wx.BoxSizer(wx.HORIZONTAL)
         topSizer = wx.BoxSizer(wx.VERTICAL)
         # color based on true value (is_online)
         colors = {True: '#AAFFAA', False: '#FFAAAA'}
@@ -64,18 +144,16 @@ class HelloFrame(wx.Frame):
             panelButton.name = key
             # set color based on online status
             panelButton.SetBackgroundColour(colors[self.model.clients[key]])
-            panelButton.SetToolTip(wx.ToolTip(
-                str(self.model.clients_runningservices[key])))
             self.Bind(wx.EVT_BUTTON, self.OnClick, panelButton)
             # add info text next to button
-            panelText = wx.StaticText(self, wx.ID_ANY, str(
-                self.model.clients_runningservices[key]))
             # loyout button and text next to each other
             sizerHorz.Add(panelButton, 0, wx.ALL, 1)
-            sizerHorz.Add(panelText, 1, wx.ALL | wx.EXPAND, 1)
             # now add button+text
             topSizer.Add(sizerHorz, 0, wx.ALL | wx.EXPAND, 1)
-        self.SetSizer(topSizer)
+        masterSizer.Add(topSizer)
+        masterSizer.Add(self.logger, 0, 0, 0)
+        self.SetSizer(masterSizer)        
+        
 
     def makeMenuBar(self):
         """
@@ -117,6 +195,38 @@ class HelloFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnExit, exitItem)
         self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem)
 
+
+    def onUpdate(self, step):
+        step = str(step)+'\n'
+        self.logger.AppendText(step)
+
+    
+    def onCancel(self, event):
+        """Cancel thread process"""
+        try:
+            self.work.stop()
+            self.work.join()
+        except:
+            pass
+
+    def onFinish(self):
+        """thread process finished"""
+        try:
+            pub.unsubscribe(self.onUpdate, "update")
+            pub.unsubscribe(self.onFinish, "finish")
+        except:
+            pass
+
+    def OnExit(self, event):
+        self.onCancel(None)
+        self.onFinish()
+        self.Destroy()
+        self.Close(True)
+    def OnClose(self, event):
+        self.onCancel(None)
+        self.onFinish()
+        self.Destroy()
+
     def OnRescan(self, event):
         pass
         # self.PushStatusText('rescanning clients')
@@ -126,16 +236,16 @@ class HelloFrame(wx.Frame):
     def OnClick(self, event):
         self.PushStatusText('configure {0}'.format(
             event.GetEventObject().name))
-        # wxCam.main(event.GetEventObject().name)
-        wxCtrl.main(event.GetEventObject().name)
+        # run these in independent processes?
+        wxCtrl_rpi.main(event.GetEventObject().name)
         try:
             self.PopStatusText()
         except:
             pass
 
-    def OnExit(self, event):
-        """Close the frame, terminating the application."""
-        self.Close(True)
+    # def OnExit(self, event):
+    #     """Close the frame, terminating the application."""
+    #     self.Close(True)
 
     def OnHello(self, event):
         """Say hello to the user."""

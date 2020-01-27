@@ -15,14 +15,20 @@ from .ConcurrentTask import ConcurrentTask
 class IOTask(daq.Task):
     """IOTask does X."""
 
-    def __init__(self, dev_name="Dev1", cha_name=["ai0"], limits=10.0, rate=10000.0):
-        """Initialize IOTask.
-
-        ARGUMENTS:
-        dev_name - ni daqmx device name
-        cha_name - list of channels (must be pure - either all ai or ao)
-        limits   - voltage limits
-        rate     - sampling rate
+    def __init__(self, dev_name="Dev1", cha_name=["ai0"], limits=10.0, rate=10000.0,
+                 nb_inputsamples_per_cycle=None):
+        """[summary]
+        
+        Args:
+            dev_name (str, optional): [description]. Defaults to "Dev1".
+            cha_name (list, optional): [description]. Defaults to ["ai0"].
+            limits (float, optional): [description]. Defaults to 10.0.
+            rate (float, optional): [description]. Defaults to 10000.0.
+            nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
+        
+        Raises:
+            TypeError: [description]
+            ValueError: [description]
         """
         # check inputs
         daq.Task.__init__(self)
@@ -38,14 +44,16 @@ class IOTask(daq.Task):
         self.cha_name = [dev_name + '/' + ch for ch in cha_name]  # append device name
         self.cha_string = ", ".join(self.cha_name)
         self.num_channels = len(cha_name)
-
+        if nb_inputsamples_per_cycle is None:
+            nb_inputsamples_per_cycle = int(rate)
+            
         # FIX: input and output tasks can have different sizes
         self.callback = None
         self.data_gen = None  # called at start of callback
         self.data_rec = None  # called at end of callback
         if self.cha_type[0] is "analog_input":
-            self.num_samples_per_chan = 10000
-            self.num_samples_per_event = 10000  # self.num_samples_per_chan*self.num_channels
+            self.num_samples_per_chan = nb_inputsamples_per_cycle
+            self.num_samples_per_event = nb_inputsamples_per_cycle  # self.num_samples_per_chan*self.num_channels
             self.CreateAIVoltageChan(self.cha_string, "", DAQmx_Val_RSE, -limits, limits, DAQmx_Val_Volts, None)
             self.AutoRegisterEveryNSamplesEvent(DAQmx_Val_Acquired_Into_Buffer, self.num_samples_per_event, 0)
             self.CfgInputBuffer(self.num_samples_per_chan * self.num_channels * 4)
@@ -146,7 +154,7 @@ def plot(disp_queue, channels_to_plot):
     plt.ion()
 
     nb_channels = len(channels_to_plot)
-
+    nb_samples = 10_000
     fig = plt.figure()
     fig.canvas.set_window_title('traces: daq')
     ax = [fig.add_subplot(nb_channels, 1, channel + 1) for channel in range(nb_channels)]
@@ -154,9 +162,9 @@ def plot(disp_queue, channels_to_plot):
     plt.draw()
     fig.canvas.start_event_loop(0.01)  # otherwise plot freezes after 3-4 iterations
     bgrd = [fig.canvas.copy_from_bbox(this_ax.bbox) for this_ax in ax]
-    points = [this_ax.plot(np.arange(10000), np.zeros((10000, 1)), linewidth=0.4)[0] for this_ax in ax]  # init plot content
+    points = [this_ax.plot(np.arange(nb_samples), np.zeros((nb_samples, 1)), linewidth=0.4)[0] for this_ax in ax]  # init plot content
     [this_ax.set_ylim(-5, 5) for this_ax in ax]  # init plot content
-    [this_ax.set_xlim(0, 10000) for this_ax in ax]  # init plot content
+    [this_ax.set_xlim(0, nb_samples) for this_ax in ax]  # init plot content
     for cnt, ax2 in enumerate(fig.get_axes()[::-1]):
         ax2.label_outer()
         ax2.spines['top'].set_visible(False)
@@ -186,7 +194,7 @@ def plot(disp_queue, channels_to_plot):
     plt.close(fig)
 
 
-def plot_fast(disp_queue, channels_to_plot):
+def plot_fast(disp_queue, channels_to_plot, nb_samples=10_000):
     """Coroutine for plotting using pyqtgraph (FAST!!)."""
     from pyqtgraph.Qt import QtGui
     import pyqtgraph as pg
@@ -194,15 +202,16 @@ def plot_fast(disp_queue, channels_to_plot):
     pg.setConfigOption('leftButtonPan', False)
 
     nb_channels = len(channels_to_plot)
-
+    if nb_samples is None:
+        nb_samples = 10_000
     # set up window and subplots
     app = QtGui.QApplication([])
     win = pg.GraphicsWindow(title="DAQ")
-    win.resize(1000, 100 * nb_channels)
+    win.resize(1000, min(100 * nb_channels, 1000))
     p = []
     for chan in range(nb_channels):
-        w = win.addPlot(y=np.zeros((10_000,)))
-        w.setXRange(0, 10_000, padding=0)
+        w = win.addPlot(y=np.zeros((nb_samples,)))
+        w.setXRange(0, nb_samples, padding=0)
         w.setYRange(-5, 5)
         w.setMouseEnabled(x=False, y=False)
         w.enableAutoRange('xy', False)
@@ -227,7 +236,7 @@ def plot_fast(disp_queue, channels_to_plot):
     print("   closing plot.")
 
 
-def save(frame_queue, filename, num_channels=1, attrs=None, sizeincrement=100, start_time=None):
+def save(sample_queue, filename, num_channels=1, attrs=None, sizeincrement=100, start_time=None):
     """Coroutine for saving data."""
     import h5py
 
@@ -251,7 +260,7 @@ def save(frame_queue, filename, num_channels=1, attrs=None, sizeincrement=100, s
     framecount = 0
     RUN = True
     while RUN:
-        frame_systemtime = frame_queue.get()
+        frame_systemtime = sample_queue.get()
         if framecount % sizeincrement == sizeincrement - 1:
             f.flush()
             dset_systemtime.resize(dset_systemtime.shape[0] + sizeincrement, axis=0)
@@ -273,6 +282,199 @@ def save(frame_queue, filename, num_channels=1, attrs=None, sizeincrement=100, s
     f.flush()
     f.close()
     print("   closed file \"{0}\".".format(filename))
+
+def process_digital(sample_queue):
+    """Coroutine for rt processing of data."""
+    print("   started RT processing")
+    # init digital output - turn on if any channel crosses threshold
+    from ethomaster.head.ZeroClient import ZeroClient
+    from ethoservice.NITriggerZeroService import NIT
+    import subprocess
+
+    ip_address = 'localhost'
+    port = "/Dev1/port0/line8:9"  # maps to P0.0 and P0.1 on the amplifier box
+    trigger_types = {'START': [1, 1],
+                     'STOP': [0, 0],
+                    }
+    print([NIT.SERVICE_PORT, NIT.SERVICE_NAME])
+    nit = ZeroClient("{0}".format(ip_address), 'nidaq')
+    sp = subprocess.Popen('python -m ethoservice.NITriggerZeroService')
+    nit.connect("tcp://{0}:{1}".format(ip_address, NIT.SERVICE_PORT))
+    nit.setup(-1, port)
+    # nit.init_local_logger('{0}/{1}/{1}_nit.log'.format(daq_save_folder, filename))
+    started = False
+    thres = 3.5
+    RUN = True
+
+    while RUN:
+        # if sample_queue.poll(0.001):
+            # content = sample_queue.recv()
+        content = sample_queue.get()
+        if content is None:
+            pass #RUN = False
+        else: 
+            data, systemtime = content
+            peak_values = np.max(np.abs(data[:,:16]), axis=0)
+            peak_crossing_channels = np.where(peak_values > thres)[0]
+            if not started and len(peak_crossing_channels):
+                print('   sending START')
+                nit.send_trigger(trigger_types['START'], duration=None)
+                started = True
+            elif started and not len(peak_crossing_channels):
+                print('   sending STOP')
+                nit.send_trigger(trigger_types['STOP'], duration=None)
+                started = False
+            elif started:
+                print('   RUNNING')
+    print("   stopped RT processing")
+
+    nit.finish()
+    nit.stop_server()
+    del(nit)
+    sp.terminate()
+    sp.kill()
+
+
+def process_analog(sample_queue):
+    """Coroutine for rt processing of data."""
+    print("   started RT processing")
+    # init digital output - turn on if any channel crosses threshold
+    from ethomaster.head.ZeroClient import ZeroClient
+    from ethoservice.ANAZeroService import ANA
+    import subprocess
+
+    ip_address = 'localhost'
+    
+    print([ANA.SERVICE_PORT, ANA.SERVICE_NAME])
+    nit = ZeroClient("{0}".format(ip_address), 'nidaq')
+    sp = subprocess.Popen('python -m ethoservice.ANAZeroService')
+    nit.connect("tcp://{0}:{1}".format(ip_address, ANA.SERVICE_PORT))
+    nit.setup(-1, 0)
+    # nit.init_local_logger('{0}/{1}/{1}_nit.log'.format(daq_save_folder, filename))
+    started = False
+    thres = 3.5
+    RUN = True
+
+    while RUN:
+        if sample_queue.poll():
+            print('pre', sample_queue.stale)
+            data = sample_queue.get()
+            print('post', sample_queue.stale)
+            # content = sample_queue.get()
+            if data is None:
+                # print('none')
+                pass  # RUN = False
+                # break
+            else: 
+                # data, systemtime = content
+                print(data.shape)
+                peak_values = np.max(np.abs(data[:,:16]), axis=0)
+                print(peak_values)
+                peak_crossing_channels = np.where(peak_values > thres)[0]
+                if not started and len(peak_crossing_channels):
+                    print('   sending START')
+                    nit.send_trigger(2, duration=1)
+                    started = True
+                elif started and not len(peak_crossing_channels):
+                    nit.send_trigger(0, duration=None)
+                    started = False
+    print("   stopped RT processing")
+
+    nit.send_trigger(0, duration=None)
+    nit.finish()
+    nit.stop_server()
+    del(nit)
+    sp.terminate()
+    sp.kill()
+
+
+
+def process_dss(sample_queue):
+    """Coroutine for rt processing of data."""
+    print("   started RT processing")
+    # init digital output - turn on if any channel crosses threshold
+    from ethomaster.head.ZeroClient import ZeroClient
+    from ethoservice.ANAZeroService import ANA
+    import subprocess
+
+    print('preparing storage')
+    import zarr
+    filename = 'C:/Users/ncb.UG-MGEN/data/rt_test.zarr'
+    f = zarr.open(filename, mode="w")
+
+    num_channels = 16
+
+    dset_raw = f.create_dataset("data_raw", shape=[0, num_channels],
+                                    chunks=[10*1024, num_channels], dtype=np.float64)
+    dset_pre = f.create_dataset("data_preprocessed", shape=[0, num_channels],
+                                    chunks=[10*1024, num_channels], dtype=np.float64)
+    dset_post = f.create_dataset("inference", shape=[0, 2],
+                                    chunks=[10*1024, 2], dtype=np.float64)
+    
+
+    ip_address = 'localhost'
+    # init DAQ for output
+    print([ANA.SERVICE_PORT, ANA.SERVICE_NAME])
+    nit = ZeroClient("{0}".format(ip_address), 'nidaq')
+    sp = subprocess.Popen('python -m ethoservice.ANAZeroService')
+    nit.connect("tcp://{0}:{1}".format(ip_address, ANA.SERVICE_PORT))
+    nit.setup(-1, 0)
+    # nit.init_local_logger('{0}/{1}/{1}_nit.log'.format(daq_save_folder, filename))
+    started = False
+
+    samplerate = 10_000  # make sure audio data and the annotations are all on the same sampling rate
+    # bandpass to get rid of slow baseline fluctuations and high-freuqency ripples
+    import scipy.signal as ss
+    sos_bp = ss.butter(5, [50, 1000], 'bandpass', output='sos', fs=samplerate)
+    print('preparing network')
+    # init network
+    import tensorflow as tf
+    from dss.utils import load_model_and_params
+    # config = tf.ConfigProto(intra_op_parallelism_threads=4,
+    #             inter_op_parallelism_threads=2,
+    #             device_count={"CPU": 4, "GPU": nb_gpu})
+
+    model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations1024/20191109_074320'
+    model, params = load_model_and_params(model_save_name)
+    model.predict(np.zeros((1, 1024, 16)))
+    RUN = True
+    print('DONE DONE DONE')
+    
+    while RUN:
+        if sample_queue.poll():
+            data = sample_queue.get()
+            data = data[:,:16]
+            # content = sample_queue.get()
+            if data is None:
+                # print('none')
+                pass  # RUN = False
+                # break
+            else: 
+                # TODO: save raw data, filtered data and prediction to file...
+                dset_raw.append(data)
+                data = ss.sosfiltfilt(sos_bp, data, axis=0).astype(np.float16)
+                dset_pre.append(data)
+                batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
+                prediction = model.predict(batch)
+                dset_post.append(prediction[0,...])
+                labels = np.argmax(prediction[0,...], axis=-1)
+                vibrations_present = np.any(labels==1)
+                
+                if not started and vibrations_present:
+                    print('   sending START')
+                    nit.send_trigger(2, duration=1)
+                    started = True
+                elif started and not vibrations_present:
+                    nit.send_trigger(0, duration=None)
+                    started = False
+    print("   stopped RT processing")
+    f.close()
+    nit.send_trigger(0, duration=None)
+    nit.finish()
+    nit.stop_server()
+    del(nit)
+    sp.terminate()
+    sp.kill()
 
 
 def log(file_name):

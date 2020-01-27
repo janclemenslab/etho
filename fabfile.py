@@ -8,8 +8,8 @@ env.password = 'droso123'
 def push():
     # local("rsync -avhz ~/Dropbox/code.py/ethoservice ncb@192.168.1.3:~/")
     try:
-    	local("mkdir \\\\{0}\\ncb\\code\\ ".format(env.host_string))
-    	local("cp -rf C:\\Users\\ncb\\Dropbox\\code.py\\ethodrome \\\\{0}\\ncb\\code\\ ".format(env.host_string))
+    	# local("mkdir \\\\{0}\\ncb\\code\\ ".format(env.host_string))
+    	local("cp -rf C:\\Users\\ncb\\ethodrome \\\\{0}\\ncb\\ ".format(env.host_string))
     	# local("robocopy C:\\Users\\ncb\\Dropbox\\code.py\\ethoservice\\ethoservice //rpi3/ncb/ethoservice /S /XD .git")
     except Exception as e:
     	print(e)

@@ -13,8 +13,11 @@ import time
 import zmq
 import os
 import sys
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 
 
+@log_exceptions(logging.getLogger(__name__))
 def frame_server():
     # Setup ZeroMQ PUBLISH socket for frames
     context = zmq.Context()
@@ -36,6 +39,7 @@ def frame_server():
     print("   closing frame_server.")
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class CAM(BaseZeroService):
     """PIcamera service.
 
