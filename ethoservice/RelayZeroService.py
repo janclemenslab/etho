@@ -6,12 +6,12 @@ import time
 import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
+
 try:
     import gpiozero
 except Exception as e:
     print("IGNORE IF RUN ON HEAD")
     print(e)
-
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class REL(BaseZeroService):
@@ -26,10 +26,9 @@ class REL(BaseZeroService):
 
     def setup(self, pin, duration):
         self.pin = pin  # data pin
-        self.delay = delay  # delay between reads
         self.duration = duration  # total duration of experiments
         self.relay = None
-        self._thread_timer = Timer(self.duration, self.finish, kwargs={'stop_service':True})
+        self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service':True})
 
     def start(self):
         self._time_started = time.time()
