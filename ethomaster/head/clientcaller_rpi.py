@@ -13,17 +13,55 @@ from ethomaster.utils.sound import parse_table, load_sounds, build_playlist, sel
 from ethoservice.SndZeroService import SND
 from ethoservice.CamZeroService import CAM
 from ethoservice.ThuZeroService import THU
-from ethoservice.ThuAZeroService import THUA
 from ethoservice.OptZeroService import OPT
 from ethoservice.Opt2ZeroService import OPT2
-from ethoservice.DAQZeroService import DAQ
-from ethoservice.PTGZeroService import PTG
+from ethoservice.RelayZeroService import REL
+
+
+import zmq
+import logging
+from zmq.log.handlers import PUBHandler
+import socket
 
 
 def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
+
+
+    # setup connection - publish to head_ip via LOGGIN_PORT
+    LOGGING_PORT = 4248
+    log_level = logging.INFO
+    head_ip = 'localhost'
+
+    ctx = zmq.Context()
+    ctx.LINGER = 0
+    pub = ctx.socket(zmq.PUB)
+    pub.connect('tcp://{0}:{1}'.format(head_ip, LOGGING_PORT))
+    log = logging.getLogger()
+    log.setLevel(log_level)
+
+    # get host name or IP to append to message
+    hostname = socket.gethostname()
+
+    prefix = "%(asctime)s.%(msecs)03d {0}@{1}:".format(
+        'CC', hostname)
+    body = "%(module)s:%(funcName)s:%(lineno)d - %(message)s"
+    df = "%Y-%m-%d,%H:%M:%S"
+    formatters = {
+        logging.DEBUG: logging.Formatter(prefix + body + "\n", datefmt=df),
+        logging.INFO: logging.Formatter(prefix + "%(message)s\n", datefmt=df),
+        logging.WARN: logging.Formatter(prefix + body + "\n", datefmt=df),
+        logging.ERROR: logging.Formatter(prefix + body + " - %(exc_info)s\n", datefmt=df),
+        logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df)}
+
+    # setup log handler which publishe all log messages to the network
+    handler = PUBHandler(pub)
+    handler.setLevel(log_level)  # catch only important messages
+    handler.formatters = formatters
+    log.addHandler(handler)
+
     # load config/protocols
     prot = readconfig(protocolfile)
-    print(prot)
+    log.debug(prot)
     maxduration = prot['NODE']['maxduration']
     user_name = prot['NODE']['user']
     folder_name = prot['NODE']['folder']
@@ -33,31 +71,55 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     if filename is None:
         filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
     dirname = prot['NODE']['savefolder']
-    print(filename)
+    log.info(f'experiment name: {filename}')
 
     # load playlist
     playlist = parse_table(playlistfile)
 
+    if 'REL' in prot['NODE']['use_services']:
+        rel_server_name = 'python -m {0} {1}'.format(REL.__module__, SER)
+        print(f'initializing {REL.SERVICE_NAME} at port {REL.SERVICE_PORT}.')
+        rel = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pirel', serializer=SER)
+        print('   starting server:', end='')
+        ret = rel.start_server(rel_server_name, folder_name, warmup=1)
+        print(f'{"success" if ret else "FAILED"}.')
+        print('   connecting to server:', end='')
+        # import ipdb; ipdb.set_trace()
+        ret = rel.connect("tcp://{0}:{1}".format(ip_address, REL.SERVICE_PORT))
+        print(f'{"success" if ret else "FAILED"}.')
+        
+        rel.init_local_logger('{0}/{1}/{1}_rel.log'.format(dirname, filename))
+        print(f"   setup with pin {prot['REL']['pin']}, duration {maxduration + 40}")
+        rel.setup(prot['REL']['pin'],  maxduration + 40)        
+        time.sleep(1)
+        print('   starting service:', end='')
+        rel.start()
+        print(f'success')
+
+
     if 'THU' in prot['NODE']['use_services']:
         thu_server_name = 'python -m {0} {1}'.format(THU.__module__, SER)
-        print([THU.SERVICE_PORT, THU.SERVICE_NAME])
+        print(f'initializing {THU.SERVICE_NAME} at port {THU.SERVICE_PORT}.')
         thu = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pithu', serializer=SER)
-        print(' starting server:', end='')
+        print('   starting server:', end='')
         ret = thu.start_server(thu_server_name, folder_name, warmup=1)
         print(f'{"success" if ret else "FAILED"}.')
-        print(' connecting to server:', end='')
-        thu.connect("tcp://{0}:{1}".format(ip_address,  THU.SERVICE_PORT))
+        print('   connecting to server:', end='')
+        # import ipdb; ipdb.set_trace()
+        ret = thu.connect("tcp://{0}:{1}".format(ip_address, THU.SERVICE_PORT))
         print(f'{"success" if ret else "FAILED"}.')
-        print(prot['THU']['pin'], prot['THU']['interval'], maxduration)
-
+        
         thu.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
-        thu.setup(prot['THU']['pin'], prot['THU']['interval'], maxduration + 20)
+        print(f"   setup with pin {prot['THU']['pin']}, interval {prot['THU']['interval']}, duration {maxduration + 20}")
+        thu.setup(prot['THU']['pin'], prot['THU']['interval'], maxduration + 20)        
         time.sleep(1)
+        print('   starting service:', end='')
         thu.start()
+        print(f'success')
 
     if 'CAM' in prot['NODE']['use_services']:
         cam_server_name = 'python -m {0} {1}'.format(CAM.__module__, SER)
-        print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
+        # print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
         cam = ZeroClient("{0}@{1}".format(user_name, ip_address), 'picam', serializer=SER)
         print(' starting server:', end='')
         time.sleep(2)
@@ -93,7 +155,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
                              cast2int=True)
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
-        print([SND.SERVICE_PORT, SND.SERVICE_NAME])
+        # print([SND.SERVICE_PORT, SND.SERVICE_NAME])
         snd = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pisnd', serializer=SER)
         print(' starting server:', end='')
         ret = snd.start_server(snd_server_name, folder_name, warmup=1)
@@ -106,7 +168,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
     if 'OPT' in prot['NODE']['use_services']:
         opt_server_name = 'python -m {0} {1}'.format(OPT.__module__, SER)
-        print([OPT.SERVICE_PORT, OPT.SERVICE_NAME])
+        # print([OPT.SERVICE_PORT, OPT.SERVICE_NAME])
         opt = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt', serializer=SER)
         print(opt.start_server(opt_server_name, folder_name, warmup=1))
         opt.connect("tcp://{0}:{1}".format(ip_address,  OPT.SERVICE_PORT))
@@ -130,9 +192,11 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         blink_dels = pulse_params.delay.tolist()
         blink_amps = pulse_params.amplitude.tolist()
         blink_pers = pulse_params.trial_period.tolist()
+        print(pulse_params)
+        print(blink_amps)
 
         opt2_server_name = 'python -m {0} {1}'.format(OPT2.__module__, SER)
-        print([OPT2.SERVICE_PORT, OPT2.SERVICE_NAME])
+        # print([OPT2.SERVICE_PORT, OPT2.SERVICE_NAME])
         opt2 = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt', serializer=SER)
         print(opt2.start_server(opt2_server_name, folder_name, warmup=1))
         opt2.connect("tcp://{0}:{1}".format(ip_address,  OPT2.SERVICE_PORT))
@@ -170,6 +234,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
 if __name__ == '__main__':
     ip_address = 'rpi8'
-    protocolfilename = '../ethoconfig/protocols/playback_5min_multiOpto2.yml'
+    protocolfilename = '../ethoconfig/protocols/playback_5min_multiOpto.yml'
     playlistfilename = '../ethoconfig/playlists/IPItune_test_multiOpto.txt'
     clientcaller(ip_address, playlistfilename, protocolfilename)
