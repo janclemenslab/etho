@@ -388,6 +388,95 @@ def process_analog(sample_queue):
     sp.kill()
 
 
+
+def process_dss(sample_queue):
+    """Coroutine for rt processing of data."""
+    print("   started RT processing")
+    # init digital output - turn on if any channel crosses threshold
+    from ethomaster.head.ZeroClient import ZeroClient
+    from ethoservice.ANAZeroService import ANA
+    import subprocess
+
+    print('preparing storage')
+    import zarr
+    filename = 'C:/Users/ncb.UG-MGEN/data/rt_test.zarr'
+    f = zarr.open(filename, mode="w")
+
+    num_channels = 16
+
+    dset_raw = f.create_dataset("data_raw", shape=[0, num_channels],
+                                    chunks=[10*1024, num_channels], dtype=np.float64)
+    dset_pre = f.create_dataset("data_preprocessed", shape=[0, num_channels],
+                                    chunks=[10*1024, num_channels], dtype=np.float64)
+    dset_post = f.create_dataset("inference", shape=[0, 2],
+                                    chunks=[10*1024, 2], dtype=np.float64)
+    
+
+    ip_address = 'localhost'
+    # init DAQ for output
+    print([ANA.SERVICE_PORT, ANA.SERVICE_NAME])
+    nit = ZeroClient("{0}".format(ip_address), 'nidaq')
+    sp = subprocess.Popen('python -m ethoservice.ANAZeroService')
+    nit.connect("tcp://{0}:{1}".format(ip_address, ANA.SERVICE_PORT))
+    nit.setup(-1, 0)
+    # nit.init_local_logger('{0}/{1}/{1}_nit.log'.format(daq_save_folder, filename))
+    started = False
+
+    samplerate = 10_000  # make sure audio data and the annotations are all on the same sampling rate
+    # bandpass to get rid of slow baseline fluctuations and high-freuqency ripples
+    import scipy.signal as ss
+    sos_bp = ss.butter(5, [50, 1000], 'bandpass', output='sos', fs=samplerate)
+    print('preparing network')
+    # init network
+    import tensorflow as tf
+    from dss.utils import load_model_and_params
+    # config = tf.ConfigProto(intra_op_parallelism_threads=4,
+    #             inter_op_parallelism_threads=2,
+    #             device_count={"CPU": 4, "GPU": nb_gpu})
+
+    model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations1024/20191109_074320'
+    model, params = load_model_and_params(model_save_name)
+    model.predict(np.zeros((1, 1024, 16)))
+    RUN = True
+    print('DONE DONE DONE')
+    
+    while RUN:
+        if sample_queue.poll():
+            data = sample_queue.get()
+            data = data[:,:16]
+            # content = sample_queue.get()
+            if data is None:
+                # print('none')
+                pass  # RUN = False
+                # break
+            else: 
+                # TODO: save raw data, filtered data and prediction to file...
+                dset_raw.append(data)
+                data = ss.sosfiltfilt(sos_bp, data, axis=0).astype(np.float16)
+                dset_pre.append(data)
+                batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
+                prediction = model.predict(batch)
+                dset_post.append(prediction[0,...])
+                labels = np.argmax(prediction[0,...], axis=-1)
+                vibrations_present = np.any(labels==1)
+                
+                if not started and vibrations_present:
+                    print('   sending START')
+                    nit.send_trigger(2, duration=1)
+                    started = True
+                elif started and not vibrations_present:
+                    nit.send_trigger(0, duration=None)
+                    started = False
+    print("   stopped RT processing")
+    f.close()
+    nit.send_trigger(0, duration=None)
+    nit.finish()
+    nit.stop_server()
+    del(nit)
+    sp.terminate()
+    sp.kill()
+
+
 def log(file_name):
     f = open(file_name, 'r')      # open file
     try:
