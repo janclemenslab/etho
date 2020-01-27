@@ -7,6 +7,8 @@ import sys
 import copy
 import yaml
 from typing import Iterable, Sequence
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 try:
     from .utils.IOTask import *
 except ImportError as e:
@@ -14,6 +16,7 @@ except ImportError as e:
     print(e)
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class DAQ(BaseZeroService):
     '''Bundles and synchronizes analog/digital input and output tasks.'''
 

@@ -6,7 +6,8 @@ import time    # for timer
 import threading
 import sys
 import numpy as np
-
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 try:
     import PyDAQmx as daq
     from PyDAQmx.DAQmxCallBack import *
@@ -17,6 +18,7 @@ except ImportError as e:
     print(e)
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class ANA(BaseZeroService):
     """[summary]"""
 

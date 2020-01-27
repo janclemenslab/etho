@@ -7,7 +7,11 @@ import threading
 import serial
 from collections import namedtuple
 import sys
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 
+
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class THUA(BaseZeroService):
     '''
     Temperature and Humidity sensor. connect to rpi via arduino. or directly to rpi if possible

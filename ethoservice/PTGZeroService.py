@@ -5,6 +5,8 @@ import zerorpc  # for starting service in `main()`
 import time     # for timer
 import threading
 import sys
+from .utils.log_exceptions import for_all_methods, log_exceptions
+import logging
 try:
     import flycapture2 as fc2
 except Exception as e:
@@ -25,8 +27,9 @@ import sys
 # import argparse
 
 
-
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 def disp(displayQueue, frame_width, frame_height, poll_timeout=0.01):
+    logging.info("setting up disp")
     cv2.namedWindow('display')
     cv2.resizeWindow('display', frame_width, frame_height)
     RUN = True
@@ -34,16 +37,18 @@ def disp(displayQueue, frame_width, frame_height, poll_timeout=0.01):
         if displayQueue.poll(poll_timeout):
             image = displayQueue.recv()  # TODO: should be none blocking (block=False) just in case, need to catch empyt queue exception
             if image is None:
-                print('stopping display thread')
+                logging.info('stopping display thread')
                 RUN = False
                 break
             cv2.imshow('display', image)
             cv2.waitKey(1)
-    print("closing display")
+    logging.info("closing display")
     cv2.destroyWindow('display')
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 def disp_fast(displayQueue, frame_width, frame_height, poll_timeout=0.01):
+    logging.info("setting up disp_fast")
     from pyqtgraph.Qt import QtGui
     import pyqtgraph as pg
     from pyqtgraph.widgets.RawImageWidget import RawImageWidget
@@ -61,18 +66,19 @@ def disp_fast(displayQueue, frame_width, frame_height, poll_timeout=0.01):
         if displayQueue.poll(poll_timeout):
             image = displayQueue.recv()  # TODO: should be none blocking (block=False) just in case, need to catch empyt queue exception
             if image is None:
-                print('stopping display thread')
+                logging.info('stopping display thread')
                 RUN = False
                 break
             win.setImage(image)
             app.processEvents()
-    print("closing display")
+    logging.info("closing display")
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 def save(writeQueue, file_name, frame_rate, frame_width, frame_height):
-    print("setting up video writer")
+    logging.info("setting up video writer")
     ovw = cv2.VideoWriter()
-    print("   saving to " + file_name + '.h264')
+    logging.info("   saving to " + file_name + '.h264')
     ovw.open(file_name + '.avi', cv2.VideoWriter_fourcc(*'x264'),
              frame_rate, (frame_width, frame_height), True)
     # ovw.open(file_name + '.h264', cv2.CAP_INTEL_MFX, cv2.VideoWriter_fourcc(*'H264'),
@@ -82,15 +88,16 @@ def save(writeQueue, file_name, frame_rate, frame_width, frame_height):
         # if writeQueue.poll(0.01):
         image = writeQueue.get()  # get new frame
         if image is None:
-            print('stopping WRITE thread')
+            logging.info('stopping WRITE thread')
             RUN = False
             break
         ovw.write(image)
-    print("closing video writer")
+    logging.info("closing video writer")
     ovw.release()
     ovw = None
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class PTG(BaseZeroService):
 
     LOGGING_PORT = 1448   # set this to range 1420-1460
