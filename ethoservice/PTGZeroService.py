@@ -78,11 +78,9 @@ def disp_fast(displayQueue, frame_width, frame_height, poll_timeout=0.01):
 def save(writeQueue, file_name, frame_rate, frame_width, frame_height):
     logging.info("setting up video writer")
     ovw = cv2.VideoWriter()
-    logging.info("   saving to " + file_name + '.h264')
+    logging.info("   saving to " + file_name + '.avi')
     ovw.open(file_name + '.avi', cv2.VideoWriter_fourcc(*'x264'),
              frame_rate, (frame_width, frame_height), True)
-    # ovw.open(file_name + '.h264', cv2.CAP_INTEL_MFX, cv2.VideoWriter_fourcc(*'H264'),
-             # frame_rate, (frame_width, frame_height), True)
     RUN = True
     while RUN:
         # if writeQueue.poll(0.01):
@@ -95,6 +93,52 @@ def save(writeQueue, file_name, frame_rate, frame_width, frame_height):
     logging.info("closing video writer")
     ovw.release()
     ovw = None
+
+
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+def save_fast(writeQueue, file_name, frame_rate, frame_width, frame_height):
+    logging.info("setting up video writer")
+    import sys
+    VPF_bin_path = 'C:/Users/ncb.UG-MGEN/codec/VideoProcessingFramework/bin3.7'
+    sys.path.append(VPF_bin_path)
+
+    import PyNvCodec as nvc
+
+    gpuID = 0
+    encFile = open(file_name + '.h264',  "wb")
+    nvEnc = nvc.PyNvEncoder({'rc':'vbr_hq','profile': 'high', 'cq': '10', 'codec': 'h264', 'bf':'3', 'fps': str(frame_rate), 'temporalaq': '', 'lookahead':'20',  's': f'{frame_width}x{frame_height}'}, gpuID)
+    nvUpl = nvc.PyFrameUploader(nvEnc.Width(), nvEnc.Height(), nvc.PixelFormat.YUV420, gpuID)
+    nvCvt = nvc.PySurfaceConverter(nvEnc.Width(), nvEnc.Height(), nvc.PixelFormat.YUV420, nvc.PixelFormat.NV12, gpuID)
+    logging.info("   saving to " + file_name + '.h264')
+    RUN = True
+    while RUN:
+        # if writeQueue.poll(0.01):
+        image = writeQueue.get()  # get new frame
+        if image is None:
+            logging.info('stopping WRITE thread')
+            RUN = False
+            break
+        rawFrameYUV420 = cv2.cvtColor(image, cv2.COLOR_RGB2YUV_I420)  # convert to YUV420 - nvenc can't handle RGB inputs
+        rawSurfaceYUV420 = nvUpl.UploadSingleFrame(rawFrameYUV420)  # upload YUV420 frame to GPU
+        if (rawSurfaceYUV420.Empty()):
+            continue  # break
+        rawSurfaceNV12 = nvCvt.Execute(rawSurfaceYUV420)  # convert YUV420 to NV12
+        if (rawSurfaceNV12.Empty()):
+            continue  # break
+        encFrame = nvEnc.EncodeSingleSurface(rawSurfaceNV12)  # compres NV12 and download
+        if(encFrame.size):
+            encByteArray = bytearray(encFrame)  # save compressd byte stream to file
+            encFile.write(encByteArray)
+       
+    logging.info("closing video writer")
+    #Encoder is asyncronous, so we need to flush it
+    encFrames = nvEnc.Flush()
+    for encFrame in encFrames:
+        if(encFrame.size):
+            encByteArray = bytearray(encFrame)
+            encFile.write(encByteArray)
+    encFile.close()
+    del encFile
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -143,6 +187,7 @@ class PTG(BaseZeroService):
 
         self.frame_rate = self.c.get_property(fc2.FRAME_RATE)['abs_value']
         print(self.frame_rate)
+        # TODO detect nb_channels
         (self.frame_width, self.frame_height) = np.array(self.im).shape[0:2]
         print((self.frame_width, self.frame_height))
 
@@ -151,6 +196,7 @@ class PTG(BaseZeroService):
         self.last_frame_time = clock()
 
         self.nFrames = int(self.frame_rate * (self.duration + 100))
+        # TODO use ConcurrentTasks
         if self.savefilename is None:  # display only - set up DISPLAY
             self.displayQueue, displayOut = Pipe()
             self.pDisplay = Process(target=disp_fast, args=(displayOut, self.frame_height, self.frame_width))
@@ -167,6 +213,7 @@ class PTG(BaseZeroService):
                 dset.attrs[k] = v
             h5f.close()
             self.writeQueue = Queue()  # TODO: this should be a Pipe since we always only want to display the last frame
+            # self.pWrite = Process(target=save_fast,
             self.pWrite = Process(target=save,
                                   args=(self.writeQueue, self.savefilename, self.frame_rate, self.frame_height, self.frame_width))
 
@@ -229,6 +276,7 @@ class PTG(BaseZeroService):
 
             if self.savefilename is not None:
                 ts = self.im.timestamp()  # retrieve time stamp embedded in the frame
+                # TODO convert time stamps to proper format
                 self.timestamps[frameNumber, :] = (t, ts['seconds'], ts['microSeconds'], ts[
                                         'cycleCount'], ts['cycleOffset'], ts['cycleSeconds'])
                 self.writeQueue.put(BGR)

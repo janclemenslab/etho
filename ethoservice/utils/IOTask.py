@@ -388,6 +388,11 @@ def process_analog(sample_queue):
     sp.kill()
 
 
+def append_to_buffer(buffer, x):
+    buffer = np.roll(buffer, shift=-x.shape[0], axis=0)
+    buffer[-len(x):, ...] = x
+    return buffer
+
 
 def process_dss(sample_queue):
     """Coroutine for rt processing of data."""
@@ -403,14 +408,12 @@ def process_dss(sample_queue):
     f = zarr.open(filename, mode="w")
 
     num_channels = 16
-
     dset_raw = f.create_dataset("data_raw", shape=[0, num_channels],
                                     chunks=[10*1024, num_channels], dtype=np.float64)
     dset_pre = f.create_dataset("data_preprocessed", shape=[0, num_channels],
                                     chunks=[10*1024, num_channels], dtype=np.float64)
     dset_post = f.create_dataset("inference", shape=[0, 2],
-                                    chunks=[10*1024, 2], dtype=np.float64)
-    
+                                    chunks=[10*1024, 2], dtype=np.float64)    
 
     ip_address = 'localhost'
     # init DAQ for output
@@ -429,37 +432,50 @@ def process_dss(sample_queue):
     print('preparing network')
     # init network
     import tensorflow as tf
-    from dss.utils import load_model_and_params
+    import dss.utils
+    import dss.event_utils
     # config = tf.ConfigProto(intra_op_parallelism_threads=4,
     #             inter_op_parallelism_threads=2,
     #             device_count={"CPU": 4, "GPU": nb_gpu})
 
-    model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations1024/20191109_074320'
-    model, params = load_model_and_params(model_save_name)
-    model.predict(np.zeros((1, 1024, 16)))
+    # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations1024/20191109_074320'
+    model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations4096/20191108_235948'
+    model, params = dss.utils.load_model_and_params(model_save_name)
+    model.predict(np.zeros((1, 4096, 16)))  # use model.input_shape
     RUN = True
     print('DONE DONE DONE')
     
+    pred_buffer = np.zeros((4096, 1))
+
     while RUN:
         if sample_queue.poll():
             data = sample_queue.get()
-            data = data[:,:16]
-            # content = sample_queue.get()
             if data is None:
-                # print('none')
                 pass  # RUN = False
                 # break
             else: 
                 # TODO: save raw data, filtered data and prediction to file...
+                data = data[:, :16]
                 dset_raw.append(data)
                 data = ss.sosfiltfilt(sos_bp, data, axis=0).astype(np.float16)
                 dset_pre.append(data)
                 batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
                 prediction = model.predict(batch)
-                dset_post.append(prediction[0,...])
-                labels = np.argmax(prediction[0,...], axis=-1)
-                vibrations_present = np.any(labels==1)
-                
+                dset_post.append(prediction[0, ...])  # model return [nb_batches, nb_samples, nb_classes]
+
+                # detect vibration pulses:
+                pred_buffer = append_to_buffer(pred_buffer, prediction[0, ..., 1:])
+                pulsetimes_pred, pulsetimes_pred_confidence = dss.event_utils.detect_events(pred_buffer[..., 0], thres=0.5, min_dist=500)
+                # filter vibrations by preceding IPI
+                min_ipi = 1000  # 100ms
+                max_ipi = 2000  # 200ms
+                good_pulses = np.logical_and(np.diff(pulsetimes_pred, append=0) > min_ipi,
+                                             np.diff(pulsetimes_pred, append=0) < max_ipi)
+                pulsetimes_pred = pulsetimes_pred[good_pulses]
+
+                print(pulsetimes_pred)
+                vibrations_present = len(pulsetimes_pred)
+
                 if not started and vibrations_present:
                     print('   sending START')
                     nit.send_trigger(2, duration=1)
@@ -467,6 +483,7 @@ def process_dss(sample_queue):
                 elif started and not vibrations_present:
                     nit.send_trigger(0, duration=None)
                     started = False
+                    
     print("   stopped RT processing")
     f.close()
     nit.send_trigger(0, duration=None)
