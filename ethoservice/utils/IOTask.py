@@ -408,12 +408,12 @@ def process_dss(sample_queue):
     f = zarr.open(filename, mode="w")
 
     num_channels = 16
-    dset_raw = f.create_dataset("data_raw", shape=[0, num_channels],
-                                    chunks=[10*1024, num_channels], dtype=np.float64)
-    dset_pre = f.create_dataset("data_preprocessed", shape=[0, num_channels],
-                                    chunks=[10*1024, num_channels], dtype=np.float64)
-    dset_post = f.create_dataset("inference", shape=[0, 2],
-                                    chunks=[10*1024, 2], dtype=np.float64)    
+    dset_raw = f.create_dataset("data_raw", shape=[0, 4096, num_channels],
+                                    chunks=[100, 8192, num_channels], dtype=np.float64)
+    dset_pre = f.create_dataset("data_preprocessed", shape=[0, 8192, num_channels],
+                                    chunks=[100, 8192, num_channels], dtype=np.float64)
+    dset_post = f.create_dataset("inference", shape=[0, 8192, 2],
+                                    chunks=[100, 8192, 2], dtype=np.float64)    
 
     ip_address = 'localhost'
     # init DAQ for output
@@ -434,18 +434,19 @@ def process_dss(sample_queue):
     import tensorflow as tf
     import dss.utils
     import dss.event_utils
-    # config = tf.ConfigProto(intra_op_parallelism_threads=4,
-    #             inter_op_parallelism_threads=2,
-    #             device_count={"CPU": 4, "GPU": nb_gpu})
-
+    import peakutils
+    
     # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations1024/20191109_074320'
-    model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations4096/20191108_235948'
+    # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations4096/20191108_235948'
+    model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations8192/20191109_080559'
     model, params = dss.utils.load_model_and_params(model_save_name)
-    model.predict(np.zeros((1, 4096, 16)))  # use model.input_shape
+    input_shape = model.inputs[0].shape[1:]
+    model.predict(np.zeros((1, *input_shape)))  # use model.input_shape
+    
     RUN = True
     print('DONE DONE DONE')
     
-    pred_buffer = np.zeros((4096, 1))
+    data_buffer = np.zeros(input_shape)
 
     while RUN:
         if sample_queue.poll():
@@ -456,29 +457,33 @@ def process_dss(sample_queue):
             else: 
                 # TODO: save raw data, filtered data and prediction to file...
                 data = data[:, :16]
-                dset_raw.append(data)
+                dset_raw.append(data.reshape(1, *data.shape), axis=0)
                 data = ss.sosfiltfilt(sos_bp, data, axis=0).astype(np.float16)
-                dset_pre.append(data)
-                batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
+                data_buffer = append_to_buffer(data_buffer, data)
+                batch = data_buffer.reshape((1, *data_buffer.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
+                dset_pre.append(batch, axis=0)                
+                # batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
                 prediction = model.predict(batch)
-                dset_post.append(prediction[0, ...])  # model return [nb_batches, nb_samples, nb_classes]
+                dset_post.append(prediction, axis=0)  # model return [nb_batches, nb_samples, nb_classes]
 
                 # detect vibration pulses:
-                pred_buffer = append_to_buffer(pred_buffer, prediction[0, ..., 1:])
-                pulsetimes_pred, pulsetimes_pred_confidence = dss.event_utils.detect_events(pred_buffer[..., 0], thres=0.5, min_dist=500)
+                # pulsetimes_pred, pulsetimes_pred_confidence = dss.event_utils.detect_events((pred_buffer[..., 0]>0.2).astype(np.float), thres=0.5, min_dist=500)
+                # pulsetimes_pred, pulsetimes_pred_confidence = dss.event_utils.detect_events((prediction[0, ..., 1]>0.2).astype(np.float), 
+                #                                                                             thres=0.5, min_dist=500)
+                pulsetimes_pred = peakutils.indexes(prediction[0, ..., 1], thres=0.25, min_dist=500, thres_abs=True)
+                                                                                
                 # filter vibrations by preceding IPI
                 min_ipi = 1000  # 100ms
                 max_ipi = 2000  # 200ms
                 good_pulses = np.logical_and(np.diff(pulsetimes_pred, append=0) > min_ipi,
                                              np.diff(pulsetimes_pred, append=0) < max_ipi)
+                print(pulsetimes_pred, pulsetimes_pred[good_pulses])
                 pulsetimes_pred = pulsetimes_pred[good_pulses]
-
-                print(pulsetimes_pred)
-                vibrations_present = len(pulsetimes_pred)
+                vibrations_present = len(pulsetimes_pred)>1
 
                 if not started and vibrations_present:
                     print('   sending START')
-                    nit.send_trigger(2, duration=1)
+                    nit.send_trigger(1.5, duration=3)
                     started = True
                 elif started and not vibrations_present:
                     nit.send_trigger(0, duration=None)
