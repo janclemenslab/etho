@@ -252,7 +252,7 @@ def save(sample_queue, filename, num_channels=1, attrs=None, sizeincrement=100,
             f.flush()
 
     dset_samples = f.create_dataset("samples", shape=[0, num_channels],
-                                    maxshape=[None, num_channels], chunks=[chunk_duration, num_channels],
+                                    maxshape=[None, num_channels], chunks=(chunk_duration, num_channels),
                                     dtype=np.float64, compression="gzip")
     dset_systemtime = f.create_dataset("systemtime", shape=[sizeincrement, 1],
                                        maxshape=[None, 1], dtype=np.float64, compression="gzip")
