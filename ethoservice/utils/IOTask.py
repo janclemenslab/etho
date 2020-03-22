@@ -410,21 +410,12 @@ def process_dss(sample_queue):
     f = zarr.open(filename, mode="w")
 
     num_channels = 16
-<<<<<<< HEAD
     dset_raw = f.create_dataset("data_raw", shape=[0, 4096, num_channels],
                                     chunks=[100, 8192, num_channels], dtype=np.float64)
     dset_pre = f.create_dataset("data_preprocessed", shape=[0, 8192, num_channels],
                                     chunks=[100, 8192, num_channels], dtype=np.float64)
     dset_post = f.create_dataset("inference", shape=[0, 8192, 2],
                                     chunks=[100, 8192, 2], dtype=np.float64)    
-=======
-    dset_raw = f.create_dataset("data_raw", shape=[0, num_channels],
-                                    chunks=[10*1024, num_channels], dtype=np.float64)
-    dset_pre = f.create_dataset("data_preprocessed", shape=[0, num_channels],
-                                    chunks=[10*1024, num_channels], dtype=np.float64)
-    dset_post = f.create_dataset("inference", shape=[0, 2],
-                                    chunks=[10*1024, 2], dtype=np.float64)
->>>>>>> 8d4b96ed1c154d3b2fdad15d7cec0595cf2f71d2
 
     ip_address = 'localhost'
     # init DAQ for output
@@ -456,13 +447,8 @@ def process_dss(sample_queue):
     
     RUN = True
     print('DONE DONE DONE')
-<<<<<<< HEAD
-    
+   
     data_buffer = np.zeros(input_shape)
-=======
-
-    pred_buffer = np.zeros((4096, 1))
->>>>>>> 8d4b96ed1c154d3b2fdad15d7cec0595cf2f71d2
 
     while RUN:
         if sample_queue.poll():
