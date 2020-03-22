@@ -81,7 +81,9 @@ class CAM(BaseZeroService):
             self.savefilename = savefilename
             os.makedirs(os.path.dirname(savefilename), exist_ok=True)
             self.format = None
+            self.log.info('   will save to {}'.format(self.savefilename))
         self._time_started = None
+        
 
     def start(self):
         self.log.info('starting recording')

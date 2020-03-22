@@ -18,14 +18,14 @@ class IOTask(daq.Task):
     def __init__(self, dev_name="Dev1", cha_name=["ai0"], limits=10.0, rate=10000.0,
                  nb_inputsamples_per_cycle=None):
         """[summary]
-        
+
         Args:
             dev_name (str, optional): [description]. Defaults to "Dev1".
             cha_name (list, optional): [description]. Defaults to ["ai0"].
             limits (float, optional): [description]. Defaults to 10.0.
             rate (float, optional): [description]. Defaults to 10000.0.
             nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
-        
+
         Raises:
             TypeError: [description]
             ValueError: [description]
@@ -46,7 +46,7 @@ class IOTask(daq.Task):
         self.num_channels = len(cha_name)
         if nb_inputsamples_per_cycle is None:
             nb_inputsamples_per_cycle = int(rate)
-            
+
         # FIX: input and output tasks can have different sizes
         self.callback = None
         self.data_gen = None  # called at start of callback
@@ -236,7 +236,8 @@ def plot_fast(disp_queue, channels_to_plot, nb_samples=10_000):
     print("   closing plot.")
 
 
-def save(sample_queue, filename, num_channels=1, attrs=None, sizeincrement=100, start_time=None):
+def save(sample_queue, filename, num_channels=1, attrs=None, sizeincrement=100,
+         chunk_duration=10_000, start_time=None):
     """Coroutine for saving data."""
     import h5py
 
@@ -251,7 +252,8 @@ def save(sample_queue, filename, num_channels=1, attrs=None, sizeincrement=100, 
             f.flush()
 
     dset_samples = f.create_dataset("samples", shape=[0, num_channels],
-                                    maxshape=[None, num_channels], dtype=np.float64, compression="gzip")
+                                    maxshape=[None, num_channels], chunks=[chunk_duration, num_channels],
+                                    dtype=np.float64, compression="gzip")
     dset_systemtime = f.create_dataset("systemtime", shape=[sizeincrement, 1],
                                        maxshape=[None, 1], dtype=np.float64, compression="gzip")
     dset_samplenumber = f.create_dataset("samplenumber", shape=[sizeincrement, 1],
@@ -312,7 +314,7 @@ def process_digital(sample_queue):
         content = sample_queue.get()
         if content is None:
             pass #RUN = False
-        else: 
+        else:
             data, systemtime = content
             peak_values = np.max(np.abs(data[:,:16]), axis=0)
             peak_crossing_channels = np.where(peak_values > thres)[0]
@@ -344,7 +346,7 @@ def process_analog(sample_queue):
     import subprocess
 
     ip_address = 'localhost'
-    
+
     print([ANA.SERVICE_PORT, ANA.SERVICE_NAME])
     nit = ZeroClient("{0}".format(ip_address), 'nidaq')
     sp = subprocess.Popen('python -m ethoservice.ANAZeroService')
@@ -365,7 +367,7 @@ def process_analog(sample_queue):
                 # print('none')
                 pass  # RUN = False
                 # break
-            else: 
+            else:
                 # data, systemtime = content
                 print(data.shape)
                 peak_values = np.max(np.abs(data[:,:16]), axis=0)
@@ -408,12 +410,21 @@ def process_dss(sample_queue):
     f = zarr.open(filename, mode="w")
 
     num_channels = 16
+<<<<<<< HEAD
     dset_raw = f.create_dataset("data_raw", shape=[0, 4096, num_channels],
                                     chunks=[100, 8192, num_channels], dtype=np.float64)
     dset_pre = f.create_dataset("data_preprocessed", shape=[0, 8192, num_channels],
                                     chunks=[100, 8192, num_channels], dtype=np.float64)
     dset_post = f.create_dataset("inference", shape=[0, 8192, 2],
                                     chunks=[100, 8192, 2], dtype=np.float64)    
+=======
+    dset_raw = f.create_dataset("data_raw", shape=[0, num_channels],
+                                    chunks=[10*1024, num_channels], dtype=np.float64)
+    dset_pre = f.create_dataset("data_preprocessed", shape=[0, num_channels],
+                                    chunks=[10*1024, num_channels], dtype=np.float64)
+    dset_post = f.create_dataset("inference", shape=[0, 2],
+                                    chunks=[10*1024, 2], dtype=np.float64)
+>>>>>>> 8d4b96ed1c154d3b2fdad15d7cec0595cf2f71d2
 
     ip_address = 'localhost'
     # init DAQ for output
@@ -445,8 +456,13 @@ def process_dss(sample_queue):
     
     RUN = True
     print('DONE DONE DONE')
+<<<<<<< HEAD
     
     data_buffer = np.zeros(input_shape)
+=======
+
+    pred_buffer = np.zeros((4096, 1))
+>>>>>>> 8d4b96ed1c154d3b2fdad15d7cec0595cf2f71d2
 
     while RUN:
         if sample_queue.poll():
@@ -454,7 +470,7 @@ def process_dss(sample_queue):
             if data is None:
                 pass  # RUN = False
                 # break
-            else: 
+            else:
                 # TODO: save raw data, filtered data and prediction to file...
                 data = data[:, :16]
                 dset_raw.append(data.reshape(1, *data.shape), axis=0)
@@ -488,7 +504,7 @@ def process_dss(sample_queue):
                 elif started and not vibrations_present:
                     nit.send_trigger(0, duration=None)
                     started = False
-                    
+
     print("   stopped RT processing")
     f.close()
     nit.send_trigger(0, duration=None)
