@@ -152,6 +152,27 @@ def min_max_inc(prop, value=None, set_value=True):
     return value
 
 
+def _compute_timestamp_offset(cam, timestamp_offset_iterations=10):
+    """Gets offset between system time and timestamps."""
+    # This method is required because the timestamp stored in the camera is relative to when it was powered on, so an
+    # offset needs to be applied to get it into epoch time; from tests I’ve done, this appears to be accurate to ~1e-3
+    # seconds.
+
+    timestamp_offsets = []
+    for i in range(timestamp_offset_iterations):
+        # Latch timestamp. This basically “freezes” the current camera timer into a variable that can be read with
+        # TimestampLatchValue()
+        cam.TimestampLatch.Execute()
+
+        # Compute timestamp offset in seconds; note that timestamp latch value is in nanoseconds
+        timestamp_offset = datetime.now().timestamp() - cam.TimestampLatchValue.GetValue()/1e9
+
+        # Append
+        timestamp_offsets.append(timestamp_offset)
+    # Return the median value
+    return np.median(timestamp_offsets)
+
+
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class SPN(BaseZeroService):
 
@@ -171,6 +192,7 @@ class SPN(BaseZeroService):
         self.cam_list = self.cam_system.GetCameras()
         self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
         self.c.Init()
+        self.c.DeviceReset.Execute()
 
         # c.set_trigger_mode(0, True, 0, 0, 14) - flycapture free-running mode ???
 
@@ -178,6 +200,8 @@ class SPN(BaseZeroService):
         self.c.ChunkModeActive.SetValue(True)
         self.c.ChunkSelector.SetValue(PySpin.ChunkSelector_Timestamp)
         self.c.ChunkEnable.SetValue(True)
+
+        self.timestamp_offset = _compute_timestamp_offset(self.c)
 
         self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
         self.c.ExposureMode.SetValue(PySpin.ExposureMode_Timed)
@@ -266,8 +290,8 @@ class SPN(BaseZeroService):
             self.pDisplay.start()
 
         self._time_started = time.time()
-        # background jobs should be run and controlled via a thread
 
+        # background jobs should be run and controlled via a thread
         self._worker_thread.start()
         self.log.info('started')
         if hasattr(self, '_thread_timer'):
@@ -285,7 +309,7 @@ class SPN(BaseZeroService):
         # self.log.info("   saving to " + self.savefilename + '_x.avi')
         # ovw.open(self.savefilename + '_x.avi', cv2.VideoWriter_fourcc(*'x264'),
         #         np.round(self.frame_rate).astype(np.uintp), (self.frame_width, self.frame_height), True)
-        
+
 
         self.c.BeginAcquisition()
         while RUN: #and not stop_event.wait(0.0001):
@@ -313,13 +337,11 @@ class SPN(BaseZeroService):
 
                     if self.savefilename is not None:
                         timestamp = im.GetTimeStamp()
-                        # TODO convert time stamps to proper format
+                        timestamp = timestamp / 1e9 - self.timestamp_offset
                         self.timestamps[frameNumber, :] = (t, timestamp)
                         self.writeQueue.put(BGR)
-                        # ovw.write(BGR)                        
                     else:
                         self.displayQueue.send(BGR)
-                    # im.Release()  # not sure we need this to free the buffer
 
                     frameNumber = frameNumber + 1
                     if frameNumber == self.nFrames:
@@ -328,7 +350,6 @@ class SPN(BaseZeroService):
                     continue
                 except Exception as e:
                     self.log.exception(e, exc_info=True)
-        # ovw.release()
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
