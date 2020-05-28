@@ -163,9 +163,10 @@ def _compute_timestamp_offset(cam, timestamp_offset_iterations=10):
         # Latch timestamp. This basically “freezes” the current camera timer into a variable that can be read with
         # TimestampLatchValue()
         cam.TimestampLatch.Execute()
-
+        system_time = time.time()
         # Compute timestamp offset in seconds; note that timestamp latch value is in nanoseconds
-        timestamp_offset = datetime.now().timestamp() - cam.TimestampLatchValue.GetValue()/1e9
+        timestamp_offset = system_time - cam.TimestampLatchValue.GetValue() / 1e9
+        print(system_time, cam.TimestampLatchValue.GetValue() / 1e9)
 
         # Append
         timestamp_offsets.append(timestamp_offset)
@@ -192,7 +193,7 @@ class SPN(BaseZeroService):
         self.cam_list = self.cam_system.GetCameras()
         self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
         self.c.Init()
-        self.c.DeviceReset.Execute()
+        # self.c.DeviceReset.Execute()
 
         # c.set_trigger_mode(0, True, 0, 0, 14) - flycapture free-running mode ???
 
@@ -224,10 +225,10 @@ class SPN(BaseZeroService):
         self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
 
         # first set frame dims so offsets can be non-zero
-        self.log.info('Frame width:', min_max_inc(self.c.Width, int(params['frame_width'])))
-        self.log.info('Frame height:', min_max_inc(self.c.Height, int(params['frame_height'])))
-        self.log.info('OffsetX:', min_max_inc(self.c.OffsetX, int(params['frame_offx'])))
-        self.log.info('OffsetY:', min_max_inc(self.c.OffsetY, int(params['frame_offy'])))
+        # self.log.info('Frame width:', min_max_inc(self.c.Width, int(params['frame_width'])))
+        # self.log.info('Frame height:', min_max_inc(self.c.Height, int(params['frame_height'])))
+        # self.log.info('OffsetX:', min_max_inc(self.c.OffsetX, int(params['frame_offx'])))
+        # self.log.info('OffsetY:', min_max_inc(self.c.OffsetY, int(params['frame_offy'])))
 
         self.c.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous)
 
@@ -263,8 +264,8 @@ class SPN(BaseZeroService):
             #     dset.attrs[k] = v
             h5f.close()
 
-            self.displayQueue, displayOut = Pipe()
-            self.pDisplay = Process(target=disp_fast, args=(displayOut, self.frame_height, self.frame_width))
+            # self.displayQueue, displayOut = Pipe()
+            # self.pDisplay = Process(target=disp_fast, args=(displayOut, self.frame_height, self.frame_width))
             self.writeQueue = Queue()  # TODO: this should be a Pipe or even better a shared np array since we always only want to display the last frame
             # self.pWrite = Process(target=save_fast,
             self.pWrite = Process(target=save,
@@ -287,7 +288,7 @@ class SPN(BaseZeroService):
             self.pDisplay.start()
         else:
             self.pWrite.start()
-            self.pDisplay.start()
+            # self.pDisplay.start()
 
         self._time_started = time.time()
 
@@ -303,13 +304,6 @@ class SPN(BaseZeroService):
         RUN = True
         frameNumber = 0
         self.log.info('started worker')
-
-        # self.log.info("setting up video writer")
-        # ovw = cv2.VideoWriter()
-        # self.log.info("   saving to " + self.savefilename + '_x.avi')
-        # ovw.open(self.savefilename + '_x.avi', cv2.VideoWriter_fourcc(*'x264'),
-        #         np.round(self.frame_rate).astype(np.uintp), (self.frame_width, self.frame_height), True)
-
 
         self.c.BeginAcquisition()
         while RUN: #and not stop_event.wait(0.0001):
@@ -331,13 +325,13 @@ class SPN(BaseZeroService):
 
                     # display every 50th frame
                     if frameNumber % 50 == 0:
-                        self.displayQueue.send(BGR)
+                        # self.displayQueue.send(BGR)
                         sys.stdout.write('\rframe interval for frame {} is {} ms.'.format(
                             frameNumber, np.round(self.frame_interval.value * 1000)))  # frame interval in ms
 
                     if self.savefilename is not None:
                         timestamp = im.GetTimeStamp()
-                        timestamp = timestamp / 1e9 - self.timestamp_offset
+                        timestamp = timestamp / 1e9 + self.timestamp_offset
                         self.timestamps[frameNumber, :] = (t, timestamp)
                         self.writeQueue.put(BGR)
                     else:
@@ -381,7 +375,7 @@ class SPN(BaseZeroService):
         self.c.DeInit()
         del self.c
         self.cam_list.Clear()
-        self.cam_system.ReleaseInstance()
+        # self.cam_system.ReleaseInstance()
 
         self.log.warning('   stopped ')
         if stop_service:
