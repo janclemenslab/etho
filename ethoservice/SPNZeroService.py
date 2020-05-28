@@ -21,8 +21,6 @@ import cv2
 from datetime import datetime
 import sys
 
-
-
 # @log_exceptions(logging.getLogger(__name__))
 def disp(displayQueue, frame_width, frame_height, poll_timeout=0.01):
     logging.info("setting up disp")
@@ -152,6 +150,32 @@ def min_max_inc(prop, value=None, set_value=True):
     return value
 
 
+
+def _compute_timestamp_offset(cam, timestamp_offset_iterations=10):
+    """ Gets timestamp offset in seconds from input camera """
+
+    # This method is required because the timestamp stored in the camera is relative to when it was powered on, so an
+    # offset needs to be applied to get it into epoch time; from tests I've done, this appears to be accurate to ~1e-3
+    # seconds.
+
+    timestamp_offsets = []
+    for i in range(timestamp_offset_iterations):
+        # Latch timestamp. This basically "freezes" the current camera timer into a variable that can be read with
+        # TimestampLatchValue()
+        cam.TimestampLatch.Execute()
+        system_time = time.time()
+        # Compute timestamp offset in seconds; note that timestamp latch value is in nanoseconds
+        # timestamp_offset = datetime.now().timestamp() - cam.TimestampLatchValue.GetValue()/1e9
+        timestamp_offset = system_time - cam.TimestampLatchValue.GetValue()/1e9
+
+        # Append
+        timestamp_offsets.append(timestamp_offset)
+        time.sleep(0.05)
+
+    # Return the median value
+    return np.median(timestamp_offsets)
+
+
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class SPN(BaseZeroService):
 
@@ -171,13 +195,17 @@ class SPN(BaseZeroService):
         self.cam_list = self.cam_system.GetCameras()
         self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
         self.c.Init()
-
+        # self.c.DeviceReset.Execute()
+        # self.c.Init()
         # c.set_trigger_mode(0, True, 0, 0, 14) - flycapture free-running mode ???
 
         # enable embedding of frame TIME STAMP
         self.c.ChunkModeActive.SetValue(True)
         self.c.ChunkSelector.SetValue(PySpin.ChunkSelector_Timestamp)
         self.c.ChunkEnable.SetValue(True)
+
+        self.timestamp_offset = _compute_timestamp_offset(self.c)
+        self.log.info(f'timestamp_offset = {self.timestamp_offset} seconds.')
 
         self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
         self.c.ExposureMode.SetValue(PySpin.ExposureMode_Timed)
@@ -200,10 +228,10 @@ class SPN(BaseZeroService):
         self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
 
         # first set frame dims so offsets can be non-zero
-        self.log.info('Frame width:', min_max_inc(self.c.Width, int(params['frame_width'])))
-        self.log.info('Frame height:', min_max_inc(self.c.Height, int(params['frame_height'])))
-        self.log.info('OffsetX:', min_max_inc(self.c.OffsetX, int(params['frame_offx'])))
-        self.log.info('OffsetY:', min_max_inc(self.c.OffsetY, int(params['frame_offy'])))
+        self.log.info(f"Frame width: {min_max_inc(self.c.Width, int(params['frame_width']))}")
+        self.log.info(f"Frame height: {min_max_inc(self.c.Height, int(params['frame_height']))}")
+        self.log.info(f"OffsetX: {min_max_inc(self.c.OffsetX, int(params['frame_offx']))}")
+        self.log.info(f"OffsetY: {min_max_inc(self.c.OffsetY, int(params['frame_offy']))}")
 
         self.c.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous)
 
@@ -230,7 +258,7 @@ class SPN(BaseZeroService):
             self.nFrames = int(self.frame_rate * (self.duration + 100))
             self.timestamps = np.zeros((self.nFrames, 2))
             # save camera info
-            print("saving camera info in the timestamps file")
+            # print("saving camera info in the timestamps file")
             h5f = h5py.File(self.savefilename + '_timeStamps.h5', "w")
             dset = h5f.create_dataset("camera_info", (1,), compression="gzip")
             # TODO: get cam info from PySpin
@@ -239,8 +267,8 @@ class SPN(BaseZeroService):
             #     dset.attrs[k] = v
             h5f.close()
 
-            self.displayQueue, displayOut = Pipe()
-            self.pDisplay = Process(target=disp_fast, args=(displayOut, self.frame_height, self.frame_width))
+            # self.displayQueue, displayOut = Pipe()
+            # self.pDisplay = Process(target=disp_fast, args=(displayOut, self.frame_height, self.frame_width))
             self.writeQueue = Queue()  # TODO: this should be a Pipe or even better a shared np array since we always only want to display the last frame
             # self.pWrite = Process(target=save_fast,
             self.pWrite = Process(target=save,
@@ -263,7 +291,7 @@ class SPN(BaseZeroService):
             self.pDisplay.start()
         else:
             self.pWrite.start()
-            self.pDisplay.start()
+            # self.pDisplay.start()
 
         self._time_started = time.time()
         # background jobs should be run and controlled via a thread
@@ -271,7 +299,7 @@ class SPN(BaseZeroService):
         self._worker_thread.start()
         self.log.info('started')
         if hasattr(self, '_thread_timer'):
-             self.log.info('duration {0} seconds'.format(self.duration))
+             self.log.info(f'duration {self.duration} seconds')
              self._thread_timer.start()
              self.log.info('finish timer started')
 
@@ -280,15 +308,8 @@ class SPN(BaseZeroService):
         frameNumber = 0
         self.log.info('started worker')
 
-        # self.log.info("setting up video writer")
-        # ovw = cv2.VideoWriter()
-        # self.log.info("   saving to " + self.savefilename + '_x.avi')
-        # ovw.open(self.savefilename + '_x.avi', cv2.VideoWriter_fourcc(*'x264'),
-        #         np.round(self.frame_rate).astype(np.uintp), (self.frame_width, self.frame_height), True)
-        
-
         self.c.BeginAcquisition()
-        while RUN: #and not stop_event.wait(0.0001):
+        while RUN:
             try:
                 im = self.c.GetNextImage(PySpin.EVENT_TIMEOUT_INFINITE)
                 t = time.time()
@@ -307,19 +328,18 @@ class SPN(BaseZeroService):
 
                     # display every 50th frame
                     if frameNumber % 50 == 0:
-                        self.displayQueue.send(BGR)
+                        # self.displayQueue.send(BGR)
                         sys.stdout.write('\rframe interval for frame {} is {} ms.'.format(
                             frameNumber, np.round(self.frame_interval.value * 1000)))  # frame interval in ms
 
                     if self.savefilename is not None:
                         timestamp = im.GetTimeStamp()
-                        # TODO convert time stamps to proper format
+                        timestamp = timestamp / 1e9 + self.timestamp_offset
                         self.timestamps[frameNumber, :] = (t, timestamp)
                         self.writeQueue.put(BGR)
-                        # ovw.write(BGR)                        
                     else:
                         self.displayQueue.send(BGR)
-                    # im.Release()  # not sure we need this to free the buffer
+                    im.Release()  # not sure we need this to free the buffer
 
                     frameNumber = frameNumber + 1
                     if frameNumber == self.nFrames:
@@ -358,7 +378,7 @@ class SPN(BaseZeroService):
             h5f.close()
 
         self.c.DeInit()
-        del self.c
+        # del self.c
         self.cam_list.Clear()
         self.cam_system.ReleaseInstance()
 
