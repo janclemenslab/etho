@@ -106,7 +106,7 @@ def Queue(maxsize=0):
     return sender, receiver
 
 
-def NumpyArray(shape=(1,)):
+def NumpyArray(shape=(1,), ctype=ctypes.c_double):
     sender = SharedNumpyArray(shape)
     sender.send = sender.put
     receiver = sender
