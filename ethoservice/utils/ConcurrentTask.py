@@ -150,6 +150,7 @@ class ConcurrentTask():
         self.send = self._sender.send
 
         # prepend queue, i.e. sink end of pipe or end of queue
+        taskinitargs = list(taskinitargs)
         taskinitargs.insert(0, self._receiver)
         self._process = Process(target=task, args=tuple(
             taskinitargs), kwargs=task_kwargs)
