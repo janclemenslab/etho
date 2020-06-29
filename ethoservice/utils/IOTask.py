@@ -396,7 +396,7 @@ def append_to_buffer(buffer, x):
     return buffer
 
 
-def process_dss(sample_queue):
+def process_dss(sample_queue, blink_intensity=1.5, blink_duration=3):
     """Coroutine for rt processing of data."""
     print("   started RT processing")
     # init digital output - turn on if any channel crosses threshold
@@ -404,18 +404,18 @@ def process_dss(sample_queue):
     from ethoservice.ANAZeroService import ANA
     import subprocess
 
-    print('preparing storage')
-    import zarr
-    filename = 'C:/Users/ncb.UG-MGEN/data/rt_test.zarr'
-    f = zarr.open(filename, mode="w")
+    # print('preparing storage')
+    # import zarr
+    # filename = 'C:/Users/ncb.UG-MGEN/data/rt_test.zarr'
+    # f = zarr.open(filename, mode="w")
 
-    num_channels = 16
-    dset_raw = f.create_dataset("data_raw", shape=[0, 4096, num_channels],
-                                    chunks=[100, 8192, num_channels], dtype=np.float64)
-    dset_pre = f.create_dataset("data_preprocessed", shape=[0, 8192, num_channels],
-                                    chunks=[100, 8192, num_channels], dtype=np.float64)
-    dset_post = f.create_dataset("inference", shape=[0, 8192, 2],
-                                    chunks=[100, 8192, 2], dtype=np.float64)    
+    # num_channels = 16
+    # dset_raw = f.create_dataset("data_raw", shape=[0, 4096, num_channels],
+    #                                 chunks=[100, 8192, num_channels], dtype=np.float64)
+    # dset_pre = f.create_dataset("data_preprocessed", shape=[0, 8192, num_channels],
+    #                                 chunks=[100, 8192, num_channels], dtype=np.float64)
+    # dset_post = f.create_dataset("inference", shape=[0, 8192, 2],
+    #                                 chunks=[100, 8192, 2], dtype=np.float64)    
 
     ip_address = 'localhost'
     # init DAQ for output
@@ -459,14 +459,14 @@ def process_dss(sample_queue):
             else:
                 # TODO: save raw data, filtered data and prediction to file...
                 data = data[:, :16]
-                dset_raw.append(data.reshape(1, *data.shape), axis=0)
+                # dset_raw.append(data.reshape(1, *data.shape), axis=0)
                 data = ss.sosfiltfilt(sos_bp, data, axis=0).astype(np.float16)
                 data_buffer = append_to_buffer(data_buffer, data)
                 batch = data_buffer.reshape((1, *data_buffer.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
-                dset_pre.append(batch, axis=0)                
+                # dset_pre.append(batch, axis=0)                
                 # batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
                 prediction = model.predict(batch)
-                dset_post.append(prediction, axis=0)  # model return [nb_batches, nb_samples, nb_classes]
+                # dset_post.append(prediction, axis=0)  # model return [nb_batches, nb_samples, nb_classes]
 
                 # detect vibration pulses:
                 # pulsetimes_pred, pulsetimes_pred_confidence = dss.event_utils.detect_events((pred_buffer[..., 0]>0.2).astype(np.float), thres=0.5, min_dist=500)
@@ -485,14 +485,14 @@ def process_dss(sample_queue):
 
                 if not started and vibrations_present:
                     print('   sending START')
-                    nit.send_trigger(1.5, duration=3)
+                    nit.set_value(blink_intensity, duration=blink_duration)
                     started = True
                 elif started and not vibrations_present:
-                    nit.send_trigger(0, duration=None)
+                    nit.set_value(0, duration=None)
                     started = False
 
     print("   stopped RT processing")
-    f.close()
+    # f.close()
     nit.send_trigger(0, duration=None)
     nit.finish()
     nit.stop_server()
