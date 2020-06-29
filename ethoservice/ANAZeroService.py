@@ -50,7 +50,7 @@ class ANA(BaseZeroService):
         self.task.CreateAOVoltageChan(self.cha_string, "", -limits, limits, DAQmx_Val_Volts, None)
         self.task.StartTask()
         
-    def send_trigger(self, state, duration=0.0001):
+    def set_value(self, state, duration=0.0001):
         """Set the digital output channels to specified state.
         
         Args:
@@ -65,6 +65,8 @@ class ANA(BaseZeroService):
         self.log.info('sending {state} on {output_channels}')
         self.task.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
                                     self._data * state, daq.byref(self.samples_read), None)
+        
+        # This is currently blocking - not so great
         if duration is not None:
             time.sleep(duration)  # alternatively could  return immediately using a threaded timer
             self.task.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
