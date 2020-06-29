@@ -204,6 +204,12 @@ class SPN(BaseZeroService):
 
         self.timestamp_offset = _compute_timestamp_offset(self.c)
 
+        # first set frame dims so offsets can be non-zero
+        self.log.info(f"Frame width: {min_max_inc(self.c.Width, int(params['frame_width']))}")
+        self.log.info(f"Frame height: {min_max_inc(self.c.Height, int(params['frame_height']))}")
+        self.log.info(f"OffsetX: {min_max_inc(self.c.OffsetX, int(params['frame_offx']))}")
+        self.log.info(f"OffsetY: {min_max_inc(self.c.OffsetY, int(params['frame_offy']))}")
+
         self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
         self.c.ExposureMode.SetValue(PySpin.ExposureMode_Timed)
         self.c.ExposureTime.SetValue(float(params['shutter_speed']))
@@ -224,11 +230,6 @@ class SPN(BaseZeroService):
 
         self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
 
-        # first set frame dims so offsets can be non-zero
-        # self.log.info('Frame width:', min_max_inc(self.c.Width, int(params['frame_width'])))
-        # self.log.info('Frame height:', min_max_inc(self.c.Height, int(params['frame_height'])))
-        # self.log.info('OffsetX:', min_max_inc(self.c.OffsetX, int(params['frame_offx'])))
-        # self.log.info('OffsetY:', min_max_inc(self.c.OffsetY, int(params['frame_offy'])))
 
         self.c.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous)
 
@@ -336,7 +337,7 @@ class SPN(BaseZeroService):
                         self.writeQueue.put(BGR)
                     else:
                         self.displayQueue.send(BGR)
-
+                    # im.Release()  # not sure we need this to free the buffer
                     frameNumber = frameNumber + 1
                     if frameNumber == self.nFrames:
                         self.log.info('Max number of frames reached - stopping.')
