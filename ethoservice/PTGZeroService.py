@@ -106,7 +106,8 @@ def save_fast(writeQueue, file_name, frame_rate, frame_width, frame_height):
 
     gpuID = 0
     encFile = open(file_name + '.h264',  "wb")
-    nvEnc = nvc.PyNvEncoder({'rc':'vbr_hq','profile': 'high', 'cq': '10', 'codec': 'h264', 'bf':'3', 'fps': str(frame_rate), 'temporalaq': '', 'lookahead':'20',  's': f'{frame_width}x{frame_height}'}, gpuID)
+    # nvEnc = nvc.PyNvEncoder({'rc':'vbr_hq','profile': 'high', 'cq': '10', 'codec': 'h264', 'bf':'3', 'fps': str(frame_rate), 'temporalaq': '', 'lookahead':'20', 's': f'{frame_width}x{frame_height}'}, gpuID)
+    nvEnc = nvc.PyNvEncoder({'rc':'cbr_hq','profile': 'high', 'cq': '10', 'codec': 'h264', 'bf':'3', 'fps': str(frame_rate), 'temporalaq': '', 'lookahead':'20', 's': f'{frame_width}x{frame_height}'}, gpuID)
     nvUpl = nvc.PyFrameUploader(nvEnc.Width(), nvEnc.Height(), nvc.PixelFormat.YUV420, gpuID)
     nvCvt = nvc.PySurfaceConverter(nvEnc.Width(), nvEnc.Height(), nvc.PixelFormat.YUV420, nvc.PixelFormat.NV12, gpuID)
     logging.info("   saving to " + file_name + '.h264')
@@ -131,7 +132,7 @@ def save_fast(writeQueue, file_name, frame_rate, frame_width, frame_height):
             encFile.write(encByteArray)
        
     logging.info("closing video writer")
-    #Encoder is asyncronous, so we need to flush it
+    # Encoder is asyncronous, so we need to flush it
     encFrames = nvEnc.Flush()
     for encFrame in encFrames:
         if(encFrame.size):
@@ -212,9 +213,13 @@ class PTG(BaseZeroService):
             for k, v in camera_info.items():
                 dset.attrs[k] = v
             h5f.close()
-            self.writeQueue = Queue()  # TODO: this should be a Pipe since we always only want to display the last frame
-            # self.pWrite = Process(target=save_fast,
-            self.pWrite = Process(target=save,
+            self.writeQueue = Queue()
+            if 'save_fast' in params and params['save_fast']:
+                self.log.info('using GPU based video compression')
+                save_fun = save_fast
+            else:
+                save_fun = save
+            self.pWrite = Process(target=save_fun,
                                   args=(self.writeQueue, self.savefilename, self.frame_rate, self.frame_height, self.frame_width))
 
         # background jobs should be run and controlled via a thread
