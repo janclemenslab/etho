@@ -37,7 +37,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     dirname = prot['NODE']['savefolder']
     print(filename)
 
-    python_exe = 'C:/Miniconda3/envs/ethod_dss/python.exe'
+    python_exe = 'C:/Users/ncb.UG-MGEN/miniconda3/python.exe'#'C:/Miniconda3/envs/ethod_dss/python.exe'
 
     if 'THUA' in prot['NODE']['use_services']:
         thua_server_name = f'{python_exe} -m {THUA.__module__} {SER}'#.format(THUA.__module__, SER)
@@ -50,7 +50,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         thua.setup(prot['THUA']['port'], prot['THUA']['interval'], maxduration + 10)
         thua.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
         thua.start()
-
+    
     if 'PTG' in prot['NODE']['use_services']:
         ptg_server_name = f'{python_exe} -m {PTG.__module__} {SER}'#'python -m {0} {1}'.format(PTG.__module__, SER)
         print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
@@ -144,6 +144,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
 if __name__ == '__main__':
     ip_address = 'rpi8'
-    protocolfilename = 'protocols/default.txt'
-    playlistfilename = 'playlists/sine_short.txt'
+    protocolfilename = '../protocols/default.txt'
+    playlistfilename = '../playlists/sine_short.txt'
     clientcaller(ip_address, playlistfilename, protocolfilename)
