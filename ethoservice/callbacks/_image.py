@@ -83,6 +83,7 @@ def save_fast(writeQueue, file_name, frame_rate, frame_width, frame_height):
     import sys
     VPF_bin_path = 'C:/Users/ncb.UG-MGEN/codec/VideoProcessingFramework/bin3.7'
     sys.path.append(VPF_bin_path)
+
     import PyNvCodec as nvc
 
     gpuID = 0
@@ -93,6 +94,7 @@ def save_fast(writeQueue, file_name, frame_rate, frame_width, frame_height):
     logging.info("   saving to " + file_name + '.h264')
     RUN = True
     while RUN:
+        # if writeQueue.poll(0.01):
         image = writeQueue.get()  # get new frame
         if image is None:
             logging.info('stopping WRITE thread')
