@@ -121,10 +121,6 @@ class SPN(BaseZeroService):
         self.frame_rate = self.c.AcquisitionResultingFrameRate.GetValue()
         self.log.info(f'Frame rate = {self.frame_rate} fps.')
 
-
-        # first set frame dims so offsets can be non-zero
-
-
         self.c.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous)
 
         # get one frame to extract actual frame rate and frame size etc.
@@ -164,11 +160,11 @@ class SPN(BaseZeroService):
             if 'save_fast' in params and params['save_fast']:
                 self.log.info(f"Using GPU-based video encoder.")
                 save_callback = callbacks['save_fast']
+                taskinitargs = (self.savefilename, self.frame_rate, self.frame_height, self.frame_width, params['save_fast_bin_path'])
             else:
                 save_callback = callbacks['save']
-
-            self.callbacks.append(ConcurrentTask(task=save_callback, comms='queue',
-                                                 taskinitargs=(self.savefilename, self.frame_rate, self.frame_height, self.frame_width)))
+                taskinitargs  =(self.savefilename, self.frame_rate, self.frame_height, self.frame_width)
+            self.callbacks.append(ConcurrentTask(task=save_callback, comms='queue', taskinitargs=taskinitargs))
 
         # background jobs should be run and controlled via a thread
         # threads can be stopped by setting an event: `_thread_stopper.set()`
