@@ -39,9 +39,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     if 'python_exe' in config['GENERAL']:
         python_exe =  config['GENERAL']['python_exe']
     else:
-        python_exe = 'C:/Miniconda3/envs/ethod_dss/python.exe'
-
-    python_exe = 'C:/Users/ncb.UG-MGEN/miniconda3/python.exe'#'C:/Miniconda3/envs/ethod_dss/python.exe'
+        python_exe = 'C:/Users/ncb.UG-MGEN/miniconda3/python.exe'
 
     if 'THUA' in prot['NODE']['use_services']:
         thua_server_name = f'{python_exe} -m {THUA.__module__} {SER}'#.format(THUA.__module__, SER)
