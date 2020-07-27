@@ -36,8 +36,10 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
     dirname = prot['NODE']['savefolder']
     print(filename)
-
-    python_exe = 'C:/Miniconda3/envs/ethod_dss/python.exe'
+    if 'python_exe' in config['GENERAL']:
+        python_exe =  config['GENERAL']['python_exe']
+    else:
+        python_exe = 'C:/Miniconda3/envs/ethod_dss/python.exe'
 
     if 'THUA' in prot['NODE']['use_services']:
         thua_server_name = f'{python_exe} -m {THUA.__module__} {SER}'#.format(THUA.__module__, SER)
@@ -128,6 +130,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
               maxduration, fs,
               display=prot['DAQ']['display'],
               realtime=prot['DAQ']['realtime'],
+              clock_source=prot['DAQ']['clock_source'],
               nb_inputsamples_per_cycle=prot['DAQ']['nb_inputsamples_per_cycle'],
               analog_chans_out=prot['DAQ']['analog_chans_out'],
               analog_chans_in=prot['DAQ']['analog_chans_in'],
