@@ -36,7 +36,8 @@ class SharedNumpyArray:
         # add one more RawValue for system_time?
         with self._lock:
             # create array in shared memory segment
-            self._shared_array_base = mp.RawArray(ctype, int(np.prod(self.shape)))
+            self._shared_array_base = mp.RawArray(
+                ctype, int(np.prod(self.shape)))
 
     @property
     def stale(self):
@@ -106,8 +107,8 @@ def Queue(maxsize=0):
     return sender, receiver
 
 
-def NumpyArray(shape=(1,)):
-    sender = SharedNumpyArray(shape)
+def NumpyArray(shape=(1,), ctype=ctypes.c_double):
+    sender = SharedNumpyArray(shape, ctype)
     sender.send = sender.put
     receiver = sender
     return sender, receiver
@@ -120,16 +121,17 @@ class ConcurrentTask():
     - maybe the tasks should implement a defined interface/communication protocol (sending `None` stops the task etc., START and STOP s)
     - the task objects should provide information about appropriate communication (e.g. `taskstopsignals`) and maybe even the communication channel (pipe vs queue). Maybe implement abstraction with a common interface for pipe, queue, zmq??
     """
-    def __init__(self, task, taskinitargs=[], comms='queue', taskstopsignal=None, comms_kwargs={}):
-        """[summary]
+
+    def __init__(self, task, taskinitargs=[], comms='queue', taskstopsignal=None, comms_kwargs={}, task_kwargs={}):
+        """ [summary]
 
         Args:
             task ([type]): [description]
             taskinitargs (list, optional): [description]. Defaults to [].
             comms (str, optional): [description]. Defaults to 'queue'.
             taskstopsignal ([type], optional): [description]. Defaults to None.
-            maxsize (int, optional): [description]. Defaults to 0.
-
+            comms_kwargs={}
+            task_kwargs={}
         Raises:
             ValueError: [description]
         """
@@ -142,19 +144,17 @@ class ConcurrentTask():
         elif self.comms == "array":
             self._sender, self._receiver = NumpyArray(**comms_kwargs)
         else:
-            raise ValueError(f'Unknown comms type {comms} - allowed values are "pipe", "queue", "array"')
+            raise ValueError(
+                f'Unknown comms type {comms} - allowed values are "pipe", "queue", "array"')
 
         self.send = self._sender.send
 
-        taskinitargs.insert(0, self._receiver)  # prepend queue, i.e. sink end of pipe or end of queue
-        self._process = Process(target=task, args=tuple(taskinitargs))
+        # prepend queue, i.e. sink end of pipe or end of queue
+        taskinitargs = list(taskinitargs)
+        taskinitargs.insert(0, self._receiver)
+        self._process = Process(target=task, args=tuple(
+            taskinitargs), kwargs=task_kwargs)
         self.start = self._process.start
-
-    # def send(self, data):
-    #     self._sender.send(data)
-
-    # def start(self):
-    #     self._process.start()
 
     def finish(self, verbose=False, sleepduration=1, sleepcycletimeout=5, maxsleepcycles=100000000):
         if self.comms == "queue":
