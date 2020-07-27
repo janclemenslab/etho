@@ -78,10 +78,9 @@ def save(writeQueue, file_name, frame_rate, frame_width, frame_height):
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @_register_callback
-def save_fast(writeQueue, file_name, frame_rate, frame_width, frame_height):
+def save_fast(writeQueue, file_name, frame_rate, frame_width, frame_height, VPF_bin_path):
     logging.info("setting up video writer")
     import sys
-    VPF_bin_path = 'C:/Users/ncb.UG-MGEN/codec/VideoProcessingFramework/bin3.7'
     sys.path.append(VPF_bin_path)
 
     import PyNvCodec as nvc
