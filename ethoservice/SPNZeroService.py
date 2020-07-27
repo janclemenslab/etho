@@ -410,6 +410,11 @@ if __name__ == '__main__':
         ser = sys.argv[1]
     else:
         ser = 'default'
+    if len(sys.argv) > 2:
+        port = sys.argv[2]
+    else:
+        port = SPN.SERVICE_PORT
+
     s = SPN(serializer=ser)
-    s.bind("tcp://0.0.0.0:{0}".format(SPN.SERVICE_PORT))  # broadcast on all IPs
+    s.bind("tcp://0.0.0.0:{0}".format(port))  # broadcast on all IPs
     s.run()
