@@ -203,6 +203,12 @@ class SPN(BaseZeroService):
         self.c.ChunkEnable.SetValue(True)
 
         self.timestamp_offset = _compute_timestamp_offset(self.c)
+        self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
+
+        self.log.info(f"Frame width: {min_max_inc(self.c.Width, int(params['frame_width']))}")
+        self.log.info(f"Frame height: {min_max_inc(self.c.Height, int(params['frame_height']))}")
+        self.log.info(f"OffsetX: {min_max_inc(self.c.OffsetX, int(params['frame_offx']))}")
+        self.log.info(f"OffsetY: {min_max_inc(self.c.OffsetY, int(params['frame_offy']))}")
 
         self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
         self.c.ExposureMode.SetValue(PySpin.ExposureMode_Timed)
@@ -222,13 +228,9 @@ class SPN(BaseZeroService):
         self.frame_rate = self.c.AcquisitionResultingFrameRate.GetValue()
         self.log.info(f'Frame rate = {self.frame_rate} fps.')
 
-        self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
 
         # first set frame dims so offsets can be non-zero
-        # self.log.info('Frame width:', min_max_inc(self.c.Width, int(params['frame_width'])))
-        # self.log.info('Frame height:', min_max_inc(self.c.Height, int(params['frame_height'])))
-        # self.log.info('OffsetX:', min_max_inc(self.c.OffsetX, int(params['frame_offx'])))
-        # self.log.info('OffsetY:', min_max_inc(self.c.OffsetY, int(params['frame_offy'])))
+
 
         self.c.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous)
 
