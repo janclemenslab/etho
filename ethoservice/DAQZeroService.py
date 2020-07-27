@@ -27,7 +27,7 @@ class DAQ(BaseZeroService):
     # def setup(self, savefilename, duration, analog_chans_out=["ao0", "ao1"], analog_chans_in=["ai2", "ai3", "ai0"]):
     def setup(self, savefilename: str=None, play_order: Iterable=None, playlist_info=None,
               duration: float=-1, fs: int=10000, display=False, realtime=False, 
-              nb_inputsamples_per_cycle=None,
+              nb_inputsamples_per_cycle=None, clock_source=None,
               analog_chans_out: Sequence=None, analog_chans_in: Sequence=['ai0'], digital_chans_out: Sequence=None,
               analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={}):
         """[summary]
@@ -41,6 +41,9 @@ class DAQ(BaseZeroService):
             display (bool, optional): [description]. Defaults to False.
             realtime (bool, optional): [description]. Defaults to False.
             nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
+            clock_source (str, optional): None for AI-synced clock. 
+                                          Use 'OnboardClock' for boards that don't support this (USB-DAQ).
+                                          Defaults to None.
             analog_chans_out (Sequence, optional): [description]. Defaults to None.
             analog_chans_in (Sequence, optional): [description]. Defaults to ['ai0'].
             digital_chans_out (Sequence, optional): [description]. Defaults to None.
@@ -61,24 +64,31 @@ class DAQ(BaseZeroService):
 
         # ANALOG OUTPUT
         if self.analog_chans_out:
-            self.taskAO = IOTask(cha_name=self.analog_chans_out, rate=fs)
+            self.taskAO = IOTask(cha_name=self.analog_chans_out, rate=fs, clock_source=clock_source)
             if analog_data_out[0].shape[-1] is not len(self.analog_chans_out):
                 raise ValueError(f'Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]}).')
             play_order_new = copy.deepcopy(play_order)
             self.taskAO.data_gen = data_playlist(analog_data_out, play_order_new, playlist_info, self.log , name='AO')
-            self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
+            if clock_source is None:
+                self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
+            else:
+                self.taskAO.DisableStartTrig()
             print(self.taskAO)
         # DIGITAL OUTPUT
         if self.digital_chans_out:
-            self.taskDO = IOTask(cha_name=self.digital_chans_out, rate=fs)
+            self.taskDO = IOTask(cha_name=self.digital_chans_out, rate=fs, clock_source=clock_source)
             play_order_new = copy.deepcopy(play_order)
             self.taskDO.data_gen = data_playlist(digital_data_out, play_order_new, name='DO')
-            self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
+            if clock_source is None:
+                self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
+            else:
+                self.taskDO.DisableStartTrig()
             print(self.taskDO)
         # ANALOG INPUT
         if self.analog_chans_in:
             self.taskAI = IOTask(cha_name=self.analog_chans_in, rate=fs, 
-                                 nb_inputsamples_per_cycle=nb_inputsamples_per_cycle)
+                                 nb_inputsamples_per_cycle=nb_inputsamples_per_cycle,
+                                 clock_source=clock_source)
             self.taskAI.data_rec = []
             if self.savefilename is not None:  # save
                 os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)

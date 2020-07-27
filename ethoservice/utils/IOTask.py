@@ -16,7 +16,7 @@ class IOTask(daq.Task):
     """IOTask does X."""
 
     def __init__(self, dev_name="Dev1", cha_name=["ai0"], limits=10.0, rate=10000.0,
-                 nb_inputsamples_per_cycle=None):
+                 nb_inputsamples_per_cycle=None, clock_source=None):
         """[summary]
 
         Args:
@@ -25,7 +25,10 @@ class IOTask(daq.Task):
             limits (float, optional): [description]. Defaults to 10.0.
             rate (float, optional): [description]. Defaults to 10000.0.
             nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
-
+            clock_source (str, optional): None for AI-synced clock. 
+                                          Use 'OnboardClock' for boards that don't support this (USB-DAQ).
+                                          Defaults to None.
+            
         Raises:
             TypeError: [description]
             ValueError: [description]
@@ -46,7 +49,7 @@ class IOTask(daq.Task):
         self.num_channels = len(cha_name)
         if nb_inputsamples_per_cycle is None:
             nb_inputsamples_per_cycle = int(rate)
-
+        print(clock_source)
         # FIX: input and output tasks can have different sizes
         self.callback = None
         self.data_gen = None  # called at start of callback
@@ -57,7 +60,8 @@ class IOTask(daq.Task):
             self.CreateAIVoltageChan(self.cha_string, "", DAQmx_Val_RSE, -limits, limits, DAQmx_Val_Volts, None)
             self.AutoRegisterEveryNSamplesEvent(DAQmx_Val_Acquired_Into_Buffer, self.num_samples_per_event, 0)
             self.CfgInputBuffer(self.num_samples_per_chan * self.num_channels * 4)
-            clock_source = 'OnboardClock'  # ao/SampleClock'  # None  # use internal clock
+            if clock_source is None:
+                clock_source = 'OnboardClock'  # ao/SampleClock'  # None  # use internal clock
         elif self.cha_type[0] is "analog_output":
             self.num_samples_per_chan = 5000
             self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
@@ -67,7 +71,8 @@ class IOTask(daq.Task):
             # self.CfgOutputBuffer(self.num_samples_per_chan)
             # ensures continuous output and avoids collision of old and new data in buffer
             self.SetWriteRegenMode(DAQmx_Val_DoNotAllowRegen)
-            clock_source = 'ai/SampleClock'  # 'OnboardClock'  # None  # use internal clock
+            if clock_source is None:
+                clock_source = 'ai/SampleClock'  # 'OnboardClock'  # None  # use internal clock
         elif self.cha_type[0] is "digital_output":
             self.num_samples_per_chan = 5000
             self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
@@ -76,12 +81,14 @@ class IOTask(daq.Task):
             self.CfgOutputBuffer(self.num_samples_per_chan * self.num_channels * 2)
             # ensures continuous output and avoids collision of old and new data in buffer
             self.SetWriteRegenMode(DAQmx_Val_DoNotAllowRegen)
-            clock_source = 'ai/SampleClock'  # None  # use internal clock
+            if clock_source is None:
+                clock_source = 'ai/SampleClock'  # None  # use internal clock
 
         if 'digital' in self. cha_type[0]:
             self._data = np.zeros((self.num_samples_per_chan, self.num_channels), dtype=np.uint8)  # init empty data array
         else:
             self._data = np.zeros((self.num_samples_per_chan, self.num_channels), dtype=np.float64)  # init empty data array
+        
         self.CfgSampClkTiming(clock_source, rate, DAQmx_Val_Rising, DAQmx_Val_ContSamps, self.num_samples_per_chan)
         self.AutoRegisterDoneEvent(0)
         self._data_lock = threading.Lock()
