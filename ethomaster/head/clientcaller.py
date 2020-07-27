@@ -106,12 +106,11 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
             playlist_items = cycle(playlist_items)  # iter(playlist_items)
         else:
             playlist_items = cycle(playlist_items)
-
         # TODO: catch errors if channel numbers are inconsistent - sounds[ii].shape[-1] should be nb_analog+nb_digital
         if prot['DAQ']['digital_chans_out'] is not None:
             nb_digital_chans_out = len(prot['DAQ']['digital_chans_out'])
-            digital_data = [snd[:, -nb_digital_chans_out].astype(np.uint8) for snd in sounds]
-            analog_data = [snd[:, :nb_digital_chans_out+1] for snd in sounds]  # remove digital traces from stimset
+            digital_data = [snd[:, -nb_digital_chans_out:].astype(np.uint8) for snd in sounds]
+            analog_data = [snd[:, :-nb_digital_chans_out] for snd in sounds]  # remove digital traces from stimset
         else:
             digital_data = None
             analog_data = sounds
