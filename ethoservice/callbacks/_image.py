@@ -171,7 +171,6 @@ class ImageWriterVPF(ImageCallback):
         for encFrame in encFrames:
             self._write_frame(encFrame)
         self.encFile.close()
-        del self.encFile
 
 
 @register_callback
