@@ -19,7 +19,7 @@ from ethoservice.utils.common import *
 import cv2
 from datetime import datetime
 from .utils.ConcurrentTask import ConcurrentTask
-from .callbacks_oop import callbacks
+from .callbacks import callbacks
 
 
 # @log_exceptions(logging.getLogger(__name__))
@@ -248,8 +248,12 @@ class SPN(BaseZeroService):
         for callback in self.callbacks:
             callback.finish()
 
+        # callbacks clean up after themselves now so probably no need for this:
         for callback in self.callbacks:
-            callback.close()
+            try:
+                callback.close()
+            except:
+                pass
 
         # if self.savefilename is not None:
         #     # FIXME: truncate self.timestamps to the actual number of recorded frames -

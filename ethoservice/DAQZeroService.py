@@ -8,7 +8,7 @@ import copy
 import yaml
 from typing import Iterable, Sequence
 from .utils.log_exceptions import for_all_methods, log_exceptions
-from .callbacks_oop import callbacks
+from .callbacks import callbacks
 
 import logging
 try:
