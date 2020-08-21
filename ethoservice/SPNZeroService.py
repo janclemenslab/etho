@@ -19,7 +19,7 @@ from ethoservice.utils.common import *
 import cv2
 from datetime import datetime
 from .utils.ConcurrentTask import ConcurrentTask
-from .callbacks import callbacks
+from .callbacks_oop import callbacks
 
 
 # @log_exceptions(logging.getLogger(__name__))
@@ -76,7 +76,6 @@ class SPN(BaseZeroService):
         # set up CAMERA
         self.cam_system = PySpin.System_GetInstance()
         self.cam_list = self.cam_system.GetCameras()
-
         try:
             self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
             self.c.Init()
@@ -99,6 +98,7 @@ class SPN(BaseZeroService):
             self.cam_list = self.cam_system.GetCameras()
             self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
             self.c.Init()
+        
         # trigger overlap -> ReadOut
         self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
 
@@ -110,12 +110,7 @@ class SPN(BaseZeroService):
         self.timestamp_offset = _compute_timestamp_offset(self.c)
         self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
 
-        self.log.info(f"Frame width: {min_max_inc(self.c.Width, int(params['frame_width']))}")
-        self.log.info(f"Frame height: {min_max_inc(self.c.Height, int(params['frame_height']))}")
-        self.log.info(f"OffsetX: {min_max_inc(self.c.OffsetX, int(params['frame_offx']))}")
-        self.log.info(f"OffsetY: {min_max_inc(self.c.OffsetY, int(params['frame_offy']))}")
-
-        # first set frame dims so offsets can be non-zero
+        # set frame dims first so offsets can be non-zero
         self.log.info(f"Frame width: {min_max_inc(self.c.Width, int(params['frame_width']))}")
         self.log.info(f"Frame height: {min_max_inc(self.c.Height, int(params['frame_height']))}")
         self.log.info(f"OffsetX: {min_max_inc(self.c.OffsetX, int(params['frame_offx']))}")
@@ -158,32 +153,15 @@ class SPN(BaseZeroService):
         self.nFrames = int(self.frame_rate * (self.duration + 100))
 
         self.callbacks = []
-       
-        if self.savefilename is None or ('display' in params and params['display']):
-            # make comms a shared array?
-            self.callbacks.append(ConcurrentTask(task=callbacks['disp_fast'], comms='pipe',
-                                                 taskinitargs=(self.frame_height, self.frame_width)))
-
-        if self.savefilename is not None:
-            os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
-            self.nFrames = int(self.frame_rate * (self.duration + 100))
-            self.timestamps = np.zeros((self.nFrames, 2))
-            # save camera info
-            print("saving camera info in the timestamps file")
-            # camera_info = self.c.get_camera_info()
-            with h5py.File(self.savefilename + '_timeStamps.h5', "w") as h5f:
-                dset = h5f.create_dataset("camera_info", (1,), compression="gzip")
-                # for k, v in camera_info.items():
-                #     dset.attrs[k] = v
-            
-            if 'save_fast' in params and params['save_fast']:
-                self.log.info(f"Using GPU-based video encoder.")
-                save_callback = callbacks['save_fast']
-                taskinitargs = (self.savefilename, self.frame_rate, self.frame_height, self.frame_width, params['save_fast_bin_path'])
+        common_task_kwargs = {'file_name': self.savefilename + 'avi', 'frame_rate': self.frame_rate,
+                              'frame_height': self.frame_height, 'frame_width': self.frame_width}
+        for cb_name, cb_params in params['callbacks'].items():
+            if cb_params is not None:
+                task_kwargs = {**common_task_kwargs, **cb_params}
             else:
-                save_callback = callbacks['save']
-                taskinitargs  =(self.savefilename, self.frame_rate, self.frame_height, self.frame_width)
-            self.callbacks.append(ConcurrentTask(task=save_callback, comms='queue', taskinitargs=taskinitargs))
+                task_kwargs = common_task_kwargs
+                
+            self.callbacks.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
 
         # background jobs should be run and controlled via a thread
         # threads can be stopped by setting an event: `_thread_stopper.set()`
@@ -216,12 +194,13 @@ class SPN(BaseZeroService):
         self.log.info('started worker')
 
         self.c.BeginAcquisition()
-        while RUN: #and not stop_event.wait(0.0001):
+        while RUN:
             try:
                 im = self.c.GetNextImage(PySpin.EVENT_TIMEOUT_INFINITE)
                 t = time.time()
             except Exception:
                 RUN = False
+                continue
 
             if im.IsIncomplete():
                 self.log.warning(f"Image incomplete with image status {im.GetImageStatus()}")
@@ -233,26 +212,23 @@ class SPN(BaseZeroService):
                     self.frame_interval.update(t - self.last_frame_time)
                     self.last_frame_time = t
 
-                    # display every 50th frame
-                    if frameNumber % 50 == 0:
-                        sys.stdout.write('\rframe interval for frame {} is {} ms.'.format(
-                            frameNumber, np.round(self.frame_interval.value * 1000)))  # frame interval in ms   
-                        sys.stdout.flush()
-
-                    if self.savefilename is not None:
-                        timestamp = im.GetTimeStamp()
-                        timestamp = timestamp / 1e9 + self.timestamp_offset
-                        self.timestamps[frameNumber, :] = (t, timestamp)
+                    timestamp = im.GetTimeStamp()
+                    timestamp = timestamp / 1e9 + self.timestamp_offset
 
                     for callback in self.callbacks:
-                        callback.send(BGR)
+                        callback.send((BGR, (t, timestamp)))
 
                     # im.Release()  # not sure we need this to free the buffer
                     frameNumber = frameNumber + 1
                     if frameNumber == self.nFrames:
                         self.log.info('Max number of frames reached - stopping.')
                         RUN = False
-                    continue
+
+                    # display every 50th frame
+                    if frameNumber % 100 == 0:
+                        sys.stdout.write('\rframe interval for frame {} is {} ms.'.format(
+                                         frameNumber, np.round(self.frame_interval.value * 1000)))  # frame interval in ms
+
                 except Exception as e:
                     self.log.exception(e, exc_info=True)
 
@@ -266,10 +242,8 @@ class SPN(BaseZeroService):
             self._thread_timer.cancel()
 
         # clean up code here
-        try: 
-            self.c.EndAcquisition()  # not sure this works if BeginAcquistion has not been called
-        except:
-            pass
+        self.c.EndAcquisition()  # not sure this works if BeginAcquistion has not been called
+
 
         for callback in self.callbacks:
             callback.finish()
@@ -277,17 +251,17 @@ class SPN(BaseZeroService):
         for callback in self.callbacks:
             callback.close()
 
-        if self.savefilename is not None:
-            # FIXME: truncate self.timestamps to the actual number of recorded frames -
-            # save this during recording so we don't loose all timestamps in case something goes wrong
-            print('saving time stamps ' + self.savefilename + '_timeStamps.h5')
-            with h5py.File(self.savefilename + '_timeStamps.h5', 'w') as h5f:
-                h5f.create_dataset("timeStamps", data=self.timestamps, compression="gzip")
+        # if self.savefilename is not None:
+        #     # FIXME: truncate self.timestamps to the actual number of recorded frames -
+        #     # save this during recording so we don't loose all timestamps in case something goes wrong
+        #     print('saving time stamps ' + self.savefilename + '_timeStamps.h5')
+        #     with h5py.File(self.savefilename + '_timeStamps.h5', 'w') as h5f:
+        #         h5f.create_dataset("timeStamps", data=self.timestamps, compression="gzip")
 
         self.c.DeInit()
         del self.c
         self.cam_list.Clear()
-        self.cam_system.ReleaseInstance()
+        # self.cam_system.ReleaseInstance()
 
         self.log.warning('   stopped ')
         if stop_service:
