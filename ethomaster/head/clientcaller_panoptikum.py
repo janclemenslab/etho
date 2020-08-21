@@ -44,7 +44,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         ptg_server_name = f'{python_exe} -m {SPN.__module__} {SER}'
         print([SPN.SERVICE_PORT, SPN.SERVICE_NAME])
         ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'spn', serializer=SER)
-        subprocess.Popen(ptg_server_name, creationflags=subprocesEs.CREATE_NEW_CONSOLE)
+        subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
         print('done')
         cam_params = undefaultify(prot['SPN'])
