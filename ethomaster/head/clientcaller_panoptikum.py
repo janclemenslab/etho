@@ -15,9 +15,9 @@ from ethoservice.CamZeroService import CAM
 from ethoservice.ThuZeroService import THU
 from ethoservice.ThuAZeroService import THUA
 from ethoservice.OptZeroService import OPT
-from ethoservice.DAQZeroService_new import DAQ
+from ethoservice.DAQZeroService import DAQ
 from ethoservice.PTGZeroService import PTG
-from ethoservice.SPNZeroService_new import SPN
+from ethoservice.SPNZeroService import SPN
 
 
 def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
