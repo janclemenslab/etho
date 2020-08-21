@@ -12,6 +12,8 @@ class SharedNumpyArray:
     Contains functions for synchronized read/write access and a staleness indicator.
     """
 
+    WHOAMI = 'array'
+
     def __init__(self, shape, ctype=ctypes.c_double):
         """[summary]
 
@@ -61,7 +63,7 @@ class SharedNumpyArray:
         """Returns true if the array has been update since the last put."""
         return not self.stale
 
-    def get(self, block=True):
+    def get(self, timeout=None, block=True):
         """Returns array values. Block is unsed and their for interface consistency with Queue."""
         with self._lock:
             self._stale.value = True
@@ -81,29 +83,41 @@ class SharedNumpyArray:
         del(self)
 
 
-def Pipe():
-    def get(receiver, block=True, timeout=0.001, empty_value=None):
+class Faucet():
+
+    WHOAMI = 'pipe'
+
+    def __init__(self, connection):
+        self.connection = connection
+        self.qsize = 0
+
+        # automate this
+        self.send = self.connection.send
+        self.close = self.connection.close
+        self.closed = self.connection.closed
+        self.__del__ = self.connection.__del__
+
+    def get(self, block=True, timeout=0.001, empty_value=None):
         if block:
             timeout = None
-        if receiver.poll(timeout):
-            return receiver.recv()
+        if self.connection.poll(timeout):
+            return self.connection.recv()
         else:
             return empty_value
 
-    sender, receiver = mp.Pipe()
-    sender.put = sender.send  # monky patch Pipe sender to have put method
-    sender.qsize = 0  # for interface compatibility with Queue
 
-    receiver.get = get
-    receiver.qsize = 0
-
+def Pipe(duplex=False):
+    receiver, sender = mp.Pipe(duplex)
+    receiver = Faucet(receiver)
+    sender = Faucet(sender)
     return sender, receiver
-
 
 def Queue(maxsize=0):
     sender = mp.Queue(maxsize)
     sender.send = sender.put
+    sender.WHOAMI = 'queue'
     receiver = sender
+
     return sender, receiver
 
 
@@ -128,7 +142,10 @@ class ConcurrentTask():
         Args:
             task ([type]): [description]
             taskinitargs (list, optional): [description]. Defaults to [].
-            comms (str, optional): [description]. Defaults to 'queue'.
+            comms (str, optional): Use a pipe if you want speed and don't mind loosing data (displaying data)
+                                   or if you want to ensure you are always assessing fresh data (realtime feedback).
+                                   Queue are great when data loss is unacceptable (saving data).
+                                   Defaults to 'queue'.
             taskstopsignal ([type], optional): [description]. Defaults to None.
             comms_kwargs={}
             task_kwargs={}
@@ -152,8 +169,8 @@ class ConcurrentTask():
         # prepend queue, i.e. sink end of pipe or end of queue
         taskinitargs = list(taskinitargs)
         taskinitargs.insert(0, self._receiver)
-        self._process = Process(target=task, args=tuple(
-            taskinitargs), kwargs=task_kwargs)
+
+        self._process = Process(target=task, args=tuple(taskinitargs), kwargs=task_kwargs)
         self.start = self._process.start
 
     def finish(self, verbose=False, sleepduration=1, sleepcycletimeout=5, maxsleepcycles=100000000):
