@@ -51,7 +51,7 @@ def _compute_timestamp_offset(cam, timestamp_offset_iterations=10):
         system_time = time.time()
         # Compute timestamp offset in seconds; note that timestamp latch value is in nanoseconds
         timestamp_offset = system_time - cam.TimestampLatchValue.GetValue() / 1e9
-        print(system_time, cam.TimestampLatchValue.GetValue() / 1e9)
+        # print(system_time, cam.TimestampLatchValue.GetValue() / 1e9)
 
         # Append
         timestamp_offsets.append(timestamp_offset)
@@ -76,10 +76,29 @@ class SPN(BaseZeroService):
         # set up CAMERA
         self.cam_system = PySpin.System_GetInstance()
         self.cam_list = self.cam_system.GetCameras()
-        self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
-        self.c.Init()
-        # self.c.DeviceReset()
 
+        try:
+            self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
+            self.c.Init()
+            self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
+        except:
+            print('sth went wrong - resetting cam')
+            device_reset = PySpin.CCommandPtr(self.c.GetNodeMap().GetNode("DeviceReset"))
+            device_reset.Execute()
+
+            self.c.DeInit()
+            del self.c
+            self.cam_list.Clear()
+            del self.cam_list
+            self.cam_system.ReleaseInstance()
+            del self.cam_system
+            time.sleep(10)
+
+            self.cam_system = PySpin.System_GetInstance()
+            self.cam_list = self.cam_system.GetCameras()
+            self.cam_list = self.cam_system.GetCameras()
+            self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
+            self.c.Init()
         # trigger overlap -> ReadOut
         self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
 
@@ -217,7 +236,8 @@ class SPN(BaseZeroService):
                     # display every 50th frame
                     if frameNumber % 50 == 0:
                         sys.stdout.write('\rframe interval for frame {} is {} ms.'.format(
-                            frameNumber, np.round(self.frame_interval.value * 1000)))  # frame interval in ms
+                            frameNumber, np.round(self.frame_interval.value * 1000)))  # frame interval in ms   
+                        sys.stdout.flush()
 
                     if self.savefilename is not None:
                         timestamp = im.GetTimeStamp()
@@ -246,8 +266,10 @@ class SPN(BaseZeroService):
             self._thread_timer.cancel()
 
         # clean up code here
-        self.c.EndAcquisition()  # not sure this works if BeginAcquistion has not been called
-
+        try: 
+            self.c.EndAcquisition()  # not sure this works if BeginAcquistion has not been called
+        except:
+            pass
 
         for callback in self.callbacks:
             callback.finish()
@@ -261,11 +283,11 @@ class SPN(BaseZeroService):
             print('saving time stamps ' + self.savefilename + '_timeStamps.h5')
             with h5py.File(self.savefilename + '_timeStamps.h5', 'w') as h5f:
                 h5f.create_dataset("timeStamps", data=self.timestamps, compression="gzip")
-            
+
         self.c.DeInit()
         del self.c
         self.cam_list.Clear()
-        # self.cam_system.ReleaseInstance()
+        self.cam_system.ReleaseInstance()
 
         self.log.warning('   stopped ')
         if stop_service:
