@@ -103,13 +103,12 @@ class Faucet():
         self.connection = connection
         self.qsize = 0
 
-        # delegate these function calls
-        self.send = self.connection.send
-        self.close = self.connection.close
-        self.closed = self.connection.closed
-        self.poll = self.connection.poll
-        self.recv = self.connection.recv
-        self.__del__ = self.connection.__del__
+    def __getattr__(self, name: str) -> Any:
+        """Delegate all attrs except `get` to do underlying Connection."""
+        if name=='get':
+            return self.get
+        else:
+            return getattr(self.connection, name)
 
     def get(self, block: bool = True, timeout: Optional[float] = 0.001, empty_value: Any =None) -> Any:
         """Mimics the logic of the `Queue.get`.
@@ -122,7 +121,6 @@ class Faucet():
         Returns:
             [type]: [description]
         """
-
         if block:
             timeout = None
         if self.connection.poll(timeout):
