@@ -7,11 +7,6 @@ import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 from .utils import camera as camera
-# try:
-#     import PySpin
-# except Exception as e:
-#     print("IGNORE IF RUN ON HEAD")
-#     print(e)
 
 import numpy as np
 import h5py
@@ -21,8 +16,6 @@ import cv2
 from datetime import datetime
 from .utils.ConcurrentTask import ConcurrentTask
 from .callbacks import callbacks
-
-
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -38,98 +31,36 @@ class GCM(BaseZeroService):
         self.savefilename = savefilename
 
         # set up CAMERA
-        camera_type = 'spinnaker' # 'flycapture', 'xiapi'  # WHICH API
         self.cam_serialnumber = str(params['cam_serialnumber'])
-        self.c = camera.make[camera_type](self.cam_serialnumber)
-
-        # self.cam_system = PySpin.System_GetInstance()
-        # self.cam_list = self.cam_system.GetCameras()
-        # try:
-        #     self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
-        #     self.c.Init()
-        #     self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
-        # except:
-        #     print('sth went wrong - resetting cam')
-        #     device_reset = PySpin.CCommandPtr(self.c.GetNodeMap().GetNode("DeviceReset"))
-        #     device_reset.Execute()
-
-        #     self.c.DeInit()
-        #     del self.c
-        #     self.cam_list.Clear()
-        #     del self.cam_list
-        #     self.cam_system.ReleaseInstance()
-        #     del self.cam_system
-        #     time.sleep(10)
-
-        #     self.cam_system = PySpin.System_GetInstance()
-        #     self.cam_list = self.cam_system.GetCameras()
-        #     self.cam_list = self.cam_system.GetCameras()
-        #     self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
-        #     self.c.Init()
-
-        # # trigger overlap -> ReadOut
-        # self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
-
-        # # enable embedding of frame TIME STAMP
-        # self.c.ChunkModeActive.SetValue(True)
-        # self.c.ChunkSelector.SetValue(PySpin.ChunkSelector_Timestamp)
-        # self.c.ChunkEnable.SetValue(True)
-
-        # self.timestamp_offset = _compute_timestamp_offset(self.c)
-        # self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
+        self.cam_type = params['cam_type']
+        assert self.cam_type in camera.make.keys()
+        self.c = camera.make[self.cam_type](self.cam_serialnumber)
+        try:
+            self.c.init()
+        except:
+            self.c.reset()
+            self.c.init()
 
         self.c.roi = [params['frame_offx'], params['frame_offy'], params['frame_width'], params['frame_height']]
-
-        # # set frame dims first so offsets can be non-zero
-        # self.log.info(f"Frame width: {min_max_inc(self.c.Width, int(params['frame_width']))}")
-        # self.log.info(f"Frame height: {min_max_inc(self.c.Height, int(params['frame_height']))}")
-        # self.log.info(f"OffsetX: {min_max_inc(self.c.OffsetX, int(params['frame_offx']))}")
-        # self.log.info(f"OffsetY: {min_max_inc(self.c.OffsetY, int(params['frame_offy']))}")
-
-        # self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
-        # self.c.ExposureMode.SetValue(PySpin.ExposureMode_Timed)
-        # self.c.ExposureTime.SetValue(float(params['shutter_speed']))
         self.c.exposure = params['shutter_speed']
-
-        # self.c.BlackLevelSelector.SetValue(PySpin.BlackLevelSelector_All)
-        # self.c.BlackLevel.SetValue(float(params['brightness']))
         self.c.brightness = params['brightness']
-
-        # self.c.GammaEnable.SetValue(False)
-        # self.c.Gamma.SetValue(float(params['gamma']))
         self.c.gamma = params['gamma']
-
-        # self.c.GainAuto.SetValue(PySpin.GainAuto_Off)
-        # self.c.Gain.SetValue(float(params['gain']))
         self.c.gain = params['gain']
-
-
-        # self.c.AcquisitionFrameRateEnable.SetValue(True)
-        # self.c.AcquisitionFrameRate.SetValue(float(params['frame_rate']))
-        # self.frame_rate = self.c.AcquisitionResultingFrameRate.GetValue()
-        # self.log.info(f'Frame rate = {self.frame_rate} fps.')
-        self.c.frame_rate = params['frame_rate']
-        # self.c.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous)
-
-        # get one frame to extract actual frame rate and frame size etc.
-        # self.c.BeginAcquisition()
-        # im = self.c.GetNextImage()
-        # timestamp = im.GetTimeStamp()
-        # im_converted = im.Convert(PySpin.PixelFormat_BGR8, PySpin.HQ_LINEAR)
-        # image = im_converted.GetNDArray()
-        # self.c.EndAcquisition()
+        self.c.framerate = params['frame_rate']
         self.c.start()
         image, image_ts, system_ts = self.c.get()
+        self.c.stop()
+
         self.frame_width, self.frame_height = image.shape[:2]
 
-        self.frame_interval = StatValue()
+        self.frame_interval = StatValue(smooth_coef=0.9)
         self.frame_interval.value = 0
         self.last_frame_time = clock()
 
-        self.nFrames = int(self.frame_rate * (self.duration + 100))
+        self.nFrames = int(self.c.framerate * (self.duration + 100))
 
         self.callbacks = []
-        common_task_kwargs = {'file_name': self.savefilename + 'avi', 'frame_rate': self.frame_rate,
+        common_task_kwargs = {'file_name': self.savefilename + 'avi', 'frame_rate': self.c.framerate,
                               'frame_height': self.frame_height, 'frame_width': self.frame_width}
         for cb_name, cb_params in params['callbacks'].items():
             if cb_params is not None:

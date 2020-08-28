@@ -18,6 +18,7 @@ from ethoservice.OptZeroService import OPT
 from ethoservice.DAQZeroService import DAQ
 from ethoservice.PTGZeroService import PTG
 from ethoservice.SPNZeroService import SPN
+from ethoservice.GCMZeroService import GCM
 
 
 def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
@@ -41,11 +42,11 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
 
     if 'SPN' in prot['NODE']['use_services']:
-        ptg_server_name = f'{python_exe} -m {SPN.__module__} {SER}'
-        print([SPN.SERVICE_PORT, SPN.SERVICE_NAME])
+        ptg_server_name = f'{python_exe} -m {GCM.__module__} {SER}'
+        print([GCM.SERVICE_PORT, GCM.SERVICE_NAME])
         ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'spn', serializer=SER)
         subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
+        ptg.connect("tcp://{0}:{1}".format(ip_address, GCM.SERVICE_PORT))
         print('done')
         cam_params = undefaultify(prot['SPN'])
         ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
@@ -53,8 +54,8 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         
     if 'SPN_ZOOM' in prot['NODE']['use_services']:
         port = 4247  # use custom port so we can start two SPN instances
-        ptg_server_name = f'{python_exe} -m {SPN.__module__} {SER} {port}'
-        print([port, SPN.SERVICE_NAME])
+        ptg_server_name = f'{python_exe} -m {GCM.__module__} {SER} {port}'
+        print([port, GCM.SERVICE_NAME])
         ptg2 = ZeroClient("{0}@{1}".format(user_name, ip_address), 'spnzoom', serializer=SER)
         subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         ptg2.connect("tcp://{0}:{1}".format(ip_address, port))
@@ -146,6 +147,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 if __name__ == '__main__':
     ip_address = 'localhost'
 
-    protocolfilename = 'C:/Users/ncb/ethoconfig/protocols/panoptikum_1min_TEST.yml'
+    # protocolfilename = 'C:/Users/ncb/ethoconfig/protocols/panoptikum_1min_TEST.yml'
+    protocolfilename = 'C:/Users/ncb/ethoconfig/protocols/panoptikum_1min_XIMEA.yml'
     playlistfilename = 'C:/Users/ncb/ethoconfig/playlists/0 silence.txt'
     clientcaller(ip_address, playlistfilename, protocolfilename)

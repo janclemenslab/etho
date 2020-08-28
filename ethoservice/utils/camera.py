@@ -2,7 +2,7 @@
 # required imports
 import time     # for timer
 import sys
-from .log_exceptions import for_all_methods, log_exceptions
+from ..utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 import numpy as np
 import h5py
@@ -37,8 +37,7 @@ class BaseCam():
         Args:
             serialnumber ([type]): [description]
         """
-        self.im = None  # pointer to image
-        self.timestamp_offset = self._get_timestamp_offset()
+        pass
 
     def get(self, timeout: Optional[float] = None) -> Tuple[np.ndarray, float, float]:
         """
@@ -57,9 +56,7 @@ class BaseCam():
         Raises:
             ValueError is sth goes wrong
         """
-
-        image, image_timestamp, system_timestamp = None, None, None
-        return image, image_timestamp, system_timestamp
+        pass
 
     def _estimate_timestamp_offset(self) -> float:
         """[summary]
@@ -74,7 +71,7 @@ class BaseCam():
     def roi(self):
         pass
 
-    @property.setter
+    @roi.setter
     def roi(self, x0, y0, width, height):
         pass
 
@@ -114,13 +111,17 @@ class BaseCam():
 
 class Spinnaker(BaseCam):
 
+    NAME = 'SPN'
+
     def __init__(self, serialnumber):
         self.serialnumber = serialnumber
 
+    def init(self):
         self.cam_system = PySpin.System_GetInstance()
         self.cam_list = self.cam_system.GetCameras()
-        self.c = self.cam_list.GetBySerial(self.cam_serialnumber)
+        self.c = self.cam_list.GetBySerial(self.serialnumber)
         self.c.Init()
+        self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
 
         # enable embedding of frame TIME STAMP
         self.c.ChunkModeActive.SetValue(True)
@@ -136,7 +137,7 @@ class Spinnaker(BaseCam):
 
         # trigger overlap -> ReadOut - for faster frame rates
         self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
-
+            
 
     def get(self, timeout=None):
 
@@ -158,21 +159,26 @@ class Spinnaker(BaseCam):
             return BGR, image_timestamp, system_stimestamp
 
     @property
-    def roi(self) -> Tuple[int, int, int]:
+    def roi(self) -> Tuple[int, int, int, int]:
         return self.c.OffsetX.GetValue(), self.c.OffsetY.GetValue(), self.c.Width.GetValue(), self.c.Height.GetValue()
 
-    @property.setter
-    def roi(self, x0: int, y0: int, x: int, y: int):
-        self._min_max_inc(self.c.Width, int(x))
-        self._min_max_inc(self.c.Height, int(y))
-        self._min_max_inc(self.c.OffsetX, int(x0))
-        self._min_max_inc(self.c.OffsetY, int(y0))
+    @roi.setter
+    def roi(self, x0_y0_x_y: Tuple[int, int, int, int]):
+        try:
+            x0, y0, x, y = x0_y0_x_y
+        except ValueError:
+            raise ValueError('Need 4-tuple with x0_y0_x_y')
+        else:
+            self._min_max_inc(self.c.Width, int(x))
+            self._min_max_inc(self.c.Height, int(y))
+            self._min_max_inc(self.c.OffsetX, int(x0))
+            self._min_max_inc(self.c.OffsetY, int(y0))
 
     @property
     def framerate(self):
         return self.c.AcquisitionResultingFrameRate.GetValue()
 
-    @property.setter
+    @framerate.setter
     def framerate(self, value: float):
         self.c.AcquisitionFrameRateEnable.SetValue(True)
         self.c.AcquisitionFrameRate.SetValue(float(value))
@@ -181,7 +187,7 @@ class Spinnaker(BaseCam):
     def gamma(self):
         return self.c.GammaEnable.GetValue()
 
-    @property.setter
+    @gamma.setter
     def gamma(self, value: bool):
         self.c.GammaEnable.SetValue(bool(value))
 
@@ -189,17 +195,17 @@ class Spinnaker(BaseCam):
     def brightness(self):
         return self.c.BlackLevel.GetValue()
 
-    @property.setter
+    @brightness.setter
     def brightness(self, value: float):
         self.c.BlackLevelSelector.SetValue(PySpin.BlackLevelSelector_All)
         self.c.BlackLevel.SetValue(float(value))
 
     @property
-    def shutter(self):
+    def exposure(self):
         return self.c.ExposureTime.GetValue()
 
-    @property.setter
-    def shutter(self, value: float):
+    @exposure.setter
+    def exposure(self, value: float):
         self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
         self.c.ExposureMode.SetValue(PySpin.ExposureMode_Timed)
         self.c.ExposureTime.SetValue(float(value))
@@ -208,7 +214,7 @@ class Spinnaker(BaseCam):
     def gain(self):
         self.c.Gain.GetValue()
 
-    @property.setter
+    @gain.setter
     def gain(self, value: float):
         self.c.GainAuto.SetValue(PySpin.GainAuto_Off)
         self.c.Gain.SetValue(float(value))
@@ -255,87 +261,142 @@ class Spinnaker(BaseCam):
         self.c.EndAcquisition()  # not sure this works if BeginAcquistion has not been called
 
     def close(self):
-        self.stop()
+        try:
+            self.stop()  # should check if cam started
+        except:
+            pass
         self.c.DeInit()
         del self.c
         self.cam_list.Clear()
         del self.cam_list
-        self.cam_system.ReleaseInstance()
-        del self.cam_system
+        # self.cam_system.ReleaseInstance()
+        # del self.cam_system
 
 
 class Ximea(BaseCam):
 
+    NAME = 'XIM'
+
     def __init__(self, serialnumber):
         self.serialnumber = serialnumber
-
+        self.timestamp_offset = 0
         self.im = xiapi.Image()
         # create instance for first connected camera
+
+    def init(self):
         self.c = xiapi.Camera()
         self.c.open_device_by_SN(self.serialnumber)
 
         self.c.set_imgdataformat('XI_MONO8')
+        self.c.set_limit_bandwidth(self.c.get_limit_bandwidth_maximum())
+        self.timestamp_offset = self._estimate_timestamp_offset()
 
 
     def get(self, timeout=None):
         self.c.get_image(self.im)  # get buffer - this blocks until an image is acquired
         system_timestamp = time.time()
-        image_timestamp = self.img.tsSec * 1e9 + self.img.tsUSec
+        image_timestamp = self.im.tsSec * 1e9 + self.im.tsUSec * 1e3
+        image_timestamp = image_timestamp / 1e9 + self.timestamp_offset
 
         image = self.im.get_image_data_numpy()
+        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+
         return image, image_timestamp, system_timestamp
+
+    def _min_max_inc(self, prop, value=None, set_value=True):
+        min_val, max_val, inc = self.c.get_param(prop + ':min'), self.c.get_param(prop + ':max'), self.c.get_param(prop + ':inc')
+
+        prop_type = type(self.c.get_param(prop))
+        if value is not None:
+            value = np.clip(value, min_val, max_val)
+            value = np.round(value / inc) * inc
+            if set_value:
+                value = prop_type(value)
+                self.c.set_param(prop, value)
+                value = self.c.get_param(prop)
+        return value
+
+    def _estimate_timestamp_offset(self, timestamp_offset_iterations=30):
+        """Gets offset between system time and timestamps."""
+        # This method is required because the timestamp stored in the camera is relative to when it was powered on, so an
+        # offset needs to be applied to get it into epoch time; from tests I’ve done, this appears to be accurate to ~1e-3
+        # seconds.
+        timestamp_offsets = []
+        tmp = self.framerate
+        self.framerate = 30 
+        self.start()
+        for _ in range(timestamp_offset_iterations):
+            # timestamp = self.c.get_timestamp()  # does not work for some reason
+            # system_time = time.time()
+            self.c.get_image(self.im)  # get buffer - this blocks until an image is acquired
+            system_ts = time.time()
+            image_ts = self.im.tsSec * 1e9 + self.im.tsUSec * 1e3
+            image_ts = image_ts / 1e9
+            timestamp_offset = system_ts - image_ts
+            timestamp_offsets.append(timestamp_offset)
+        self.stop()
+        self.framerate = tmp
+        # Return the median value
+        return np.median(timestamp_offsets)
 
     @property
     def roi(self):
         return self.c.get_offsetX(), self.c.get_offsetY(), self.c.get_width(), self.c.get_height()
 
-    @property.setter
-    def roi(self, x0: int, y0: int, x: int, y: int):
-        # see how to access these for the width and heigh params:
-        # XI_PRM_INFO_INCREMENT
-        # XI_PRM_INFO_MAX
-        # XI_PRM_INFO_MIN
-        # xiGetParamInt(handle, XI_PRM_EXPOSURE XI_PRM_INFO_MAX, &exp_max);
-        self.c.set_offsetX(int(x0))
-        self.c.set_offsetY(int(y0))
-        self.c.set_width(int(x))
-        self.c.set_height(int(y))
-
+    @roi.setter
+    def roi(self, x0_y0_x_y: Tuple[int, int, int, int]):
+        try:
+            x0, y0, x, y = x0_y0_x_y
+        except ValueError:
+            raise ValueError('Need 4-tuple with x0_y0_x_y')
+        else:
+            self._min_max_inc('offsetX', x0)
+            self._min_max_inc('offsetY', y0)
+            self._min_max_inc('width', x)
+            self._min_max_inc('height', y)
+        
     @property
     def exposure(self):
-        self.c.get_exposure()
+        return self.c.get_exposure()
 
-    @property.setter
+    @exposure.setter
     def exposure(self, value: float):
-        self.c.set_aeag('XI_OFF')
+        self.c.disable_aeag()
         self.c.set_exposure(float(value))
 
     @property
     def framerate(self):
-        self.c.get_framerate()
+       return self.c.get_framerate()
 
-    @property.setter
+    @framerate.setter
     def framerate(self, value: float):
         self.c.set_acq_timing_mode('XI_ACQ_TIMING_MODE_FRAME_RATE')
         self.c.set_framerate(float(value))
 
     @property
     def gamma(self):
-        self.c.get_gammay()
+        return self.c.get_gammaY()
 
-    @property.setter
+    @gamma.setter
     def gamma(self, value: float):
-        self.c.set_gammay(float(value))
+        self.c.set_gammaY(float(value))
 
     @property
     def gain(self):
-        self.c.get_gain()
+        return self.c.get_gain()
 
-    @property.setter
+    @gain.setter
     def gain(self, value: float):
-        self.c.set_aeag('XI_OFF')
+        self.c.disable_aeag()
         self.c.set_gain(float(value))
 
+    @property
+    def brightness(self):
+        return None
+
+    @brightness.setter
+    def brightness(self, value: float):
+        pass
 
     def start(self):
         self.c.start_acquisition()
@@ -352,6 +413,6 @@ class Ximea(BaseCam):
 
 
 class FlyCapture(BaseCam):
-    pass
+    NAME = 'PTG'
 
-make = {'spinnaker': Spinnaker, 'xiapi': Ximea, 'flycapture': FlyCapture}
+make = {'Spinnaker': Spinnaker, 'Ximea': Ximea, 'FlyCapture': FlyCapture}
