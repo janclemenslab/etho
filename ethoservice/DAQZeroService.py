@@ -96,43 +96,17 @@ class DAQ(BaseZeroService):
             self.taskAI.data_rec = []
 
             self.callbacks = []
-            """yaml
-            DAQ:
-                callbacks:
-                    realtime:
-                        nb_inputsamples_per_cycle: 4096
-                    save_fast:
-                        VPF_bin_path: str_val  # required
-                    save_timestamps:
-                otherstuff: 'what?'
-            """
             attrs = {'rate': fs, 'analog_chans_in': analog_chans_in, **metadata}
             common_task_kwargs = {'file_name': self.savefilename, 'nb_inputsamples_per_cycle': nb_inputsamples_per_cycle,
                                   'nb_analog_chans_in': len(analog_chans_in), 'attrs': attrs}
 
             for cb_name, cb_params in params['callbacks'].items():
-                # self.taskAI.callbacks.append(cb.callbacks[cb_name].make_concurrent(task_kwargs={**common_task_kwargs, **cb_params}))
-                # self.taskAI.data_rec.append(callbacks[cb_name].make_concurrent(task_kwargs={**common_task_kwargs, **cb_params}))
                 if cb_params is not None:
                     task_kwargs = {**common_task_kwargs, **cb_params}
                 else:
                     task_kwargs = common_task_kwargs
-                    
+
                 self.taskAI.data_rec.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
-
-
-            # if self.savefilename is not None:  # save
-            #     os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
-            #     attrs = {'rate': fs, 'analog_chans_in': analog_chans_in, **metadata}
-            #     self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.analog_chans_in), attrs])
-            #     self.taskAI.data_rec.append(self.save_task)
-            # if display:
-            #     self.disp_task = ConcurrentTask(task=plot_fast, taskinitargs=[display, nb_inputsamples_per_cycle], comms="pipe")
-            #     self.taskAI.data_rec.append(self.disp_task)
-            # if realtime:
-            #     self.proc_task = ConcurrentTask(task=process_dss, comms="array",
-            #                                     comms_kwargs={'shape': (nb_inputsamples_per_cycle, len(analog_chans_in))})
-            #     self.taskAI.data_rec.append(self.proc_task)
 
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
