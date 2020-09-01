@@ -6,11 +6,52 @@ import time
 import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
+
+HAS_RPI4_LIB = False
+HAS_RPI3_LIB = False
+
 try:
     import Adafruit_DHT
+    HAS_RPI3_LIB = True
 except Exception as e:
     print("IGNORE IF RUN ON HEAD")
     print(e)
+
+try:
+    import adafruit_dht, board
+    HAS_RPI4_LIB = True
+except Exception as e:
+    print("IGNORE IF RUN ON HEAD")
+    print(e)
+
+
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+class THU_rpi4():
+
+    def __init__(self, pin):
+        self.pin = pin
+        self.sensor = adafruit_dht.DHT22(getattr(board, f'D{self.pin}'))
+
+    def read(self):
+        try:
+            temperature = self.sensor.temperature
+            humidity = self.sensor.humidity
+        except RuntimeError:
+            temperature = None
+            humidity = None
+        return humidity, temperature
+
+
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+class THU_rpi3():
+
+    def __init__(self, pin):
+        self.pin = pin
+        self.sensor = Adafruit_DHT.DHT22
+
+    def read(self):
+        humidity, temperature = Adafruit_DHT.read_retry(self.sensor, self.pin)
+        return humidity, temperature
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -24,8 +65,13 @@ class THU(BaseZeroService):
     SERVICE_NAME = 'THU'
 
     def setup(self, pin, delay, duration):
-        self.sensor = Adafruit_DHT.DHT22  # type of temperature sensor - make this arg?
         self.pin = pin  # data pin
+        if HAS_RPI4_LIB:
+            self.sensor = THU_rpi4(self.pin)  # type of temperature sensor - make this arg?
+        elif HAS_RPI3_LIB:
+            self.sensor = THU_rpi3(self.pin)  # type of temperature sensor - make this arg?
+        else:
+            raise ValueError('Oh no, could not dht lib')
         self.delay = int(delay)  # delay between reads
         self.duration = duration  # total duration of experiments
 
@@ -53,7 +99,9 @@ class THU(BaseZeroService):
         RUN = True
         while RUN:
             try:
-                self.humidity, self.temperature = Adafruit_DHT.read_retry(self.sensor, self.pin)
+                # self.humidity, self.temperature = Adafruit_DHT.read_retry(self.sensor, self.pin)
+                self.humidity, self.temperature = self.sensor.read()
+
                 try:
                     self.log.info(f'temperature: {self.temperature:0.1f}; humidity: {self.humidity:0.1f}')
                 except TypeError as e:
