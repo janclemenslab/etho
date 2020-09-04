@@ -13,17 +13,15 @@ from ethomaster.gui.wxBusyDialog import BusyDialog
 class Model:
     def __init__(self):
         # this should happen in config!!
-        if isinstance(config['GENERAL']['hosts'], str):
-            config['GENERAL']['hosts'] = [config['GENERAL']['hosts']]
-        self.hosts = config['GENERAL']['host_ips']
-        self.host_ips = config['GENERAL']['host_ips'].values()
-        self.host_names = config['GENERAL']['host_ips'].keys()
+        self.hosts = config['GENERAL']['hosts']
+        self.host_ips = config['GENERAL']['hosts'].values()
+        self.host_names = config['GENERAL']['hosts'].keys()
         self.host_ip2names = {ip: name for ip, name in zip(self.host_ips, self.host_names)}
         self.host_status = exepool(ping, self.host_ips)
         
     def rescan(self):
         print('RESCANNING - listing clients:')
-        self.host_status = exepool(ping, config['GENERAL']['hosts'])
+        self.host_status = exepool(ping, self.host_ips)
         print(self.host_status)
         print('RESCANNING - listing running services:')
         
