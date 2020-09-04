@@ -139,7 +139,6 @@ def Pipe(duplex=False):
 def Queue(maxsize=0):
     sender = mp.Queue(maxsize)
     sender.send = sender.put
-    sender.WHOAMI = 'queue'
     receiver = sender
     return sender, receiver
 

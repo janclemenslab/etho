@@ -101,7 +101,7 @@ class ImageDisplayPQG(ImageCallback):
 class ImageWriterCV2(ImageCallback):
 
     SUFFIX: str = '.avi'
-    FRIENDLY_NAME = 'save'
+    FRIENDLY_NAME = 'save_avi'
 
     def __init__(self, data_source, *, poll_timeout=0.01,
                  **kwargs):
@@ -109,10 +109,10 @@ class ImageWriterCV2(ImageCallback):
 
         self.vw = cv2.VideoWriter()
         self.vw.open(self.file_name + self.SUFFIX, cv2.VideoWriter_fourcc(*'x264'),
-                     self.frame_rate, (self.frame_width, self.frame_height), True)
+                     self.frame_rate, (self.frame_height, self.frame_width), True)
 
     def _loop(self, data):
-        if self.data_source.WHOAMI == 'array':
+        if hasattr(self.data_source, 'WHOAMI') and self.data_source.WHOAMI == 'array':
             image = data
         else:
             image, timestamp = data
@@ -122,13 +122,14 @@ class ImageWriterCV2(ImageCallback):
     def _cleanup(self):
         self.vw.release()
         del self.vw
+        super()._cleanup()
 
 
 @register_callback
 class ImageWriterVPF(ImageCallback):
 
     SUFFIX: str = '.avi'
-    FRIENDLY_NAME = 'save_fast'
+    FRIENDLY_NAME = 'save_avi_fast'
 
     def __init__(self, data_source, *, poll_timeout=0.01,
                  VPF_bin_path=None,
@@ -215,6 +216,7 @@ class TimestampWriterHDF(ImageCallback):
         self.ts.resize(self.frame_count, axis=0)  # self.ts[:self.frame_count]
         self.f.flush()
         self.f.close()
+        super()._cleanup()
 
 
 if __name__ == "__main__":

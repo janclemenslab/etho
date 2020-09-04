@@ -116,7 +116,7 @@ class PlotPQG(BaseCallback):
 @register_callback
 class SaveHDF(BaseCallback):
 
-    FRIENDLY_NAME = 'save'
+    FRIENDLY_NAME = 'save_h5'
     SUFFIX = '_daq.h5'
 
     def __init__(self, data_source, *, file_name, attrs=None, poll_timeout=0.01, **kwargs):

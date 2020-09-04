@@ -11,6 +11,7 @@ class BaseCallback():
         self.data_source = data_source
         self.poll_timeout = poll_timeout
         self.RUN: bool = True
+        self.CLEAN: bool = False
         self.rate = rate
 
     @classmethod
@@ -59,8 +60,9 @@ class BaseCallback():
     def _cleanup(self):
         # close everything created during __init__
         # Maybe flush data_source (e.g. process all items from the queue). Or keep it simple?
-        pass
+        self.CLEAN = True
 
     def __del__(self):
         self.stop()
-        self._cleanup()
+        if not self.CLEAN:
+            self._cleanup()

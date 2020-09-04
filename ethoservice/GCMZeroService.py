@@ -60,7 +60,7 @@ class GCM(BaseZeroService):
         self.nFrames = int(self.c.framerate * (self.duration + 100))
 
         self.callbacks = []
-        common_task_kwargs = {'file_name': self.savefilename + 'avi', 'frame_rate': self.c.framerate,
+        common_task_kwargs = {'file_name': self.savefilename, 'frame_rate': self.c.framerate,
                               'frame_height': self.frame_height, 'frame_width': self.frame_width}
         for cb_name, cb_params in params['callbacks'].items():
             if cb_params is not None:
@@ -139,7 +139,6 @@ class GCM(BaseZeroService):
 
         # clean up code here
         self.c.close()  # not sure this works if BeginAcquistion has not been called
-
         for callback in self.callbacks:
             callback.finish()
 
@@ -185,7 +184,6 @@ if __name__ == '__main__':
         port = sys.argv[2]
     else:
         port = GCM.SERVICE_PORT
-
     s = GCM(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(port))  # broadcast on all IPs
     s.run()
