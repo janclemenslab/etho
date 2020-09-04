@@ -13,7 +13,6 @@ from ethomaster.utils.sound import parse_table, load_sounds, build_playlist, sel
 from ethoservice.SndZeroService import SND
 from ethoservice.CamZeroService import CAM
 from ethoservice.ThuZeroService import THU
-from ethoservice.OptZeroService import OPT
 from ethoservice.Opt2ZeroService import OPT2
 from ethoservice.RelayZeroService import REL
 
@@ -21,6 +20,19 @@ import zmq
 import logging
 from zmq.log.handlers import PUBHandler
 import socket
+
+
+def start_service(REL, SER, user_name, ip_address, folder_name):
+    rel_server_name = 'python -m {0} {1}'.format(REL.__module__, SER)
+    print(f'initializing {REL.SERVICE_NAME} at port {REL.SERVICE_PORT}.')
+    rel = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pirel', serializer=SER)
+    print('   starting server:', end='')
+    ret = rel.start_server(rel_server_name, folder_name, warmup=1)
+    print(f'{"success" if ret else "FAILED"}.')
+    print('   connecting to server:', end='')
+    ret = rel.connect("tcp://{0}:{1}".format(ip_address, REL.SERVICE_PORT))
+    print(f'{"success" if ret else "FAILED"}.')
+    return rel
 
 
 def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=None):
@@ -76,16 +88,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
     playlist = parse_table(playlistfile)
 
     if 'REL' in prot['NODE']['use_services']:
-        rel_server_name = 'python -m {0} {1}'.format(REL.__module__, SER)
-        print(f'initializing {REL.SERVICE_NAME} at port {REL.SERVICE_PORT}.')
-        rel = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pirel', serializer=SER)
-        print('   starting server:', end='')
-        ret = rel.start_server(rel_server_name, folder_name, warmup=1)
-        print(f'{"success" if ret else "FAILED"}.')
-        print('   connecting to server:', end='')
-        # import ipdb; ipdb.set_trace()
-        ret = rel.connect("tcp://{0}:{1}".format(ip_address, REL.SERVICE_PORT))
-        print(f'{"success" if ret else "FAILED"}.')
+         rel = start_service(REL, SER, user_name, ip_address, folder_name)
         
         rel.init_local_logger('{0}/{1}/{1}_rel.log'.format(dirname, filename))
         print(f"   setup with pin {prot['REL']['pin']}, duration {maxduration + 40}")
@@ -97,17 +100,8 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
 
 
     if 'THU' in prot['NODE']['use_services']:
-        thu_server_name = 'python -m {0} {1}'.format(THU.__module__, SER)
-        print(f'initializing {THU.SERVICE_NAME} at port {THU.SERVICE_PORT}.')
-        thu = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pithu', serializer=SER)
-        print('   starting server:', end='')
-        ret = thu.start_server(thu_server_name, folder_name, warmup=1)
-        print(f'{"success" if ret else "FAILED"}.')
-        print('   connecting to server:', end='')
-        # import ipdb; ipdb.set_trace()
-        ret = thu.connect("tcp://{0}:{1}".format(ip_address, THU.SERVICE_PORT))
-        print(f'{"success" if ret else "FAILED"}.')
-        
+        thu = start_service(THU, SER, user_name, ip_address, folder_name)
+
         thu.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
         print(f"   setup with pin {prot['THU']['pin']}, interval {prot['THU']['interval']}, duration {maxduration + 20}")
         thu.setup(prot['THU']['pin'], prot['THU']['interval'], maxduration + 20)        
@@ -117,15 +111,9 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         print(f'success')
 
     if 'CAM' in prot['NODE']['use_services']:
-        cam_server_name = 'python -m {0} {1}'.format(CAM.__module__, SER)
-        # print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
-        cam = ZeroClient("{0}@{1}".format(user_name, ip_address), 'picam', serializer=SER)
-        print(' starting server:', end='')
-        time.sleep(2)
-        ret = cam.start_server(cam_server_name, folder_name, warmup=1)
-        print(f'{"success" if ret else "FAILED"}.')
-        cam.connect("tcp://{0}:{1}".format(ip_address, CAM.SERVICE_PORT))
-        print('done')
+        cam = start_service(CAM, SER, user_name, ip_address, folder_name)
+
+
         cam.init_local_logger('{0}/{1}/{1}_cam.log'.format(dirname, filename))
         cam.setup('{0}/{1}/{1}.h264'.format(dirname, filename), maxduration + 10)
         time.sleep(1)
@@ -133,7 +121,6 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         cam_start_time = time.time() # time.sleep(5)
 
     if 'SND' in prot['NODE']['use_services']:
-        snd_server_name = 'python -m {0} {1}'.format(SND.__module__, SER)
         fs = prot['SND']['samplingrate']
         shuffle_playback = prot['SND']['shuffle']
 
@@ -154,12 +141,9 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
                              cast2int=True)
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
-        snd = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pisnd', serializer=SER)
-        print(' starting server:', end='')
-        ret = snd.start_server(snd_server_name, folder_name, warmup=1)
-        print(f'{"success" if ret else "FAILED"}.')
-        snd.connect("tcp://{0}:{1}".format(ip_address, SND.SERVICE_PORT))
-        print('done')
+        snd = start_service(SND, SER, user_name, ip_address, folder_name)
+
+
         print('sending sound data to {0} - may take a while.'.format(host_name))
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
         snd.setup(sounds, playlist, playlist_items, totallen, fs)
@@ -173,6 +157,22 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         pulse_params = parse_pulse_parameters(opto_playlist, sounds, fs)
         pulse_params = pulse_params.loc[playlist_items, :]
     
+
+        # # scale amp by attenuation values - get wavelength from FREQ field in playlist
+        # if ip_address in config['ATTENUATION']:  # use node specific attenuation data
+        #     attenuation_led = config['ATTENUATION_LED'][ip_address]
+        #     print(f'using LED attenuation data specific to {ip_address}.')
+        # else:
+        #     attenuation_led = config['ATTENUATION_LED']
+        #     print(f'using global LED attenuation data (for {ip_address}).')
+
+        # led_wavelengths = fun(opto_playlist)
+        # blink_amps_scaled = []
+        # for blink_amp, led_wavelength in zip(blink_amps, led_wavelengths):
+        #     blink_amps_scaled.append(blink_amp * led_wavelength)
+        # blink_amps = blink_amps_scaled
+
+
         blink_durs = pulse_params.duration.tolist()
         blink_paus = pulse_params.pause.tolist()
         blink_nums = pulse_params.number.tolist()
