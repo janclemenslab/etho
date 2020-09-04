@@ -17,14 +17,13 @@ from ethoservice.OptZeroService import OPT
 from ethoservice.Opt2ZeroService import OPT2
 from ethoservice.RelayZeroService import REL
 
-
 import zmq
 import logging
 from zmq.log.handlers import PUBHandler
 import socket
 
 
-def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
+def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=None):
 
 
     # setup connection - publish to head_ip via LOGGIN_PORT
@@ -69,7 +68,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
     # unique file name for video and node-local logs
     if filename is None:
-        filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
+        filename = '{0}-{1}'.format(host_name, time.strftime('%Y%m%d_%H%M%S'))
     dirname = prot['NODE']['savefolder']
     log.info(f'experiment name: {filename}')
 
@@ -137,13 +136,13 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         snd_server_name = 'python -m {0} {1}'.format(SND.__module__, SER)
         fs = prot['SND']['samplingrate']
         shuffle_playback = prot['SND']['shuffle']
-        
-        if ip_address in config['ATTENUATION']:  # use node specific attenuation data
-            attenuation = config['ATTENUATION'][ip_address]
-            print(f'using attenuation data specific to {ip_address}.')
+
+        if host_name in config['ATTENUATION']:  # use node specific attenuation data
+            attenuation = config['ATTENUATION'][host_name]
+            print(f'using attenuation data specific to {host_name}.')
         else:
             attenuation = config['ATTENUATION']
-            print(f'using global attenuation data (for {ip_address}).')
+            print(f'using global attenuation data (for {host_name}).')
         print(attenuation)
         
         channels_to_keep = prot['SND']['playlist_channels']
@@ -155,27 +154,15 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
                              cast2int=True)
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
-        # print([SND.SERVICE_PORT, SND.SERVICE_NAME])
         snd = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pisnd', serializer=SER)
         print(' starting server:', end='')
         ret = snd.start_server(snd_server_name, folder_name, warmup=1)
         print(f'{"success" if ret else "FAILED"}.')
         snd.connect("tcp://{0}:{1}".format(ip_address, SND.SERVICE_PORT))
         print('done')
-        print('sending sound data to {0} - may take a while.'.format(ip_address))
+        print('sending sound data to {0} - may take a while.'.format(host_name))
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
         snd.setup(sounds, playlist, playlist_items, totallen, fs)
-
-    if 'OPT' in prot['NODE']['use_services']:
-        opt_server_name = 'python -m {0} {1}'.format(OPT.__module__, SER)
-        # print([OPT.SERVICE_PORT, OPT.SERVICE_NAME])
-        opt = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt', serializer=SER)
-        print(opt.start_server(opt_server_name, folder_name, warmup=1))
-        opt.connect("tcp://{0}:{1}".format(ip_address,  OPT.SERVICE_PORT))
-        print('done')
-        print(prot['OPT']['pin'], prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'], maxduration)
-        opt.setup(prot['OPT']['pin'], maxduration, prot['OPT']['blinkinterval'], prot['OPT']['blinkduration'])
-        opt.init_local_logger('{0}/{1}/{1}_opt.log'.format(dirname, filename))
 
     if 'OPT2' in prot['NODE']['use_services']:
         channels_to_keep = prot['OPT2']['playlist_channels']
@@ -196,10 +183,10 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print(blink_amps)
 
         opt2_server_name = 'python -m {0} {1}'.format(OPT2.__module__, SER)
-        # print([OPT2.SERVICE_PORT, OPT2.SERVICE_NAME])
         opt2 = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt', serializer=SER)
         print(opt2.start_server(opt2_server_name, folder_name, warmup=1))
         opt2.connect("tcp://{0}:{1}".format(ip_address,  OPT2.SERVICE_PORT))
+
         print('done')
         print(*prot['OPT2'], maxduration)
         opt2.setup(prot['OPT2']['pin'], maxduration, blink_pers, blink_durs, blink_paus, blink_nums, blink_dels, blink_amps)
@@ -233,7 +220,8 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
 
 if __name__ == '__main__':
-    ip_address = 'rpi8'
+    host_name = 'rpi8'
+    ip_address = '192.168.1.8'
     protocolfilename = '../ethoconfig/protocols/playback_5min_multiOpto.yml'
     playlistfilename = '../ethoconfig/playlists/IPItune_test_multiOpto.txt'
-    clientcaller(ip_address, playlistfilename, protocolfilename)
+    clientcaller(host_name, ip_address, playlistfilename, protocolfilename)

@@ -15,19 +15,18 @@ class Model:
         # this should happen in config!!
         if isinstance(config['GENERAL']['hosts'], str):
             config['GENERAL']['hosts'] = [config['GENERAL']['hosts']]
-        self.clients = exepool(ping, config['GENERAL']['hosts'])
-        print(self.clients)
-        # self.clients_runningservices = exepool(get_running_services, config['GENERAL']['hosts'])
-        # print(self.clients_runningservices)
-
+        self.hosts = config['GENERAL']['host_ips']
+        self.host_ips = config['GENERAL']['host_ips'].values()
+        self.host_names = config['GENERAL']['host_ips'].keys()
+        self.host_ip2names = {ip: name for ip, name in zip(self.host_ips, self.host_names)}
+        self.host_status = exepool(ping, self.host_ips)
+        
     def rescan(self):
         print('RESCANNING - listing clients:')
-        self.clients = exepool(ping, config['GENERAL']['hosts'])
-        print(self.clients)
+        self.host_status = exepool(ping, config['GENERAL']['hosts'])
+        print(self.host_status)
         print('RESCANNING - listing running services:')
-        # self.clients_runningservices = exepool(get_running_services, config['GENERAL']['hosts'])
-        # print(self.clients_runningservices)
-
+        
 
 
 from threading import Thread
@@ -137,19 +136,24 @@ class HelloFrame(wx.Frame):
         topSizer = wx.BoxSizer(wx.VERTICAL)
         # color based on true value (is_online)
         colors = {True: '#AAFFAA', False: '#FFAAAA'}
-        for key in self.model.clients:
+        for name in self.model.host_names:
+            ip = self.model.hosts[name]
+            status = self.model.host_status[ip]
+            
             sizerHorz = wx.BoxSizer(wx.HORIZONTAL)
-            panelButton = wx.Button(self, label=key)
+            panelButton = wx.Button(self, label=name)
             # custom `name` field so we can identify button
-            panelButton.name = key
+            panelButton.name = name
+            panelButton.ip = ip
             # set color based on online status
-            panelButton.SetBackgroundColour(colors[self.model.clients[key]])
+            panelButton.SetBackgroundColour(colors[status])
             self.Bind(wx.EVT_BUTTON, self.OnClick, panelButton)
             # add info text next to button
             # loyout button and text next to each other
             sizerHorz.Add(panelButton, 0, wx.ALL, 1)
             # now add button+text
             topSizer.Add(sizerHorz, 0, wx.ALL | wx.EXPAND, 1)
+
         masterSizer.Add(topSizer)
         masterSizer.Add(self.logger, 0, 0, 0)
         self.SetSizer(masterSizer)        
@@ -222,6 +226,7 @@ class HelloFrame(wx.Frame):
         self.onFinish()
         self.Destroy()
         self.Close(True)
+
     def OnClose(self, event):
         self.onCancel(None)
         self.onFinish()
@@ -229,23 +234,17 @@ class HelloFrame(wx.Frame):
 
     def OnRescan(self, event):
         pass
-        # self.PushStatusText('rescanning clients')
-        # self.model.rescan()
-        # self.PopStatusText()
+
 
     def OnClick(self, event):
-        self.PushStatusText('configure {0}'.format(
-            event.GetEventObject().name))
-        # run these in independent processes?
-        wxCtrl_rpi.main(event.GetEventObject().name)
+        name, ip = event.GetEventObject().name, event.GetEventObject().ip
+        self.PushStatusText('configure {0}'.format(ip, name))
+        wxCtrl_rpi.main(name, ip)
         try:
             self.PopStatusText()
         except:
             pass
 
-    # def OnExit(self, event):
-    #     """Close the frame, terminating the application."""
-    #     self.Close(True)
 
     def OnHello(self, event):
         """Say hello to the user."""
@@ -261,7 +260,6 @@ class HelloFrame(wx.Frame):
 if __name__ == '__main__':
     # When this module is run (not imported) then create the app, the
     # frame, show it, and start the event loop.
-    # import ipdb; ipdb.set_trace()
     app = wx.App()
     frm = HelloFrame(None, title='ethodrome', size=(600, 300))
     frm.Show()

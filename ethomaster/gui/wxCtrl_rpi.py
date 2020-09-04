@@ -15,8 +15,9 @@ def list_path(path='playlists'):
 
 
 class Frame(wx.Frame):
-    def __init__(self, host):
+    def __init__(self, host, ip):
         self.host = host
+        self.ip = ip
         style = wx.DEFAULT_FRAME_STYLE & ~wx.RESIZE_BORDER & ~wx.MAXIMIZE_BOX
         super(Frame, self).__init__(
             None, -1, '{0} control'.format(self.host), style=style)
@@ -32,8 +33,6 @@ class Frame(wx.Frame):
         bStart = wx.Button(self, label='start selected')
         self.Bind(wx.EVT_BUTTON, self.OnClickStart, bStart)
         self.bStart = bStart
-        bStatus = wx.Button(self, label='status')
-        self.Bind(wx.EVT_BUTTON, self.OnClickStatus, bStatus)
 
         bCamPreview = wx.Button(self, label='cam preview')
         self.Bind(wx.EVT_BUTTON, self.OnClickCamPreview, bCamPreview)
@@ -49,7 +48,6 @@ class Frame(wx.Frame):
         sizerH.Add(self.protocolList, 0, 0, 0)
         sizerB = wx.BoxSizer(wx.VERTICAL)
         sizerB.Add(bStart, 0, 0, 0)
-        sizerB.Add(bStatus, 0, 0, 0)
         sizerB.Add(bCamPreview, 0, 0, 0)
         sizerB.Add(bThuPreview, 0, 0, 0)
         sizerB.Add(bDanger, 0, 0, 0)
@@ -73,56 +71,44 @@ class Frame(wx.Frame):
         if playlistName and protocolName:
             self.SetStatusText("playlist: {0}, prot: {1}".format(playlistName, protocolName))
             message = "starting playlist {0} with prot {1} on {2}".format(playlistName, protocolName, self.host)
-            args = (self.host, os.path.join(self.playlistfolder, playlistName),
-                               os.path.join(self.protocolfolder, protocolName))
+            args = (self.host, self.ip, 
+                    os.path.join(self.playlistfolder, playlistName),
+                    os.path.join(self.protocolfolder, protocolName))
             print(message)
             # check node status before starting??
-            # self.bStart.Disable()
             try:
-                # or start this as independent process?
+                # start this as independent process
                 p = Process(target=clientcaller.clientcaller, args=args)
                 p.start()
-                # clientcaller.clientcaller(*args)
                 while ret is None:
                     ret = p.join(timeout=1)
             except:
                 pass
             finally:
-                pass# self.bStart.Enable()
-            # BusyDialog(self, size=(300,150)).run(clientcaller.clientcaller, args, message=message)
+                pass
         else:
             print('no controlf file selected')
 
-    def OnClickStatus(self, event):
-        with BusyDialog(self) as dlg:
-            if dlg.ShowModal() == wx.ID_OK:
-                # do something here
-                self.clientStatus = clientmanager.client_status(self.host)
-                print(self.clientStatus)
-            else:
-                # handle dialog being cancelled or ended by some other button
-                pass
-
     def OnClickCamPreview(self, event):
         print("if running - start cam service and preview, otherwise connect to running service and preview")
-        wxCam.main(self.host)
+        wxCam.main(self.ip)
 
     def OnClickThuPreview(self, event):
-        ThuPreview.main(self.host)
+        ThuPreview.main(self.ip)
 
     def OnClickDanger(self, event):
-        with DangerDialog(self.host, None, title=self.host) as dlg:
+        with DangerDialog(self.ip, None, title=self.host) as dlg:
             if dlg.ShowModal() == wx.ID_CLOSE:
                 print('DANGER zone left.')
 
 
-def main(host):
+def main(host, ip):
     app = wx.App()
-    frame = Frame(host)
+    frame = Frame(host, ip)
     frame.Center()
     frame.Show()
     app.MainLoop()
 
 
 if __name__ == '__main__':
-    main(host='localhost')
+    main(host='localhost', ip='localhost')

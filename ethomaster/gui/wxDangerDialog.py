@@ -29,6 +29,8 @@ class DangerDialog(wx.Dialog):
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
         bKillAll = wx.Button(self, label='kill ALL services')
         hbox1.Add(bKillAll)
+        bKillPython = wx.Button(self, label='kill ALL python processes')
+        hbox1.Add(bKillPython)
         bReboot = wx.Button(self, label='reboot')
         hbox1.Add(bReboot)
 
@@ -44,6 +46,7 @@ class DangerDialog(wx.Dialog):
         self.SetSizer(vbox)
 
         self.Bind(wx.EVT_BUTTON, self.OnKillAll, bKillAll)
+        self.Bind(wx.EVT_BUTTON, self.OnKillPython, bKillPython)
         self.Bind(wx.EVT_BUTTON, self.OnKillService, bKillService)
         self.Bind(wx.EVT_BUTTON, self.OnReboot, bReboot)
 
@@ -64,6 +67,10 @@ class DangerDialog(wx.Dialog):
             print('   find PID for {0}'.format(service))
             print(self.sr.kill_service(service))
             print('      kill PID for {0}'.format(service))
+
+    def OnKillPython(self, e):
+        print('killing all python processes on  {0}'.format(self.host))
+        print(self.sr.run('pkill python'))
 
     def OnReboot(self, e):
         print('waiting for reboot of {0}'.format(self.host))
