@@ -70,6 +70,9 @@ class CAM(BaseZeroService):
         self.camera.framerate = framerate  # fps
         self.camera.shutter_speed = shutterspeed  # us
         self.camera.zoom = [0, 0.1, 1.0, 1]
+        self.camera.awb_mode = 'off'
+        self.camera.awb_gains = (113/128, 99/128)
+
        # as framenumber in frame <-display timestamp!!
         self.camera.annotate_frame_num = annotate_frame_num
         self.duration = duration
