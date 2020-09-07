@@ -88,7 +88,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
     playlist = parse_table(playlistfile)
 
     if 'REL' in prot['NODE']['use_services']:
-         rel = start_service(REL, SER, user_name, ip_address, folder_name)
+        rel = start_service(REL, SER, user_name, ip_address, folder_name)
         
         rel.init_local_logger('{0}/{1}/{1}_rel.log'.format(dirname, filename))
         print(f"   setup with pin {prot['REL']['pin']}, duration {maxduration + 40}")
@@ -135,8 +135,14 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         channels_to_keep = prot['SND']['playlist_channels']
         print(f"   selecting channels {channels_to_keep} for SND from playlist.")
         sound_playlist = select_channels_from_playlist(playlist, channels_to_keep)
+
+        led_amp = prot['SND']['ledamp']['default']
+        if host_name in prot['SND']['ledamp']:
+            print(f'using special LEDamp for {host_name}.')
+            led_amp = prot['SND']['ledamp'][host_name]
+
         sounds = load_sounds(sound_playlist, fs, attenuation=attenuation,
-                             LEDamp=prot['SND']['ledamp'],
+                             LEDamp=led_amp,
                              stimfolder=config['HEAD']['stimfolder'],
                              cast2int=True)
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
