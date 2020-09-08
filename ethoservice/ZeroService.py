@@ -63,8 +63,8 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
 
     @classmethod
-    def make(cls, SER, user_name, ip_address, folder_name):
-        server_name = 'python -m {0} {1}'.format(cls.__module__, SER)
+    def make(cls, SER, user_name, ip_address, folder_name, python_exe='python'):
+        server_name = '{0} -m {1} {2}'.format(python_exe, cls.__module__, SER)
         print(f'initializing {cls.SERVICE_NAME} at port {cls.SERVICE_PORT}.')
         service = ethomaster.head.ZeroClient.ZeroClient("{0}@{1}".format(user_name, ip_address), 'piservice', serializer=SER)
         print('   starting server:', end='')
