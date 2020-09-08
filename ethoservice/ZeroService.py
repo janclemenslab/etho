@@ -9,7 +9,7 @@ import time
 import os
 import subprocess
 from ethoservice.utils.common import iswin
-
+import ethomaster.head
 
 class BaseZeroService(abc.ABC, zerorpc.Server):
     """Define abstract base class for all 0services.
@@ -19,7 +19,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     SERVICE_PORT: network port for communication with the head
     SERVICE_NAME: unique, three-letter identifier for the service
     is_busy: indicates whether service is running (True/False)
-    cleanup: called when finishing/shutting down the service release hardware, close files etc
+    cleanup: called when finishing/shutting down the service serviceease hardware, close files etc
     test - test functionality of the class (?)
 
     Optional:
@@ -60,6 +60,20 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
         self._time_started = None
         self.duration = None
+
+
+    @classmethod
+    def make(cls, SER, user_name, ip_address, folder_name):
+        server_name = 'python -m {0} {1}'.format(cls.__module__, SER)
+        print(f'initializing {cls.SERVICE_NAME} at port {cls.SERVICE_PORT}.')
+        service = ethomaster.head.ZeroClient.ZeroClient("{0}@{1}".format(user_name, ip_address), 'piservice', serializer=SER)
+        print('   starting server:', end='')
+        ret = service.start_server(server_name, folder_name, warmup=1)
+        print(f'{"success" if ret else "FAILED"}.')
+        print('   connecting to server:', end='')
+        ret = service.connect("tcp://{0}:{1}".format(ip_address, cls.SERVICE_PORT))
+        print(f'{"success" if ret else "FAILED"}.')
+        return service
 
     def _init_network_logger(self, head_ip: str = '192.168.1.1', log_level: str = logging.INFO):
         """Initialize logger that publishes messages over the network format.
