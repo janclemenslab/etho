@@ -107,6 +107,7 @@ class HelloFrame(wx.Frame):
         # ensure the parent's __init__ is called
         super(HelloFrame, self).__init__(*args, **kw)
 
+        print('pinging hosts')
         self.model = Model()
 
         # create a menu bar

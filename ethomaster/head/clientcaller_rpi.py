@@ -22,19 +22,6 @@ from zmq.log.handlers import PUBHandler
 import socket
 
 
-def start_service(REL, SER, user_name, ip_address, folder_name):
-    rel_server_name = 'python -m {0} {1}'.format(REL.__module__, SER)
-    print(f'initializing {REL.SERVICE_NAME} at port {REL.SERVICE_PORT}.')
-    rel = ZeroClient("{0}@{1}".format(user_name, ip_address), 'pirel', serializer=SER)
-    print('   starting server:', end='')
-    ret = rel.start_server(rel_server_name, folder_name, warmup=1)
-    print(f'{"success" if ret else "FAILED"}.')
-    print('   connecting to server:', end='')
-    ret = rel.connect("tcp://{0}:{1}".format(ip_address, REL.SERVICE_PORT))
-    print(f'{"success" if ret else "FAILED"}.')
-    return rel
-
-
 def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=None):
 
 
@@ -88,7 +75,8 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
     playlist = parse_table(playlistfile)
 
     if 'REL' in prot['NODE']['use_services']:
-        rel = start_service(REL, SER, user_name, ip_address, folder_name)
+        # rel = start_service(REL, SER, user_name, ip_address, folder_name)
+        rel = REL.make(SER, user_name, ip_address, folder_name)
         
         rel.init_local_logger('{0}/{1}/{1}_rel.log'.format(dirname, filename))
         print(f"   setup with pin {prot['REL']['pin']}, duration {maxduration + 40}")
@@ -100,7 +88,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
 
 
     if 'THU' in prot['NODE']['use_services']:
-        thu = start_service(THU, SER, user_name, ip_address, folder_name)
+        thu = THU.make(SER, user_name, ip_address, folder_name)
 
         thu.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
         print(f"   setup with pin {prot['THU']['pin']}, interval {prot['THU']['interval']}, duration {maxduration + 20}")
@@ -111,7 +99,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         print(f'success')
 
     if 'CAM' in prot['NODE']['use_services']:
-        cam = start_service(CAM, SER, user_name, ip_address, folder_name)
+        cam = CAM.make(SER, user_name, ip_address, folder_name)
 
 
         cam.init_local_logger('{0}/{1}/{1}_cam.log'.format(dirname, filename))
@@ -147,7 +135,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
                              cast2int=True)
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
-        snd = start_service(SND, SER, user_name, ip_address, folder_name)
+        snd = SND.make(SER, user_name, ip_address, folder_name)
 
 
         print('sending sound data to {0} - may take a while.'.format(host_name))
@@ -188,12 +176,8 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         print(pulse_params)
         print(blink_amps)
 
-        opt2_server_name = 'python -m {0} {1}'.format(OPT2.__module__, SER)
-        opt2 = ZeroClient("{0}@{1}".format(user_name, ip_address), 'piopt', serializer=SER)
-        print(opt2.start_server(opt2_server_name, folder_name, warmup=1))
-        opt2.connect("tcp://{0}:{1}".format(ip_address,  OPT2.SERVICE_PORT))
-
-        print('done')
+        opt2 = OPT2.make(SER, user_name, ip_address, folder_name)
+        
         print(*prot['OPT2'], maxduration)
         opt2.setup(prot['OPT2']['pin'], maxduration, blink_pers, blink_durs, blink_paus, blink_nums, blink_dels, blink_amps)
         opt2.init_local_logger('{0}/{1}/{1}_opt2.log'.format(dirname, filename))
