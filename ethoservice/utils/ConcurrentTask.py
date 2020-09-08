@@ -1,9 +1,13 @@
+"""Communication primitives with a common interface
+and a helper class for running tasks in independent processes."""
 from multiprocessing import Process
 import multiprocessing as mp
 import time
 import sys
 import numpy as np
 import ctypes
+from typing import Optional, Any
+import multiprocessing.connection
 
 
 class SharedNumpyArray:
@@ -84,20 +88,39 @@ class SharedNumpyArray:
 
 
 class Faucet():
+    """Wrapper for Pipe connection objects that exposes
+    `get` function for common interface with Queues."""
 
     WHOAMI = 'pipe'
 
-    def __init__(self, connection):
+    def __init__(self, connection: multiprocessing.connection.Connection):
+        """Wraps Connection object returned when calling Pipe and
+        delegates function calls to have a common interface with the Queue.
+
+        Args:
+            connection (multiprocessing.connection.Connection): [description]
+        """
         self.connection = connection
         self.qsize = 0
 
-        # automate this
-        self.send = self.connection.send
-        self.close = self.connection.close
-        self.closed = self.connection.closed
-        self.__del__ = self.connection.__del__
+    def __getattr__(self, name: str) -> Any:
+        """Delegate all attrs except `get` to do underlying Connection."""
+        if name=='get':
+            return self.get
+        else:
+            return getattr(self.connection, name)
 
-    def get(self, block=True, timeout=0.001, empty_value=None):
+    def get(self, block: bool = True, timeout: Optional[float] = 0.001, empty_value: Any =None) -> Any:
+        """Mimics the logic of the `Queue.get`.
+
+        Args:
+            block (bool, optional): [description]. Defaults to True.
+            timeout (float, optional): [description]. Defaults to 0.001.
+            empty_value ([type], optional): [description]. Defaults to None.
+
+        Returns:
+            [type]: [description]
+        """
         if block:
             timeout = None
         if self.connection.poll(timeout):
@@ -112,12 +135,11 @@ def Pipe(duplex=False):
     sender = Faucet(sender)
     return sender, receiver
 
+
 def Queue(maxsize=0):
     sender = mp.Queue(maxsize)
     sender.send = sender.put
-    sender.WHOAMI = 'queue'
     receiver = sender
-
     return sender, receiver
 
 
@@ -129,28 +151,23 @@ def NumpyArray(shape=(1,), ctype=ctypes.c_double):
 
 
 class ConcurrentTask():
-    """
-    - tasks should stop when being sent None
-    TODO
-    - maybe the tasks should implement a defined interface/communication protocol (sending `None` stops the task etc., START and STOP s)
-    - the task objects should provide information about appropriate communication (e.g. `taskstopsignals`) and maybe even the communication channel (pipe vs queue). Maybe implement abstraction with a common interface for pipe, queue, zmq??
-    """
+    """Helper class for running tasks in independent
+    processes with communication tools attached."""
 
-    def __init__(self, task, taskinitargs=[], comms='queue', taskstopsignal=None, comms_kwargs={}, task_kwargs={}):
+    def __init__(self, task, task_kwargs={}, comms='queue', comms_kwargs={}, taskstopsignal=None):
         """ [summary]
 
         Args:
-            task ([type]): [description]
-            taskinitargs (list, optional): [description]. Defaults to [].
+            task ([type]): First arg to task must be the end of the comms and is provided via `args`.
+            task_kwargs={}
             comms (str, optional): Use a pipe if you want speed and don't mind loosing data (displaying data)
                                    or if you want to ensure you are always assessing fresh data (realtime feedback).
                                    Queue are great when data loss is unacceptable (saving data).
                                    Defaults to 'queue'.
-            taskstopsignal ([type], optional): [description]. Defaults to None.
             comms_kwargs={}
-            task_kwargs={}
+            taskstopsignal ([type], optional): [description]. Defaults to None.
         Raises:
-            ValueError: [description]
+            ValueError: for unknown comms
         """
         self.comms = comms
         self.taskstopsignal = taskstopsignal
@@ -162,25 +179,30 @@ class ConcurrentTask():
             self._sender, self._receiver = NumpyArray(**comms_kwargs)
         else:
             raise ValueError(
-                f'Unknown comms type {comms} - allowed values are "pipe", "queue", "array"')
+                f'Unknown comms {comms} - allowed values are "pipe", "queue", "array"')
 
+        # delegate send calls from sender
         self.send = self._sender.send
 
-        # prepend queue, i.e. sink end of pipe or end of queue
-        taskinitargs = list(taskinitargs)
-        taskinitargs.insert(0, self._receiver)
-
-        self._process = Process(target=task, args=tuple(taskinitargs), kwargs=task_kwargs)
+        self._process = Process(target=task, args=(self._receiver,), kwargs=task_kwargs)
         self.start = self._process.start
 
-    def finish(self, verbose=False, sleepduration=1, sleepcycletimeout=5, maxsleepcycles=100000000):
+    def finish(self, verbose: bool = False, sleepduration: float = 1,
+               sleepcycletimeout: int = 5, maxsleepcycles: int = 100000000):
         if self.comms == "queue":
             sleepcounter = 0
-            queuesize = self._sender.qsize()
+            try:
+                queuesize = self._sender.qsize()
+            except NotImplementedError:  # catch python bug on OSX
+                return
+
             queuehasnotchangedcounter = 0
             while queuesize > 0 and sleepcounter < maxsleepcycles and queuehasnotchangedcounter < sleepcycletimeout:
                 time.sleep(sleepduration)
-                queuesize = self._sender.qsize()
+                try:
+                    queuesize = self._sender.qsize()
+                except NotImplementedError:  # catch python bug on OSX
+                    break
                 sleepcounter += 1
                 queuehasnotchanged = (queuesize == self._sender.qsize())
                 if queuehasnotchanged:
@@ -191,14 +213,14 @@ class ConcurrentTask():
                     sys.stdout.write('\r   waiting {} seconds for {} frames to self.'.format(
                         sleepcounter, self._sender.qsize()))  # frame interval in ms
 
-    def close(self):
+    def close(self, sleep_time: float = 0.5):
         self.send(self.taskstopsignal)
-        time.sleep(0.5)
+        time.sleep(sleep_time)
         try:
             self._process.terminate()
         except AttributeError:
             pass
-        time.sleep(0.5)
+        time.sleep(sleep_time)
         self._sender.close()
         del self._process
         del self._sender
