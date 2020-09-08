@@ -10,14 +10,8 @@ from ethomaster.head.ZeroClient import ZeroClient
 from ethomaster.utils.config import readconfig, undefaultify
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 
-from ethoservice.SndZeroService import SND
-from ethoservice.CamZeroService import CAM
-from ethoservice.ThuZeroService import THU
 from ethoservice.ThuAZeroService import THUA
-from ethoservice.OptZeroService import OPT
 from ethoservice.DAQZeroService import DAQ
-from ethoservice.PTGZeroService import PTG
-from ethoservice.SPNZeroService import SPN
 from ethoservice.GCMZeroService import GCM
 
 
@@ -40,6 +34,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     else:
         python_exe = 'C:/Users/ncb/Miniconda3/python.exe'
 
+    services = []
 
     if 'SPN' in prot['NODE']['use_services']:
         ptg_server_name = f'{python_exe} -m {GCM.__module__} {SER}'
@@ -51,6 +46,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         cam_params = undefaultify(prot['SPN'])
         ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
         ptg.init_local_logger('{0}/{1}/{1}_spn.log'.format(dirname, filename))
+        services.append(ptg)
         
     if 'SPN_ZOOM' in prot['NODE']['use_services']:
         port = 4247  # use custom port so we can start two SPN instances
@@ -64,6 +60,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         ptg2.setup('{0}/{1}/{1}_zoom'.format(dirname, filename), maxduration + 10, cam_params)
         ptg2.init_local_logger('{0}/{1}/{1}_spnzoom.log'.format(dirname, filename))   
         ptg2.start()
+        services.append(ptg2)
 
     if 'SPN' in prot['NODE']['use_services']:
         ptg.start()
@@ -132,16 +129,27 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
               metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']},
               params=daq_params)
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(daq_save_folder, filename))
-    
+        services.append(daq)
+
     if 'DAQ' in prot['NODE']['use_services']:
         while time.time() - t0 < 5:
-            time.sleep(1)
-
+            time.sleep(.1)
 
         daq.start()
         logging.info('DAQ started')
 
     print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
+
+    RUN = len(services)>0
+
+    while RUN:
+        time.sleep(2)
+        ret = input('\rStop?')
+        if ret=='y':
+            RUN = False
+            for service in services:
+                service.finish()
+                service.close()            
 
 
 if __name__ == '__main__':
