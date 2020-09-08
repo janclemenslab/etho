@@ -102,13 +102,14 @@ class Faucet():
         """
         self.connection = connection
         self.qsize = 0
+        self.send = self.connection.send
 
-    def __getattr__(self, name: str) -> Any:
+    # def __getattribute__(self, name: str) -> Any:
         """Delegate all attrs except `get` to do underlying Connection."""
-        if name=='get':
-            return self.get
-        else:
-            return getattr(self.connection, name)
+        # if name=='get':
+        #     return self._get
+        # else:
+        #     return getattr(self.connection, name)
 
     def get(self, block: bool = True, timeout: Optional[float] = 0.001, empty_value: Any =None) -> Any:
         """Mimics the logic of the `Queue.get`.
