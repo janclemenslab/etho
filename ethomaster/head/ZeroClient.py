@@ -1,12 +1,12 @@
 import zerorpc
 import time
-from ethomaster.utils.SSHRunner import SSHRunner
+from ethomaster.utils.SSHRunner import SSHRunner, is_win
 import zmq
 import logging
 from zmq.log.handlers import PUBHandler
 import socket
 from ethomaster import config
-
+import subprocess
 
 class ZeroClient(zerorpc.Client):
 
@@ -53,15 +53,19 @@ class ZeroClient(zerorpc.Client):
 
     def start_server(self, server_name, folder_name='.', warmup=2, timeout=5):
         self.log.info(f'   {self.SERVICE_NAME} starting')
-        # cmd = "source ~/.bash_profile;cd {0};nohup {1}".format(
-        #     folder_name, server_name)
-        cmd = "source ~/.bash_profile;cd {0};nohup {1}".format(
-            folder_name, server_name)
-        self.pid = self.sr.run_and_get_pid(cmd, timeout=timeout)
-        self.log.info(f'   {self.SERVICE_NAME} warmup')
-        time.sleep(warmup)  # wait for server to warm up
+        if is_win():
+            popen = subprocess.Popen(server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
+            self.pid = popen.pid
+            status = 'unknown'
+        else:
+            cmd = "source ~/.bash_profile;cd {0};nohup {1}".format(
+                folder_name, server_name)
+            self.pid = self.sr.run_and_get_pid(cmd, timeout=timeout)
+            self.log.info(f'   {self.SERVICE_NAME} warmup')
+            time.sleep(warmup)  # wait for server to warm up
+            status = self.is_running_server()
         self.log.info(f'   {self.SERVICE_NAME} done')
-        return self.is_running_server()
+        return status
 
     def stop_server(self):
         self.log.info(f'   {self.SERVICE_NAME} finish and cleanup')
