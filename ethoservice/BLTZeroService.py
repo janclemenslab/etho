@@ -5,12 +5,14 @@ import time    # for timer
 import threading
 import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
+from .utils.ConcurrentTask import Pipe
 import logging
 import defopt
 from typing import Optional
 import os
 
 from pybmt.callback.threshold_callback import ThresholdCallback
+from pybmt.callback.broadcast_callback import BroadcastCallback
 from pybmt.fictrac.driver import FicTracDriver
 
 
@@ -33,7 +35,10 @@ class BLT(BaseZeroService):
         fictrac_savedir = os.path.dirname(savefilename)
 
         # Instantiate the callback object that is invoked when new tracking state is detected.
-        callback = ThresholdCallback(speed_threshold=0.009, num_frames_mean=25)
+        self.sender, self.receiver = Pipe()  # should be instantiated outside and sender should be arg so receiver is available elsewhere
+                                             # or we make receiver acccessible as an arg of the service
+                                             # or https://docs.python.org/3.7/library/multiprocessing.html#module-multiprocessing.sharedctypes 
+        callback = BroadcastCallback(comms=self.sender)
 
         # Instantiate a FicTracDriver object to handle running of FicTrac in the background
         # and communication of program state.
