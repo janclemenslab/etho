@@ -1,0 +1,23 @@
+GENERAL:
+  hosts: [localhost] # list all hosts - use "localhost" if you want to run services locally, list hosts by their host name ("rpi3") or IP address (192.168.1.10) to run on remote machines
+  services: [DAQ, SPN]  # select services to be run by their 3-letter name
+  services_working_port: [4249, 4248] # ports over which each service is advertised
+  services_logging_port: [1449, 1448] # ports over which each service is logs
+  user: ncb
+  folder: C:/Users/ncb # default working directory
+  python_exe: C:/Users/ncb/miniconda3/python.exe  # full path to the python executable on the nodes, can point to an exe in an environment
+
+HEAD:
+  name: localhost # name/IP of head
+  playlistfolder: C:/Users/ncb/ethoconfig/playlists
+  protocolfolder: C:/Users/ncb/ethoconfig/protocols
+  stimfolder: C:/Users/ncb/ethoconfig/stim
+  loggingfolder: C:/Users/ncb/log
+
+LOGGER:
+  portrange: [1420, 1461]  # range of ports to listen to log messages from
+
+ATTENUATION: # frequency:attenuation factor pairs
+  {-1: 1,  0: 1,100: 1,150: 1, 200: 1, 250: 1, 300: 1, 350: 1, 400: 1, 450: 1, 500: 1, 600: 1, 700: 1, 800: 1, 900: 1, 1000: 1, 1500: 1, 2000: 1}
+  # TODO: change to nested list with per-host settings
+  # TODO: implement and document LED attenuation

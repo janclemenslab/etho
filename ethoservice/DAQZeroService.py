@@ -8,6 +8,8 @@ import copy
 import yaml
 from typing import Iterable, Sequence
 from .utils.log_exceptions import for_all_methods, log_exceptions
+from .callbacks import callbacks
+
 import logging
 try:
     from .utils.IOTask import *
@@ -26,12 +28,13 @@ class DAQ(BaseZeroService):
 
     # def setup(self, savefilename, duration, analog_chans_out=["ao0", "ao1"], analog_chans_in=["ai2", "ai3", "ai0"]):
     def setup(self, savefilename: str=None, play_order: Iterable=None, playlist_info=None,
-              duration: float=-1, fs: int=10000, display=False, realtime=False, 
+              duration: float=-1, fs: int=10000, display=False, realtime=False,
               nb_inputsamples_per_cycle=None, clock_source=None,
               analog_chans_out: Sequence=None, analog_chans_in: Sequence=['ai0'], digital_chans_out: Sequence=None,
-              analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={}):
+              analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={},
+              params=None):
         """[summary]
-        
+
         Args:
             savefilename (str, optional): [description]. Defaults to None.
             play_order (Iterable, optional): [description]. Defaults to None.
@@ -41,7 +44,7 @@ class DAQ(BaseZeroService):
             display (bool, optional): [description]. Defaults to False.
             realtime (bool, optional): [description]. Defaults to False.
             nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
-            clock_source (str, optional): None for AI-synced clock. 
+            clock_source (str, optional): None for AI-synced clock.
                                           Use 'OnboardClock' for boards that don't support this (USB-DAQ).
                                           Defaults to None.
             analog_chans_out (Sequence, optional): [description]. Defaults to None.
@@ -50,7 +53,8 @@ class DAQ(BaseZeroService):
             analog_data_out (Sequence, optional): [description]. Defaults to None.
             digital_data_out (Sequence, optional): [description]. Defaults to None.
             metadata (dict, optional): [description]. Defaults to {}.
-        
+            params: part of prot dict (prot['DAQ'])
+
         Raises:
             ValueError: [description]
         """
@@ -86,22 +90,23 @@ class DAQ(BaseZeroService):
             print(self.taskDO)
         # ANALOG INPUT
         if self.analog_chans_in:
-            self.taskAI = IOTask(cha_name=self.analog_chans_in, rate=fs, 
+            self.taskAI = IOTask(cha_name=self.analog_chans_in, rate=fs,
                                  nb_inputsamples_per_cycle=nb_inputsamples_per_cycle,
                                  clock_source=clock_source)
             self.taskAI.data_rec = []
-            if self.savefilename is not None:  # save
-                os.makedirs(os.path.dirname(self.savefilename), exist_ok=True)
-                attrs = {'rate': fs, 'analog_chans_in': analog_chans_in, **metadata}
-                self.save_task = ConcurrentTask(task=save, comms="queue", taskinitargs=[self.savefilename, len(self.analog_chans_in), attrs])
-                self.taskAI.data_rec.append(self.save_task)
-            if display:
-                self.disp_task = ConcurrentTask(task=plot_fast, taskinitargs=[display, nb_inputsamples_per_cycle], comms="pipe")
-                self.taskAI.data_rec.append(self.disp_task)
-            if realtime:
-                self.proc_task = ConcurrentTask(task=process_dss, comms="array", 
-                                                comms_kwargs={'shape': (nb_inputsamples_per_cycle, len(analog_chans_in))})
-                self.taskAI.data_rec.append(self.proc_task)
+
+            self.callbacks = []
+            attrs = {'rate': fs, 'analog_chans_in': analog_chans_in, **metadata}
+            common_task_kwargs = {'file_name': self.savefilename, 'nb_inputsamples_per_cycle': nb_inputsamples_per_cycle,
+                                  'nb_analog_chans_in': len(analog_chans_in), 'attrs': attrs}
+
+            for cb_name, cb_params in params['callbacks'].items():
+                if cb_params is not None:
+                    task_kwargs = {**common_task_kwargs, **cb_params}
+                else:
+                    task_kwargs = common_task_kwargs
+
+                self.taskAI.data_rec.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
 
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
