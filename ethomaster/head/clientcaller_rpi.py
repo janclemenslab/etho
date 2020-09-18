@@ -76,9 +76,8 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
 
     if 'REL' in prot['NODE']['use_services']:
         # rel = start_service(REL, SER, user_name, ip_address, folder_name)
-        rel = REL.make(SER, user_name, ip_address, folder_name)
-        
-        rel.init_local_logger('{0}/{1}/{1}_rel.log'.format(dirname, filename))
+        rel = REL.make(SER, user_name, ip_address, folder_name, remote=True)
+        # rel.init_local_logger('{0}/{1}/{1}_rel.log'.format(dirname, filename))
         print(f"   setup with pin {prot['REL']['pin']}, duration {maxduration + 40}")
         rel.setup(prot['REL']['pin'],  maxduration + 40)        
         time.sleep(1)
@@ -88,7 +87,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
 
 
     if 'THU' in prot['NODE']['use_services']:
-        thu = THU.make(SER, user_name, ip_address, folder_name)
+        thu = THU.make(SER, user_name, ip_address, folder_name, remote=True)
 
         thu.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
         print(f"   setup with pin {prot['THU']['pin']}, interval {prot['THU']['interval']}, duration {maxduration + 20}")
@@ -99,8 +98,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         print(f'success')
 
     if 'CAM' in prot['NODE']['use_services']:
-        cam = CAM.make(SER, user_name, ip_address, folder_name)
-
+        cam = CAM.make(SER, user_name, ip_address, folder_name, remote=True)
 
         cam.init_local_logger('{0}/{1}/{1}_cam.log'.format(dirname, filename))
         cam.setup('{0}/{1}/{1}.h264'.format(dirname, filename), maxduration + 10)
@@ -135,8 +133,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
                              cast2int=True)
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
-        snd = SND.make(SER, user_name, ip_address, folder_name)
-
+        snd = SND.make(SER, user_name, ip_address, folder_name, remote=True)
 
         print('sending sound data to {0} - may take a while.'.format(host_name))
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
@@ -176,7 +173,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         print(pulse_params)
         print(blink_amps)
 
-        opt2 = OPT2.make(SER, user_name, ip_address, folder_name)
+        opt2 = OPT2.make(SER, user_name, ip_address, folder_name, remote=True)
         
         print(*prot['OPT2'], maxduration)
         opt2.setup(prot['OPT2']['pin'], maxduration, blink_pers, blink_durs, blink_paus, blink_nums, blink_dels, blink_amps)

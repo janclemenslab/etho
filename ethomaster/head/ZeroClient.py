@@ -51,9 +51,9 @@ class ZeroClient(zerorpc.Client):
         handler.setLevel(logging.INFO)
         self.log.addHandler(handler)
 
-    def start_server(self, server_name, folder_name='.', warmup=2, timeout=5):
+    def start_server(self, server_name, folder_name='.', warmup=2, timeout=5, remote=False):
         self.log.info(f'   {self.SERVICE_NAME} starting')
-        if is_win():
+        if not remote:
             popen = subprocess.Popen(server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
             self.pid = popen.pid
             status = 'unknown'
