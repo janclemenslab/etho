@@ -9,7 +9,7 @@ import time
 import os
 import subprocess
 from ethoservice.utils.common import iswin
-import ethomaster.head
+
 
 class BaseZeroService(abc.ABC, zerorpc.Server):
     """Define abstract base class for all 0services.
@@ -64,6 +64,8 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
     @classmethod
     def make(cls, SER, user_name, ip_address, folder_name, python_exe='python', remote=False):
+        import ethomaster.head  # only works on the head node
+
         server_name = '{0} -m {1} {2}'.format(python_exe, cls.__module__, SER)
         print(f'initializing {cls.SERVICE_NAME} at port {cls.SERVICE_PORT}.')
         service = ethomaster.head.ZeroClient.ZeroClient("{0}@{1}".format(user_name, ip_address), 'piservice', serializer=SER)
