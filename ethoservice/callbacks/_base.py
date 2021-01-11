@@ -2,7 +2,7 @@ import queue
 import time
 
 from ..utils.ConcurrentTask import ConcurrentTask
-
+from . import register_callback
 
 class BaseCallback():
 
@@ -66,3 +66,8 @@ class BaseCallback():
         self.stop()
         if not self.CLEAN:
             self._cleanup()
+
+@register_callback
+class BroadcastCallback():
+    """broadcast data w/o acting on it."""
+    pass

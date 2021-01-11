@@ -4,16 +4,17 @@ from .ZeroService import BaseZeroService  # import super class
 import time    # for timer
 import threading
 import sys
-from .utils.log_exceptions import for_all_methods, log_exceptions
-from .utils.ConcurrentTask import Pipe
 import logging
 import defopt
 from typing import Optional
 import os
 
+from .utils.log_exceptions import for_all_methods, log_exceptions
+from .utils.ConcurrentTask import Pipe
+
 from pybmt.callback.threshold_callback import ThresholdCallback
 from pybmt.callback.broadcast_callback import BroadcastCallback
-from pybmt.fictrac.driver import FicTracDriver
+from pybmt.fictrac.service import FicTracDriver
 
 
 # decorate all methods in the class so that exceptions are properly logged
@@ -30,30 +31,19 @@ class BLT(BaseZeroService):
         self.duration = float(duration)
 
         # APPLICATION SPECIFIC SETUP CODE HERE
-        fictrac_config = params['config_file']
-        fictrac_console_out = savefilename + "_out.txt"
-        fictrac_savedir = os.path.dirname(savefilename)
-
-        # Instantiate the callback object that is invoked when new tracking state is detected.
-        self.sender, self.receiver = Pipe()  # should be instantiated outside and sender should be arg so receiver is available elsewhere
-                                             # or we make receiver acccessible as an arg of the service
-                                             # or https://docs.python.org/3.7/library/multiprocessing.html#module-multiprocessing.sharedctypes 
-        callback = BroadcastCallback(comms=self.sender)
 
         # Instantiate a FicTracDriver object to handle running of FicTrac in the background
         # and communication of program state.
-        self.tracDrv = FicTracDriver(config_file=fictrac_config, console_ouput_file=fictrac_console_out,
-                                track_change_callback=callback, plot_on=False, pgr_enable=True,
-                                save_dir=fictrac_savedir)
+        self.tracDrv = FicTracDriver.as_server(config_file=params['config_file'],  savefilename=savefilename)
 
-        self._thread_stopper = threading.Event()
+        # self._thread_stopper = threading.Event()
         if self.duration>0:
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service':True})
-        self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
+        # self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
 
     def start(self):
         self._time_started = time.time()
-        self._worker_thread.start()        
+        # self._worker_thread.start()        
         # background jobs should be run and controlled via a thread
         self.log.info('started')
         if hasattr(self, '_thread_timer'):
@@ -61,11 +51,8 @@ class BLT(BaseZeroService):
              self._thread_timer.start()
              self.log.info('finish timer started')
 
-    def _worker(self, stop_event):
-        try:
-            self.tracDrv.run()
-        except Exception as e:
-            self.log.exception(e)
+    # def _worker(self, stop_event):
+    #     pass
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')

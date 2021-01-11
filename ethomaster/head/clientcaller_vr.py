@@ -5,6 +5,7 @@ import os
 import subprocess
 import logging
 from itertools import cycle
+import defopt
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
@@ -15,6 +16,7 @@ from ethoservice.ThuAZeroService import THUA
 from ethoservice.DAQZeroService import DAQ
 from ethoservice.GCMZeroService import GCM
 from ethoservice.BLTZeroService import BLT
+from ethoservice.DLPZeroService import DLP
 
 
 def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
@@ -52,11 +54,16 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         blt = BLT.make(SER, user_name, ip_address, folder_name, python_exe)
         blt_params = undefaultify(prot['BLT'])
         blt.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, blt_params)
-        blt.init_local_logger('{0}/{1}/{1}_bltn.log'.format(dirname, filename))
+        blt.init_local_logger('{0}/{1}/{1}_blt.log'.format(dirname, filename))
         blt.start()
-    
-    print('DDDDDDDDDDDDDDDDDDDDDDDDDD')
-        
+            
+    if 'DLP' in prot['NODE']['use_services']:
+        dlp = DLP.make(SER, user_name, ip_address, folder_name, python_exe)
+        dlp_params = undefaultify(prot['DLP'])
+        dlp.setup(maxduration + 10, params=dlp_params)
+        dlp.init_local_logger('{0}/{1}/{1}_dlp.log'.format(dirname, filename))
+        dlp.start()
+            
     if 'DAQ' in prot['NODE']['use_services']:
         if prot['DAQ']['run_locally']:
             print('   Running DAQ job locally.')
@@ -118,6 +125,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
 if __name__ == '__main__':
     ip_address = 'localhost'
-    protocolfilename = 'test.yml'
+    protocolfilename = 'test_vr.yml'
     playlistfilename = 'ethoconfig/playlists/sine_short.txt'
     clientcaller(ip_address, playlistfilename, protocolfilename)
