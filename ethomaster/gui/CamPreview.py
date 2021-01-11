@@ -16,7 +16,7 @@ def camPreview(host, user='ncb'):
     cam_service_port = CAM.SERVICE_PORT
 
     cam = ZeroClient('{0}@{1}'.format(user, host))
-    cam.start_server(cam_server_name, folder_name, warmup=1)
+    cam.start_server(cam_server_name, folder_name, warmup=1, remote=True)
     cam.connect("tcp://{0}:{1}".format(host, cam_service_port))
     print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
 

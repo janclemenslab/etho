@@ -52,9 +52,11 @@ class REL(BaseZeroService):
 
     def _turn_on(self):
         self.relay = gpiozero.LED(self.pin)
+        self.relay.on()
 
     def _turn_off(self):
         if self.relay:
+            self.relay.off()
             self.relay.close()
 
     def disp(self):
