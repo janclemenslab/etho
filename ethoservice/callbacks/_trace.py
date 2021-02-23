@@ -156,8 +156,9 @@ class SaveHDF(BaseCallback):
     def _append_data(self, data, systemtime):
         self.arrays['samples'].append(data)
 
-        samplenumber = self.f.root['samples'].shape[:1]
-        self.arrays['samplenumber'].append(np.array([samplenumber]))
+        # samplenumber = self.f.root['samples'].shape[:1]
+        samplenumber = data.shape[0]
+        self.arrays['samplenumber'].append(np.array([samplenumber])[:, np.newaxis])
 
         self.arrays['systemtime'].append(systemtime)
 
@@ -169,7 +170,10 @@ class SaveHDF(BaseCallback):
         self._append_data(data_to_save, np.array([systemtime])[:, np.newaxis])
 
     def _cleanup(self):
-        self.f.flush()
+        try:
+            self.f.flush()
+        except tables.exceptions.ClosedFileError:
+            pass
         self.f.close()
 
 
@@ -264,21 +268,22 @@ class RealtimeDSS(BaseCallback):
 if __name__ == "__main__":
     import time
 
-    # ct = PlotPQG.make_concurrent(task_kwargs={'channels_to_plot': [0, 2], 'rate': .2}, comms='pipe')
-    # ct.start()
-    # for _ in range(1000):
-    #     timestamp = time.time()
-    #     ct.send((np.random.randn(10_000, 4), timestamp))
-    # ct.finish()
-    # ct.close()
-
-    ct = SaveHDF.make_concurrent({'file_name': 'test'})
+    ct = PlotPQG.make_concurrent(task_kwargs={'channels_to_plot': [0, 2], 'rate': .2}, comms='pipe')
     ct.start()
-    for _ in range(10):
+    for _ in range(1000):
         timestamp = time.time()
-        print(timestamp)
-        # ct.send((np.random.randn(10_000, 4), timestamp))
-        ct.send((np.zeros((10_000, 4)), timestamp))
-        time.sleep(1)
+        ct.send((np.random.randn(10_000, 4), timestamp))
+        # time.sleep(0.2)
     ct.finish()
     ct.close()
+
+    # ct = SaveHDF.make_concurrent({'file_name': 'test'})
+    # ct.start()
+    # for _ in range(10):
+    #     timestamp = time.time()
+    #     print(timestamp)
+    #     # ct.send((np.random.randn(10_000, 4), timestamp))
+    #     ct.send((np.zeros((10_000, 4)), timestamp))
+    #     time.sleep(1)
+    # ct.finish()
+    # ct.close()

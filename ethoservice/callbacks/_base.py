@@ -37,11 +37,6 @@ class BaseCallback():
             t0 = time.time()
             try:
                 data = self.data_source.get(timeout=self.poll_timeout)
-            except AttributeError:
-                if self.data_source.poll(timeout=self.poll_timeout):
-                    data = self.data_source.recv()
-                else:
-                    continue
             except queue.Empty:
                 continue
 
