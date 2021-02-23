@@ -32,6 +32,7 @@ class DAQ(BaseZeroService):
               nb_inputsamples_per_cycle=None, clock_source=None,
               analog_chans_out: Sequence=None, analog_chans_in: Sequence=['ai0'], digital_chans_out: Sequence=None,
               analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={},
+              devname: str='Dev1',
               params=None):
         """[summary]
 
@@ -52,6 +53,7 @@ class DAQ(BaseZeroService):
             digital_chans_out (Sequence, optional): [description]. Defaults to None.
             analog_data_out (Sequence, optional): [description]. Defaults to None.
             digital_data_out (Sequence, optional): [description]. Defaults to None.
+            devname (str, optional): Defaults to Dev1.
             metadata (dict, optional): [description]. Defaults to {}.
             params: part of prot dict (prot['DAQ'])
 
@@ -66,9 +68,11 @@ class DAQ(BaseZeroService):
         self.analog_chans_in = analog_chans_in
         self.digital_chans_out = digital_chans_out
 
+        self.dev_name = devname
+
         # ANALOG OUTPUT
         if self.analog_chans_out:
-            self.taskAO = IOTask(cha_name=self.analog_chans_out, rate=fs, clock_source=clock_source)
+            self.taskAO = IOTask(self.dev_name, cha_name=self.analog_chans_out, rate=fs, clock_source=clock_source)
             if analog_data_out[0].shape[-1] is not len(self.analog_chans_out):
                 raise ValueError(f'Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]}).')
             play_order_new = copy.deepcopy(play_order)
@@ -80,7 +84,7 @@ class DAQ(BaseZeroService):
             print(self.taskAO)
         # DIGITAL OUTPUT
         if self.digital_chans_out:
-            self.taskDO = IOTask(cha_name=self.digital_chans_out, rate=fs, clock_source=clock_source)
+            self.taskDO = IOTask(self.dev_name, cha_name=self.digital_chans_out, rate=fs, clock_source=clock_source)
             play_order_new = copy.deepcopy(play_order)
             self.taskDO.data_gen = data_playlist(digital_data_out, play_order_new, name='DO')
             if clock_source is None:
@@ -90,7 +94,7 @@ class DAQ(BaseZeroService):
             print(self.taskDO)
         # ANALOG INPUT
         if self.analog_chans_in:
-            self.taskAI = IOTask(cha_name=self.analog_chans_in, rate=fs,
+            self.taskAI = IOTask(self.dev_name, cha_name=self.analog_chans_in, rate=fs,
                                  nb_inputsamples_per_cycle=nb_inputsamples_per_cycle,
                                  clock_source=clock_source)
             self.taskAI.data_rec = []
