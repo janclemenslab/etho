@@ -87,6 +87,48 @@ class SharedNumpyArray:
         del(self)
 
 
+# class Faucet():
+#     """Wrapper for Pipe connection objects that exposes
+#     `get` function for common interface with Queues."""
+
+#     WHOAMI = 'pipe'
+
+#     def __init__(self, connection: multiprocessing.connection.Connection):
+#         """Wraps Connection object returned when calling Pipe and
+#         delegates function calls to have a common interface with the Queue.
+
+#         Args:
+#             connection (multiprocessing.connection.Connection): [description]
+#         """
+#         self.connection = connection
+#         self.qsize = 0
+
+#     def __getattr__(self, name: str) -> Any:
+#         """Delegate all attrs except `get` to do underlying Connection."""
+#         if name=='get':
+#             return self.get
+#         else:
+#             return getattr(self.connection, name)
+
+#     def get(self, block: bool = True, timeout: Optional[float] = 0.001, empty_value: Any =None) -> Any:
+#         """Mimics the logic of the `Queue.get`.
+
+#         Args:
+#             block (bool, optional): [description]. Defaults to True.
+#             timeout (float, optional): [description]. Defaults to 0.001.
+#             empty_value ([type], optional): [description]. Defaults to None.
+
+#         Returns:
+#             [type]: [description]
+#         """
+#         if block:
+#             timeout = None
+#         if self.connection.poll(timeout):
+#             return self.connection.recv()
+#         else:
+#             return empty_value
+
+
 class Faucet():
     """Wrapper for Pipe connection objects that exposes
     `get` function for common interface with Queues."""
@@ -100,15 +142,25 @@ class Faucet():
         Args:
             connection (multiprocessing.connection.Connection): [description]
         """
-        self.connection = connection
+        self._connection = connection
         self.qsize = 0
+        # self.send = self._connection.send
+        # breakpoint()
+        for attr_name in self._connection.__dir__():
+            if attr_name in self.__dir__():
+                continue
+            else:
+                attr_value = self._connection.__getattribute__(attr_name)
+                self.__setattr__(attr_name, attr_value)
 
-    def __getattr__(self, name: str) -> Any:
-        """Delegate all attrs except `get` to do underlying Connection."""
-        if name=='get':
-            return self.get
-        else:
-            return getattr(self.connection, name)
+    # def __getattribute__(self, name: str) -> Any:
+    #     """Delegate all attrs except `get` to do underlying Connection."""
+    #     if name=='get':
+    #         return self._get
+    #     else:
+    #         # return getattr(self._connection, name)
+    #         # the call to `self._connection` will lead to recursivity!
+    #         return super()._connection.__getattribute__(name)  # `object._connection.__getattribute__(name)` or `super()._connection.__getattribute__(name)` ?
 
     def get(self, block: bool = True, timeout: Optional[float] = 0.001, empty_value: Any =None) -> Any:
         """Mimics the logic of the `Queue.get`.
@@ -123,12 +175,10 @@ class Faucet():
         """
         if block:
             timeout = None
-        if self.connection.poll(timeout):
-            return self.connection.recv()
+        if self._connection.poll(timeout):
+            return self._connection.recv()
         else:
             return empty_value
-
-
 def Pipe(duplex=False):
     receiver, sender = mp.Pipe(duplex)
     receiver = Faucet(receiver)
