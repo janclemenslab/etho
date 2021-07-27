@@ -112,10 +112,10 @@ class LED_blinker(DLP_runner):
 
 # Example with stim control via param file
 @register_runner
-class LED_blinker_file(DLP_runner):
-    """Blinking square - opacity controlled by `opacity` field in npz file."""
+class ObjectMoverSizer(DLP_runner):
+    """Move and resize object based on `size` and `position` fields in npz file."""
 
-    def __init__(self, win, object, filename: str, led_size = 0.3, led_pos = [-1,-0.3], **kwignore):
+    def __init__(self, win, object, filename: str, **kwignore):
         """Set up LED blinker.
 
         Args:
@@ -130,18 +130,17 @@ class LED_blinker_file(DLP_runner):
             Dict[str: float/int]: values should be numbers - not lists or np.arrays!
 
         """
-        self.led_size = led_size
-        self.led_pos = led_pos
-
-        self.rectangle = object(win=win, units = 'norm', size=self.led_size, pos=self.led_pos,
-                              autoDraw = True, fillColor=[-1, -1, -1], lineWidth=0, opacity=1)
+        self.object = object(win=win, units = 'norm', size=0, pos=[-1, 0], radius=2*1/270,
+                    autoDraw = True, fillColor = [-1, -1, -1], lineWidth=0)
+        # self.object = object(win=win, units = 'norm', size=self.led_size, pos=self.led_pos,
+        #                       autoDraw = True, fillColor=[-1, -1, -1], lineWidth=0, opacity=1)
 
         # do not use plain arrays - either pd.DataFrames.read_csv, or np.recarrays
         # so we parameters in the data are more obvious
         # if filename is list -> load all extend the list
         self.params = np.load(filename)
 
-    def update(self, frame_number: int, ball_info: Dict, kwargs: Optional[Dict]):
+    def update(self, frame_number: int, ball_info: Dict, **kwargs: Optional[Dict]):
         """Update LED blinker.
 
         Args:
@@ -151,10 +150,13 @@ class LED_blinker_file(DLP_runner):
         Returns:
             Dict[str: float/int]: values should be numbers - not lists or np.arrays!
         """
-        self.rectangle.opacity = self.params['opacity'][frame_number]
+        self.object.size = self.params['sizes'][frame_number]
+        self.object.pos = [self.params['positions'][frame_number], 0]
         return self.status()
 
     def status(self):
         """Generate status message."""
-        log_msg = {'opacity': self.rectangle.opacity}
+        log_msg = {'size': self.object.size,
+                   'position_0': self.object.pos[0],
+                   'position_1': self.object.pos[1]}
         return log_msg
