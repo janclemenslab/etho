@@ -87,6 +87,41 @@ class SharedNumpyArray:
         del(self)
 
 
+# class SharedMemory:
+
+#     def __init__(self, example):
+#         self._shared_array = mmap.mmap(-1, ctypes.sizeof(fictrac.FicTracState), "FicTracStateSHMEM")
+
+#     @property
+#     def stale(self):
+#         """Thread safe access to whether or not the current array values have been get-ed already."""
+#         with self._lock:
+#             return self._stale.value
+    
+#     def poll(self):
+#         """Returns true if the array has been update since the last put."""
+#         return not self.stale
+
+#     def get(self, timeout=None, block=True):
+#         """Returns array values. Block is unsed and their for interface consistency with Queue."""
+#         with self._lock:
+#             self._stale.value = True
+#             return self._asnp()
+
+#     def put(self, data):
+#         """Update the values in the shared array."""
+#         if data is None:
+#             return
+
+#         with self._lock:
+#             self._shared_array = self._asnp()
+#             self._shared_array[:] = data[0][:]
+#             self._stale.value = False
+
+#     def close(self):
+#         del(self)
+
+
 class Faucet():
     """Wrapper for Pipe connection objects that exposes
     `get` function for common interface with Queues."""
@@ -102,14 +137,12 @@ class Faucet():
         """
         self.connection = connection
         self.qsize = 0
-        self.send = self.connection.send
 
-    # def __getattribute__(self, name: str) -> Any:
-        """Delegate all attrs except `get` to do underlying Connection."""
-        # if name=='get':
-        #     return self._get
-        # else:
-        #     return getattr(self.connection, name)
+        # delegate function calls
+        self.send = self.connection.send
+        self.close = self.connection.close
+        self.closed = self.connection.closed
+    
 
     def get(self, block: bool = True, timeout: Optional[float] = 0.001, empty_value: Any =None) -> Any:
         """Mimics the logic of the `Queue.get`.
