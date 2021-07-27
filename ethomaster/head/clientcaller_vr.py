@@ -36,14 +36,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     dirname = prot['NODE']['savefolder']
     print(filename)
 
-    if 'DLP' in prot['NODE']['use_services']:
-        dlp_save_filename = '{0}/{1}/{1}'.format(dirname, filename)
-
-        dlp = DLP.make(SER, user_name, ip_address, folder_name, python_exe)
-        dlp_params = undefaultify(prot['DLP'])
-        dlp.setup(maxduration + 10, dlp_save_filename, params=dlp_params)
-        dlp.init_local_logger('{0}/{1}/{1}_dlp.log'.format(dirname, filename))
-
     if 'SPN' in prot['NODE']['use_services']:
         ptg = GCM.make(SER, user_name, ip_address, folder_name, python_exe)
         cam_params = undefaultify(prot['SPN'])
@@ -153,6 +145,18 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
               metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']},
               params=undefaultify(prot['DAQ']))
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(daq_save_folder, filename))
+
+    # IMPORTANT! Need to run this last. 
+    # Otherwise, terminal windows from the other services will steal focus of psychopy window (I guess).
+    if 'DLP' in prot['NODE']['use_services']:
+        dlp_save_filename = '{0}/{1}/{1}'.format(dirname, filename)
+
+        dlp = DLP.make(SER, user_name, ip_address, folder_name, python_exe)
+        dlp_params = undefaultify(prot['DLP'])
+        dlp.setup(maxduration + 10, dlp_save_filename, params=dlp_params)
+        dlp.init_local_logger('{0}/{1}/{1}_dlp.log'.format(dirname, filename))
+
+    if 'DAQ' in prot['NODE']['use_services']:
         daq.start()
         logging.info('DAQ started')
         print('DAQ started')
