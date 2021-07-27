@@ -63,17 +63,19 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
 
     @classmethod
-    def make(cls, SER, user_name, ip_address, folder_name, python_exe='python', remote=False):
+    def make(cls, SER, user_name, ip_address, folder_name, python_exe='python', remote=False, port=None):
         import ethomaster.head  # only works on the head node
+        if port is None:
+            port = cls.SERVICE_PORT
 
         server_name = '{0} -m {1} {2}'.format(python_exe, cls.__module__, SER)
-        print(f'initializing {cls.SERVICE_NAME} at port {cls.SERVICE_PORT}.')
+        print(f'initializing {cls.SERVICE_NAME} at port {port}.')
         service = ethomaster.head.ZeroClient.ZeroClient("{0}@{1}".format(user_name, ip_address), 'piservice', serializer=SER)
         print('   starting server:', end='')
         ret = service.start_server(server_name, folder_name, warmup=1, remote=remote)
         print(f'{"success" if ret else "FAILED"}.')
         print('   connecting to server:', end='')
-        ret = service.connect("tcp://{0}:{1}".format(ip_address, cls.SERVICE_PORT))
+        ret = service.connect("tcp://{0}:{1}".format(ip_address, port))
         print(f'{"success" if ret else "FAILED"}.')
         return service
 
