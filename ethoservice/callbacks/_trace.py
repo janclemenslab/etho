@@ -174,6 +174,63 @@ class SaveHDF(BaseCallback):
 
 
 @register_callback
+class SaveDLP_HDF(BaseCallback):
+    """
+    Save dict of dicts of single values to h5.
+    First dict's keys map to groups, second dict's keys to variables.
+    """
+
+    FRIENDLY_NAME = 'savedlp_h5'
+    SUFFIX = '_dlp.h5'
+
+    def __init__(self, data_source, *, file_name, attrs=None, poll_timeout=0.01, **kwargs):
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+        self.file_name = file_name
+        self.f = tables.open_file(self.file_name + self.SUFFIX, mode="w")
+        self.vanilla: bool = True  # True if the data structure has not been initialized (via `_init_data`)
+        self.arrays = dict()
+
+    @classmethod
+    def make_concurrent(cls, task_kwargs, comms='queue'):
+        return ConcurrentTask(task=cls.make_run, task_kwargs=task_kwargs, comms=comms)
+
+    def _init_data(self, data, systemtime):
+        filters = tables.Filters(complevel=4, complib='zlib', fletcher32=True)
+        for grp_name, grp_data in data.items():
+            group = self.f.create_group('/', name=grp_name)
+            self.arrays[grp_name] = dict()
+            for key, val in grp_data.items():
+                self.arrays[grp_name][key] = self.f.create_earray(group, key,
+                                                    tables.Atom.from_dtype(np.array(val).dtype),
+                                                    shape=(0,),
+                                                    chunkshape=(1000,),
+                                                    filters=filters)
+
+        self.arrays['systemtime'] = self.f.create_earray(self.f.root, 'systemtime',
+                            tables.Atom.from_dtype(systemtime.dtype),
+                            shape=(0,),
+                            chunkshape=(1000,),
+                            filters=filters)
+        self.vanilla = False
+
+    def _append_data(self, data, systemtime):
+        for grp_name, grp_data in data.items():
+            for key, val in grp_data.items():
+                self.arrays[grp_name][key].append(np.array([val]))
+        self.arrays['systemtime'].append(systemtime)
+
+    def _loop(self, data):
+        data_to_save, systemtime = data  # unpack
+        if self.vanilla:
+            self._init_data(data_to_save, np.array([systemtime]))
+        self._append_data(data_to_save, np.array([systemtime]))
+
+    def _cleanup(self):
+        self.f.flush()
+        self.f.close()
+
+
+@register_callback
 class RealtimeDSS(BaseCallback):
     def __init__(self, data_source, *, poll_timeout=0.01,
                  model_save_name: str = None,
