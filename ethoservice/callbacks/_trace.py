@@ -156,7 +156,7 @@ class SaveHDF(BaseCallback):
     def _append_data(self, data, systemtime):
         self.arrays['samples'].append(data)
 
-        samplenumber = self.f.root['samples'].shape[:1]
+        samplenumber = data.shape[:1]  # self.f.root['samples'].shape[:1]
         self.arrays['samplenumber'].append(np.array([samplenumber]))
 
         self.arrays['systemtime'].append(systemtime)
