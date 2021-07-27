@@ -30,15 +30,18 @@ class DLP(BaseZeroService):
         fps = 180
         nb_frames = int(self.duration * fps)
         self.tracDrv = FicTracDriver.as_client(remote_endpoint_url="localhost:5556")
-        if self.tracDrv.fictrac_process is None:
+        if self.tracDrv.fictrac_process is None:  # ensure fictrac is running
             self.tracDrv = None
 
         # 180 hz, 7 bit depth, white
-        pycrafter4500.pattern_mode(num_pats=3,
-                                fps=180,
-                                bit_depth=7,
-                                led_color=0b111,  # BGR flags
-                                )
+        try:
+            pycrafter4500.pattern_mode(num_pats=3,
+                                    fps=180,
+                                    bit_depth=7,
+                                    led_color=0b111,  # BGR flags
+                                    )
+        except AttributeError:
+            raise ValueError("Failed setting DLP pattern mode. Maybe DLP is off.")
 
         # background jobs should be run and controlled via a thread
 
@@ -56,17 +59,15 @@ class DLP(BaseZeroService):
         self._worker_thread = threading.Thread(target=self._workerX, 
             args=(self._thread_stopper, self._thread_start_run, self._thread_is_ready, logfilename, nb_frames, self.log, self.tracDrv, params))
 
-        # start thread here so everything is initialized before we start for
-        # more deterministic delays
+        # start thread here so everything is initialized before 
+        # we start for more deterministic delays
         self.log.info("Initialzing PsychoPy stuff.")
         
         # start the thread - this will halt after initialization
-        print('started')
         self._worker_thread.start()
 
         # block until thread is initialized
         self._thread_is_ready.wait()
-        print('init done')
         
     def start(self):
         self._time_started = time.time()
@@ -82,15 +83,19 @@ class DLP(BaseZeroService):
 
     def _workerX(self, stop_event, start_run_event, is_ready_event, savefilename, nb_frames, logger, tracDrv, params):
         # need to import psychopy here since psychopy only works in the thread where it's imported
-        import pyglet.app
+        # import pyglet.app
         from psychopy.visual.windowframepack import ProjectorFramePacker
         import psychopy.visual, psychopy.event, psychopy.core, psychopy.visual.windowwarp
         from tqdm import tqdm
         from .callbacks import callbacks
 
         # INIT WINDOW
-        win_size = (912,1140)
+        win_size = (912, 1140)
         projection_width = win_size[0]
+
+        # main window
+        win = psychopy.visual.Window(monitor='projector', screen=1, units="norm", fullscr=False,
+                     useFBO = True, size=win_size, allowGUI=False)
 
         # 'light' window below fly
         block_size = 100
@@ -100,31 +105,22 @@ class DLP(BaseZeroService):
         #                               useFBO = True, size = (block_size,block_size),
         #                               pos=(int(projection_width/2) - (block_size/2), int(4*projection_width/5) - (block_size/2)),
         #                               allowGUI=False, color=[0.8,0.8,0.8])
-        # # 'light' window below fly
-        # win2 = psychopy.visual.Window(monitor='projector', screen=1, units="norm", fullscr=False,
-        #     useFBO = True, size = (block_size,block_size),
-        #     pos=(int(win_size[0]/2)-(block_size/2),int(4*win_size[0]/5)-(block_size/2)),
-        #     allowGUI=False, color=[0.8,0.8,0.8])
+        # 'light' window below fly
+        win2 = psychopy.visual.Window(monitor='projector', screen=1, units="norm", fullscr=False,
+            useFBO = True, size = (block_size,block_size),
+            pos=(int(win_size[0]/2)-(block_size/2),int(4*win_size[0]/5)-(block_size/2)),
+            allowGUI=False, color=[0.8,0.8,0.8])
         
-        # main window
-        win = psychopy.visual.Window(monitor='projector', screen=1, units="norm", fullscr=False,
-                     useFBO = True, size=win_size, allowGUI=False, waitBlanking=False)
         framePacker = ProjectorFramePacker(win)
 
         # INIT WARPER (skip for prototyping)
         if params['use_warping']:
             logger.info(f"Loading warp data from {params['warpfile']}")
             # create a warper and change projection using warpfile
-            t0 = time.time()
             warper = psychopy.visual.windowwarp.Warper(win, warp=None, warpfile=None)
-            # warper = psychopy.visual.windowwarp.Warper(win, warp='warpfile', warpfile=params['warpfile'],
-                                                    #    eyepoint = [0.5, 0.5], flipHorizontal = False,
-                                                    #    flipVertical = False)
-
             warper.changeProjection(warp='warpfile', warpfile=params['warpfile'],
                                     eyepoint = [0.5, 0.5], flipHorizontal = False,
                                     flipVertical = False)
-            print(time.time() - t0)
             logger.info("Warp file loaded.")
 
         # INIT RUNNERS
