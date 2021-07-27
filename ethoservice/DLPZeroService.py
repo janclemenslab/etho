@@ -72,8 +72,6 @@ class DLP(BaseZeroService):
     def start(self):
         self._time_started = time.time()
         # background jobs should be run and controlled via a thread
-        # self._worker_thread.start()
-
         self._thread_start_run.set()  # this will start playing the DLP stimulis  
         self.log.info('started')
         if hasattr(self, '_thread_timer'):
@@ -83,36 +81,27 @@ class DLP(BaseZeroService):
 
     def _workerX(self, stop_event, start_run_event, is_ready_event, savefilename, nb_frames, logger, tracDrv, params):
         # need to import psychopy here since psychopy only works in the thread where it's imported
-        # import pyglet.app
         from psychopy.visual.windowframepack import ProjectorFramePacker
         import psychopy.visual, psychopy.event, psychopy.core, psychopy.visual.windowwarp
         from tqdm import tqdm
         from .callbacks import callbacks
 
-        # INIT WINDOW
-        win_size = (912, 1140)
-        projection_width = win_size[0]
+        # # INIT WINDOW
+        screen_id = 1
+        block_size = 100
 
         # main window
-        win = psychopy.visual.Window(monitor='projector', screen=1, units="norm", fullscr=False,
-                     useFBO = True, size=win_size, allowGUI=False)
-
-        # 'light' window below fly
-        block_size = 100
-        # # FIXME: when using the second window AND a warper, calls to `win.flip()` block!
-        # # moving this to after the warper init blocks the code immediately
-        # win2 = psychopy.visual.Window(monitor='projector', screen=1, units="norm", fullscr=False,
-        #                               useFBO = True, size = (block_size,block_size),
-        #                               pos=(int(projection_width/2) - (block_size/2), int(4*projection_width/5) - (block_size/2)),
-        #                               allowGUI=False, color=[0.8,0.8,0.8])
-        # 'light' window below fly
-        win2 = psychopy.visual.Window(monitor='projector', screen=1, units="norm", fullscr=False,
-            useFBO = True, size = (block_size,block_size),
-            pos=(int(win_size[0]/2)-(block_size/2),int(4*win_size[0]/5)-(block_size/2)),
-            allowGUI=False, color=[0.8,0.8,0.8])
-        
+        win = psychopy.visual.Window(monitor='projector', screen=screen_id, units="norm", fullscr=False,
+            useFBO = True, size=(912,1140), allowGUI=False)
         framePacker = ProjectorFramePacker(win)
+    
+        # 'light' window below fly
+        win2 = psychopy.visual.Window(monitor='projector', screen=screen_id, units="norm", fullscr=False,
+            useFBO = True, size = (block_size,block_size),
+            pos=(int(win.size[0]/2)-(block_size/2),int(4*win.size[0]/5)-(block_size/2)),
+            allowGUI=False, color=[0.8,0.8,0.8])
 
+    
         # INIT WARPER (skip for prototyping)
         if params['use_warping']:
             logger.info(f"Loading warp data from {params['warpfile']}")
@@ -151,6 +140,12 @@ class DLP(BaseZeroService):
         logger.info('Waiting for `start_run` event.')
         self._thread_start_run.wait()
 
+        # re-activate windows
+        win2.winHandle.activate() #re-activate window
+        win2.flip() #redraw the newly activated window
+        win.winHandle.activate() #re-activate window
+        win.flip() #redraw the newly activated window
+
         # RUN THE RUNNERS
         logger.info('Running the runners')
         ball_info = None
@@ -168,7 +163,7 @@ class DLP(BaseZeroService):
                 log_msg[runner_name] = log_data
 
             win.flip()
-            psychopy.event.clearEvents()
+            # psychopy.event.clearEvents()
             systemtime = time.time()
             for task in tasks:
                 task.send((log_msg, systemtime))
@@ -178,6 +173,7 @@ class DLP(BaseZeroService):
             runner.destroy()
 
         win.close()
+        win2.close()
         for task in tasks:
             try:
                 task.close()
