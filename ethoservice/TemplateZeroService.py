@@ -7,7 +7,7 @@ import threading
 import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
-
+import defopt
 
 # decorate all methods in the class so that exceptions are properly logged
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -83,11 +83,15 @@ class TMP(BaseZeroService):
             return None
 
 
-if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        ser = sys.argv[1]
-    else:
-        ser = 'default'
-    s = TMP(serializer=ser)
-    s.bind("tcp://0.0.0.0:{0}".format(s.SERVICE_PORT))  # broadcast on all IPs
+def cli(serializer: str = 'default', port: Optional[str] = None):
+    if port == None:
+        port = TMP.SERVICE_PORT
+    s = TMP(serializer=serializer)
+    s.bind("tcp://0.0.0.0:{0}".format(port))  # broadcast on all IPs
+    print('running TMPZeroService')
     s.run()
+    print('done')
+    
+
+if __name__ == '__main__':
+    defopt.run(cli)
