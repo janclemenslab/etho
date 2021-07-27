@@ -1,24 +1,19 @@
 #!/usr/bin/env python
-# required imports
 from .ZeroService import BaseZeroService  # import super class
-import zerorpc # for starting service in `main()`
 import time    # for timer
 import threading
-import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 from .utils import dlp_runners
 import logging
 import defopt
-from typing import Optional, Any
+from typing import Optional
 import pycrafter4500
-import os
 
 from pybmt.callback.threshold_callback import ThresholdCallback
 from pybmt.callback.broadcast_callback import BroadcastCallback
 from pybmt.fictrac.service import FicTracDriver
 from pybmt.fictrac.state import FicTracState
-import mmap
-import ctypes
+
 
 
 # decorate all methods in the class so that exceptions are properly logged
@@ -29,85 +24,170 @@ class DLP(BaseZeroService):
     SERVICE_PORT = 4253  # last two digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "DLP" # short, uppercase, 3-letter ID of the service (must equal class name)
 
-    def setup(self, duration, params=None):
+    def setup(self, duration, logfilename, params=None):
         self._time_started = None
         self.duration = float(duration)
-        # APPLICATION SPECIFIC SETUP CODE HERE
-        if params is None or 'runner' not in params:
-            self.runner = dlp_runners.runners['default']
-        else:
-            self.runner = dlp_runners.runners[params['runner']]
-
+        fps = 180
+        nb_frames = int(self.duration * fps)
         self.tracDrv = FicTracDriver.as_client(remote_endpoint_url="localhost:5556")
+        if self.tracDrv.fictrac_process is None:
+            self.tracDrv = None
 
         # 180 hz, 7 bit depth, white
         pycrafter4500.pattern_mode(num_pats=3,
                                 fps=180,
                                 bit_depth=7,
-                                led_color=0b111,  # BGR flags                 
+                                led_color=0b111,  # BGR flags
                                 )
 
         # background jobs should be run and controlled via a thread
+
+        # signals that the works is initialized and ready to receive the start_run signal
+        self._thread_is_ready = threading.Event()
+        # start running the worker after init
+        self._thread_start_run = threading.Event()
         # threads can be stopped by setting an event: `_thread_stopper.set()`
         self._thread_stopper = threading.Event()
-        # and/or via a timer
+
+        # via a timer
         if self.duration>0:
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service':True})
         #
-        self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
+        self._worker_thread = threading.Thread(target=self._workerX, 
+            args=(self._thread_stopper, self._thread_start_run, self._thread_is_ready, logfilename, nb_frames, self.log, self.tracDrv, params))
 
+        # start thread here so everything is initialized before we start for
+        # more deterministic delays
+        self.log.info("Initialzing PsychoPy stuff.")
+        
+        # start the thread - this will halt after initialization
+        print('started')
+        self._worker_thread.start()
+
+        # block until thread is initialized
+        self._thread_is_ready.wait()
+        print('init done')
+        
     def start(self):
         self._time_started = time.time()
-
         # background jobs should be run and controlled via a thread
-        self._worker_thread.start()
+        # self._worker_thread.start()
+
+        self._thread_start_run.set()  # this will start playing the DLP stimulis  
         self.log.info('started')
         if hasattr(self, '_thread_timer'):
              self.log.info('duration {0} seconds'.format(self.duration))
              self._thread_timer.start()
              self.log.info('finish timer started')
 
-    def _worker(self, stop_event): 
-        self.runner(self.log, self.tracDrv)
+    def _workerX(self, stop_event, start_run_event, is_ready_event, savefilename, nb_frames, logger, tracDrv, params):
+        # need to import psychopy here since psychopy only works in the thread where it's imported
+        import pyglet.app
+        from psychopy.visual.windowframepack import ProjectorFramePacker
+        import psychopy.visual, psychopy.event, psychopy.core, psychopy.visual.windowwarp
+        from tqdm import tqdm
+        from .callbacks import callbacks
 
-    # def _workerX(self, stop_event):
-    #     # need to import here since psychopy can only work in the thread where it's imported
-    #     import pyglet.app #
-    #     from psychopy import visual, event, core
-    #     from psychopy.visual.windowframepack import ProjectorFramePacker
-    #     win = visual.Window([800,800], monitor="testMonitor", screen=1, units="deg", fullscr=True, useFBO = True)
-    #     framePacker = ProjectorFramePacker(win)
+        # INIT WINDOW
+        win_size = (912,1140)
+        projection_width = win_size[0]
 
-    #     rect = visual.Rect(win, width=5, height=5, autoLog=None, units='', lineWidth=1.5, lineColor=None,
-    #                         lineColorSpace='rgb', fillColor=[0.0,0.0,0.0], fillColorSpace='rgb', pos=(-10, 0), size=None, ori=0.0, 
-    #                         opacity=1.0, contrast=1.0, depth=0, interpolate=True, name=None, autoDraw=False)
-
-    #     cnt = 0
-    #     period = 100
-    #     RUN = True
-    #     WHITE = True
-    #     self.log.info('run')
-    #     while RUN:
-    #         cnt +=1
-    #         if WHITE:
-    #             rect.fillColor = [1.0, 1.0, 1.0]  # advance phase by 0.05 of a cycle
-    #         else:
-    #             rect.fillColor = [-1.0, -1.0, -1.0]  # advance phase by 0.05 of a cycle
-    #         if cnt % period == 0:
-    #             WHITE = not WHITE
-    #             rect.pos = rect.pos + [0.01, 0]
-    #             if self.tracDrv is not None:
-    #                 print(self.tracDrv._read_message())
-
-    #         rect.draw()
-    #         win.flip()
-
-    #         if len(event.getKeys())>0:
-    #             break
-    #         event.clearEvents()
+        # 'light' window below fly
+        block_size = 100
+        # # FIXME: when using the second window AND a warper, calls to `win.flip()` block!
+        # # moving this to after the warper init blocks the code immediately
+        # win2 = psychopy.visual.Window(monitor='projector', screen=1, units="norm", fullscr=False,
+        #                               useFBO = True, size = (block_size,block_size),
+        #                               pos=(int(projection_width/2) - (block_size/2), int(4*projection_width/5) - (block_size/2)),
+        #                               allowGUI=False, color=[0.8,0.8,0.8])
+        # # 'light' window below fly
+        # win2 = psychopy.visual.Window(monitor='projector', screen=1, units="norm", fullscr=False,
+        #     useFBO = True, size = (block_size,block_size),
+        #     pos=(int(win_size[0]/2)-(block_size/2),int(4*win_size[0]/5)-(block_size/2)),
+        #     allowGUI=False, color=[0.8,0.8,0.8])
         
-    #     win.close()
-    #     core.quit()
+        # main window
+        win = psychopy.visual.Window(monitor='projector', screen=1, units="norm", fullscr=False,
+                     useFBO = True, size=win_size, allowGUI=False, waitBlanking=False)
+        framePacker = ProjectorFramePacker(win)
+
+        # INIT WARPER (skip for prototyping)
+        if params['use_warping']:
+            logger.info(f"Loading warp data from {params['warpfile']}")
+            # create a warper and change projection using warpfile
+            t0 = time.time()
+            warper = psychopy.visual.windowwarp.Warper(win, warp=None, warpfile=None)
+            # warper = psychopy.visual.windowwarp.Warper(win, warp='warpfile', warpfile=params['warpfile'],
+                                                    #    eyepoint = [0.5, 0.5], flipHorizontal = False,
+                                                    #    flipVertical = False)
+
+            warper.changeProjection(warp='warpfile', warpfile=params['warpfile'],
+                                    eyepoint = [0.5, 0.5], flipHorizontal = False,
+                                    flipVertical = False)
+            print(time.time() - t0)
+            logger.info("Warp file loaded.")
+
+        # INIT RUNNERS
+        logger.info('Initializing runners:')
+        runners = {}
+        for runner_name, runner_args in params['runners'].items():
+            if 'object' in runner_args:  # get class handle from object name
+                runner_args['object'] = psychopy.visual.__dict__[runner_args['object']]
+            logger.info(f'   {runner_name}: {runner_args}')
+            runners[runner_name] = dlp_runners.runners[runner_name](win, **runner_args)
+
+        # INIT CALLBACKS
+        tasks = []
+        attrs = {}
+        common_task_kwargs = {'file_name': savefilename, 'attrs': attrs}
+        for cb_name, cb_params in params['callbacks'].items():
+            if cb_params is not None:
+                task_kwargs = {**common_task_kwargs, **cb_params}
+            else:
+                task_kwargs = common_task_kwargs
+            tasks.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
+
+        for task in tasks:
+            task.start()
+
+        logger.info('Finished initializing worker.') 
+        is_ready_event.set()
+        logger.info('Waiting for `start_run` event.')
+        self._thread_start_run.wait()
+
+        # RUN THE RUNNERS
+        logger.info('Running the runners')
+        ball_info = None
+        log_msg = dict()
+        for frame_number in tqdm(range(nb_frames), total=nb_frames, mininterval=1):
+            if stop_event.is_set():
+                logger.info('received stop event')
+                break
+
+            if tracDrv is not None:   # get ball info
+                ball_info = tracDrv._read_message()
+
+            for runner_name, runner in runners.items():
+                log_data = runner.update(frame_number, ball_info)
+                log_msg[runner_name] = log_data
+
+            win.flip()
+            psychopy.event.clearEvents()
+            systemtime = time.time()
+            for task in tasks:
+                task.send((log_msg, systemtime))
+
+       # CLEAN UP RUNNERS
+        for runner in runners.values():
+            runner.destroy()
+
+        win.close()
+        for task in tasks:
+            try:
+                task.close()
+            except Exception as e:
+                pass  # print(e)
+        psychopy.core.quit()
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
@@ -154,7 +234,7 @@ def cli(serializer: str = 'default', port: Optional[str] = None):
     print('running DLPZeroService')
     s.run()
     print('done')
-    
+
 
 if __name__ == '__main__':
     defopt.run(cli)
