@@ -7,7 +7,7 @@ from itertools import cycle
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
-from ethomaster.utils.config import readconfig
+from ethomaster.utils.config import readconfig, undefaultify
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 
 from ethoservice.SndZeroService import SND
@@ -60,7 +60,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
         print('done')
-        cam_params = dict(prot['PTG'])
+        cam_params = undefaultify(prot['PTG'])
         ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
         ptg.init_local_logger('{0}/{1}/{1}_ptg.log'.format(dirname, filename))
         ptg.start()
@@ -73,7 +73,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
         ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
         print('done')
-        cam_params = dict(prot['SPN'])
+        cam_params = undefaultify(prot['SPN'])
         ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
         ptg.init_local_logger('{0}/{1}/{1}_spn.log'.format(dirname, filename))
         ptg.start()
@@ -125,6 +125,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print('done')
         print('sending sound data to {0} - may take a while.'.format(ip_address))
 
+        daq_params = undefaultify(prot['DAQ'])
         daq.setup(daq_save_filename, playlist_items, playlist,
               maxduration, fs,
               display=prot['DAQ']['display'],
@@ -136,7 +137,8 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
               digital_chans_out=prot['DAQ']['digital_chans_out'],
               analog_data_out=analog_data,
               digital_data_out=digital_data,
-              metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']})
+              metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']},
+              params=daq_params)
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(daq_save_folder, filename))
         daq.start()
         logging.info('DAQ started')
