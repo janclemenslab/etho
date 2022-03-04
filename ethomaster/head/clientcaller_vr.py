@@ -7,6 +7,7 @@ import logging
 from itertools import cycle
 import defopt
 from pprint import pprint
+import shutil
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
@@ -35,6 +36,11 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
     dirname = prot['NODE']['savefolder']
     print(filename)
+    breakpoint()
+    os.makedirs(f"{dirname}/{filename}", exist_ok=True)
+
+    shutil.copy2(os.path.join(config['HEAD']['protocolfolder'], protocolfile),
+                 f'{dirname}/{filename}/{os.path.basename(protocolfile)}')
 
     if 'DLP' in prot['NODE']['use_services']:
         dlp_save_filename = '{0}/{1}/{1}'.format(dirname, filename)
@@ -42,6 +48,10 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         dlp_params = undefaultify(prot['DLP'])
         dlp.setup(maxduration + 10, dlp_save_filename, params=dlp_params)
         dlp.init_local_logger('{0}/{1}/{1}_dlp.log'.format(dirname, filename))
+        if 'ObjectMoverSizer' in prot['DLP']['runners'].keys():
+            shutil.copy2(prot['DLP']['runners']['ObjectMoverSizer']['filename'],
+                         f'{dirname}/{filename}/{filename}_movieparams.npz')
+
 
     if 'SPN' in prot['NODE']['use_services']:
         ptg = GCM.make(SER, user_name, ip_address, folder_name, python_exe)
