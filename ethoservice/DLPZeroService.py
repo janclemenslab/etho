@@ -56,7 +56,7 @@ class DLP(BaseZeroService):
         if self.duration>0:
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service':True})
         #
-        self._worker_thread = threading.Thread(target=self._workerX, 
+        self._worker_thread = threading.Thread(target=self._worker, 
             args=(self._thread_stopper, self._thread_start_run, self._thread_is_ready, logfilename, nb_frames, self.log, self.tracDrv, params))
 
         # start thread here so everything is initialized before 
@@ -79,7 +79,7 @@ class DLP(BaseZeroService):
              self._thread_timer.start()
              self.log.info('finish timer started')
 
-    def _workerX(self, stop_event, start_run_event, is_ready_event, savefilename, nb_frames, logger, tracDrv, params):
+    def _worker(self, stop_event, start_run_event, is_ready_event, savefilename, nb_frames, logger, tracDrv, params):
         # need to import psychopy here since psychopy only works in the thread where it's imported
         from psychopy.visual.windowframepack import ProjectorFramePacker
         import psychopy.visual, psychopy.event, psychopy.core, psychopy.visual.windowwarp
@@ -88,20 +88,12 @@ class DLP(BaseZeroService):
 
         # # INIT WINDOW
         screen_id = 1
-        block_size = 100
 
         # main window
         win = psychopy.visual.Window(monitor='projector', screen=screen_id, units="norm", fullscr=False,
             useFBO = True, size=(912,1140), allowGUI=False)
         framePacker = ProjectorFramePacker(win)
-    
-        # 'light' window below fly
-        win2 = psychopy.visual.Window(monitor='projector', screen=screen_id, units="norm", fullscr=False,
-            useFBO = True, size = (block_size,block_size),
-            pos=(int(win.size[0]/2)-(block_size/2),int(4*win.size[0]/5)-(block_size/2)),
-            allowGUI=False, color=[0.8,0.8,0.8])
-
-    
+        
         # INIT WARPER (skip for prototyping)
         if params['use_warping']:
             logger.info(f"Loading warp data from {params['warpfile']}")
@@ -141,8 +133,6 @@ class DLP(BaseZeroService):
         self._thread_start_run.wait()
 
         # re-activate windows
-        win2.winHandle.activate() #re-activate window
-        win2.flip() #redraw the newly activated window
         win.winHandle.activate() #re-activate window
         win.flip() #redraw the newly activated window
 
@@ -161,9 +151,8 @@ class DLP(BaseZeroService):
             for runner_name, runner in runners.items():
                 log_data = runner.update(frame_number, ball_info)
                 log_msg[runner_name] = log_data
-
             win.flip()
-            # psychopy.event.clearEvents()
+            
             systemtime = time.time()
             for task in tasks:
                 task.send((log_msg, systemtime))
@@ -173,7 +162,7 @@ class DLP(BaseZeroService):
             runner.destroy()
 
         win.close()
-        win2.close()
+        # win2.close()
         for task in tasks:
             try:
                 task.close()
@@ -215,7 +204,6 @@ class DLP(BaseZeroService):
             pass  # your code here
         else:
             return None
-
 
 
 def cli(serializer: str = 'default', port: Optional[str] = None):
