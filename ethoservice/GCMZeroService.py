@@ -60,6 +60,7 @@ class GCM(BaseZeroService):
         self.nFrames = int(self.c.framerate * (self.duration + 100))
 
         self.callbacks = []
+        self.callback_names = []
         common_task_kwargs = {'file_name': self.savefilename, 'frame_rate': self.c.framerate,
                               'frame_height': self.frame_height, 'frame_width': self.frame_width}
         for cb_name, cb_params in params['callbacks'].items():
@@ -69,6 +70,7 @@ class GCM(BaseZeroService):
                 task_kwargs = common_task_kwargs
 
             self.callbacks.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
+            self.callback_names.append(cb_name)
 
         # background jobs should be run and controlled via a thread
         # threads can be stopped by setting an event: `_thread_stopper.set()`
@@ -105,8 +107,12 @@ class GCM(BaseZeroService):
             try:
                 image, image_ts, system_ts = self.c.get()
 
-                for callback in self.callbacks:
-                    callback.send((image, (system_ts, image_ts)))
+                for callback_name, callback in zip(self.callback_names, self.callbacks):
+                    if 'timestamps'in callback_name:
+                        package = (0, (system_ts, image_ts))
+                    else:
+                        package = (image, (system_ts, image_ts))
+                    callback.send(package)
 
                 # update FPS counter
                 self.frame_interval.update(system_ts - self.last_frame_time)
