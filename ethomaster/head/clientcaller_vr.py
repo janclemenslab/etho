@@ -56,8 +56,8 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     if 'SPN' in prot['NODE']['use_services']:
         ptg = GCM.make(SER, user_name, ip_address, folder_name, python_exe)
         cam_params = undefaultify(prot['SPN'])
-        ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
-        ptg.init_local_logger('{0}/{1}/{1}_spn.log'.format(dirname, filename))
+        ptg.setup('{0}/{1}/{1}_ball'.format(dirname, filename), maxduration + 10, cam_params)
+        ptg.init_local_logger('{0}/{1}/{1}_ball_spn.log'.format(dirname, filename))
         ptg.start()
         # time.sleep(5)
 
@@ -102,8 +102,8 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print('done')
         cam_params = undefaultify(prot['SPN2'])
         print(cam_params)
-        ptg2.setup('{0}/{1}/{1}_ball'.format(dirname, filename), maxduration + 10, cam_params)
-        ptg2.init_local_logger('{0}/{1}/{1}_ball_spn.log'.format(dirname, filename))
+        ptg2.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
+        ptg2.init_local_logger('{0}/{1}/{1}_spn.log'.format(dirname, filename))
         ptg2.start()
         # services.append(ptg2)
 
@@ -182,6 +182,18 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
 if __name__ == '__main__':
     ip_address = 'localhost'
-    protocolfilename = 'test_new_runners.yml'
-    playlistfilename = '../ethoconfig/playlists/sine.txt'
+
+    # to run for size (300s)
+    # protocolfilename = 'test_new_runners_size.yml'
+    # playlistfilename = '../ethoconfig/playlists/sine.txt'
+    # clientcaller(ip_address, playlistfilename, protocolfilename)
+
+    # to position fly in the center
+    # protocolfilename = 'kimia_size_1.yml'
+    # playlistfilename = '../ethoconfig/playlists/silence.txt'
+    # clientcaller(ip_address, playlistfilename, protocolfilename)
+
+    # to test
+    protocolfilename = 'mini_test_3.yml'
+    playlistfilename = '../ethoconfig/playlists/silence.txt'
     clientcaller(ip_address, playlistfilename, protocolfilename)
