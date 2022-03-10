@@ -34,10 +34,10 @@ class Panel(wx.Panel):
 
 
 class Frame(wx.Frame):
-    def __init__(self, host):
+    def __init__(self, host: str, protocol_filename: str = None):
         style = wx.DEFAULT_FRAME_STYLE & ~wx.RESIZE_BORDER & ~wx.MAXIMIZE_BOX
         super(Frame, self).__init__(None, -1, '{0} preview'.format(host), style=style)
-        self.panel = Panel(self, camPreview(host))
+        self.panel = Panel(self, camPreview(host, protocol_filename))
         self.Fit()
         self.Bind(wx.EVT_CLOSE, self.OnClose)
 
@@ -46,9 +46,9 @@ class Frame(wx.Frame):
         self.Destroy()
 
 
-def main(host):
+def main(host: str, protocol_filename: str = None):
     app = wx.App()
-    frame = Frame(host)
+    frame = Frame(host, protocol_filename)
     frame.Center()
     frame.Show()
     app.MainLoop()

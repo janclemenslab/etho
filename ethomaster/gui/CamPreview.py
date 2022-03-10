@@ -7,9 +7,9 @@ import zmq
 
 from ethomaster.head.ZeroClient import ZeroClient
 from ethoservice.CamZeroService import CAM
+from ethomaster.utils.config import readconfig, undefaultify
 
-
-def camPreview(host, user='ncb'):
+def camPreview(host, protocol_filename: str = None, user: str = 'ncb'):
 
     cam_server_name = 'python -m {0}'.format(CAM.__module__)
     folder_name = '~/'
@@ -30,7 +30,17 @@ def camPreview(host, user='ncb'):
 
     cam_was_running = cam.is_busy()
     if not cam_was_running:
-        cam.setup(None, 0)
+        if protocol_filename is not None:
+            print(f' starting cam with params from {protocol_filename}.')
+            prot = undefaultify(readconfig(protocol_filename)["CAM"])
+            print(prot)
+            if prot is not None:
+                cam.setup(None, 0, **prot)
+            else:
+                cam.setup(None, 0)
+        else:
+            print(f' starting cam with default params.')
+            cam.setup(None, 0)  # , **prot)
         cam.start()
 
     try:
