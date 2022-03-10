@@ -60,23 +60,25 @@ def normalize_table(table: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def select_channels_from_playlist(playlist, channels_to_keep):
+def select_channels_from_playlist(playlist: pd.DataFrame, channels_to_keep: List[str]):
     """[summary]
     
     Args:
-        playlist ([type]): [description]
-        channels_to_keep ([type]): [description]
+        playlist (pd.DataFrame): [description]
+        channels_to_keep (List[str]): [description]
     
     Returns:
-        [type]: [description]
+        pd.DataFrame: playlist with selected channels
     """
     playlist_new = playlist.copy()
     for col_name, col_data in playlist_new.iteritems():
         for row_name, row_data in col_data.iteritems():
             if isinstance(row_data, (list, tuple)):
-                playlist_new.set_value(row_name, col_name, [row_data[channel] for channel in channels_to_keep])
+                # playlist_new.set_value(row_name, col_name, [row_data[channel] for channel in channels_to_keep])
+                playlist_new.at[row_name, col_name] = [row_data[channel] for channel in channels_to_keep]
             if isinstance(row_data, np.ndarray):
-                playlist_new.set_value(row_name, col_name, np.array(row_data)[channels_to_keep])
+                # playlist_new.set_value(row_name, col_name, np.array(row_data)[channels_to_keep])
+                playlist_new.at[row_name, col_name] = np.array(row_data)[channels_to_keep]
     return playlist_new
 
 
@@ -98,7 +100,8 @@ def parse_pulse_parameters(playlist, sounds, fs):
     blink_nums = np.zeros_like(blink_durs)
     blink_dels = np.zeros_like(blink_durs)
     blink_amps = np.zeros_like(blink_durs)
-    pulse_params = pd.DataFrame(columns=['duration', 'pause', 'number', 'delay', 'amplitude', 'trial_period'])
+    pulse_params = pd.DataFrame(columns=['duration', 'pause', 'number', 'delay', 'amplitude', 'trial_period'],
+                                dtype=object)
     for index, row in playlist.iterrows():
         
         for stim_num, stim_amp in enumerate(row.intensity):
@@ -123,8 +126,7 @@ def make_sine(frequency: float, phase: float, duration: float, samplingrate: flo
     Args:
         frequency [Hz], phase [pi], duration [ms], samplingrate [Hz]
     Returns:
-        stimulus waveform
-
+        np.array with stimulus waveform
     """
     t = np.arange(0, duration / 1000, 1 / samplingrate)
     x = np.sin(2 * np.pi * t * frequency + phase)
@@ -137,10 +139,8 @@ def make_pulse(pulseDur: float, pulsePau: float, pulseNumber: float, pulseDelay:
     Args:
         pulseDur [ms], pulsePau [ms], pulseNumber, pulseDelay [ms], samplingrate [Hz]
     Returns:
-        stimulus waveform
-
+        np.array with stimulus waveform
     """
-    # NOT TESTED
     x = np.concatenate((np.ones((np.intp(samplingrate * pulseDur / 1000),)),
                         np.zeros((np.intp(samplingrate * pulsePau / 1000),))))
     x = np.tile(x, (np.intp(pulseNumber),))
@@ -148,23 +148,29 @@ def make_pulse(pulseDur: float, pulsePau: float, pulseNumber: float, pulseDelay:
     return x
 
 
-def build_playlist(soundlist, duration, fs, shuffle=True):
+def build_playlist(soundlist: List[np.array], duration: float, fs: float, shuffle=True, sound_order=None):
     """Block-shuffle playlist and concatenate to duration."""
+    if sound_order is None:
+        sound_order = np.arange(len(soundlist))
+
     totallen = 0
     if duration > 0:
         playlist_items = list()
+        # add sounds to list as long as total duration is shorter than max duration
         while totallen < duration:
-            if shuffle:
-                # cast to int - otherwise fails since msgpack can't serialize numpy arrays
-                next_item = int(np.random.permutation(len(soundlist))[0])
-            else:
-                next_item = len(playlist_items) % len(soundlist)
+            # re-shuffle at the end of each block
+            if shuffle and len(playlist_items) % len(sound_order)==0:
+                sound_order = np.random.permutation(sound_order)
+
+            next_item = sound_order[len(playlist_items) % len(sound_order)]
             playlist_items.append(next_item)
             totallen += len(soundlist[playlist_items[-1]]) / fs
-    elif duration == -1:
-        playlist_items = list(range(len(soundlist)))
+    elif duration == -1:  # play sound_order once
         if shuffle:
-            playlist_items = np.random.permutation(playlist_items).tolist()
+            sound_order = np.random.permutation(sound_order)
+        playlist_items = sound_order.tolist()
+        
+        # get total duration of playlist
         for item in playlist_items:
             totallen += len(soundlist[item]) / fs
     return playlist_items, totallen
