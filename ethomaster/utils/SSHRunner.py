@@ -71,8 +71,8 @@ class SSHRunner():
         # `>/dev/null 2>&1` makes sure we return
         # `echo $!` prints pid of spawned process
 
-        prefix = "plink -i C:/Users/ncb/Documents/raspberry.ppk" if is_win() else "ssh -f"
-
+        prefix = "ssh -f"
+        
         if is_win():
             cmd = '{0} {1} "{2} >/dev/null 2>&1 & echo $!"'.format(
                 prefix, self.host, cmd)
@@ -81,9 +81,6 @@ class SSHRunner():
                 prefix, self.host, cmd)
         try:
             output = cmdline(cmd)
-            # universal_newlines=True so output is string and not byte
-            # output = subprocess.check_output(
-            #     cmd, shell=True, universal_newlines=True, timeout=timeout)
         except subprocess.CalledProcessError as e:
             output = e.output + "\n"
         except subprocess.TimeoutExpired as e:
@@ -96,16 +93,13 @@ class SSHRunner():
         return self._parse_pid(output)
 
     def run_foreground(self, cmd, timeout=None):
-        # `>/dev/null 2>&1` makes sure we return
-        # `echo $!` prints pid of spawned process
-        prefix = "plink -i C:/Users/ncb/Documents/raspberry.ppk" if is_win() else "ssh -f"
-
+        prefix = "ssh -f"
+        
         if is_win():
             cmd = '{0} {1} "{2}"'.format(prefix, self.host, cmd)
         else:
             cmd = "{0} {1} '{2}'".format(prefix, self.host, cmd)
 
-        # cmd = "ssh -f {0} '{1}'".format(self.host, cmd)
         # universal_newlines=True so output is string and not byte
         try:
             output = subprocess.check_output(
