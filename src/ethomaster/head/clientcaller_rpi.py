@@ -31,7 +31,6 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
     LOGGING_PORT = 4248
     log_level = logging.INFO
     head_ip = 'localhost'
-
     ctx = zmq.Context()
     ctx.LINGER = 0
     pub = ctx.socket(zmq.PUB)
