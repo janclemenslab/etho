@@ -235,6 +235,10 @@ class HelloFrame(wx.Frame):
         pass
 
 
+    # def OnClick(self, event):
+    #     name, ip = event.GetEventObject().name, event.GetEventObject().ip
+    #     self.PushStatusText('configure {0}'.format(ip, name))
+    #     wxCtrl_rpi.main(name#ifndef _PY_UTILS_HPP_
     def OnClick(self, event):
         name, ip = event.GetEventObject().name, event.GetEventObject().ip
         self.PushStatusText('configure {0}'.format(ip, name))

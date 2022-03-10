@@ -91,7 +91,12 @@ class Frame(wx.Frame):
 
     def OnClickCamPreview(self, event):
         print("if running - start cam service and preview, otherwise connect to running service and preview")
-        wxCam.main(self.ip)
+        protocol_filename = self.protocolList.GetStringSelection()
+        if protocol_filename:
+            protocol_filename = os.path.join(self.protocolfolder, protocol_filename)
+        else:
+            protocol_filename = None
+        wxCam.main(self.ip, protocol_filename)
 
     def OnClickThuPreview(self, event):
         ThuPreview.main(self.ip)

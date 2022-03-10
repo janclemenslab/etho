@@ -7,7 +7,7 @@ from itertools import cycle
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
-from ethomaster.utils.config import readconfig
+from ethomaster.utils.config import readconfig, undefaultify
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist, select_channels_from_playlist, parse_pulse_parameters
 
 from ethoservice.SndZeroService import SND
@@ -20,6 +20,8 @@ import zmq
 import logging
 from zmq.log.handlers import PUBHandler
 import socket
+
+logging.basicConfig(level=logging.INFO)
 
 
 def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=None):
@@ -72,6 +74,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
     log.info(f'experiment name: {filename}')
 
     # load playlist
+    log.info(f'using playlist: {playlistfile}')
     playlist = parse_table(playlistfile)
 
     if 'REL' in prot['NODE']['use_services']:
@@ -101,10 +104,13 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         cam = CAM.make(SER, user_name, ip_address, folder_name, remote=True)
 
         cam.init_local_logger('{0}/{1}/{1}_cam.log'.format(dirname, filename))
-        cam.setup('{0}/{1}/{1}.h264'.format(dirname, filename), maxduration + 10)
+        cam_params = undefaultify(prot["CAM"])
+        if cam_params is None:
+            cam_params = {}
+        cam.setup('{0}/{1}/{1}.h264'.format(dirname, filename), maxduration + 10, **cam_params)
         time.sleep(1)
         cam.start()
-        cam_start_time = time.time() # time.sleep(5)
+        cam_start_time = time.time()
 
     if 'SND' in prot['NODE']['use_services']:
         fs = prot['SND']['samplingrate']
@@ -127,25 +133,45 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
             print(f'using special LEDamp for {host_name}.')
             led_amp = prot['SND']['ledamp'][host_name]
 
-        sounds = load_sounds(sound_playlist, fs, attenuation=attenuation,
+        # get unique playlist rows
+        unique_rows = playlist.to_string(header=False,
+                        index=False,
+                        index_names=False).split('\n')
+        unique_rows = [','.join(ele.split()) for ele in unique_rows]
+        uni, unique_row_idx, unique_row_inverse = np.unique(unique_rows, return_inverse=True, return_index=True)
+   
+        # build sound for all unqiue rows in the playlist
+        sounds = load_sounds(sound_playlist.iloc[unique_row_idx], fs, attenuation=attenuation,
                              LEDamp=led_amp,
                              stimfolder=config['HEAD']['stimfolder'],
                              cast2int=True)
-        playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
 
+        # use unique_row_inverse here to build playlist_items as indices into "sounds"
+        playlist_items, totallen = build_playlist(sounds, maxduration, fs,
+                                                  shuffle=shuffle_playback, 
+                                                  sound_order=unique_row_inverse)
+
+        log.info(playlist.iloc[unique_row_idx].iloc[playlist_items])
+        
         snd = SND.make(SER, user_name, ip_address, folder_name, remote=True)
 
-        print('sending sound data to {0} - may take a while.'.format(host_name))
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
-        snd.setup(sounds, playlist, playlist_items, totallen, fs)
+
+        print('sending sound data to {0} - may take a while.'.format(host_name))
+        snd.setup(sounds, playlist.iloc[unique_row_idx], playlist_items, totallen, fs)
+        print('  Done.')
 
     if 'OPT2' in prot['NODE']['use_services']:
         channels_to_keep = prot['OPT2']['playlist_channels']
         print(f"   selecting channels {channels_to_keep} for OPT2 from playlist.")
         opto_playlist = select_channels_from_playlist(playlist, channels_to_keep)
-        
+        # opto_playlist = select_channels_from_playlist(playlist.iloc[unique_row_idx], channels_to_keep)
         print(f"   parsing pulse parameters from playlist.")
+        # opto_playlist.reset_index(inplace=True, drop=True)
         pulse_params = parse_pulse_parameters(opto_playlist, sounds, fs)
+
+        #  H A C K !!!!
+        # pulse_params = parse_pulse_parameters(opto_playlist[:len(sounds)], sounds, fs)
         pulse_params = pulse_params.loc[playlist_items, :]
     
 
@@ -207,8 +233,13 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
 
 
 if __name__ == '__main__':
-    host_name = 'rpi8'
-    ip_address = '192.168.1.8'
-    protocolfilename = '../ethoconfig/protocols/playback_5min_multiOpto.yml'
-    playlistfilename = '../ethoconfig/playlists/IPItune_test_multiOpto.txt'
+    host_name = 'rpi9'
+    ip_address = '192.168.1.9'
+    # protocolfilename = '../ethoconfig/protocols/cop_40min.yml'
+    protocolfilename = '../ethoconfig/protocols/_cop_test.yml' #10min.yml'
+    
+    # playlistfilename = 'C:/Users/ncb/ethoconfig/playlists/IPI36_20s2min_test.txt'
+    playlistfilename = '../ethoconfig/playlists/mini_test_2022.txt' #cop_IPI36_1s_10min.txt'
     clientcaller(host_name, ip_address, playlistfilename, protocolfilename)
+
+
