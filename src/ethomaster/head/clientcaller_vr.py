@@ -35,8 +35,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     if filename is None:
         filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
     dirname = prot['NODE']['savefolder']
-    print(filename)
-    breakpoint()
     os.makedirs(f"{dirname}/{filename}", exist_ok=True)
 
     shutil.copy2(os.path.join(config['HEAD']['protocolfolder'], protocolfile),
