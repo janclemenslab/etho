@@ -54,7 +54,7 @@ class IOTask(daq.Task):
         self.callback = None
         self.data_gen = None  # called at start of callback
         self.data_rec = None  # called at end of callback
-        if self.cha_type[0] is "analog_input":
+        if self.cha_type[0] == "analog_input":
             self.num_samples_per_chan = nb_inputsamples_per_cycle
             self.num_samples_per_event = nb_inputsamples_per_cycle  # self.num_samples_per_chan*self.num_channels
             self.CreateAIVoltageChan(self.cha_string, "", DAQmx_Val_RSE, -limits, limits, DAQmx_Val_Volts, None)
@@ -62,7 +62,7 @@ class IOTask(daq.Task):
             self.CfgInputBuffer(self.num_samples_per_chan * self.num_channels * 4)
             if clock_source is None:
                 clock_source = 'OnboardClock'  # ao/SampleClock'  # None  # use internal clock
-        elif self.cha_type[0] is "analog_output":
+        elif self.cha_type[0] == "analog_output":
             self.num_samples_per_chan = 5000
             self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
             self.CreateAOVoltageChan(self.cha_string, "", -limits, limits, DAQmx_Val_Volts, None)
@@ -73,7 +73,7 @@ class IOTask(daq.Task):
             self.SetWriteRegenMode(DAQmx_Val_DoNotAllowRegen)
             if clock_source is None:
                 clock_source = 'ai/SampleClock'  # 'OnboardClock'  # None  # use internal clock
-        elif self.cha_type[0] is "digital_output":
+        elif self.cha_type[0] == "digital_output":
             self.num_samples_per_chan = 5000
             self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
             self.CreateDOChan(self.cha_string, "", DAQmx_Val_ChanPerLine)
@@ -84,7 +84,7 @@ class IOTask(daq.Task):
             if clock_source is None:
                 clock_source = 'ai/SampleClock'  # None  # use internal clock
 
-        if 'digital' in self. cha_type[0]:
+        if 'digital' in self.cha_type[0]:
             self._data = np.zeros((self.num_samples_per_chan, self.num_channels), dtype=np.uint8)  # init empty data array
         else:
             self._data = np.zeros((self.num_samples_per_chan, self.num_channels), dtype=np.float64)  # init empty data array
@@ -123,17 +123,17 @@ class IOTask(daq.Task):
                 except StopIteration:
                     self._data = None
 
-            if self.cha_type[0] is "analog_input":
+            if self.cha_type[0] == "analog_input":
                 # should only read self.num_samples_per_event!! otherwise recordings will be zeropadded for each chunk
                 self.ReadAnalogF64(DAQmx_Val_Auto, 1.0, DAQmx_Val_GroupByScanNumber,
                                    self._data, self.num_samples_per_chan * self.num_channels, daq.byref(self.samples_read), None)
                 # only keep samples that were actually read, .value converts c_long to int
                 self._data = self._data[:self.samples_read.value, :]
 
-            elif self.cha_type[0] is "analog_output" and self._data is not None:
+            elif self.cha_type[0] == "analog_output" and self._data is not None:
                 self.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
                                     self._data, daq.byref(self.samples_read), None)
-            elif self.cha_type[0] is 'digital_output' and self._data is not None:
+            elif self.cha_type[0] == 'digital_output' and self._data is not None:
                 self.WriteDigitalLines(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
                                        self._data, daq.byref(self.samples_read), None)
 

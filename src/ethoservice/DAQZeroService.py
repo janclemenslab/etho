@@ -192,14 +192,14 @@ class DAQ(BaseZeroService):
         if ai:
             try:
                 self.taskAI.IsTaskDone(taskIsDoneAI)
-            except daq.InvalidTaskError as e:
+            except (daq.InvalidTaskError, GenStoppedToPreventRegenOfOldSamplesError) as e:
                 taskCheckFailed = True
         else:
             taskIsDoneAI = 0
         if ao and self.analog_chans_out:
             try:
                 self.taskAO.IsTaskDone(taskIsDoneAO)
-            except daq.InvalidTaskError as e:
+            except (daq.InvalidTaskError, GenStoppedToPreventRegenOfOldSamplesError) as e:
                 taskCheckFailed = True
         else:
             taskIsDoneAO = 0
