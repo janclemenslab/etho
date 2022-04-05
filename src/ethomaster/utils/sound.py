@@ -110,7 +110,6 @@ def parse_pulse_parameters(playlist, sounds, fs):
 
         for stim_num, stim in enumerate(row.stimFileName):
             if stim.startswith('PUL'):
-                dur, pau, num, dey = [int(token) for token in stim.split('_')[1:]]
                 blink_durs[stim_num], blink_paus[stim_num], blink_nums[stim_num], blink_dels[stim_num] = [int(token) for token in stim.split('_')[1:]]
         pulse_params.loc[index, 'duration'] = blink_durs / 1000
         pulse_params.loc[index, 'pause'] = blink_paus / 1000
