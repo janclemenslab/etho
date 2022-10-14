@@ -93,7 +93,7 @@ class IOTask(daq.Task):
         self._newdata_event = threading.Event()
         if 'output' in self.cha_type[0]:
             self.EveryNCallback()
-        self.pbar = tqdm(desc='DAQ')
+        self.pbar = tqdm(desc='NI DAQ')
 
     def __repr__(self):
         return '{0}: {1}'.format(self.cha_type[0], self.cha_string)
