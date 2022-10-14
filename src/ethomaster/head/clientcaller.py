@@ -73,12 +73,12 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     #     ptg.start()
     #     time.sleep(5)
 
-    if 'SPN' in prot['NODE']['use_services']:
-        spn = GCM.make(SER, user_name, ip_address, folder_name, python_exe)
-        cam_params = undefaultify(prot['SPN'])
-        spn.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
-        spn.init_local_logger('{0}/{1}/{1}_spn.log'.format(dirname, filename))
-        spn.start()
+    if 'GCM' in prot['NODE']['use_services']:
+        gcm = GCM.make(SER, user_name, ip_address, folder_name, python_exe)
+        cam_params = undefaultify(prot['GCM'])
+        gcm.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
+        gcm.init_local_logger('{0}/{1}/{1}_gcm.log'.format(dirname, filename))
+        gcm.start()
 
     if 'DAQ' in prot['NODE']['use_services']:
         daq_server_name = f'{python_exe} -m {DAQ.__module__} {SER}'  #'python -m {0} {1}'.format(DAQ.__module__, SER)
