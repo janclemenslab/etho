@@ -50,10 +50,6 @@ class GCM(BaseZeroService):
 
         self.frame_width, self.frame_height = image.shape[:2]
 
-        self.frame_interval = StatValue(smooth_coef=0.9)
-        self.frame_interval.value = 0
-        self.last_frame_time = clock()
-
         self.nFrames = int(self.c.framerate * (self.duration + 100))
 
         self.callbacks = []
@@ -102,7 +98,7 @@ class GCM(BaseZeroService):
         frameNumber = 0
         self.log.info('started worker')
         self.c.start()
-        self.pbar = tqdm(self.nFrames)
+        self.pbar = tqdm(self.nFrames, desc='Camera', units='frames')
         while RUN:
 
             try:
@@ -115,14 +111,8 @@ class GCM(BaseZeroService):
                         package = (image, (system_ts, image_ts))
                     callback.send(package)
 
-                # update FPS counter
-                self.frame_interval.update(system_ts - self.last_frame_time)
-                self.last_frame_time = system_ts
-
                 if frameNumber % 100 == 0:
                     self.pbar.update(100)
-                    sys.stdout.write('\rframe interval for frame {} is {} ms.'.format(
-                        frameNumber, np.round(self.frame_interval.value * 1000)))  # frame interval in ms
 
                 frameNumber = frameNumber + 1
                 if frameNumber == self.nFrames:
