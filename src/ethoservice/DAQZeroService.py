@@ -2,10 +2,8 @@
 from .ZeroService import BaseZeroService  # import super class
 import time     # for timer
 import threading
-import os
 import sys
 import copy
-import yaml
 from typing import Iterable, Sequence
 from .utils.log_exceptions import for_all_methods, log_exceptions
 from .callbacks import callbacks
