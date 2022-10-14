@@ -1,5 +1,5 @@
 # required imports
-from .ZeroService import BaseZeroService  # import super class
+from .ZeroService import BaseZeroService
 import time  # for timer
 import threading
 import sys
@@ -8,6 +8,7 @@ import logging
 from .utils import camera as camera
 
 import numpy as np
+from tqdm import tqdm
 from ethoservice.utils.common import *
 
 from .callbacks import callbacks
@@ -101,6 +102,7 @@ class GCM(BaseZeroService):
         frameNumber = 0
         self.log.info('started worker')
         self.c.start()
+        self.pbar = tqdm(self.nFrames)
         while RUN:
 
             try:
@@ -118,6 +120,7 @@ class GCM(BaseZeroService):
                 self.last_frame_time = system_ts
 
                 if frameNumber % 100 == 0:
+                    self.pbar.update(100)
                     sys.stdout.write('\rframe interval for frame {} is {} ms.'.format(
                         frameNumber, np.round(self.frame_interval.value * 1000)))  # frame interval in ms
 
