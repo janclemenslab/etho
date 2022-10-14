@@ -5,11 +5,9 @@ from PyDAQmx.DAQmxConstants import *
 from PyDAQmx.DAQmxFunctions import *
 
 import threading
-import sys
+from tqdm import tqdm
 import time
 import numpy as np
-
-from .ConcurrentTask import ConcurrentTask
 
 
 class IOTask(daq.Task):
@@ -25,10 +23,10 @@ class IOTask(daq.Task):
             limits (float, optional): [description]. Defaults to 10.0.
             rate (float, optional): [description]. Defaults to 10000.0.
             nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
-            clock_source (str, optional): None for AI-synced clock. 
+            clock_source (str, optional): None for AI-synced clock.
                                           Use 'OnboardClock' for boards that don't support this (USB-DAQ).
                                           Defaults to None.
-            
+
         Raises:
             TypeError: [description]
             ValueError: [description]
@@ -88,13 +86,14 @@ class IOTask(daq.Task):
             self._data = np.zeros((self.num_samples_per_chan, self.num_channels), dtype=np.uint8)  # init empty data array
         else:
             self._data = np.zeros((self.num_samples_per_chan, self.num_channels), dtype=np.float64)  # init empty data array
-        
+
         self.CfgSampClkTiming(clock_source, rate, DAQmx_Val_Rising, DAQmx_Val_ContSamps, self.num_samples_per_chan)
         self.AutoRegisterDoneEvent(0)
         self._data_lock = threading.Lock()
         self._newdata_event = threading.Event()
         if 'output' in self.cha_type[0]:
             self.EveryNCallback()
+        self.pbar = tqdm(desc='DAQ')
 
     def __repr__(self):
         return '{0}: {1}'.format(self.cha_type[0], self.cha_string)
@@ -142,6 +141,7 @@ class IOTask(daq.Task):
                     if self._data is not None:
                         data_rec.send((self._data, systemtime))
             self._newdata_event.set()
+            self.pbar.update(1)
         return 0  # The function should return an integer
 
     def DoneCallback(self, status):
