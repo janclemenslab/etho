@@ -129,6 +129,48 @@ class ImageWriterCV2(ImageCallback):
 
 
 @register_callback
+class ImageWriterCVR(ImageCallback):
+
+    SUFFIX: str = '.avi'
+    FRIENDLY_NAME = 'save_avi_round'
+    TIMESTAMPS_ONLY = False
+
+    def __init__(self, data_source, *, poll_timeout=0.01, max_frames_per_video=100_000,
+                 **kwargs):
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        self.video_count = 0
+        self.frame_count = 0
+        self.max_frames_per_video = max_frames_per_video
+
+        self.vw = cv2.VideoWriter()
+        self.vw.open(self.file_name + self.SUFFIX + f"{self.video_count:06d}", cv2.VideoWriter_fourcc(*'x264'),
+                     self.frame_rate, (self.frame_height, self.frame_width), True)
+
+    def _loop(self, data):
+        if hasattr(self.data_source, 'WHOAMI') and self.data_source.WHOAMI == 'array':
+            image = data
+        else:
+            image, timestamp = data
+
+        self.vw.write(image)
+        self.frame_count += 1
+        if self.frame_count > self.max_frames_per_video:
+            self.vw.release()
+            del self.vw
+            self.vw = cv2.VideoWriter()
+            self.vw.open(self.file_name + self.SUFFIX + f"{self.video_count:06d}", cv2.VideoWriter_fourcc(*'x264'),
+                         self.frame_rate, (self.frame_height, self.frame_width), True)
+            self.frame_count = 0
+            self.video_count += 1
+
+    def _cleanup(self):
+        self.vw.release()
+        del self.vw
+        super()._cleanup()
+
+
+@register_callback
 class ImageWriterVPF(ImageCallback):
 
     SUFFIX: str = '.avi'
