@@ -1,10 +1,8 @@
 # required imports
-import time     # for timer
-import sys
+import time  # for timer
 from ..utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 import numpy as np
-import h5py
 import cv2
 from typing import Tuple, Optional
 
@@ -16,6 +14,13 @@ except ImportError as e:
 
 try:
     import PySpin
+except ImportError as e:
+    print("IGNORE IF RUN ON HEAD")
+    print(e)
+
+
+try:
+    import PyCapture2
 except ImportError as e:
     print("IGNORE IF RUN ON HEAD")
     print(e)
@@ -67,11 +72,11 @@ class BaseCam():
         pass
 
     @property
-    def roi(self):
+    def roi(self) -> Tuple[int, int, int, int]:
         pass
 
     @roi.setter
-    def roi(self, x0, y0, width, height):
+    def roi(self, x0_y0_x_y: Tuple[int, int, int, int]):
         pass
 
     @property
@@ -136,7 +141,6 @@ class Spinnaker(BaseCam):
 
         # trigger overlap -> ReadOut - for faster frame rates
         self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
-            
 
     def get(self, timeout=None):
 
@@ -289,11 +293,9 @@ class Ximea(BaseCam):
         self.c.set_downsampling('XI_DWN_2x2')
         self.c.set_downsampling_type('XI_SKIPPING')
 
-
         self.c.set_imgdataformat('XI_MONO8')
         self.c.set_limit_bandwidth(self.c.get_limit_bandwidth_maximum())
         self.timestamp_offset = self._estimate_timestamp_offset()
-
 
     def get(self, timeout=None):
         self.c.get_image(self.im)  # get buffer - this blocks until an image is acquired
@@ -307,7 +309,8 @@ class Ximea(BaseCam):
         return image, image_timestamp, system_timestamp
 
     def _min_max_inc(self, prop, value=None, set_value=True):
-        min_val, max_val, inc = self.c.get_param(prop + ':min'), self.c.get_param(prop + ':max'), self.c.get_param(prop + ':inc')
+        min_val, max_val, inc = self.c.get_param(prop + ':min'), self.c.get_param(prop + ':max'), self.c.get_param(prop +
+                                                                                                                   ':inc')
 
         prop_type = type(self.c.get_param(prop))
         if value is not None:
@@ -326,7 +329,7 @@ class Ximea(BaseCam):
         # seconds.
         timestamp_offsets = []
         tmp = self.framerate
-        self.framerate = 30 
+        self.framerate = 30
         self.start()
         for _ in range(timestamp_offset_iterations):
             # timestamp = self.c.get_timestamp()  # does not work for some reason
@@ -363,19 +366,20 @@ class Ximea(BaseCam):
             self._min_max_inc('offsetY', y0)
             self._min_max_inc('width', x)
             self._min_max_inc('height', y)
-        
+
     @property
     def exposure(self):
         return self.c.get_exposure()
 
     @exposure.setter
     def exposure(self, value: float):
+        """Set exposure/shutter time in WHICH UNITS? ns or ms?."""
         self.c.disable_aeag()
         self.c.set_exposure(float(value))
 
     @property
     def framerate(self):
-       return self.c.get_framerate()
+        return self.c.get_framerate()
 
     @framerate.setter
     def framerate(self, value: float):
@@ -421,7 +425,179 @@ class Ximea(BaseCam):
         pass
 
 
-class FlyCapture(BaseCam):
-    NAME = 'PTG'
+class PyCapture(BaseCam):
+    NAME = 'CAP'
 
-make = {'Spinnaker': Spinnaker, 'Ximea': Ximea, 'FlyCapture': FlyCapture}
+    def __init__(self, serialnumber):
+        """[summary]
+
+        Should set:
+        - continuous acq
+        - anything that optimizes throughput
+        - pixel format
+        - time stamping
+        - init pointer to image
+
+        Args:
+            serialnumber (Union[str, int]): [description]
+        """
+        self.serialnumber = int(serialnumber)
+        self.timestamp_offset = 0
+        self.im = PyCapture2.Image()
+
+    def init(self):
+        self.bus = PyCapture2.BusManager()
+        self.c = PyCapture2.Camera()
+        self.uid = self.bus.getCameraFromSerialNumber(self.serialnumber)
+        self.c.connect(self.uid)
+        # self.c.setConfiguration(grabMode=PyCapture2.GRAB_MODE.DROP_FRAMES)
+        # FAILS with "IIDC failure"
+        # self.c.setFormat7Configuration(100.0, mode=PyCapture2.MODE.MODE_0, pixelFormat=PyCapture2.PIXEL_FORMAT.BGR)
+        self.timestamp_offset = self._estimate_timestamp_offset()
+        # embedded_info = self.c.getEmbeddedImageInfo()
+        # if embedded_info.available.timestamp:
+        self.c.setEmbeddedImageInfo(timestamp=True)
+        #     print('\nTimeStamp is enabled.\n')
+        # else:
+        #     print('\nTimeStamp no available.\n')
+
+    def get(self, timeout: Optional[float] = None) -> Tuple[np.ndarray, float, float]:
+        """
+
+        pull image from cam, convert to np.ndarray, get time stamp
+
+        Args:
+            timeout (Optional[float], optional): [description]. Defaults to None.
+
+        Returns:
+            Tuple[np.ndarray, float, float]:
+                image as np.array (x,y,c)
+                image_timestamp (in seconds UTC)
+                system_timestamp (in seconds UTC)
+
+        Raises:
+            ValueError is sth goes wrong
+        """
+        try:
+            self.im = self.c.retrieveBuffer()
+            system_ts = time.time()
+        except PyCapture2.Fc2error as fc2Err:
+            print('Error retrieving buffer : %s' % fc2Err)
+            return
+
+        ts = self.im.getTimeStamp()
+
+        image_ts = ts.cycleSeconds * 8000 + ts.cycleCount
+        # image_ts = cycleOffset + cycleSecs / 8000
+
+        image = self.im.convert(PyCapture2.PIXEL_FORMAT.BGR).getData()
+        image = image.reshape((self.im.getCols(), self.im.getRows(), -1))
+        image = image.astype(np.uint8)
+        return image, image_ts, system_ts
+
+    def _estimate_timestamp_offset(self) -> float:
+        """[summary]
+
+        Returns:
+            float: Timestamp offset rel to system time.
+                   Return 0 if timestamps are already in system time.
+        """
+        return 0
+
+    @property
+    def roi(self) -> Tuple[int, int, int, int]:
+        imageSettings, packetSize, percentage = self.c.getFormat7Configuration()
+        return imageSettings.offsetX, imageSettings.offsetY, imageSettings.width, imageSettings.height
+
+    @roi.setter
+    def roi(self, x0_y0_x_y: Tuple[int, int, int, int]):
+        # try:
+        #     x0, y0, x, y = x0_y0_x_y
+        #     info, isValid = self.c.getFormat7Info(PyCapture2.MODE.MODE_0)
+        #     import ipdb;ipdb.set_trace()
+        #     self.c.setFormat7Configuration(100.0, offsetX=0, offsetY=0, width=16, height=16)
+        # except ValueError:
+        #     raise ValueError('Need 4-tuple with x0_y0_x_y')
+        # # else:
+        # self.c.setFormat7Configuration(100.0, offsetX=0, offsetY=0)
+        # self._min_max_inc('width', int(x))
+        # self._min_max_inc('height', int(y))
+        # self._min_max_inc('offsetX', int(x0))
+        # self._min_max_inc('offsetY', int(y0))
+        pass
+
+    def _min_max_inc(self, prop: str, value: int = None, set_value=True):
+        # info, isValid = self.c.getFormat7Info(PyCapture2.MODE.MODE_0)
+        # prop_map = {'width': {'max_val': info.maxWidth, 'min_val': info.minWidth, 'inc': info.imageHStepSize},
+        #             'height': {'max_val': info.maxHeight, 'min_val': info.minHeight, 'inc': info.imageVStepSize},
+        #             'offsetX': {'max_val': info.maxWidth, 'min_val': 0, 'inc': info.offsetHStepSize},
+        #             'offsetY': {'max_val': info.maxHeight, 'min_val': 0, 'inc': info.offsetVStepSize},
+        #             }
+
+        # if value is not None:
+        #     value = np.clip(value, prop_map[prop]['min_val'], prop_map[prop]['max_val'])
+        #     value = np.round(value / prop_map[prop]['inc']) * prop_map[prop]['inc']
+        #     if set_value:
+        #         self.c.setFormat7Configuration(100.0, **{prop: int(value)})
+        #         imageSettings, packetSize, percentage = self.c.getFormat7Configuration()
+        #         value = getattr(imageSettings, prop)
+        return value
+
+    @property
+    def brightness(self):
+        return self.c.getProperty(PyCapture2.PROPERTY_TYPE.BRIGHTNESS).absValue
+
+    @brightness.setter
+    def brightness(self, value: float):
+        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.BRIGHTNESS, absValue=float(value), autoManualMode=False)
+
+    @property
+    def exposure(self):
+        # UNITS?
+        return self.c.getProperty(PyCapture2.PROPERTY_TYPE.SHUTTER).absValue
+
+    @exposure.setter
+    def exposure(self, value: float):
+        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.SHUTTER, absValue=float(value), autoManualMode=False)
+
+    @property
+    def gain(self):
+        return self.c.getProperty(PyCapture2.PROPERTY_TYPE.GAIN).absValue
+
+    @gain.setter
+    def gain(self, value: float):
+        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.GAIN, absValue=float(value), autoManualMode=False)
+
+    @property
+    def gamma(self):
+        return self.c.getProperty(PyCapture2.PROPERTY_TYPE.GAMMA).absValue
+
+    @gamma.setter
+    def gamma(self, value: float):
+        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.GAMMA, absValue=float(value), autoManualMode=False)
+
+    @property
+    def framerate(self):
+        return self.c.getProperty(PyCapture2.PROPERTY_TYPE.FRAME_RATE).absValue
+
+    @framerate.setter
+    def framerate(self, value: float):
+        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.FRAME_RATE, absValue=float(value), autoManualMode=False)
+
+    def start(self):
+        self.c.startCapture()
+
+    def stop(self):
+        self.c.stopCapture()
+
+    def close(self):
+        self.c.disconnect()
+        del self.c
+
+    def reset(self):
+        """Reset the camera system to free all resources."""
+        # self.bus.FireBusReset(self.guid)
+        self.bus.rescanBus()  # does not reset but "invalidates all current camera connections"
+
+
+make = {'Spinnaker': Spinnaker, 'Ximea': Ximea, 'PyCapture': PyCapture}
