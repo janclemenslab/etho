@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # required imports
 from .ZeroService import BaseZeroService  # import super class
-import zerorpc # for starting service in `main()`
-import time    # for timer
+import zerorpc  # for starting service in `main()`
+import time  # for timer
 import threading
 import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 import defopt
+from typing import Optional
+
 
 # decorate all methods in the class so that exceptions are properly logged
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -15,7 +17,7 @@ class TMP(BaseZeroService):
 
     LOGGING_PORT = 1443  # set this to range 1420-1460
     SERVICE_PORT = 4243  # last two digits match logging port - but start with "42" instead of "14"
-    SERVICE_NAME = "TMP" # short, uppercase, 3-letter ID of the service (must equal class name)
+    SERVICE_NAME = "TMP"  # short, uppercase, 3-letter ID of the service (must equal class name)
 
     def setup(self, duration):
         self._time_started = None
@@ -27,8 +29,8 @@ class TMP(BaseZeroService):
         # threads can be stopped by setting an event: `_thread_stopper.set()`
         self._thread_stopper = threading.Event()
         # and/or via a timer
-        if self.duration>0:
-            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service':True})
+        if self.duration > 0:
+            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
         #
         self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
 
@@ -39,14 +41,14 @@ class TMP(BaseZeroService):
         self._worker_thread.start()
         self.log.info('started')
         if hasattr(self, '_thread_timer'):
-             self.log.info('duration {0} seconds'.format(self.duration))
-             self._thread_timer.start()
-             self.log.info('finish timer started')
+            self.log.info('duration {0} seconds'.format(self.duration))
+            self._thread_timer.start()
+            self.log.info('finish timer started')
 
     def _worker(self, stop_event):
         RUN = True
         while RUN and not stop_event.wait(0.1):
-            pass # APPLICATION SPECIFIC RUN CODE HERE
+            pass  # APPLICATION SPECIFIC RUN CODE HERE
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
@@ -66,7 +68,7 @@ class TMP(BaseZeroService):
         pass
 
     def is_busy(self):
-        return True # should return True/False
+        return True  # should return True/False
 
     def test(self):
         return True
@@ -84,14 +86,14 @@ class TMP(BaseZeroService):
 
 
 def cli(serializer: str = 'default', port: Optional[str] = None):
-    if port == None:
+    if port is None:
         port = TMP.SERVICE_PORT
     s = TMP(serializer=serializer)
     s.bind("tcp://0.0.0.0:{0}".format(port))  # broadcast on all IPs
     print('running TMPZeroService')
     s.run()
     print('done')
-    
+
 
 if __name__ == '__main__':
     defopt.run(cli)
