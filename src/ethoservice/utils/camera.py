@@ -496,12 +496,6 @@ class PyCapture(BaseCam):
         return image, image_ts, system_ts
 
     def _estimate_timestamp_offset(self) -> float:
-        """[summary]
-
-        Returns:
-            float: Timestamp offset rel to system time.
-                   Return 0 if timestamps are already in system time.
-        """
         return 0
 
     @property
@@ -511,36 +505,46 @@ class PyCapture(BaseCam):
 
     @roi.setter
     def roi(self, x0_y0_x_y: Tuple[int, int, int, int]):
-        # try:
-        #     x0, y0, x, y = x0_y0_x_y
-        #     info, isValid = self.c.getFormat7Info(PyCapture2.MODE.MODE_0)
-        #     import ipdb;ipdb.set_trace()
-        #     self.c.setFormat7Configuration(100.0, offsetX=0, offsetY=0, width=16, height=16)
-        # except ValueError:
-        #     raise ValueError('Need 4-tuple with x0_y0_x_y')
-        # # else:
-        # self.c.setFormat7Configuration(100.0, offsetX=0, offsetY=0)
-        # self._min_max_inc('width', int(x))
-        # self._min_max_inc('height', int(y))
-        # self._min_max_inc('offsetX', int(x0))
-        # self._min_max_inc('offsetY', int(y0))
+        try:
+            x0, y0, x, y = x0_y0_x_y
+        except ValueError:
+            raise ValueError(F"Input {x0_y0_x_y} should be a 4-tuple.")
+        try:
+            fmt7_img_set = PyCapture2.Format7ImageSettings(0, x0, y0, x, y, PyCapture2.PIXEL_FORMAT.MONO8)
+            fmt7_pkt_inf, isValid = self.c.validateFormat7Settings(fmt7_img_set)
+            self.c.setFormat7ConfigurationPacket(fmt7_pkt_inf.maxBytesPerPacket, fmt7_img_set)
+        except Exception as e:
+            logging.exception(f"Failed setting ROI from input {x0_y0_x_y}", exc_info=e)
+            self.c.setFormat7Configuration(100.0, offsetX=0, offsetY=0)
+            x = self._min_max_inc('width', int(x), set_value=False)
+            y = self._min_max_inc('height', int(y), set_value=False)
+            x0 = self._min_max_inc('offsetX', int(x0), set_value=False)
+            y0 = self._min_max_inc('offsetY', int(y0), set_value=False)
+            logging.info(f"Trying again with these values {[x0, y0, x, y]}")
+            try:
+                fmt7_img_set = PyCapture2.Format7ImageSettings(0, x0, y0, x, y, PyCapture2.PIXEL_FORMAT.MONO8)
+                fmt7_pkt_inf, isValid = self.c.validateFormat7Settings(fmt7_img_set)
+                self.c.setFormat7ConfigurationPacket(fmt7_pkt_inf.maxBytesPerPacket, fmt7_img_set)
+            except Exception as e:
+                logging.exception(f"Failed setting ROI from input {x0_y0_x_y}", exc_info=e)
+                raise
         pass
 
     def _min_max_inc(self, prop: str, value: int = None, set_value=True):
-        # info, isValid = self.c.getFormat7Info(PyCapture2.MODE.MODE_0)
-        # prop_map = {'width': {'max_val': info.maxWidth, 'min_val': info.minWidth, 'inc': info.imageHStepSize},
-        #             'height': {'max_val': info.maxHeight, 'min_val': info.minHeight, 'inc': info.imageVStepSize},
-        #             'offsetX': {'max_val': info.maxWidth, 'min_val': 0, 'inc': info.offsetHStepSize},
-        #             'offsetY': {'max_val': info.maxHeight, 'min_val': 0, 'inc': info.offsetVStepSize},
-        #             }
+        info, isValid = self.c.getFormat7Info(PyCapture2.MODE.MODE_0)
+        prop_map = {'width': {'max_val': info.maxWidth, 'min_val': info.minWidth, 'inc': info.imageHStepSize},
+                    'height': {'max_val': info.maxHeight, 'min_val': info.minHeight, 'inc': info.imageVStepSize},
+                    'offsetX': {'max_val': info.maxWidth, 'min_val': 0, 'inc': info.offsetHStepSize},
+                    'offsetY': {'max_val': info.maxHeight, 'min_val': 0, 'inc': info.offsetVStepSize},
+                    }
 
-        # if value is not None:
-        #     value = np.clip(value, prop_map[prop]['min_val'], prop_map[prop]['max_val'])
-        #     value = np.round(value / prop_map[prop]['inc']) * prop_map[prop]['inc']
-        #     if set_value:
-        #         self.c.setFormat7Configuration(100.0, **{prop: int(value)})
-        #         imageSettings, packetSize, percentage = self.c.getFormat7Configuration()
-        #         value = getattr(imageSettings, prop)
+        if value is not None:
+            value = np.clip(value, prop_map[prop]['min_val'], prop_map[prop]['max_val'])
+            value = np.round(value / prop_map[prop]['inc']) * prop_map[prop]['inc']
+            if set_value:
+                self.c.setFormat7Configuration(100.0, **{prop: int(value)})
+                imageSettings, packetSize, percentage = self.c.getFormat7Configuration()
+                value = getattr(imageSettings, prop)
         return value
 
     @property
@@ -582,7 +586,7 @@ class PyCapture(BaseCam):
 
     @framerate.setter
     def framerate(self, value: float):
-        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.FRAME_RATE, absValue=float(value), autoManualMode=False)
+        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.FRAME_RATE, absValue=float(value), autoManualMode=False, onOff=True)
 
     def start(self):
         self.c.startCapture()
