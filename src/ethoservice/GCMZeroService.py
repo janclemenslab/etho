@@ -26,6 +26,67 @@ from rich.pretty import Pretty
 logger = logging.getLogger('GCM')
 logging.basicConfig(level=logging.INFO)
 
+import skimage.transform
+
+
+def to_string(img: np.ndarray, dest_width: int, unicode: bool = True) -> str:
+    img_width, img_height = img.shape[:2]
+    scale = img_width / dest_width
+    dest_height = int(img_height / scale)
+    dest_height = dest_height + 1 if dest_height % 2 != 0 else dest_height
+
+    img = skimage.transform.resize(img, (dest_width, dest_height), preserve_range=True)
+    img = img.astype(float)
+    img -= np.min(img)
+    img /= np.max(img)+0.000001
+    img *= 255
+    img = img.astype(np.uint8)
+    output = ""
+
+    for y in range(0, dest_height, 2):
+        for x in range(dest_width):
+            if unicode:
+                r1, g1, b1 = img[x, y, :]
+                r2, g2, b2 = img[x, y + 1, :]
+                output = output + f"[rgb({r1},{g1},{b1}) on rgb({r2},{g2},{b2})]█[/]"
+            else:
+                r, g, b = img[x, y]
+                output = output + f"[on rgb({r},{g},{b})] [/]"
+
+        output = output + "\n"
+
+    return output
+
+
+def dict_to_def(d):
+    s = ''
+    for key, val in d.items():
+        s += f"[bold]{key}[/]:\n   {str(val)}\n"
+    return s
+
+
+def dict_to_def_aults(d, d2):
+    s = ''
+    for key, val in d.items():
+        s += f"[bold]{key}[/]:\n   {str(val)} (target: {str(d2[key])})\n"
+    return s
+
+
+def dict_to_table(d, title=None, key_name='Key', value_names=None):
+
+    table = Table(title=title)
+
+    table.add_column(key_name, justify="right", style="cyan", no_wrap=True)
+    if value_names is None:
+        first_key = list(d.keys())[0]
+        value_names = [f'Value {cnt}' for cnt, _ in enumerate(d[first_key])]
+
+    for value_name in value_names:
+        table.add_column(value_name, justify='left', style="magenta")
+
+    for key, val in d.items():
+        table.add_row(key, *[str(v) for v in val])
+    return table
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class GCM(BaseZeroService):
@@ -61,14 +122,32 @@ class GCM(BaseZeroService):
         image, image_ts, system_ts = self.c.get()
         self.c.stop()
 
-        logger.info(f"{self.cam_type} (sn {self.cam_serialnumber})")
-        rich.print(self.c.info_hardware())
-        rich.print(params)
-        rich.print(self.c.info_imaging())
+        iii = self.c.info_imaging()
+        iii['exposure'] = f"{iii['exposure']:1.2f}ms"
+        params['exposure'] = f"{params['shutter_speed']/1_000:1.2f}ms"
+        params['framerate'] = params['frame_rate']
+        params['offsetX'], params['offsetY'], params['width'], params['height']=params['frame_offx'], params['frame_offy'], params['frame_width'], params['frame_height']
+
+        self.layout = Layout()
+        self.layout.split_column(
+            Layout(Panel(''), name="progress", size=8),
+            Layout(Panel(''), name="info"),
+        )
+
+        self.layout["info"].split_row(
+            Layout(Panel(dict_to_def(self.c.info_hardware())), name="hardware", ratio=3),
+            Layout(Panel(dict_to_def_aults(iii, params)), name="image", ratio=3),
+            Layout(Panel(''), name="frame", ratio=8),
+        )
+
+        # logger.info(f"{self.cam_type} (sn {self.cam_serialnumber})")
+        # rich.print(self.c.info_hardware())
+        # rich.print(params)
+        # rich.print(self.c.info_imaging())
         self.frame_width, self.frame_height, self.frame_channels = image.shape
-        logger.info(image.shape)
+        # logger.info(image.shape)
         self.framerate = self.c.framerate
-        logger.info(self.framerate)
+        # logger.info(self.framerate)
         self.nFrames = int(self.framerate * (self.duration + 100))
 
         self.callbacks = []
@@ -118,32 +197,44 @@ class GCM(BaseZeroService):
         self.log.info('started worker')
         self.c.start()
         self.pbar = tqdm(total=self.nFrames, desc='GCM', unit=' frames')
-        while RUN:
+        c=Console()
+        nDigits = len(str(int(self.nFrames)))
+        with Live(self.layout, auto_refresh=False, screen=True, ) as live:
 
-            try:
-                image, image_ts, system_ts = self.c.get()
+            while RUN:
 
-                for callback_name, callback in zip(self.callback_names, self.callbacks):
-                    if 'timestamps' in callback_name:
-                        package = (0, (system_ts, image_ts))
-                    else:
-                        package = (image, (system_ts, image_ts))
-                    callback.send(package)
+                try:
+                    image, image_ts, system_ts = self.c.get()
 
-                if frameNumber % self.framerate == 0:
-                    self.pbar.update(100)
+                    for callback_name, callback in zip(self.callback_names, self.callbacks):
+                        if 'timestamps' in callback_name:
+                            package = (0, (system_ts, image_ts))
+                        else:
+                            package = (image, (system_ts, image_ts))
+                        callback.send(package)
 
-                frameNumber = frameNumber + 1
-                if frameNumber == self.nFrames:
-                    self.log.info('Max number of frames reached - stopping.')
+                    if frameNumber % self.framerate == 0:
+                        out = to_string(image, c.size.width, unicode=False)
+                        self.layout['info']['frame'].update(Panel(out, title=f'Frame {frameNumber}'))
+                        prgrs_len = c.size.width // 2 - 40
+                        prgrs_cut = frameNumber//(self.nFrames//prgrs_len)
+                        prgrs = ['█' if pos < prgrs_cut else '░' for pos in range(prgrs_len)]
+
+                        progressbar = f"[{''.join(prgrs)}] frame {int(frameNumber): {nDigits}d}/{self.nFrames}"
+                        self.layout['progress'].update(Panel(f"Camera: {progressbar}", title='Camera'))
+                        live.refresh()
+
+                    frameNumber = frameNumber + 1
+                    if frameNumber == self.nFrames:
+                        self.log.info('Max number of frames reached - stopping.')
+                        RUN = False
+
+                except ValueError as e:
                     RUN = False
-
-            except ValueError as e:
-                RUN = False
-                self.c.stop()
-                self.log.exception(e, exc_info=True)
-            except Exception as e:
-                self.log.exception(e, exc_info=True)
+                    self.c.stop()
+                    self.log.exception(e, exc_info=True)
+                except Exception as e:
+                    self.log.exception(e, exc_info=True)
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
