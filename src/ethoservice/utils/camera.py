@@ -6,24 +6,27 @@ import numpy as np
 import cv2
 from typing import Tuple, Optional
 
+
+# TODO save exception info and re-raise when we try to create the respective camera
 try:
     from ximea import xiapi
 except ImportError as e:
-    print("IGNORE IF RUN ON HEAD")
-    print(e)
+    # print(e)
+    pass
 
 try:
     import PySpin
 except ImportError as e:
-    print("IGNORE IF RUN ON HEAD")
-    print(e)
-
+    # print("IGNORE IF RUN ON HEAD")
+    # print(e)
+    pass
 
 try:
     import PyCapture2
 except ImportError as e:
-    print("IGNORE IF RUN ON HEAD")
-    print(e)
+    # print("IGNORE IF RUN ON HEAD")
+    # print(e)
+    pass
 
 
 class BaseCam():
@@ -111,6 +114,21 @@ class BaseCam():
     def reset(self):
         """Reset the camera system to free all resources."""
         pass
+
+    def info_hardware(self):
+        pass
+
+    def info_imaging(self):
+        x0, y0, x, y = self.roi
+        info = {'width': x, 'height': y,
+                'offsetX': x0, 'offsetY': y0,
+                'exposure': self.exposure / 1_000,
+                'brightness': self.brightness,
+                'gamma': self.gamma,
+                'gain': self.gain,
+                'framerate': self.framerate,
+                }
+        return info
 
 
 class Spinnaker(BaseCam):
@@ -483,16 +501,18 @@ class PyCapture(BaseCam):
             system_ts = time.time()
         except PyCapture2.Fc2error as fc2Err:
             print('Error retrieving buffer : %s' % fc2Err)
-            return
+            raise ValueError('Image is None.')
 
         ts = self.im.getTimeStamp()
 
         image_ts = ts.cycleSeconds * 8000 + ts.cycleCount
         # image_ts = cycleOffset + cycleSecs / 8000
-
-        image = self.im.convert(PyCapture2.PIXEL_FORMAT.BGR).getData()
-        image = image.reshape((self.im.getCols(), self.im.getRows(), -1))
+        # image = self.im.convert(PyCapture2.PIXEL_FORMAT.BGR)
+        image = self.im.getData()
+        image = image.reshape((self.im.getRows(), self.im.getCols(), -1))
         image = image.astype(np.uint8)
+        if image.shape[-1] != 3:
+            image = np.tile(image, (1, 1, 3))
         return image, image_ts, system_ts
 
     def _estimate_timestamp_offset(self) -> float:
@@ -557,12 +577,12 @@ class PyCapture(BaseCam):
 
     @property
     def exposure(self):
-        # UNITS?
-        return self.c.getProperty(PyCapture2.PROPERTY_TYPE.SHUTTER).absValue
+        # convert to ns
+        return self.c.getProperty(PyCapture2.PROPERTY_TYPE.SHUTTER).absValue * 1_000
 
     @exposure.setter
     def exposure(self, value: float):
-        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.SHUTTER, absValue=float(value), autoManualMode=False)
+        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.SHUTTER, absValue=float(value / 1_000), autoManualMode=False)
 
     @property
     def gain(self):
@@ -595,13 +615,25 @@ class PyCapture(BaseCam):
         self.c.stopCapture()
 
     def close(self):
+        self.stop()
         self.c.disconnect()
-        del self.c
 
     def reset(self):
         """Reset the camera system to free all resources."""
         # self.bus.FireBusReset(self.guid)
         self.bus.rescanBus()  # does not reset but "invalidates all current camera connections"
+
+    def info_hardware(self):
+        cam_info = self.c.getCameraInfo()
+        info = {'Serial number': cam_info.serialNumber,
+                'Camera model': cam_info.modelName.decode('utf-8'),
+                'Camera vendor': cam_info.vendorName.decode('utf-8'),
+                'Sensor': cam_info.sensorInfo.decode('utf-8'),
+                'Resolution': cam_info.sensorResolution.decode('utf-8'),
+                'Firmware version': cam_info.firmwareVersion.decode('utf-8'),
+                'Firmware build time': cam_info.firmwareBuildTime.decode('utf-8'),
+        }
+        return info
 
 
 make = {'Spinnaker': Spinnaker, 'Ximea': Ximea, 'PyCapture': PyCapture}

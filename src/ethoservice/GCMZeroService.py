@@ -7,11 +7,24 @@ from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 from .utils import camera as camera
 
-import numpy as np
+import rich
 from tqdm import tqdm
 from ethoservice.utils.common import *
 
 from .callbacks import callbacks
+
+from rich.console import Console
+from rich.layout import Layout
+from rich.panel import Panel
+from rich.progress import Progress
+from rich.console import Console
+from rich.table import Table
+from rich.live import Live
+from rich.text import Text
+from rich.pretty import Pretty
+
+logger = logging.getLogger('GCM')
+logging.basicConfig(level=logging.INFO)
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -34,7 +47,7 @@ class GCM(BaseZeroService):
         try:
             self.c.init()
         except Exception as e:
-            logging.exception("Failed to init {self.cam_type} (sn {self.cam_serialnumber}). Reset and re-try.", exc_info=e)
+            logger.exception("Failed to init {self.cam_type} (sn {self.cam_serialnumber}). Reset and re-try.", exc_info=e)
             self.c.reset()
             self.c.init()
 
@@ -48,15 +61,21 @@ class GCM(BaseZeroService):
         image, image_ts, system_ts = self.c.get()
         self.c.stop()
 
-        self.frame_width, self.frame_height = image.shape[:2]
-
-        self.nFrames = int(self.c.framerate * (self.duration + 100))
+        logger.info(f"{self.cam_type} (sn {self.cam_serialnumber})")
+        rich.print(self.c.info_hardware())
+        rich.print(params)
+        rich.print(self.c.info_imaging())
+        self.frame_width, self.frame_height, self.frame_channels = image.shape
+        logger.info(image.shape)
+        self.framerate = self.c.framerate
+        logger.info(self.framerate)
+        self.nFrames = int(self.framerate * (self.duration + 100))
 
         self.callbacks = []
         self.callback_names = []
         common_task_kwargs = {
             'file_name': self.savefilename,
-            'frame_rate': self.c.framerate,
+            'frame_rate': self.framerate,
             'frame_height': self.frame_height,
             'frame_width': self.frame_width
         }
@@ -98,7 +117,7 @@ class GCM(BaseZeroService):
         frameNumber = 0
         self.log.info('started worker')
         self.c.start()
-        self.pbar = tqdm(self.nFrames, desc='Camera', units='frames')
+        self.pbar = tqdm(total=self.nFrames, desc='GCM', unit=' frames')
         while RUN:
 
             try:
@@ -111,7 +130,7 @@ class GCM(BaseZeroService):
                         package = (image, (system_ts, image_ts))
                     callback.send(package)
 
-                if frameNumber % 100 == 0:
+                if frameNumber % self.framerate == 0:
                     self.pbar.update(100)
 
                 frameNumber = frameNumber + 1
