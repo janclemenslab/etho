@@ -11,10 +11,15 @@ import numpy as np
 
 
 class IOTask(daq.Task):
-    """IOTask does X."""
 
-    def __init__(self, dev_name="Dev1", cha_name=["ai0"], limits=10.0, rate=10000.0,
-                 nb_inputsamples_per_cycle=None, clock_source=None):
+    def __init__(self,
+                 dev_name="Dev1",
+                 cha_name=["ai0"],
+                 limits=10.0,
+                 rate=10000.0,
+                 nb_inputsamples_per_cycle=None,
+                 clock_source=None,
+                 duration=None):
         """[summary]
 
         Args:
@@ -42,12 +47,13 @@ class IOTask(daq.Task):
         if len(set(self.cha_type)) > 1:
             raise ValueError('channels should all be of the same type but are {0}.'.format(set(self.cha_type)))
 
+        self.pbar = tqdm(desc='DAQ', total=duration)
+
         self.cha_name = [dev_name + '/' + ch for ch in cha_name]  # append device name
         self.cha_string = ", ".join(self.cha_name)
         self.num_channels = len(cha_name)
         if nb_inputsamples_per_cycle is None:
             nb_inputsamples_per_cycle = int(rate)
-        print(clock_source)
         # FIX: input and output tasks can have different sizes
         self.callback = None
         self.data_gen = None  # called at start of callback
@@ -93,7 +99,6 @@ class IOTask(daq.Task):
         self._newdata_event = threading.Event()
         if 'output' in self.cha_type[0]:
             self.EveryNCallback()
-        self.pbar = tqdm(desc='NI DAQ')
 
     def __repr__(self):
         return '{0}: {1}'.format(self.cha_type[0], self.cha_string)
@@ -114,6 +119,7 @@ class IOTask(daq.Task):
         Calls `self.data_gen` or `self.data_rec` for requesting/processing data.
         """
         # for clean teardown, catch PyDAQmx.DAQmxFunctions.GenStoppedToPreventRegenOfOldSamplesError
+        cnt = 0
         with self._data_lock:
             systemtime = time.time()
             if self.data_gen is not None:
@@ -124,14 +130,14 @@ class IOTask(daq.Task):
 
             if self.cha_type[0] == "analog_input":
                 # should only read self.num_samples_per_event!! otherwise recordings will be zeropadded for each chunk
-                self.ReadAnalogF64(DAQmx_Val_Auto, 1.0, DAQmx_Val_GroupByScanNumber,
-                                   self._data, self.num_samples_per_chan * self.num_channels, daq.byref(self.samples_read), None)
+                self.ReadAnalogF64(DAQmx_Val_Auto, 1.0, DAQmx_Val_GroupByScanNumber, self._data,
+                                   self.num_samples_per_chan * self.num_channels, daq.byref(self.samples_read), None)
                 # only keep samples that were actually read, .value converts c_long to int
                 self._data = self._data[:self.samples_read.value, :]
 
             elif self.cha_type[0] == "analog_output" and self._data is not None:
-                self.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
-                                    self._data, daq.byref(self.samples_read), None)
+                self.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber, self._data,
+                                    daq.byref(self.samples_read), None)
             elif self.cha_type[0] == 'digital_output' and self._data is not None:
                 self.WriteDigitalLines(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
                                        self._data, daq.byref(self.samples_read), None)
@@ -142,6 +148,7 @@ class IOTask(daq.Task):
                         data_rec.send((self._data, systemtime))
             self._newdata_event.set()
             self.pbar.update(1)
+
         return 0  # The function should return an integer
 
     def DoneCallback(self, status):
@@ -151,7 +158,7 @@ class IOTask(daq.Task):
 
 
 def log(file_name):
-    f = open(file_name, 'r')      # open file
+    f = open(file_name, 'r')  # open file
     try:
         while True:
             message = (yield)  # gets sent variables
@@ -163,10 +170,12 @@ def log(file_name):
 
 def coroutine(func):
     """ decorator that auto-initializes (calls `next(None)`) coroutines"""
+
     def start(*args, **kwargs):
         cr = func(*args, **kwargs)
         next(cr)
         return cr
+
     return start
 
 
@@ -176,6 +185,7 @@ def data_playlist(sounds, play_order, playlist_info=None, logger=None, name='sta
     first_run = True
     run_cnt = 0
     playlist_cnt = 0
+    import rich
     try:
         while play_order:
             run_cnt += 1
@@ -189,6 +199,8 @@ def data_playlist(sounds, play_order, playlist_info=None, logger=None, name='sta
                 if playlist_info is not None:
                     msg = _format_playlist(playlist_info.loc[pp], playlist_cnt)
                     print(f'{msg}')
+                    # tqdm.write(rich.print(f'{msg}')
+                    rich.print(msg)
                     if logger:
                         logger.info(msg)
             stim = sounds[pp]
