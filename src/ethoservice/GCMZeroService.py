@@ -7,7 +7,7 @@ import logging
 from .utils import camera as camera
 from .callbacks import callbacks
 
-from .utils.tui import dict_to_def, dict_to_def_aults
+from .utils.tui import dict_to_def, dict_to_def_aults, CameraProgress
 import rich
 from rich.console import Console
 from rich.panel import Panel
@@ -70,6 +70,7 @@ class GCM(BaseZeroService):
         self.framerate = self.c.framerate
         self.nFrames = int(self.framerate * (self.duration + 100))
         self.nFramesTarget = int(self.framerate * self.duration)
+        self.pbar = CameraProgress(self.nFramesTarget)
 
         self.callbacks = []
         self.callback_names = []
@@ -115,16 +116,17 @@ class GCM(BaseZeroService):
     def _worker(self, stop_event):
         RUN = True
         frameNumber = 0
-        time0 = time.time()
         self.log.info('started worker')
         self.c.start()
-        c = Console()
-        nDigits = len(str(int(self.nFrames)))
 
         while RUN:
-
             try:
-                image, image_ts, system_ts = self.c.get()
+
+                out = self.c.get()
+                if out is None:
+                    raise ValueError('Image is None')
+                else:
+                    image, image_ts, system_ts = out
 
                 for callback_name, callback in zip(self.callback_names, self.callbacks):
                     if 'timestamps' in callback_name:
@@ -134,25 +136,7 @@ class GCM(BaseZeroService):
                     callback.send(package)
 
                 if frameNumber % self.framerate == 0:
-                    time1 = time.time()
-                    if frameNumber > self.framerate:
-                        dt = (time1 - time0) / self.framerate
-                        time0 = time1
-
-                        prgrs_len = c.size.width // 2 - 40
-                        prgrs_target = int((self.nFramesTarget / self.nFrames) * prgrs_len)
-                        prgrs_cut = round(frameNumber / (self.nFrames // prgrs_len))
-                        prgrs = []
-                        for pos in range(prgrs_len):
-                            if pos < prgrs_cut:
-                                prgrs.append('█')
-                            elif pos > prgrs_target:
-                                prgrs.append('░')
-                            else:
-                                prgrs.append('▒')
-
-                        progressbar = f"\rCamera: [{''.join(prgrs)}] {int(frameNumber): {nDigits}d}/{self.nFramesTarget} frames at {1/dt:1.2f} fps"
-                        print(progressbar, end='')
+                    self.pbar.update(number_of_frames=frameNumber, payload=image_ts)
 
                 frameNumber = frameNumber + 1
                 if frameNumber == self.nFrames:
@@ -162,7 +146,7 @@ class GCM(BaseZeroService):
             except ValueError as e:
                 RUN = False
                 self.c.stop()
-                self.log.exception(e, exc_info=True)
+                self.log.debug(e, exc_info=True)
             except Exception as e:
                 self.log.exception(e, exc_info=True)
 

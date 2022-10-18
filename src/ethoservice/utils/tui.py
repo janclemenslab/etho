@@ -4,6 +4,7 @@ from rich.console import Console
 from rich.table import Table
 from typing import Optional
 import pandas as pd
+import time
 
 
 def dict_to_def(d):
@@ -70,32 +71,35 @@ def df_to_table(
     return rich_table
 
 
-# class CameraProgress():
+class CameraProgress():
 
-#     def __init__(self, nbFrames, nbFramesTarget):
+    def __init__(self, nbFrames):
 
-#         time0 = time.time()
-#         self.c = Console()
-#         self.nbFrames = nbFrames
-#         self.nbFramesTarget = nbFramesTarget
-#         self.nDigits = len(str(int(self.nbFrames)))
+        self.prev_t = None
+        self.prev_n = None
+        self.console = Console()
+        self.nbFrames = nbFrames
+        self.nDigits = len(str(int(self.nbFrames)))
 
+    def update(self, number_of_frames, payload=None):
+        t = time.time()
+        if self.prev_t is not None:
+            current_frame_interval = (t - self.prev_t) / (number_of_frames - self.prev_n)
+            current_frame_rate = 1 / current_frame_interval
 
-#     def update(self, frameNumber):
-#         dt = (time1 - time0) / self.framerate
-#         time0 = time1
+            prgrs_len = self.console.size.width // 2 - 40
+            prgrs_cut = round(number_of_frames / (self.nbFrames // prgrs_len))
 
-#         prgrs_len = c.size.width // 2 - 40
-#         prgrs_target = int((self.nbFramesTarget / self.nbFrames) * prgrs_len)
-#         prgrs_cut = round(frameNumber / (self.nbFrames // prgrs_len))
-#         prgrs = []
-#         for pos in range(prgrs_len):
-#             if pos < prgrs_cut:
-#                 prgrs.append('█')
-#             elif pos > prgrs_target:
-#                 prgrs.append('░')
-#             else:
-#                 prgrs.append('▒')
+            prgrs = []
+            for pos in range(prgrs_len):
+                if pos < prgrs_cut:
+                    prgrs.append('█')
+                else:
+                    prgrs.append('░')
 
-#         progressbar = f"\rCamera: [{''.join(prgrs)}] {int(frameNumber): {self.nDigits}d}/{self.nbFramesTarget} frames at {1/dt:1.2f} fps"
-#         print(progressbar, end='')
+            progressbar = f"\rCamera: [{''.join(prgrs)}] {int(number_of_frames): {self.nDigits}d}/{self.nbFrames} frames at {current_frame_rate:1.2f} fps"
+            if payload is not None:
+                progressbar += f"{payload}"
+            print(progressbar, end='')
+        self.prev_t = t
+        self.prev_n = number_of_frames
