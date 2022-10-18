@@ -1,6 +1,5 @@
 import zerorpc
 import abc
-import sys
 import zmq
 import logging
 from zmq.log.handlers import PUBHandler
@@ -9,6 +8,7 @@ import time
 import os
 import subprocess
 from ethoservice.utils.common import iswin
+from typing import Optional
 
 
 class BaseZeroService(abc.ABC, zerorpc.Server):
@@ -35,12 +35,11 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     """
 
     # TODO: make more robust - add exceptions/try-catch
-    LOGGING_PORT = None  # network port used for publishing log messages
-    SERVICE_PORT = None  # network port for communicating with the head
-    SERVICE_NAME = None
+    LOGGING_PORT: Optional[int] = None  # network port used for publishing log messages
+    SERVICE_PORT: Optional[int] = None  # network port for communicating with the head
+    SERVICE_NAME: Optional[str] = None
 
-    def __init__(self, *args, serializer: str = 'default', head_ip: str = '192.168.1.1',
-                 **kwargs):
+    def __init__(self, *args, serializer: str = 'default', head_ip: str = '192.168.1.1', **kwargs):
         """[summary]
 
         Args:
@@ -49,8 +48,6 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             logging_port (int, optional): [description]. Defaults to None.
             service_port (int, optional): [description]. Defaults to None.
         """
-
-
         self._serializer = serializer
         ctx = zerorpc.Context()
         ctx.register_serializer(self._serializer)
@@ -60,7 +57,6 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
         self._time_started = None
         self.duration = None
-
 
     @classmethod
     def make(cls, SER, user_name, ip_address, folder_name, python_exe='python', remote=False, port=None):
@@ -99,8 +95,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         # get host name or IP to append to message
         self.hostname = socket.gethostname()
 
-        prefix = "%(asctime)s.%(msecs)03d {0}@{1}:".format(
-            self.SERVICE_NAME, self.hostname)
+        prefix = "%(asctime)s.%(msecs)03d {0}@{1}:".format(self.SERVICE_NAME, self.hostname)
         body = "%(module)s:%(funcName)s:%(lineno)d - %(message)s"
         df = "%Y-%m-%d,%H:%M:%S"
         formatters = {
@@ -108,7 +103,8 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             logging.INFO: logging.Formatter(prefix + "%(message)s\n", datefmt=df),
             logging.WARN: logging.Formatter(prefix + body + "\n", datefmt=df),
             logging.ERROR: logging.Formatter(prefix + body + " - %(exc_info)s\n", datefmt=df),
-            logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df)}
+            logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df)
+        }
 
         # setup log handler which publishe all log messages to the network
         handler = PUBHandler(pub)
@@ -145,8 +141,8 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.filelogger.setLevel(logging.INFO)  # catch all messages
 
         # create a logging format
-        formatter = logging.Formatter("%(asctime)s.%(msecs)03d {0}@{1}: %(message)s".format(
-            self.SERVICE_NAME, self.hostname), datefmt="%Y-%m-%d,%H:%M:%S")
+        formatter = logging.Formatter("%(asctime)s.%(msecs)03d {0}@{1}: %(message)s".format(self.SERVICE_NAME, self.hostname),
+                                      datefmt="%Y-%m-%d,%H:%M:%S")
         self.filelogger.setFormatter(formatter)
         # add the handlers to the logger
         self.log.addHandler(self.filelogger)
