@@ -73,15 +73,14 @@ def df_to_table(
 
 class CameraProgress():
 
-    def __init__(self, nbFrames):
-
-        self.prev_t = None
-        self.prev_n = None
+    def __init__(self, nbFrames: int):
+        self.prev_t: Optional[float] = None
+        self.prev_n: Optional[int] = None
         self.console = Console()
         self.nbFrames = nbFrames
         self.nDigits = len(str(int(self.nbFrames)))
 
-    def update(self, number_of_frames, payload=None):
+    def update(self, number_of_frames: int, payload=None):
         t = time.time()
         if self.prev_t is not None:
             current_frame_interval = (t - self.prev_t) / (number_of_frames - self.prev_n)
@@ -97,7 +96,7 @@ class CameraProgress():
                 else:
                     prgrs.append('░')
 
-            progressbar = f"\rCamera: [{''.join(prgrs)}] {int(number_of_frames): {self.nDigits}d}/{self.nbFrames} frames at {current_frame_rate:1.2f} fps"
+            progressbar = f"\rCamera: [{''.join(prgrs)}] {int(number_of_frames): {self.nDigits}d}/{self.nbFrames} frames at {current_frame_rate:1.2f} fps    "
             if payload is not None:
                 progressbar += f"{payload}"
             print(progressbar, end='')
