@@ -136,7 +136,7 @@ class GCM(BaseZeroService):
                     callback.send(package)
 
                 if frameNumber % self.framerate == 0:
-                    self.pbar.update(number_of_frames=frameNumber, payload=image_ts)
+                    self.pbar.update(number_of_frames=frameNumber)
 
                 frameNumber = frameNumber + 1
                 if frameNumber == self.nFrames:
