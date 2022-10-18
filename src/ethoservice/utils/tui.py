@@ -3,7 +3,7 @@ from rich.panel import Panel
 from rich.console import Console
 from rich.table import Table
 from typing import Optional
-from pandas import pd
+import pandas as pd
 
 
 def dict_to_def(d):
