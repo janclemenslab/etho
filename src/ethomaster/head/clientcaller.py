@@ -155,6 +155,6 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
 if __name__ == '__main__':
     ip_address = 'localhost'
-    protocolfilename = 'ethoconfig/protocols/default.txt'
-    playlistfilename = 'ethoconfig/playlists/sine_short.txt'
+    protocolfilename = 'ethoconfig/protocols/mic35mm_5min.yml'
+    playlistfilename = 'ethoconfig/playlists/0 silence.txt'
     clientcaller(ip_address, playlistfilename, protocolfilename)
