@@ -19,6 +19,8 @@ class FlyCapture2(BaseCam):
             raise pycapture_error
         self.serialnumber = int(serialnumber)
         self.timestamp_offset = 0
+        self.prev_ts = None
+        self.prev_image_ts = 0
         self.im = PyCapture2.Image()
 
     def init(self):
@@ -50,12 +52,20 @@ class FlyCapture2(BaseCam):
             self.im = self.c.retrieveBuffer()
             system_ts = time.time()
         except PyCapture2.Fc2error as fc2Err:
-            print('Error retrieving buffer : %s' % fc2Err)
             raise ValueError('Image is None.')
-
+        # convert timestamp
         ts = self.im.getTimeStamp()
-
-        image_ts = ts.cycleSeconds * 8000 + ts.cycleCount
+        if self.prev_ts is None:
+            image_ts = 0
+        else:
+            diff = (ts.cycleSeconds - self.prev_ts.cycleSeconds) * 8000 + (ts.cycleCount - self.prev_ts.cycleCount)
+            diff_ts = diff / 8_000
+            if diff_ts <= 0:
+                diff_ts += 128
+            image_ts = self.prev_image_ts + diff_ts
+        self.prev_ts = ts
+        self.prev_image_ts = image_ts
+        # convert image
         image = self.im.getData()
         image = image.reshape((self.im.getRows(), self.im.getCols(), -1))
         image = image.astype(np.uint8)
