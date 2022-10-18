@@ -1,35 +1,49 @@
 #!/usr/bin/env python
 from .ZeroService import BaseZeroService  # import super class
-import time     # for timer
+import time
 import threading
 import sys
 import copy
-from typing import Iterable, Sequence
+from typing import Iterable, Sequence, Optional, Dict, Any
 from .utils.log_exceptions import for_all_methods, log_exceptions
 from .callbacks import callbacks
-
+from rich.panel import Panel
+from rich.table import Table
+from .utils.tui import dict_to_def, df_to_table
+import rich
 import logging
+
 try:
     from .utils.IOTask import *
+    import_error = None
 except ImportError as e:
-    print("IGNORE IF RUN ON HEAD")
-    print(e)
+    import_error = e
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class DAQ(BaseZeroService):
     '''Bundles and synchronizes analog/digital input and output tasks.'''
 
-    LOGGING_PORT = 1449   # set this to range 1420-1460
-    SERVICE_PORT = 4249   # last to digits match logging port - but start with "42" instead of "14"
+    LOGGING_PORT = 1449  # set this to range 1420-1460
+    SERVICE_PORT = 4249  # last to digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "DAQ"  # short, uppercase, 3-letter ID of the service (equals class name)
 
-    # def setup(self, savefilename, duration, analog_chans_out=["ao0", "ao1"], analog_chans_in=["ai2", "ai3", "ai0"]):
-    def setup(self, savefilename: str=None, play_order: Iterable=None, playlist_info=None,
-              duration: float=-1, fs: int=10000, display=False, realtime=False,
-              nb_inputsamples_per_cycle=None, clock_source=None,
-              analog_chans_out: Sequence=None, analog_chans_in: Sequence=['ai0'], digital_chans_out: Sequence=None,
-              analog_data_out: Sequence=None, digital_data_out: Sequence=None, metadata={},
+    def setup(self,
+              savefilename: str = None,
+              play_order: Iterable = None,
+              playlist_info=None,
+              duration: float = -1,
+              fs: int = 10000,
+              display=False,
+              realtime=False,
+              nb_inputsamples_per_cycle=None,
+              clock_source=None,
+              analog_chans_out: Optional[Sequence[str]] = None,
+              analog_chans_in: Sequence[str] = ['ai0'],
+              digital_chans_out: Optional[Sequence[str]] = None,
+              analog_data_out: Optional[Sequence[np.ndarray]] = None,
+              digital_data_out: Optional[Sequence] = None,
+              metadata: Optional[Dict] = None,
               params=None):
         """[summary]
 
@@ -56,26 +70,43 @@ class DAQ(BaseZeroService):
         Raises:
             ValueError: [description]
         """
+        if import_error is not None:
+            raise ImportError(e)
+
         self._time_started = None
         self.duration = duration
         self.savefilename = savefilename
-        # APPLICATION SPECIFIC SETUP CODE HERE
+
         self.analog_chans_out = analog_chans_out
         self.analog_chans_in = analog_chans_in
         self.digital_chans_out = digital_chans_out
+
+        info: Dict[str, Any] = {
+            'sample rate': f"{fs}Hz",
+            'analog output': self.analog_chans_out,
+            'digital output': self.digital_chans_out,
+            'analog input': self.analog_chans_in,
+            'duration': f"{duration}s",
+            'savefilename': savefilename,
+            'metadata': metadata,
+        }
+
+        rich.print(Panel(dict_to_def(info), title='Information'))
+        rich.print(Panel(df_to_table(playlist_info, Table()), title='Playlist'))
 
         # ANALOG OUTPUT
         if self.analog_chans_out:
             self.taskAO = IOTask(cha_name=self.analog_chans_out, rate=fs, clock_source=clock_source)
             if analog_data_out[0].shape[-1] is not len(self.analog_chans_out):
-                raise ValueError(f'Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]}).')
+                raise ValueError(
+                    f'Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]}).'
+                )
             play_order_new = copy.deepcopy(play_order)
-            self.taskAO.data_gen = data_playlist(analog_data_out, play_order_new, playlist_info, self.log , name='AO')
+            self.taskAO.data_gen = data_playlist(analog_data_out, play_order_new, playlist_info, self.log, name='AO')
             if clock_source is None:
                 self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             else:
                 self.taskAO.DisableStartTrig()
-            print(self.taskAO)
         # DIGITAL OUTPUT
         if self.digital_chans_out:
             self.taskDO = IOTask(cha_name=self.digital_chans_out, rate=fs, clock_source=clock_source)
@@ -85,18 +116,25 @@ class DAQ(BaseZeroService):
                 self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             else:
                 self.taskDO.DisableStartTrig()
-            print(self.taskDO)
         # ANALOG INPUT
         if self.analog_chans_in:
-            self.taskAI = IOTask(cha_name=self.analog_chans_in, rate=fs,
+            self.taskAI = IOTask(cha_name=self.analog_chans_in,
+                                 rate=fs,
                                  nb_inputsamples_per_cycle=nb_inputsamples_per_cycle,
-                                 clock_source=clock_source)
+                                 clock_source=clock_source,
+                                 duration=self.duration)
             self.taskAI.data_rec = []
 
             self.callbacks = []
+            if metadata is None:
+                metadata = {}
             attrs = {'rate': fs, 'analog_chans_in': analog_chans_in, **metadata}
-            common_task_kwargs = {'file_name': self.savefilename, 'nb_inputsamples_per_cycle': nb_inputsamples_per_cycle,
-                                  'nb_analog_chans_in': len(analog_chans_in), 'attrs': attrs}
+            common_task_kwargs = {
+                'file_name': self.savefilename,
+                'nb_inputsamples_per_cycle': nb_inputsamples_per_cycle,
+                'nb_analog_chans_in': len(analog_chans_in),
+                'attrs': attrs
+            }
 
             for cb_name, cb_params in params['callbacks'].items():
                 if cb_params is not None:
@@ -127,9 +165,9 @@ class DAQ(BaseZeroService):
 
         self.log.info('started')
         if hasattr(self, '_thread_timer'):
-             self.log.info('duration {0} seconds'.format(self.duration))
-             self._thread_timer.start()
-             self.log.info('finish timer started')
+            self.log.info('duration {0} seconds'.format(self.duration))
+            self._thread_timer.start()
+            self.log.info('finish timer started')
 
     def finish(self, stop_service=False):
         self.log.warning('stopping')
