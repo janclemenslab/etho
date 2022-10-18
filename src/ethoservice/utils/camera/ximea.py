@@ -1,7 +1,7 @@
 import time
 import numpy as np
 from typing import Tuple
-from base import BaseCam, gray2rgb
+from .base import BaseCam, gray2rgb
 
 try:
     from ximea import xiapi
