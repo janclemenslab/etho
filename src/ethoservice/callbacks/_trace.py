@@ -169,8 +169,11 @@ class SaveHDF(BaseCallback):
         self._append_data(data_to_save, np.array([systemtime])[:, np.newaxis])
 
     def _cleanup(self):
-        self.f.flush()
-        self.f.close()
+        if self.f.isopen:
+            self.f.flush()
+            self.f.close()
+        else:
+            logging.debug(f"{self.file_name} already closed.")
 
 
 @register_callback
@@ -226,8 +229,11 @@ class SaveDLP_HDF(BaseCallback):
         self._append_data(data_to_save, np.array([systemtime]))
 
     def _cleanup(self):
-        self.f.flush()
-        self.f.close()
+        if self.f.isopen:
+            self.f.flush()
+            self.f.close()
+        else:
+            logging.debug(f"{self.file_name} already closed.")
 
 
 @register_callback
