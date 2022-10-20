@@ -7,8 +7,8 @@ import socket
 import time
 import os
 import subprocess
-from ethoservice.utils.common import iswin
 from typing import Optional
+import sys
 
 
 class BaseZeroService(abc.ABC, zerorpc.Server):
@@ -65,14 +65,14 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             port = cls.SERVICE_PORT
 
         server_name = '{0} -m {1} {2}'.format(python_exe, cls.__module__, SER)
-        print(f'initializing {cls.SERVICE_NAME} at port {port}.')
+        logging.debug(f'initializing {cls.SERVICE_NAME} at port {port}.')
         service = ethomaster.head.ZeroClient.ZeroClient("{0}@{1}".format(user_name, ip_address), 'piservice', serializer=SER)
-        print('   starting server:', end='')
+        logging.debug('   starting server:', end='')
         ret = service.start_server(server_name, folder_name, warmup=1, remote=remote)
-        print(f'{"success" if ret else "FAILED"}.')
-        print('   connecting to server:', end='')
+        logging.debug(f'{"success" if ret else "FAILED"}.')
+        logging.debug('   connecting to server:', end='')
         ret = service.connect("tcp://{0}:{1}".format(ip_address, port))
-        print(f'{"success" if ret else "FAILED"}.')
+        logging.debug(f'{"success" if ret else "FAILED"}.')
         return service
 
     def _init_network_logger(self, head_ip: str = '192.168.1.1', log_level: str = logging.INFO):
@@ -159,12 +159,16 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             time_elapsed = time.time() - self._time_started
         return time_elapsed
 
+    def attr(self, name: str):
+        # 0rpc only exposes functions - can't access attributes directly
+        # so we wrap attribute access in a function
+        return self.__getattribute__(name)
+
     def progress(self):
-        if (self._time_elapsed() is None) or (self.duration is None):
-            progress = None
-        else:
-            progress = self._time_elapsed() / self.duration
-        return [self._time_elapsed(), self.duration, 'seconds', progress]
+        try:
+            return {'total': self.duration, 'elapsed': self._time_elapsed()}
+        except:
+            pass
 
     def ping(self):
         self.log.info('pong')
@@ -176,8 +180,8 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         Args:
             ip_address: "tcp://0.0.0.0"
         """
-        self.log.warning("starting starting")
-        self.bind(ip_address + ":" + self.SERVICE_PORT)
+        self.log.warning("starting")
+        self.bind(f"{ip_address}:{self.SERVICE_PORT}")
         self.run()
         self.log.warning("   done")
 
@@ -187,14 +191,15 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         try:
             self.stop()
         except Exception as e:
-            print(e)
+            logging.debug('stopnot', exc_info=e)
         self.log.warning("   done")
         self._flush_loggers()
         self.service_kill()
 
     def service_kill(self):
         self.log.warning('   kill process {0}'.format(self._getpid()))
-        if iswin():
+        iswin = sys.platform == "win32"
+        if iswin:
             # run this in subprocess so the function returns - running this via os.system(...) will kill the process but not return
             subprocess.Popen('taskkill /F /PID {0}'.format(self._getpid()))
         else:

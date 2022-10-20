@@ -1,16 +1,24 @@
 #!/bin/python
 import time
 import wx
-
 from ethomaster.head.clientmanager import *
 from ethomaster.utils.SSHRunner import *
 from ethomaster import config
 import ethomaster.gui.wxCtrl_rpi as wxCtrl_rpi
 from ethomaster.gui.wxBusyDialog import BusyDialog
+from threading import Thread
+from pubsub import pub
+# from wx.lib.pubsub import pub
+import logging
+import zmq
+import logging
+import logging.handlers
+from ethomaster import config
 
 
 # TODO Run this in background and automatically update gui using pubsub https://wiki.wxpython.org/ModelViewController
 class Model:
+
     def __init__(self):
         # this should happen in config!!
         self.hosts = config['GENERAL']['hosts']
@@ -18,26 +26,12 @@ class Model:
         self.host_names = config['GENERAL']['hosts'].keys()
         self.host_ip2names = {ip: name for ip, name in zip(self.host_ips, self.host_names)}
         self.host_status = exepool(ping, self.host_ips)
-        
+
     def rescan(self):
         print('RESCANNING - listing clients:')
         self.host_status = exepool(ping, self.host_ips)
         print(self.host_status)
         print('RESCANNING - listing running services:')
-        
-
-
-from threading import Thread
-import wx
-from pubsub import pub
-# from wx.lib.pubsub import pub
-import time
-import logging
-import time
-import zmq
-import logging
-import logging.handlers
-from ethomaster import config
 
 
 class WorkThread(Thread):
@@ -46,7 +40,7 @@ class WorkThread(Thread):
         """Init Worker Thread Class."""
         Thread.__init__(self)
         self.stop_work_thread = 0
-        
+
         logger = logging.getLogger('')
         logger.setLevel(logging.INFO)
         # __ to console logger
@@ -59,7 +53,7 @@ class WorkThread(Thread):
         console.setLevel(logging.INFO)
         # add handler to logger
         logger.addHandler(console)
-       
+
         # subscribe to all logging ports
         logging_ports = range(int(config['LOGGER']['portrange'][0]), int(config['LOGGER']['portrange'][1]))
         ctx = zmq.Context()
@@ -71,7 +65,7 @@ class WorkThread(Thread):
         self.logger = logger
         self.start()  # start the thread
         self.val = 0
-    
+
     def run(self):
         print('LISTENING FOR MESSAGES')
 
@@ -98,8 +92,6 @@ class WorkThread(Thread):
         self.stop_work_thread = 1
 
 
-
-
 class HelloFrame(wx.Frame):
     """A Frame that says Hello World."""
 
@@ -117,7 +109,7 @@ class HelloFrame(wx.Frame):
         self.CreateStatusBar()
         self.SetStatusText("ethodrome")
 
-        self.logger = wx.TextCtrl(self,size=(1000, 2000), style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_DONTWRAP)
+        self.logger = wx.TextCtrl(self, size=(1000, 2000), style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_DONTWRAP)
         font1 = wx.Font(8, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Consolas')
         self.logger.SetFont(font1)
 
@@ -128,7 +120,6 @@ class HelloFrame(wx.Frame):
         pub.subscribe(self.onUpdate, "update")
         pub.subscribe(self.onFinish, "finish")
         self.work = WorkThread()
-    
 
     def makeButtonPanel(self):
         masterSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -138,7 +129,7 @@ class HelloFrame(wx.Frame):
         for name in self.model.host_names:
             ip = self.model.hosts[name]
             status = self.model.host_status[ip]
-            
+
             sizerHorz = wx.BoxSizer(wx.HORIZONTAL)
             panelButton = wx.Button(self, label=name)
             # custom `name` field so we can identify button
@@ -155,8 +146,7 @@ class HelloFrame(wx.Frame):
 
         masterSizer.Add(topSizer)
         masterSizer.Add(self.logger, 0, 0, 0)
-        self.SetSizer(masterSizer)        
-        
+        self.SetSizer(masterSizer)
 
     def makeMenuBar(self):
         """
@@ -169,8 +159,7 @@ class HelloFrame(wx.Frame):
         fileMenu = wx.Menu()
         # The "\t..." syntax defines an accelerator key that also triggers
         # the same event
-        rescanItem = fileMenu.Append(-1, "&Rescan...\tCtrl-R",
-                                     "Rescan nodes")
+        rescanItem = fileMenu.Append(-1, "&Rescan...\tCtrl-R", "Rescan nodes")
         fileMenu.AppendSeparator()
         # When using a stock ID we don't need to specify the menu item's
         # label
@@ -198,12 +187,10 @@ class HelloFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnExit, exitItem)
         self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem)
 
-
     def onUpdate(self, step):
-        step = str(step)+'\n'
+        step = str(step) + '\n'
         self.logger.AppendText(step)
 
-    
     def onCancel(self, event):
         """Cancel thread process"""
         try:
@@ -234,11 +221,6 @@ class HelloFrame(wx.Frame):
     def OnRescan(self, event):
         pass
 
-
-    # def OnClick(self, event):
-    #     name, ip = event.GetEventObject().name, event.GetEventObject().ip
-    #     self.PushStatusText('configure {0}'.format(ip, name))
-    #     wxCtrl_rpi.main(name#ifndef _PY_UTILS_HPP_
     def OnClick(self, event):
         name, ip = event.GetEventObject().name, event.GetEventObject().ip
         self.PushStatusText('configure {0}'.format(ip, name))
@@ -248,16 +230,13 @@ class HelloFrame(wx.Frame):
         except:
             pass
 
-
     def OnHello(self, event):
         """Say hello to the user."""
         wx.MessageBox("Hello again from wxPython")
 
     def OnAbout(self, event):
         """Display an About Dialog"""
-        wx.MessageBox("This is a wxPython Hello World sample",
-                      "About Hello World 2",
-                      wx.OK | wx.ICON_INFORMATION)
+        wx.MessageBox("This is a wxPython Hello World sample", "About Hello World 2", wx.OK | wx.ICON_INFORMATION)
 
 
 if __name__ == '__main__':

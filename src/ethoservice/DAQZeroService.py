@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-from .ZeroService import BaseZeroService  # import super class
+from .ZeroService import BaseZeroService
 import time
 import threading
 import sys
@@ -72,6 +71,8 @@ class DAQ(BaseZeroService):
         Raises:
             ValueError: [description]
         """
+        self.status = 'initializing'
+
         if import_error is not None:
             raise ImportError(e)
 
@@ -148,8 +149,11 @@ class DAQ(BaseZeroService):
 
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
+        self.status = 'initialized'
 
     def start(self):
+        self.status = 'running'
+
         self._time_started = time.time()
 
         for task in self.taskAI.data_rec:
@@ -165,13 +169,14 @@ class DAQ(BaseZeroService):
         # Start the AI task - generates AI start trigger and triggers the output tasks
         self.taskAI.StartTask()
 
-        self.log.info('started')
+        self.log.debug('started')
         if hasattr(self, '_thread_timer'):
-            self.log.info('duration {0} seconds'.format(self.duration))
+            self.log.debug('duration {0} seconds'.format(self.duration))
             self._thread_timer.start()
-            self.log.info('finish timer started')
+            self.log.debug('finish timer started')
 
     def finish(self, stop_service=False):
+        self.status = 'finishing'
         self.log.warning('stopping')
         if hasattr(self, '_thread_stopper'):
             self._thread_stopper.set()
@@ -263,6 +268,7 @@ if __name__ == '__main__':
         ser = sys.argv[1]
     else:
         ser = 'default'
+    logging.info('Starting DAQ service')
     s = DAQ(serializer=ser)  # expose class via zerorpc
     s.bind("tcp://0.0.0.0:{0}".format(DAQ.SERVICE_PORT))  # broadcast on all IPs
     s.run()

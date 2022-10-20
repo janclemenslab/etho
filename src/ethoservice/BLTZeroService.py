@@ -10,12 +10,15 @@ from typing import Optional
 import os
 
 from .utils.log_exceptions import for_all_methods, log_exceptions
-from .utils.ConcurrentTask import Pipe
+from .utils.concurrent_task import Pipe
 
-from pybmt.callback.threshold_callback import ThresholdCallback
-from pybmt.callback.broadcast_callback import BroadcastCallback
-from pybmt.fictrac.service import FicTracDriver
-
+try:
+    from pybmt.callback.threshold_callback import ThresholdCallback
+    from pybmt.callback.broadcast_callback import BroadcastCallback
+    from pybmt.fictrac.service import FicTracDriver
+    pybmt_error = None
+except ImportError as pybmt_error:
+    pass
 
 # decorate all methods in the class so that exceptions are properly logged
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -26,6 +29,8 @@ class BLT(BaseZeroService):
     SERVICE_NAME = "BLT" # short, uppercase, 3-letter ID of the service (must equal class name)
 
     def setup(self, savefilename, duration, params):
+        if pybmt_error is not None:
+            raise pybmt_error
         self.log.info('setup')
         self._time_started = None
         self.duration = float(duration)
@@ -43,7 +48,7 @@ class BLT(BaseZeroService):
 
     def start(self):
         self._time_started = time.time()
-        # self._worker_thread.start()        
+        # self._worker_thread.start()
         # background jobs should be run and controlled via a thread
         self.log.info('started')
         if hasattr(self, '_thread_timer'):
@@ -100,7 +105,7 @@ def cli(serializer: str = 'default', port: Optional[str] = None):
     print('running BLTZeroService')
     s.run()
     print('done')
-    
+
 
 if __name__ == '__main__':
     defopt.run(cli)

@@ -1,10 +1,3 @@
-#!/usr/bin/env python
-try:
-    import picamera
-    picamera_error = None
-except Exception as e:
-    picamera_error = e
-
 from threading import Timer
 import io
 from .ZeroService import BaseZeroService
@@ -14,6 +7,11 @@ import os
 import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
+try:
+    import picamera
+    picamera_error = None
+except Exception as picamera_error:
+    pass
 
 
 @log_exceptions(logging.getLogger(__name__))

@@ -13,8 +13,8 @@ from rich.console import Console
 from rich.panel import Panel
 
 
-logger = logging.getLogger('GCM')
-logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger('GCM')
+# logging.basicConfig(level=logging.INFO)
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -49,6 +49,7 @@ class GCM(BaseZeroService):
         self.c.framerate = params['frame_rate']
         self.c.start()
         image, image_ts, system_ts = self.c.get()
+        self.test_image = image
         self.c.stop()
 
         iii = self.c.info_imaging()
@@ -68,9 +69,7 @@ class GCM(BaseZeroService):
 
         self.frame_width, self.frame_height, self.frame_channels = image.shape
         self.framerate = self.c.framerate
-        self.nFrames = int(self.framerate * (self.duration + 100))
-        self.nFramesTarget = int(self.framerate * self.duration)
-        self.pbar = CameraProgress(self.nFramesTarget)
+        self.nFrames = int(self.framerate * self.duration + 100)
 
         self.callbacks = []
         self.callback_names = []
@@ -107,11 +106,11 @@ class GCM(BaseZeroService):
 
         # background jobs should be run and controlled via a thread
         self._worker_thread.start()
-        self.log.info('started')
+        self.log.debug('started')
         if hasattr(self, '_thread_timer'):
-            self.log.info('duration {0} seconds'.format(self.duration))
+            self.log.debug('duration {0} seconds'.format(self.duration))
             self._thread_timer.start()
-            self.log.info('finish timer started')
+            self.log.debug('finish timer started')
 
     def _worker(self, stop_event):
         RUN = True
@@ -135,10 +134,7 @@ class GCM(BaseZeroService):
                         package = (image, (system_ts, image_ts))
                     callback.send(package)
 
-                if frameNumber % self.framerate == 0:
-                    self.pbar.update(number_of_frames=frameNumber)
-
-                frameNumber = frameNumber + 1
+                frameNumber += 1
                 if frameNumber == self.nFrames:
                     self.log.info('Max number of frames reached - stopping.')
                     RUN = False
