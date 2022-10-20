@@ -12,6 +12,8 @@ from rich.table import Table
 from .utils.tui import dict_to_def, df_to_table
 import rich
 import logging
+import numpy as np
+
 
 try:
     from .utils.IOTask import *
