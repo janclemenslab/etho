@@ -10,7 +10,7 @@ import numpy as np
 from numpy.core.numeric import False_
 import scipy.signal as ss
 
-from ..utils.ConcurrentTask import ConcurrentTask
+from ..utils.concurrent_task import ConcurrentTask
 from . import register_callback
 from typing import List
 from ._base import BaseCallback

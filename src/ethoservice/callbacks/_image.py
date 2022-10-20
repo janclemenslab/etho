@@ -7,7 +7,7 @@ import numpy as np
 import cv2
 from . import register_callback
 from ._base import BaseCallback
-from ..utils.ConcurrentTask import ConcurrentTask
+from ..utils.concurrent_task import ConcurrentTask
 
 
 class ImageCallback(BaseCallback):
