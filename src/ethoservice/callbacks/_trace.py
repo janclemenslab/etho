@@ -3,9 +3,7 @@
 TODO: register for logging: `@for_all_methods(log_exceptions(logging.getLogger(__name__)))`
 TODO: Make generic/abstract HDF writer
 """
-
 import logging
-from os import system
 import numpy as np
 from numpy.core.numeric import False_
 import scipy.signal as ss
