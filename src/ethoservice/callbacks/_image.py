@@ -174,13 +174,27 @@ class ImageWriterCV2(ImageCallback):
 
 @register_callback
 class ImageWriterCVR(ImageCallback):
-    """Round robin videowriter - see ImageWriterVidGear for details."""
+    """Round robin videowriter - see ImageWriterVidGear for details.
+
+    Will switch after a specified to a new file.
+    Naming patter `f"{file_name}_{video_count:06d}.avi"`, for instance "testvideo_000012.avi"
+
+    Special protocol parameters:
+    ```yaml
+    callbacks:
+        save_vidgear:
+            ffmpeg_params:  # dict with parameters to pass to ffmpeg
+                crf: 16
+            max_frames_per_video: 100_000  # number of frames after which to switch to new video file
+    ```
+
+    """
 
     SUFFIX: str = '.avi'
     FRIENDLY_NAME = 'save_vidgear_round'
     TIMESTAMPS_ONLY = False
 
-    def __init__(self, data_source, *, poll_timeout=0.01, max_frames_per_video=100_000, **kwargs):
+    def __init__(self, data_source, *, poll_timeout=0.01, max_frames_per_video=100_000, ffmpeg_params: Optional[Dict[str, Any]] = None, **kwargs):
 
         if vidgear_import_error is not None:
             raise vidgear_import_error
@@ -191,7 +205,9 @@ class ImageWriterCVR(ImageCallback):
         self.frame_count = 0
         self.max_frames_per_video = max_frames_per_video
 
-        output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
+        self.output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
+        if ffmpeg_params is not None:
+            self.output_params.update(ffmpeg_params)
         self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **output_params)
 
     def _loop(self, data):
@@ -225,6 +241,16 @@ class ImageWriterVidGear(ImageCallback):
         - ffmpeg: `mamba install ffmpeg -c conda-forge
         - vidgear: `python -m pip install vidgear[core]`
 
+    Special protocol parameters:
+        - ffmpeg_params: dict with parameters to pass to ffmpeg
+
+    ```yaml
+    callbacks:
+        save_vidgear:
+            ffmpeg_params:  # dict with parameters to pass to ffmpeg
+                crf: 16
+    ```
+
     Raises:
         vidgear_import_error: If VidGear could not be imported.
     """
@@ -233,14 +259,17 @@ class ImageWriterVidGear(ImageCallback):
     FRIENDLY_NAME = 'save_vidgear'
     TIMESTAMPS_ONLY = False
 
-    def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
+    def __init__(self, data_source, *, poll_timeout=0.01, ffmpeg_params: Optional[Dict[str, Any]] = None, **kwargs):
         if vidgear_import_error is not None:
             raise vidgear_import_error
 
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
-        self.vw = WriteGear(output_filename=self.file_name + self.SUFFIX, **output_params)
+        self.output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
+        if ffmpeg_params is not None:
+            self.output_params.update(ffmpeg_params)
+
+        self.vw = WriteGear(output_filename=self.file_name + self.SUFFIX, **self.output_params)
 
     def _loop(self, data):
         if hasattr(self.data_source, 'WHOAMI') and self.data_source.WHOAMI == 'array':
