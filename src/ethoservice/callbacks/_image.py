@@ -7,8 +7,8 @@ from xml.dom import NotFoundErr
 import numpy as np
 from . import register_callback
 from ._base import BaseCallback
-from ..utils.ConcurrentTask import ConcurrentTask
-
+from ..utils.concurrent_task import ConcurrentTask
+from typing import Optional, Dict, Any
 try:
     import cv2
     cv2_import_error = None
@@ -205,11 +205,9 @@ class ImageWriterCVR(ImageCallback):
         if self.frame_count > self.max_frames_per_video:
             self.vw.close()
             del self.vw
-            output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
-            self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **output_params)
-
             self.frame_count = 0
             self.video_count += 1
+            self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **output_params)
 
     def _cleanup(self):
         self.vw.close()
