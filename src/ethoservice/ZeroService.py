@@ -75,7 +75,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         logging.debug(f'{"success" if ret else "FAILED"}.')
         return service
 
-    def _init_network_logger(self, head_ip: str = '192.168.1.1', log_level: str = logging.INFO):
+    def _init_network_logger(self, head_ip: str = '192.168.1.1', log_level: int = logging.INFO):
         """Initialize logger that publishes messages over the network format.
 
         For live display of messages on head node (see ethomaster.head.headlogger).
