@@ -6,7 +6,7 @@ from collections import defaultdict
 HOME = str(pathlib.Path.home())
 GLOBALCONFIGFILEPATH = os.path.join(HOME, 'ethoconfig.yml')
 if not os.path.exists(GLOBALCONFIGFILEPATH):
-    GLOBALCONFIGFILEPATH = os.path.join(HOME, 'ethoconfig.ini') # ~/ethoconfig.ini
+    GLOBALCONFIGFILEPATH = os.path.join(HOME, 'ethoconfig.ini')  # ~/ethoconfig.ini
 if not os.path.exists(GLOBALCONFIGFILEPATH):
     raise FileNotFoundError('no config file found. should be ~/ethoconfig.yml or ~/ethoconfig.yml')
 
@@ -25,10 +25,12 @@ def defaultify(d, defaultfactory=lambda: None):
         return d
     return defaultdict(defaultfactory, {k: defaultify(v, defaultfactory) for k, v in d.items()})
 
+
 def undefaultify(d):
     if not isinstance(d, dict):
         return d
     return {k: undefaultify(v) for k, v in d.items()}
+
 
 def saveconfig(filename, prot):
     import yaml
