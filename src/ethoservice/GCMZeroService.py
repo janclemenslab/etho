@@ -6,15 +6,9 @@ from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 from .utils import camera as camera
 from .callbacks import callbacks
-
-from .utils.tui import dict_to_def, dict_to_def_aults, CameraProgress
+from .utils.tui import dict_to_def, dict_to_def_aults
 import rich
-from rich.console import Console
 from rich.panel import Panel
-
-
-# logger = logging.getLogger('GCM')
-# logging.basicConfig(level=logging.INFO)
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -37,7 +31,7 @@ class GCM(BaseZeroService):
         try:
             self.c.init()
         except Exception as e:
-            logger.exception("Failed to init {self.cam_type} (sn {self.cam_serialnumber}). Reset and re-try.", exc_info=e)
+            self.log.exception("Failed to init {self.cam_type} (sn {self.cam_serialnumber}). Reset and re-try.", exc_info=e)
             self.c.reset()
             self.c.init()
 
@@ -198,10 +192,12 @@ if __name__ == '__main__':
         ser = sys.argv[1]
     else:
         ser = 'default'
+
     if len(sys.argv) > 2:
         port = sys.argv[2]
     else:
         port = GCM.SERVICE_PORT
+
     s = GCM(serializer=ser)
-    s.bind("tcp://0.0.0.0:{0}".format(port))  # broadcast on all IPs
+    s.bind(f"tcp://0.0.0.0:{port}")  # broadcast on all IPs
     s.run()
