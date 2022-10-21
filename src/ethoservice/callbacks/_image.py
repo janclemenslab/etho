@@ -3,11 +3,31 @@
 TODO: register all methods for logging: `@for_all_methods(log_exceptions(logging.getLogger(__name__)))`
 """
 import logging
+from xml.dom import NotFoundErr
 import numpy as np
-import cv2
 from . import register_callback
 from ._base import BaseCallback
-from ..utils.concurrent_task import ConcurrentTask
+from ..utils.ConcurrentTask import ConcurrentTask
+
+try:
+    import cv2
+    cv2_import_error = None
+except ImportError as cv2_import_error:
+    pass
+
+try:
+    from vidgear.gears import WriteGear
+    vidgear_import_error = None
+except ImportError as vidgear_import_error:
+    pass
+
+try:
+    from pyqtgraph.Qt import QtGui
+    import pyqtgraph as pg
+    from pyqtgraph.widgets.RawImageWidget import RawImageWidget
+    pyqtgraph_import_error = NotFoundErr
+except ImportError as pyqtgraph_import_error:
+    pass
 
 
 class ImageCallback(BaseCallback):
@@ -36,6 +56,9 @@ class ImageDisplayCV2(ImageCallback):
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, poll_timeout=0.01, **kwargs):
+        if cv2_import_error is not None:
+            raise cv2_import_error
+
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         logging.info("setting up disp")
@@ -67,11 +90,10 @@ class ImageDisplayPQG(ImageCallback):
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+        if pyqtgraph_import_error is not None:
+            raise pyqtgraph_import_error
 
-        from pyqtgraph.Qt import QtGui
-        import pyqtgraph as pg
-        from pyqtgraph.widgets.RawImageWidget import RawImageWidget
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         logging.info("setting up ImageDisplayPQG")
 
@@ -105,12 +127,31 @@ class ImageDisplayPQG(ImageCallback):
 
 @register_callback
 class ImageWriterCV2(ImageCallback):
+    """Save images to video using opencv's VideoWriter.
+
+    Fast but little control over video compression quality.
+
+    Requirements:
+        - ffmpeg (?): `mamba install ffmpeg -c conda-forge
+        - openh264 (?) form the cisco github page
+        - opencv: `mamba install opencv -c conda-forge`
+
+    Raises:
+        vidgear_import_error: If VidGear could not be imported.
+
+    Args:
+        ImageCallback (_type_): _description_
+    """
 
     SUFFIX: str = '.avi'
     FRIENDLY_NAME = 'save_avi'
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
+
+        if cv2_import_error is not None:
+            raise cv2_import_error
+
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         self.vw = cv2.VideoWriter()
@@ -133,24 +174,25 @@ class ImageWriterCV2(ImageCallback):
 
 @register_callback
 class ImageWriterCVR(ImageCallback):
+    """Round robin videowriter - see ImageWriterVidGear for details."""
 
     SUFFIX: str = '.avi'
-    FRIENDLY_NAME = 'save_avi_round'
+    FRIENDLY_NAME = 'save_vidgear_round'
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, *, poll_timeout=0.01, max_frames_per_video=100_000, **kwargs):
+
+        if vidgear_import_error is not None:
+            raise vidgear_import_error
+
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         self.video_count = 0
         self.frame_count = 0
         self.max_frames_per_video = max_frames_per_video
-        save_name = f"{self.file_name}_{self.video_count:04d}{self.SUFFIX}"
-        self.vw_open_args = [
-            save_name, cv2.VideoWriter_fourcc(*'x264'), self.frame_rate, (self.frame_height, self.frame_width), True
-        ]
 
-        self.vw = cv2.VideoWriter()
-        self.vw.open(*self.vw_open_args)
+        output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
+        self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **output_params)
 
     def _loop(self, data):
         if hasattr(self.data_source, 'WHOAMI') and self.data_source.WHOAMI == 'array':
@@ -160,38 +202,82 @@ class ImageWriterCVR(ImageCallback):
 
         self.vw.write(image)
         self.frame_count += 1
-
         if self.frame_count > self.max_frames_per_video:
+            self.vw.close()
+            del self.vw
+            output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
+            self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **output_params)
+
             self.frame_count = 0
             self.video_count += 1
 
-            self.vw.release()
-            del self.vw
-            self.vw = cv2.VideoWriter()
-            self.vw_open_args[0] = f"{self.file_name}_{self.video_count:04d}{self.SUFFIX}"
-            self.vw.open(*self.vw_open_args)
-            logging.info(f"   Writing to new video {self.file_name + self.SUFFIX}{self.video_count:06d}")
+    def _cleanup(self):
+        self.vw.close()
+        del self.vw
+        super()._cleanup()
+
+
+@register_callback
+class ImageWriterVidGear(ImageCallback):
+    """Write video files using vidgear [](https://abhitronix.github.io/vidgear/latest/).
+    Directly calls ffmpeg for video encoding, works with 100+ fps.
+    Gives more control over compression quality, via args to ffmpeg.
+
+    Requirements:
+        - ffmpeg: `mamba install ffmpeg -c conda-forge
+        - vidgear: `python -m pip install vidgear[core]`
+
+    Raises:
+        vidgear_import_error: If VidGear could not be imported.
+    """
+
+    SUFFIX: str = '.avi'
+    FRIENDLY_NAME = 'save_vidgear'
+    TIMESTAMPS_ONLY = False
+
+    def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
+        if vidgear_import_error is not None:
+            raise vidgear_import_error
+
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
+        self.vw = WriteGear(output_filename=self.file_name + self.SUFFIX, **output_params)
+
+    def _loop(self, data):
+        if hasattr(self.data_source, 'WHOAMI') and self.data_source.WHOAMI == 'array':
+            image = data
+        else:
+            image, timestamp = data
+
+        self.vw.write(image)
 
     def _cleanup(self):
-        self.vw.release()
+        self.vw.close()
         del self.vw
         super()._cleanup()
 
 
 @register_callback
 class ImageWriterVPF(ImageCallback):
+    """CUDA-accelerated video encoding using Nvidia's VideoProcessingFramework.
+    Very fast (1000fps) and high quality but produce large videos.
+
+    Requirements:
+        - VideoProcessingFramework: https://github.com/NVIDIA/VideoProcessingFramework
+    """
 
     SUFFIX: str = '.avi'
     FRIENDLY_NAME = 'save_avi_fast'
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, *, poll_timeout=0.01, VPF_bin_path=None, **kwargs):
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         import sys
         sys.path.append(VPF_bin_path)
         import PyNvCodec as nvc
 
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
         gpuID = 0
         self.encFile = open(self.file_name + self.SUFFIX, "wb")
         # self.nvEnc = nvc.PyNvEncoder({'rc':'vbr_hq','profile': 'high', 'cq': '10', 'codec': 'h264', 'bf':'3',
