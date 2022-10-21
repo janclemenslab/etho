@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-import PyDAQmx as daq
-from PyDAQmx.DAQmxCallBack import *
-from PyDAQmx.DAQmxConstants import *
-from PyDAQmx.DAQmxFunctions import *
-
 import threading
 from tqdm import tqdm
 import time
 import numpy as np
+
+try:
+    import PyDAQmx as daq
+    from PyDAQmx.DAQmxCallBack import *
+    from PyDAQmx.DAQmxConstants import *
+    from PyDAQmx.DAQmxFunctions import *
+    pydaqmx_import_error = None
+except ImportError as pydaqmx_import_error:
+    pass
 
 
 class IOTask(daq.Task):
@@ -36,6 +40,9 @@ class IOTask(daq.Task):
             TypeError: [description]
             ValueError: [description]
         """
+        if pydaqmx_import_error is not None:
+            raise pydaqmx_import_error
+
         # check inputs
         daq.Task.__init__(self)
         if not isinstance(cha_name, (list, tuple)):
