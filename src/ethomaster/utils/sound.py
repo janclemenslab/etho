@@ -234,7 +234,7 @@ def load_sounds(playlist: pd.DataFrame, fs: float, attenuation: Dict[float, floa
             xLED = np.zeros(xx[non_mirror_led_chan].shape)  # second channel is all zeros unless we mirrorsound
             # copy channel for led
             # duration of the LED pattern at least 100ms if possible so it registers in video
-            minLEDduration = 3000 / 1000 * fs  # at least 100ms
+            minLEDduration = 3 * fs  # at least 3s
             # set to minimal duration
             LEDduration = np.max((sample_sound, minLEDduration))
             # prevent overflow (if 100ms exceeds duration of sound)
