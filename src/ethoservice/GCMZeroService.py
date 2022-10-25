@@ -1,28 +1,21 @@
-# required imports
-from .ZeroService import BaseZeroService  # import super class
-import zerorpc  # for starting service in `main()`
-import time     # for timer
+from .ZeroService import BaseZeroService
+import time
 import threading
 import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 from .utils import camera as camera
-
-import numpy as np
-import h5py
-from ethoservice.utils.common import *
-
-import cv2
-from datetime import datetime
-from .utils.ConcurrentTask import ConcurrentTask
 from .callbacks import callbacks
+from .utils.tui import dict_to_def, dict_to_def_aults
+import rich
+from rich.panel import Panel
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class GCM(BaseZeroService):
 
-    LOGGING_PORT = 1448   # set this to range 1420-1460
-    SERVICE_PORT = 4248   # last to digits match logging port - but start with "42" instead of "14"
+    LOGGING_PORT = 1448  # set this to range 1420-1460
+    SERVICE_PORT = 4248  # last to digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "GCM"  # short, uppercase, 3-letter ID of the service (equals class name)
 
     def setup(self, savefilename, duration, params):
@@ -37,7 +30,8 @@ class GCM(BaseZeroService):
         self.c = camera.make[self.cam_type](self.cam_serialnumber)
         try:
             self.c.init()
-        except:
+        except Exception as e:
+            self.log.exception("Failed to init {self.cam_type} (sn {self.cam_serialnumber}). Reset and re-try.", exc_info=e)
             self.c.reset()
             self.c.init()
 
@@ -49,20 +43,36 @@ class GCM(BaseZeroService):
         self.c.framerate = params['frame_rate']
         self.c.start()
         image, image_ts, system_ts = self.c.get()
+        self.test_image = image
         self.c.stop()
 
-        self.frame_width, self.frame_height = image.shape[:2]
+        iii = self.c.info_imaging()
+        iii['exposure'] = f"{iii['exposure']:1.2f}ms"
+        params['exposure'] = f"{params['shutter_speed']/1_000:1.2f}ms"
+        params['framerate'] = params['frame_rate']
+        params['offsetX'], params['offsetY'], params['width'], params['height'] = params['frame_offx'], params[
+            'frame_offy'], params['frame_width'], params['frame_height']
 
-        self.frame_interval = StatValue(smooth_coef=0.9)
-        self.frame_interval.value = 0
-        self.last_frame_time = clock()
+        hii = self.c.info_hardware()
+        hii.update({k: v if v is not None else 'defaults' for k, v, in params['callbacks'].items()})
+        hii['savefilename'] = self.savefilename
+        hii['duration'] = self.duration
 
-        self.nFrames = int(self.c.framerate * (self.duration + 100))
+        rich.print(Panel(dict_to_def(hii), title='Hardware'))
+        rich.print(Panel(dict_to_def_aults(iii, params), title='Image settings'))
+
+        self.frame_width, self.frame_height, self.frame_channels = image.shape
+        self.framerate = self.c.framerate
+        self.nFrames = int(self.framerate * self.duration + 100)
 
         self.callbacks = []
         self.callback_names = []
-        common_task_kwargs = {'file_name': self.savefilename, 'frame_rate': self.c.framerate,
-                              'frame_height': self.frame_height, 'frame_width': self.frame_width}
+        common_task_kwargs = {
+            'file_name': self.savefilename,
+            'frame_rate': self.framerate,
+            'frame_height': self.frame_height,
+            'frame_width': self.frame_width
+        }
         for cb_name, cb_params in params['callbacks'].items():
             if cb_params is not None:
                 task_kwargs = {**common_task_kwargs, **cb_params}
@@ -81,8 +91,7 @@ class GCM(BaseZeroService):
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
 
         # set up the worker thread
-        self._worker_thread = threading.Thread(
-            target=self._worker, args=(self._thread_stopper,))
+        self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
 
     def start(self):
         for callback in self.callbacks:
@@ -91,38 +100,35 @@ class GCM(BaseZeroService):
 
         # background jobs should be run and controlled via a thread
         self._worker_thread.start()
-        self.log.info('started')
+        self.log.debug('started')
         if hasattr(self, '_thread_timer'):
-             self.log.info('duration {0} seconds'.format(self.duration))
-             self._thread_timer.start()
-             self.log.info('finish timer started')
+            self.log.debug('duration {0} seconds'.format(self.duration))
+            self._thread_timer.start()
+            self.log.debug('finish timer started')
 
     def _worker(self, stop_event):
         RUN = True
         frameNumber = 0
         self.log.info('started worker')
         self.c.start()
-        while RUN:
 
+        while RUN:
             try:
-                image, image_ts, system_ts = self.c.get()
+
+                out = self.c.get()
+                if out is None:
+                    raise ValueError('Image is None')
+                else:
+                    image, image_ts, system_ts = out
 
                 for callback_name, callback in zip(self.callback_names, self.callbacks):
-                    if 'timestamps'in callback_name:
+                    if 'timestamps' in callback_name:
                         package = (0, (system_ts, image_ts))
                     else:
                         package = (image, (system_ts, image_ts))
                     callback.send(package)
 
-                # update FPS counter
-                self.frame_interval.update(system_ts - self.last_frame_time)
-                self.last_frame_time = system_ts
-
-                if frameNumber % 100 == 0:
-                    sys.stdout.write('\rframe interval for frame {} is {} ms.'.format(
-                                        frameNumber, np.round(self.frame_interval.value * 1000)))  # frame interval in ms
-
-                frameNumber = frameNumber + 1
+                frameNumber += 1
                 if frameNumber == self.nFrames:
                     self.log.info('Max number of frames reached - stopping.')
                     RUN = False
@@ -130,7 +136,7 @@ class GCM(BaseZeroService):
             except ValueError as e:
                 RUN = False
                 self.c.stop()
-                self.log.exception(e, exc_info=True)
+                self.log.debug(e, exc_info=True)
             except Exception as e:
                 self.log.exception(e, exc_info=True)
 
@@ -164,7 +170,7 @@ class GCM(BaseZeroService):
         pass
 
     def is_busy(self):
-        return True # should return True/False
+        return True  # should return True/False
 
     def test(self):
         return True
@@ -186,10 +192,12 @@ if __name__ == '__main__':
         ser = sys.argv[1]
     else:
         ser = 'default'
+
     if len(sys.argv) > 2:
         port = sys.argv[2]
     else:
         port = GCM.SERVICE_PORT
+
     s = GCM(serializer=ser)
-    s.bind("tcp://0.0.0.0:{0}".format(port))  # broadcast on all IPs
+    s.bind(f"tcp://0.0.0.0:{port}")  # broadcast on all IPs
     s.run()

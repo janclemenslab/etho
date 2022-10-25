@@ -1,3 +1,4 @@
+# Scanimage
 - set scanimage scan dur to inf and savefilename
 - arm scanimage grab/loop trigger
 - this calls user fun which triggers python script that will send the savefilename

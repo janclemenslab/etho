@@ -1,20 +1,17 @@
-#!/usr/bin/env python
-try:
-    import picamera
-except Exception as e:
-    print("IGNORE IF RUN ON HEAD")
-    print(e)
-
 from threading import Timer
 import io
 from .ZeroService import BaseZeroService
-import zerorpc
 import time
 import zmq
 import os
 import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
+try:
+    import picamera
+    picamera_error = None
+except Exception as picamera_error:
+    pass
 
 
 @log_exceptions(logging.getLogger(__name__))
@@ -54,8 +51,14 @@ class CAM(BaseZeroService):
     SERVICE_PORT = 4242
     SERVICE_NAME = 'CAM'
 
-    # def setup(self, savefilename, duration, bitrate=10000000, resolution=(1640, 800), framerate=40, shutterspeed=10 * 1000, annotate_frame_num=False):
-    def setup(self, savefilename, duration, bitrate=10000000, resolution=(1640, 922), framerate=40, shutterspeed=10 * 1000, annotate_frame_num=False):
+    def setup(self,
+              savefilename,
+              duration,
+              bitrate=10000000,
+              resolution=(1640, 922),
+              framerate=40,
+              shutterspeed=10 * 1000,
+              annotate_frame_num=False):
         """Initialize recording.
 
         Args:
@@ -63,6 +66,9 @@ class CAM(BaseZeroService):
             duration in seconds
             name-value pairs not settable via zerorpc - maybe send via settings dictionary
         """
+        if picamera_error is not None:
+            raise picamera_error
+
         self.camera = picamera.PiCamera()
         self.fs = frame_server()
         self.fs.send(None)
@@ -71,9 +77,9 @@ class CAM(BaseZeroService):
         self.camera.shutter_speed = shutterspeed  # us
         self.camera.zoom = [0, 0.1, 1.0, 1]
         self.camera.awb_mode = 'off'
-        self.camera.awb_gains = (113/128, 99/128)
+        self.camera.awb_gains = (113 / 128, 99 / 128)
 
-       # as framenumber in frame <-display timestamp!!
+        # as framenumber in frame <-display timestamp!!
         self.camera.annotate_frame_num = annotate_frame_num
         self.duration = duration
         self.bitrate = bitrate
@@ -86,7 +92,6 @@ class CAM(BaseZeroService):
             self.format = None
             self.log.info('   will save to {}'.format(self.savefilename))
         self._time_started = None
-        
 
     def start(self):
         self.log.info('starting recording')

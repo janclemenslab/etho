@@ -5,15 +5,18 @@ import defopt
 from itertools import cycle
 import os
 import zerorpc
+import logging
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 from ethomaster.utils.shuffled_cycle import shuffled_cycle
-from ethomaster.utils.config import readconfig, saveconfig
+from ethomaster.utils.config import readconfig, saveconfig, undefaultify
 
 from ethoservice.DAQZeroService import DAQ
+import PyDAQmx.DAQmxFunctions
 
+logging.basicConfig(level=logging.INFO)
 
 def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: str,
              save: bool=False, shuffle: bool=False, loop: bool=False, selected_stim: int=None):
@@ -49,6 +52,7 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
                          stimfolder=config['HEAD']['stimfolder'])
     sounds = [sound.astype(np.float64) for sound in sounds]
 
+
     # get digital pattern from analog_data_out - duplicate analog_data_out,
     triggers = list()
     for sound in sounds:
@@ -74,11 +78,16 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
     print('done')
     print('sending sound data to {0} - may take a while.'.format(ip_address))
     if save:
-        filename = os.path.join(prot['NODE']['savefolder'], filename, filename)
-        daq_save_filename = '{0}_daq.h5'.format(filename)
+        daq_save_filename = os.path.join(prot['NODE']['savefolder'], filename, filename)
+        logging.info(f"   Saving to {daq_save_filename}.")
     else:
+        logging.info(f"   Preview mode, removing the following save callbacks:")
         daq_save_filename = None
-    print(daq_save_filename)
+        for k in list(prot['DAQ']['callbacks'].keys()):
+            if 'save' in k:
+                logging.info(f"      {k}")
+                del prot['DAQ']['callbacks'][k]
+
     daq.setup(daq_save_filename, playlist_items, playlist,
               maxduration, fs, prot['DAQ']['display'],
               analog_chans_out=prot['DAQ']['analog_chans_out'],
@@ -86,24 +95,26 @@ def clientcc(filename: str, filecounter: int, protocolfile: str, playlistfile: s
               digital_chans_out=prot['DAQ']['digital_chans_out'],
               analog_data_out=sounds,
               digital_data_out=triggers,
+              params=undefaultify(prot['DAQ']),
               metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']})
     if save:
-        daq.init_local_logger('{0}_daq.log'.format(filename))
+        daq.init_local_logger('{0}_daq.log'.format(daq_save_filename))
         # dump protocol file as yaml
-        saveconfig('{0}_prot.yml'.format(filename), prot)
+        saveconfig('{0}_prot.yml'.format(daq_save_filename), prot)
 
     daq.start()
-    t0 = time.clock()
+    t0 = time.time()
     try:
         while daq.is_busy():
             time.sleep(0.5)
-            t1 = time.clock()
+            t1 = time.time()
             print(f'   Busy {t1-t0:1.2f} seconds.\r', end='', flush=True)
     except zerorpc.exceptions.RemoteError:
-        time.sleep(1.0)  # make sure we catch the last AI callback
+        time.sleep(5)  # make sure we catch the last AI callback
         daq.finish()
+
     print(f'   Finished after {t1-t0:1.2f} seconds.')
-    time.sleep(1)
+    time.sleep(5)
     sp.terminate()
     sp.kill()
     print('DONE.')

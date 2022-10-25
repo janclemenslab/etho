@@ -3,27 +3,40 @@ import numpy as np
 import pandas as pd
 import subprocess
 import logging
+import rich
 from itertools import cycle
+from rich.progress import Progress
 
 from ethomaster import config
 from ethomaster.head.ZeroClient import ZeroClient
 from ethomaster.utils.config import readconfig, undefaultify
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 
-from ethoservice.SndZeroService import SND
-from ethoservice.CamZeroService import CAM
-from ethoservice.ThuZeroService import THU
 from ethoservice.ThuAZeroService import THUA
-from ethoservice.OptZeroService import OPT
 from ethoservice.DAQZeroService import DAQ
-from ethoservice.PTGZeroService import PTG
-from ethoservice.SPNZeroService import SPN
+from ethoservice.GCMZeroService import GCM
+
+
+import threading
+import _thread as thread
+import sys
+
+
+def timed(fn, s, *args, **kwargs):
+    quit_fun = thread.interrupt_main  # raises KeyboardInterrupt
+    timer = threading.Timer(s, quit_fun)
+    timer.start()
+    try:
+        result = fn(*args, **kwargs)
+    except:  # catch KeyboardInterrupt for silent timeouts
+        result = 1
+    finally:
+        timer.cancel()
+    return result
 
 
 def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     # load config/protocols
-    # import tensorflow as tf
-    # print('tpip ensorflow version', tf.__version__)
     prot = readconfig(protocolfile)
     print(prot)
     maxduration = prot['NODE']['maxduration']
@@ -37,50 +50,34 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
     dirname = prot['NODE']['savefolder']
     print(filename)
     if 'python_exe' in config['GENERAL']:
-        python_exe =  config['GENERAL']['python_exe']
+        python_exe = config['GENERAL']['python_exe']
     else:
         python_exe = 'C:/Users/ncb.UG-MGEN/miniconda3/python.exe'
 
+    services = {}
     if 'THUA' in prot['NODE']['use_services']:
-        thua_server_name = f'{python_exe} -m {THUA.__module__} {SER}'#.format(THUA.__module__, SER)
-        print([THUA.SERVICE_PORT, THUA.SERVICE_NAME])
-        thua = ZeroClient("{0}@{1}".format(user_name, ip_address), 'thuarduino', serializer=SER)
-        subprocess.Popen(thua_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        thua.connect("tcp://{0}:{1}".format(ip_address, THUA.SERVICE_PORT))
-        print('done')
+        thua = THUA.make(SER, user_name, ip_address, folder_name, python_exe)
         print(prot['THUA'])
         thua.setup(prot['THUA']['port'], prot['THUA']['interval'], maxduration + 10)
         thua.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
         thua.start()
-    
-    if 'PTG' in prot['NODE']['use_services']:
-        ptg_server_name = f'{python_exe} -m {PTG.__module__} {SER}'#'python -m {0} {1}'.format(PTG.__module__, SER)
-        print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
-        ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'ptgcam', serializer=SER)
-        subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
-        print('done')
-        cam_params = undefaultify(prot['PTG'])
-        ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
-        ptg.init_local_logger('{0}/{1}/{1}_ptg.log'.format(dirname, filename))
-        ptg.start()
-        time.sleep(5)
+        services['THUA'] = thua
 
-    if 'SPN' in prot['NODE']['use_services']:
-        ptg_server_name = f'{python_exe} -m {SPN.__module__} {SER}'#'python -m {0} {1}'.format(PTG.__module__, SER)
-        print([SPN.SERVICE_PORT, SPN.SERVICE_NAME])
-        ptg = ZeroClient("{0}@{1}".format(user_name, ip_address), 'spncam', serializer=SER)
-        subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
-        print('done')
-        cam_params = undefaultify(prot['SPN'])
-        ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
-        ptg.init_local_logger('{0}/{1}/{1}_spn.log'.format(dirname, filename))
-        ptg.start()
-        time.sleep(5)
+    if 'GCM' in prot['NODE']['use_services']:
+        gcm = GCM.make(SER, user_name, ip_address, folder_name, python_exe)
+        cam_params = undefaultify(prot['GCM'])
+        gcm.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 20, cam_params)
+        gcm.init_local_logger('{0}/{1}/{1}_gcm.log'.format(dirname, filename))
+        img = gcm.attr('test_image')
+        print('Press any key to continue.')
+        import cv2
+        cv2.imshow('Are you happy?',img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        gcm.start()
+        services['camera'] = gcm
 
     if 'DAQ' in prot['NODE']['use_services']:
-        daq_server_name = f'{python_exe} -m {DAQ.__module__} {SER}'#'python -m {0} {1}'.format(DAQ.__module__, SER)
         if prot['DAQ']['run_locally']:
             print('   Running DAQ job locally.')
             ip_address = 'localhost'
@@ -98,8 +95,11 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         else:
             attenuation = config['ATTENUATION']
 
-        sounds = load_sounds(playlist, fs, attenuation=attenuation,
-                             LEDamp=prot['DAQ']['ledamp'], stimfolder=config['HEAD']['stimfolder'])
+        sounds = load_sounds(playlist,
+                             fs,
+                             attenuation=attenuation,
+                             LEDamp=prot['DAQ']['ledamp'],
+                             stimfolder=config['HEAD']['stimfolder'])
         sounds = [sound.astype(np.float64) for sound in sounds]
         playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
         if maxduration == -1:
@@ -117,37 +117,55 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
             digital_data = None
             analog_data = sounds
         daq_save_filename = '{0}/{1}/{1}_daq.h5'.format(daq_save_folder, filename)
-        print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
-        daq = ZeroClient("{0}@{1}".format(user_name, ip_address), 'nidaq', serializer=SER)
 
-        subprocess.Popen(daq_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        daq.connect("tcp://{0}:{1}".format(ip_address, DAQ.SERVICE_PORT))
-        print('done')
+        daq = DAQ.make(SER, user_name, ip_address, folder_name, python_exe)
+
         print('sending sound data to {0} - may take a while.'.format(ip_address))
-
         daq_params = undefaultify(prot['DAQ'])
-        daq.setup(daq_save_filename, playlist_items, playlist,
-              maxduration, fs,
-              display=prot['DAQ']['display'],
-              realtime=prot['DAQ']['realtime'],
-              clock_source=prot['DAQ']['clock_source'],
-              nb_inputsamples_per_cycle=prot['DAQ']['nb_inputsamples_per_cycle'],
-              analog_chans_out=prot['DAQ']['analog_chans_out'],
-              analog_chans_in=prot['DAQ']['analog_chans_in'],
-              digital_chans_out=prot['DAQ']['digital_chans_out'],
-              analog_data_out=analog_data,
-              digital_data_out=digital_data,
-              metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']},
-              params=daq_params)
+        daq.setup(daq_save_filename,
+                  playlist_items,
+                  playlist,
+                  maxduration,
+                  fs,
+                  clock_source=prot['DAQ']['clock_source'],
+                  nb_inputsamples_per_cycle=prot['DAQ']['nb_inputsamples_per_cycle'],
+                  analog_chans_out=prot['DAQ']['analog_chans_out'],
+                  analog_chans_in=prot['DAQ']['analog_chans_in'],
+                  digital_chans_out=prot['DAQ']['digital_chans_out'],
+                  analog_data_out=analog_data,
+                  digital_data_out=digital_data,
+                  metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']},
+                  params=daq_params)
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(daq_save_folder, filename))
+        print('waiting for camera', end='', flush=True)
+        while gcm.progress()['elapsed'] < 5:
+            time.sleep(1)
+            print('.', end='', flush=True)
+        print(' done.')
         daq.start()
-        logging.info('DAQ started')
+        # logging.info('DAQ started')
+        services['daq'] = daq
+    # print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
+    with Progress() as progress:
+        tasks = {}
+        for key, s in services.items():
+            tasks[key] = progress.add_task(f"[red]{key}", total=s.progress()['total'])
+        # import ipdb;ipdb.set_trace()
 
-    print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
+        while not progress.finished:
+            for key, task_id in tasks.items():
+                if progress._tasks[task_id].finished:
+                    continue
+                try:
+                    p = timed(services[key].progress, 5)
+                    progress.update(task_id, completed=p['elapsed'])
+                except:  # if call times out, stop progress display - this will stop the display whenever a task times out - not necessarily when a task is done
+                    progress.stop_task(task_id)
+            time.sleep(1)
 
 
 if __name__ == '__main__':
-    ip_address = 'rpi8'
-    protocolfilename = '../protocols/default.txt'
-    playlistfilename = '../playlists/sine_short.txt'
+    ip_address = 'localhost'
+    protocolfilename = 'ethoconfig/protocols/mic35mm_5min.yml'
+    playlistfilename = 'ethoconfig/playlists/0 silence.txt'
     clientcaller(ip_address, playlistfilename, protocolfilename)

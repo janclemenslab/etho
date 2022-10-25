@@ -3,14 +3,12 @@
 TODO: register for logging: `@for_all_methods(log_exceptions(logging.getLogger(__name__)))`
 TODO: Make generic/abstract HDF writer
 """
-
 import logging
-from os import system
 import numpy as np
 from numpy.core.numeric import False_
 import scipy.signal as ss
 
-from ..utils.ConcurrentTask import ConcurrentTask
+from ..utils.concurrent_task import ConcurrentTask
 from . import register_callback
 from typing import List
 from ._base import BaseCallback
@@ -169,8 +167,11 @@ class SaveHDF(BaseCallback):
         self._append_data(data_to_save, np.array([systemtime])[:, np.newaxis])
 
     def _cleanup(self):
-        self.f.flush()
-        self.f.close()
+        if self.f.isopen:
+            self.f.flush()
+            self.f.close()
+        else:
+            logging.debug(f"{self.file_name} already closed.")
 
 
 @register_callback
@@ -226,8 +227,11 @@ class SaveDLP_HDF(BaseCallback):
         self._append_data(data_to_save, np.array([systemtime]))
 
     def _cleanup(self):
-        self.f.flush()
-        self.f.close()
+        if self.f.isopen:
+            self.f.flush()
+            self.f.close()
+        else:
+            logging.debug(f"{self.file_name} already closed.")
 
 
 @register_callback

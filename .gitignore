@@ -93,4 +93,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
-.vscode/settings.json
+
+.vscode
+*cache
+scratch
+_docs

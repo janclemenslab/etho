@@ -1,9 +1,15 @@
+# Experimental protocols
+For experiment-specific settings.
+
+### Make
+[yaml](pyyaml.org) format. The following fields are supported:
+```yaml
 # define defaults - can be overriden in protocols/headers
 NODE: # node-specific parameters and parameters that apply to all service (e.g. maxduration)
   user: ncb # default user
   folder: C:/Users/ncb/ # default working directory
   savefolder: C:/Users/ncb/data # this is where the recordings will be saved
-  maxduration: 90  # seconds
+  maxduration: 90 # seconds
   use_services: [GCM, DAQ]  # list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names
   serializer: pickle  # save default
 
@@ -39,12 +45,11 @@ DAQ:
   limits: 10.0
   callbacks:
     save_h5:   # save data as hdfs (has no params)
-    plot:  # plot traces using matplotlib
-    plot_fast:  # plot traces using pyqtgraph (much faster!)
+    plot:  # plot traces using matplotlib OR
+    plot_fast:  # plot traces using pyqtgraph (much faster!) (use either `plot` or plot_fast`, never both)
 
-THUA:  # temperature and humidity sensor attached to an arduino
-  port: COM3
-  interval: 20.0  # seconds
+THUA:
+  pin ???
 
 CAM:  # pi camera
   framerate: 30 # frames per second
@@ -67,10 +72,26 @@ OPT2:  # pi opto led control
 SND:  # pi sound playback via pygame
   samplingrate: 44100  # Hz
   shuffle: False  # block-randomize order of stimuli for playback
-  ledamp:  # allow node specific values
-    default: 1300  # amplitude of the IR LED used for syncing audio and video
-    rpi6: 2000
+  ledamp: 1300  # amplitude of the IR LED used for syncing audio and video
   playlist_channels: [0, 1]
 
 REL:  # pi relay control (for backlight and illumination)
   pin: 22
+
+DLP:  # DLP projector
+  warpfile: 'Z:/#Data/flyball/projector/warpmesh_1140x912.data'
+  use_warping: False
+  callbacks:
+    savedlp_h5:  # save per-frame stimulus parameters to `_dlp.h5`
+  runners:
+    LED_blinker:
+      object: 'Rect'  # should be the classname: `psychopy.visuals.NAME`
+      led_frame: 360
+      led_duration: 180
+```
+
+### Parse
+```python
+from ethomaster.utils.config import readconfig
+prot = readconfig(protocolfile)
+```

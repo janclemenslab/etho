@@ -1,12 +1,13 @@
 import zerorpc
 import time
-from ethomaster.utils.SSHRunner import SSHRunner, is_win
+from ethomaster.utils.SSHRunner import SSHRunner
 import zmq
 import logging
 from zmq.log.handlers import PUBHandler
 import socket
 from ethomaster import config
 import subprocess
+
 
 class ZeroClient(zerorpc.Client):
 
@@ -51,10 +52,14 @@ class ZeroClient(zerorpc.Client):
         handler.setLevel(logging.INFO)
         self.log.addHandler(handler)
 
-    def start_server(self, server_name, folder_name='.', warmup=2, timeout=5, remote=False):
+    def start_server(self, server_name, folder_name='.', warmup=2, timeout=5, remote=False, debug: bool = False):
         self.log.info(f'   {self.SERVICE_NAME} starting')
         if not remote:
-            popen = subprocess.Popen(server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
+            if debug:
+                creationflags = subprocess.CREATE_NEW_CONSOLE
+            else:
+                creationflags = 0
+            popen = subprocess.Popen(server_name, creationflags=creationflags)
             self.pid = popen.pid
             status = 'unknown'
         else:

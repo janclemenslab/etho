@@ -1,13 +1,12 @@
 import queue
 import time
-
-from ..utils.ConcurrentTask import ConcurrentTask
+from ..utils.concurrent_task import ConcurrentTask
 from . import register_callback
+
 
 class BaseCallback():
 
-    def __init__(self, data_source, poll_timeout: float = None, rate: float = 0,
-                 **kwargs):
+    def __init__(self, data_source, poll_timeout: float = None, rate: float = 0, **kwargs):
         self.data_source = data_source
         self.poll_timeout = poll_timeout
         self.RUN: bool = True
@@ -46,7 +45,7 @@ class BaseCallback():
                 continue
 
             if data is not None:
-                if (t0-t1)>=self.rate:
+                if (t0 - t1) >= self.rate:
                     self._loop(data)
                     t1 = t0
             else:
@@ -66,6 +65,7 @@ class BaseCallback():
         self.stop()
         if not self.CLEAN:
             self._cleanup()
+
 
 @register_callback
 class BroadcastCallback():

@@ -14,21 +14,21 @@ env.password = 'droso123'
 
 
 def cmdline(command):
-    process = Popen(
-        args=command,
-        stdout=PIPE,
-        shell=True
-    )
+    process = Popen(args=command, stdout=PIPE, shell=True)
     return process.communicate()[0]
+
 
 def is_mac():
     return platform.system().lower() == 'darwin'
 
+
 def is_win():
     return platform.system().lower() == 'windows'
 
+
 def is_linux():
     return platform.system().lower() == 'linux'
+
 
 def ping(host):
     """
@@ -40,14 +40,13 @@ def ping(host):
     parameters = "-n 1" if is_win() else "-c 1"
     suffix = ">nul 2>&1" if is_win() else ">/dev/null 2>&1"
     # Pinging (">/dev/null 2>&1" supresses output)
-    exit_code = os.system(
-        "ping {0} {1}{2}".format(parameters, host, suffix))
+    exit_code = os.system("ping {0} {1}{2}".format(parameters, host, suffix))
     # 0=success
     return exit_code == 0
 
 
 class SSHRunner():
-    """<anages remote processes.
+    """Manages remote processes.
 
     run
     runbg
@@ -60,7 +59,7 @@ class SSHRunner():
     def __init__(self, host):
         self.host = host
         token = host.split('@')
-        if len(token)==1:  # host_name
+        if len(token) == 1:  # host_name
             self.user_name = ''
             self.host_name = token[0]
         else:  # user_name@host_name
@@ -72,13 +71,11 @@ class SSHRunner():
         # `echo $!` prints pid of spawned process
 
         prefix = "ssh -f"
-        
+
         if is_win():
-            cmd = '{0} {1} "{2} >/dev/null 2>&1 & echo $!"'.format(
-                prefix, self.host, cmd)
+            cmd = '{0} {1} "{2} >/dev/null 2>&1 & echo $!"'.format(prefix, self.host, cmd)
         else:
-            cmd = "{0} {1} '{2} >/dev/null 2>&1 & echo $!'".format(
-                prefix, self.host, cmd)
+            cmd = "{0} {1} '{2} >/dev/null 2>&1 & echo $!'".format(prefix, self.host, cmd)
         try:
             output = cmdline(cmd)
         except subprocess.CalledProcessError as e:
@@ -94,7 +91,7 @@ class SSHRunner():
 
     def run_foreground(self, cmd, timeout=None):
         prefix = "ssh -f"
-        
+
         if is_win():
             cmd = '{0} {1} "{2}"'.format(prefix, self.host, cmd)
         else:
@@ -102,8 +99,7 @@ class SSHRunner():
 
         # universal_newlines=True so output is string and not byte
         try:
-            output = subprocess.check_output(
-                cmd, shell=True, universal_newlines=True, timeout=timeout)
+            output = subprocess.check_output(cmd, shell=True, universal_newlines=True, timeout=timeout)
         except subprocess.CalledProcessError as e:
             output = e.output + "\n"
         except subprocess.TimeoutExpired as e:
@@ -111,7 +107,7 @@ class SSHRunner():
         return output
 
     def run_background(self, cmd, timeout=None):
-         return self.run("nohup {0}".format(cmd), timeout=timeout)
+        return self.run("nohup {0}".format(cmd), timeout=timeout)
 
     def _parse_pid(self, output):
         if isinstance(output, bytes):
@@ -152,7 +148,7 @@ class SSHRunner():
         if wait:
             time.sleep(2)  # make sure host is down
             wait_seconds = 0
-            while wait_seconds<timeout and not self.is_online():
+            while wait_seconds < timeout and not self.is_online():
                 wait_seconds += wait_interval
                 time.sleep(wait_interval)
 
@@ -169,7 +165,7 @@ class SSHRunner():
             output = self.run('ps -p {0}\n'.format(pid))
         else:
             output = self.run('ps -o pid= -p {0}\n'.format(pid))
-        return len(self._parse_out(output))>0
+        return len(self._parse_out(output)) > 0
 
     def is_online(self):
         return ping(self.host_name)
