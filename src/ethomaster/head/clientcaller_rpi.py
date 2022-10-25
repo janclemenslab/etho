@@ -1,12 +1,8 @@
 import time
 import numpy as np
-import pandas as pd
-import subprocess
 import logging
-from itertools import cycle
 
 from ethomaster import config
-from ethomaster.head.ZeroClient import ZeroClient
 from ethomaster.utils.config import readconfig, undefaultify
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist, select_channels_from_playlist, parse_pulse_parameters
 
@@ -156,21 +152,19 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
 
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
 
-        print('sending sound data to {0} - may take a while.'.format(host_name))
+        log.info('sending sound data to {0} - may take a while.'.format(host_name))
         snd.setup(sounds, playlist.iloc[unique_row_idx], playlist_items, totallen, fs)
-        print('  Done.')
+        log.info('  Done.')
 
     if 'OPT2' in prot['NODE']['use_services']:
         channels_to_keep = prot['OPT2']['playlist_channels']
-        print(f"   selecting channels {channels_to_keep} for OPT2 from playlist.")
-        opto_playlist = select_channels_from_playlist(playlist, channels_to_keep)
-        # opto_playlist = select_channels_from_playlist(playlist.iloc[unique_row_idx], channels_to_keep)
-        print(f"   parsing pulse parameters from playlist.")
-        # opto_playlist.reset_index(inplace=True, drop=True)
+        log.info(f"   selecting channels {channels_to_keep} for OPT2 from playlist.")
+
+        opto_playlist = select_channels_from_playlist(playlist.iloc[unique_row_idx], channels_to_keep)
+        log.info(f"   parsing pulse parameters from playlist.")
+        opto_playlist.reset_index(inplace=True, drop=True)
         pulse_params = parse_pulse_parameters(opto_playlist, sounds, fs)
 
-        #  H A C K !!!!
-        # pulse_params = parse_pulse_parameters(opto_playlist[:len(sounds)], sounds, fs)
         pulse_params = pulse_params.loc[playlist_items, :]
     
 
@@ -205,7 +199,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         opt2.init_local_logger('{0}/{1}/{1}_opt2.log'.format(dirname, filename))
 
     if 'CAM' in prot['NODE']['use_services']:
-        # make sure 5seconds have elapsed
+        # make sure 5 seconds have elapsed
         while time.time() - cam_start_time <= 5:
             time.sleep(0.01)
         print(f'   {time.time() - cam_start_time:1.4f} seconds elapsed. Ready to start SND and/or OPT.')
