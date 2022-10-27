@@ -3,7 +3,6 @@ import os
 import wx
 from ethomaster import config
 import ethomaster.head.clientcaller as clientcaller
-import ethomaster.head.clientmanager as clientmanager
 from ethomaster.gui.wxDangerDialog import DangerDialog
 from ethomaster.gui.wxBusyDialog import BusyDialog
 import ethomaster.gui.wxCam as wxCam
@@ -32,9 +31,6 @@ class Frame(wx.Frame):
         bStart = wx.Button(self, label='start selected')
         self.Bind(wx.EVT_BUTTON, self.OnClickStart, bStart)
 
-        bStatus = wx.Button(self, label='status')
-        self.Bind(wx.EVT_BUTTON, self.OnClickStatus, bStatus)
-
         bCamPreview = wx.Button(self, label='cam preview')
         self.Bind(wx.EVT_BUTTON, self.OnClickCamPreview, bCamPreview)
 
@@ -48,7 +44,6 @@ class Frame(wx.Frame):
         sizer.Add(self.playlistList, 0, 0, 0)
         sizer.Add(self.protocolList, 0, 0, 0)
         sizer.Add(bStart, 0, 0, 0)
-        sizer.Add(bStatus, 0, 0, 0)
         sizer.Add(bCamPreview, 0, 0, 0)
         sizer.Add(bThuPreview, 0, 0, 0)
         sizer.Add(bDanger, 0, 0, 0)
@@ -77,17 +72,6 @@ class Frame(wx.Frame):
             print('no controlf file selected')
         # check node status before starting??
         # CALL: startRecording(selectedItemString)
-
-    def OnClickStatus(self, event):
-        with BusyDialog(self) as dlg:
-            if dlg.ShowModal() == wx.ID_OK:
-                # do something here
-                self.clientStatus = clientmanager.client_status(self.host)
-                print(self.clientStatus)
-            else:
-                # handle dialog being cancelled or ended by some other button
-                pass
-    # The dialog is automatically destroyed on exit from the context manager
 
     def OnClickCamPreview(self, event):
         print("if running - start cam service and preview, otherwise connect to running service and preview")

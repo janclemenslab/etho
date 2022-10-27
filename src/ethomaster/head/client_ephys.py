@@ -8,7 +8,7 @@ import zerorpc
 import logging
 
 from ethomaster import config
-from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster.head.zeroclient import ZeroClient
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 from ethomaster.utils.shuffled_cycle import shuffled_cycle
 from ethomaster.utils.config import readconfig, saveconfig, undefaultify

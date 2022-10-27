@@ -1,5 +1,5 @@
 import time
-from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster.head.zeroclient import ZeroClient
 from ethoservice.PTGZeroService import PTG
 import subprocess
 

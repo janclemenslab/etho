@@ -1,11 +1,7 @@
-#!/bin/python
 import time
 import wx
-from ethomaster.head.clientmanager import *
-from ethomaster.utils.SSHRunner import *
 from ethomaster import config
 import ethomaster.gui.wxCtrl_rpi as wxCtrl_rpi
-from ethomaster.gui.wxBusyDialog import BusyDialog
 from threading import Thread
 from pubsub import pub
 # from wx.lib.pubsub import pub
@@ -14,6 +10,39 @@ import zmq
 import logging
 import logging.handlers
 from ethomaster import config
+import platform
+import os
+import concurrent.futures
+
+
+def ping(host):
+    """
+    Returns True if host (str) responds to a ping request.
+    Remember that some hosts may not respond to a ping request even if the host name is valid.
+    """
+    # Ping parameters as function of OS
+    parameters = "-n 1 -w 1000" if platform.system().lower() == "windows" else "-c 1 -W 1"
+    suffix = ">nul 2>&1" if platform.system().lower() == "windows" else ">/dev/null 2>&1"
+    # Pinging (">/dev/null 2>&1" supresses output)
+    exit_code = os.system(
+        "ping {0} {1}{2}".format(parameters, host, suffix))
+    # 0=success
+    return exit_code == 0
+
+
+def exepool(func, args):
+    # We can use a with statement to ensure threads are cleaned up promptly
+    out = dict()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        # Start the load operations and mark each future with its URL
+        future_to_url = {executor.submit(func, arg): arg for arg in args}
+        for future in concurrent.futures.as_completed(future_to_url):
+            url = future_to_url[future]
+            try:
+                out[url] = future.result()
+            except Exception as exc:
+                print('%r generated an exception: %s' % (url, exc))
+    return out
 
 
 # TODO Run this in background and automatically update gui using pubsub https://wiki.wxpython.org/ModelViewController

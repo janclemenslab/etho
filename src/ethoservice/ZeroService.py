@@ -57,6 +57,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
         self._time_started = None
         self.duration = None
+        self.info = dict()
 
     @classmethod
     def make(cls, SER, user_name, ip_address, folder_name, python_exe='python', remote=False, port=None):
@@ -89,7 +90,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         ctx.LINGER = 0
         pub = ctx.socket(zmq.PUB)
         pub.connect('tcp://{0}:{1}'.format(head_ip, self.LOGGING_PORT))
-        self.log = logging.getLogger()
+        self.log = logging.getLogger((__name__))
         self.log.setLevel(log_level)
 
         # get host name or IP to append to message
@@ -164,9 +165,23 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         # so we wrap attribute access in a function
         return self.__getattribute__(name)
 
+    def information(self):
+        """Information to display about the
+
+        should be Dict[str, Dict[str, Any]]
+        should be Dict[str, Tuple[Dict[str, Any], Dict[str, Any]]]
+        should be Dict[str, pd.DataFrame]
+
+        Print to terminal with `ethoservice.utils.tui.rich_information`.
+        """
+        return self.info
+
     def progress(self):
         try:
-            return {'total': self.duration, 'elapsed': self._time_elapsed()}
+            elapsed = self._time_elapsed()
+            p = {'total': self.duration, 'elapsed': elapsed, 'elapsed_delta': elapsed - self.prev_elapsed, 'elapsed_units': 'seconds'}
+            self.prev_elapsed = elapsed
+            return p
         except:
             pass
 
@@ -191,7 +206,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         try:
             self.stop()
         except Exception as e:
-            logging.debug('stopnot', exc_info=e)
+            self.log.debug('stopnot', exc_info=e)
         self.log.warning("   done")
         self._flush_loggers()
         self.service_kill()

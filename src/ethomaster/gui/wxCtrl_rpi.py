@@ -3,9 +3,7 @@ import os
 import wx
 from ethomaster import config
 import ethomaster.head.clientcaller_rpi as clientcaller
-import ethomaster.head.clientmanager as clientmanager
 from ethomaster.gui.wxDangerDialog import DangerDialog
-from ethomaster.gui.wxBusyDialog import BusyDialog
 import ethomaster.gui.wxCam as wxCam
 import ethomaster.gui.ThuPreview as ThuPreview
 from multiprocessing import Process
@@ -71,7 +69,7 @@ class Frame(wx.Frame):
         if playlistName and protocolName:
             self.SetStatusText("playlist: {0}, prot: {1}".format(playlistName, protocolName))
             message = "starting playlist {0} with prot {1} on {2}".format(playlistName, protocolName, self.host)
-            args = (self.host, self.ip, 
+            args = (self.host, self.ip,
                     os.path.join(self.playlistfolder, playlistName),
                     os.path.join(self.protocolfolder, protocolName))
             print(message)

@@ -1,14 +1,11 @@
-"""[summary]
-
-TODO: register for logging: `@for_all_methods(log_exceptions(logging.getLogger(__name__)))`
-TODO: Make generic/abstract HDF writer
-"""
+"""Callbacks for processing time series."""
 import logging
 import numpy as np
 from numpy.core.numeric import False_
 import scipy.signal as ss
 
 from ..utils.concurrent_task import ConcurrentTask
+from ..utils.log_exceptions import for_all_methods, log_exceptions
 from . import register_callback
 from typing import List
 from ._base import BaseCallback
@@ -24,14 +21,13 @@ except ImportError:
     pass
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class PlotMPL(BaseCallback):
 
     FRIENDLY_NAME = 'plot'
 
-    def __init__(self, data_source, *, poll_timeout=0.01,
-                 channels_to_plot: List, nb_samples: int = 10_000,
-                 **kwargs):
+    def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: List, nb_samples: int = 10_000, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
         self.channels_to_plot = channels_to_plot
         self.nb_channels = len(self.channels_to_plot)
@@ -49,7 +45,8 @@ class PlotMPL(BaseCallback):
         plt.draw()
         self.fig.canvas.start_event_loop(0.01)  # otherwise plot freezes after 3-4 iterations
         self.bgrd = [self.fig.canvas.copy_from_bbox(this_ax.bbox) for this_ax in self.ax]
-        self.points = [ax.plot(np.arange(self.nb_samples), np.zeros((self.nb_samples, 1)), linewidth=0.4)[0] for ax in self.ax]  # init plot content
+        self.points = [ax.plot(np.arange(self.nb_samples), np.zeros((self.nb_samples, 1)), linewidth=0.4)[0] for ax in self.ax
+                      ]  # init plot content
         [ax.set_ylim(-5, 5) for ax in self.ax]  # init plot content
         [ax.set_xlim(0, self.nb_samples) for ax in self.ax]  # init plot content
         for cnt, ax in enumerate(self.fig.get_axes()[::-1]):
@@ -72,14 +69,13 @@ class PlotMPL(BaseCallback):
         self.fig.canvas.flush_events()
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class PlotPQG(BaseCallback):
 
     FRIENDLY_NAME = 'plot_fast'
 
-    def __init__(self, data_source, *, poll_timeout=0.01,
-                 channels_to_plot: List, nb_samples: int = 10_000,
-                 **kwargs):
+    def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: List, nb_samples: int = 10_000, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
         self.channels_to_plot = channels_to_plot
         self.nb_channels = len(self.channels_to_plot)
@@ -111,6 +107,7 @@ class PlotPQG(BaseCallback):
         self.app.processEvents()
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class SaveHDF(BaseCallback):
 
@@ -128,28 +125,31 @@ class SaveHDF(BaseCallback):
     def make_concurrent(cls, task_kwargs, comms='queue'):
         return ConcurrentTask(task=cls.make_run, task_kwargs=task_kwargs, comms=comms)
 
-
     def _init_data(self, data, systemtime):
         filters = tables.Filters(complevel=4, complib='zlib', fletcher32=True)
 
-        self.arrays['samples'] = self.f.create_earray(self.f.root, 'samples',
-                                                    tables.Atom.from_dtype(data.dtype),
-                                                    shape=[0, *data.shape[1:]],
-                                                    chunkshape=[*data.shape],
-                                                    filters=filters)
+        self.arrays['samples'] = self.f.create_earray(self.f.root,
+                                                      'samples',
+                                                      tables.Atom.from_dtype(data.dtype),
+                                                      shape=[0, *data.shape[1:]],
+                                                      chunkshape=[*data.shape],
+                                                      filters=filters)
 
-        self.arrays['systemtime'] = self.f.create_earray(self.f.root, 'systemtime',
-                            tables.Atom.from_dtype(np.array(systemtime).dtype),
-                            shape=[0, 1],
-                            chunkshape=[100, 1],
-                            filters=filters)
+        self.arrays['systemtime'] = self.f.create_earray(self.f.root,
+                                                         'systemtime',
+                                                         tables.Atom.from_dtype(np.array(systemtime).dtype),
+                                                         shape=[0, 1],
+                                                         chunkshape=[100, 1],
+                                                         filters=filters)
 
         samplenumber = self.f.root['samples'].shape[:1]
-        self.arrays['samplenumber'] = self.f.create_earray(self.f.root, 'samplenumber',
-                            tables.Atom.from_dtype(np.array([samplenumber])[:, np.newaxis].dtype),
-                            shape=[0, 1],
-                            chunkshape=[100, 1],
-                            filters=filters)
+        self.arrays['samplenumber'] = self.f.create_earray(self.f.root,
+                                                           'samplenumber',
+                                                           tables.Atom.from_dtype(
+                                                               np.array([samplenumber])[:, np.newaxis].dtype),
+                                                           shape=[0, 1],
+                                                           chunkshape=[100, 1],
+                                                           filters=filters)
 
     def _append_data(self, data, systemtime):
         self.arrays['samples'].append(data)
@@ -174,6 +174,7 @@ class SaveHDF(BaseCallback):
             logging.debug(f"{self.file_name} already closed.")
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class SaveDLP_HDF(BaseCallback):
     """
@@ -201,17 +202,19 @@ class SaveDLP_HDF(BaseCallback):
             group = self.f.create_group('/', name=grp_name)
             self.arrays[grp_name] = dict()
             for key, val in grp_data.items():
-                self.arrays[grp_name][key] = self.f.create_earray(group, key,
-                                                    tables.Atom.from_dtype(np.array(val).dtype),
-                                                    shape=(0,),
-                                                    chunkshape=(1000,),
-                                                    filters=filters)
+                self.arrays[grp_name][key] = self.f.create_earray(group,
+                                                                  key,
+                                                                  tables.Atom.from_dtype(np.array(val).dtype),
+                                                                  shape=(0,),
+                                                                  chunkshape=(1000,),
+                                                                  filters=filters)
 
-        self.arrays['systemtime'] = self.f.create_earray(self.f.root, 'systemtime',
-                            tables.Atom.from_dtype(systemtime.dtype),
-                            shape=(0,),
-                            chunkshape=(1000,),
-                            filters=filters)
+        self.arrays['systemtime'] = self.f.create_earray(self.f.root,
+                                                         'systemtime',
+                                                         tables.Atom.from_dtype(systemtime.dtype),
+                                                         shape=(0,),
+                                                         chunkshape=(1000,),
+                                                         filters=filters)
         self.vanilla = False
 
     def _append_data(self, data, systemtime):
@@ -234,19 +237,20 @@ class SaveDLP_HDF(BaseCallback):
             logging.debug(f"{self.file_name} already closed.")
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class RealtimeDSS(BaseCallback):
-    def __init__(self, data_source, *, poll_timeout=0.01,
-                 model_save_name: str = None,
-                 **kwargs):
+
+    def __init__(self, data_source, *, poll_timeout=0.01, model_save_name: str = None, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
         """Coroutine for rt processing of data."""
-        from ethomaster.head.ZeroClient import ZeroClient
+        from ethomaster.head.zeroclient import ZeroClient
         from ethoservice.ANAZeroService import ANA
         import subprocess
         import tensorflow as tf
-        import dss.utils
-        import dss.event_utils
+        import das
+        import das.utils
+        import das.event_utils
 
         print("   started RT processing")
         ip_address = 'localhost'
@@ -266,7 +270,7 @@ class RealtimeDSS(BaseCallback):
         # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations4096/20191108_235948'
         # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations8192/20191109_080559'
         self.model_save_name = model_save_name
-        self.model, self.params = dss.utils.load_model_and_params(self.model_save_name)
+        self.model, self.params = das.utils.load_model_and_params(self.model_save_name)
         self.input_shape = self.model.inputs[0].shape[1:]
         self.model.predict(np.zeros((1, *self.input_shape)))  # use model.input_shape
 
@@ -287,7 +291,8 @@ class RealtimeDSS(BaseCallback):
         data = data[:, :self.input_shape[-1]]
         data = ss.sosfiltfilt(self.sos_bp, data, axis=0).astype(np.float16)
         self.data_buffer = self._append_to_buffer(self.data_buffer, data)
-        batch = self.data_buffer.reshape((1, *self.data_buffer.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
+        batch = self.data_buffer.reshape(
+            (1, *self.data_buffer.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
         # batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
         prediction = self.model.predict(batch)
 
@@ -298,11 +303,10 @@ class RealtimeDSS(BaseCallback):
         # filter vibrations by preceding IPI
         min_ipi = 1000  # 100ms
         max_ipi = 2000  # 200ms
-        good_pulses = np.logical_and(np.diff(pulsetimes_pred, append=0) > min_ipi,
-                                    np.diff(pulsetimes_pred, append=0) < max_ipi)
+        good_pulses = np.logical_and(np.diff(pulsetimes_pred, append=0) > min_ipi, np.diff(pulsetimes_pred, append=0) < max_ipi)
         print(pulsetimes_pred, pulsetimes_pred[good_pulses])
         pulsetimes_pred = pulsetimes_pred[good_pulses]
-        vibrations_present = len(pulsetimes_pred)>1
+        vibrations_present = len(pulsetimes_pred) > 1
 
         if not self.started and vibrations_present:
             print('   sending START')
@@ -317,7 +321,7 @@ class RealtimeDSS(BaseCallback):
         self.nit.send_trigger(0, duration=None)
         self.nit.finish()
         self.nit.stop_server()
-        del(self.nit)
+        del (self.nit)
         self.sp.terminate()
         self.sp.kill()
 

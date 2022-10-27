@@ -5,11 +5,13 @@ def for_all_methods(decorator):
     """"Decorates all methods of a class with 'decorator'."""
 
     def decorate(cls):
-        for attr in cls.__dict__: # there's propably a better way to do this
+        for attr in cls.__dict__:  # there's propably a better way to do this
             if callable(getattr(cls, attr)):
                 setattr(cls, attr, decorator(getattr(cls, attr)))
         return cls
+
     return decorate
+
 
 def log_exceptions(logger=None):
     """
@@ -32,5 +34,7 @@ def log_exceptions(logger=None):
                 logger.exception(err)
                 # re-raise the exception
                 raise
+
         return wrapper
+
     return decorator

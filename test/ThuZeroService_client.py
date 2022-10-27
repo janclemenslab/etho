@@ -1,5 +1,5 @@
 import time
-from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster.head.zeroclient import ZeroClient
 from ethoservice.ThuZeroService import THU
 from ethomaster import config
 

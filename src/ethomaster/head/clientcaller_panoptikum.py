@@ -6,7 +6,7 @@ import logging
 from itertools import cycle
 
 from ethomaster import config
-from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster.head.zeroclient import ZeroClient
 from ethomaster.utils.config import readconfig, undefaultify
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 
@@ -47,7 +47,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         ptg.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 10, cam_params)
         ptg.init_local_logger('{0}/{1}/{1}_spn.log'.format(dirname, filename))
         services.append(ptg)
-        
+
     if 'SPN_ZOOM' in prot['NODE']['use_services']:
         port = 4247  # use custom port so we can start two SPN instances
         ptg_server_name = f'{python_exe} -m {GCM.__module__} {SER} {port}'
@@ -58,7 +58,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         print('done')
         cam_params = undefaultify(prot['SPN_ZOOM'])
         ptg2.setup('{0}/{1}/{1}_zoom'.format(dirname, filename), maxduration + 10, cam_params)
-        ptg2.init_local_logger('{0}/{1}/{1}_spnzoom.log'.format(dirname, filename))   
+        ptg2.init_local_logger('{0}/{1}/{1}_spnzoom.log'.format(dirname, filename))
         ptg2.start()
         services.append(ptg2)
 
@@ -149,7 +149,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
             RUN = False
             for service in services:
                 service.finish()
-                service.close()            
+                service.close()
 
 
 if __name__ == '__main__':

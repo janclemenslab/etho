@@ -1,17 +1,32 @@
 import zerorpc
 import time
-from ethomaster.utils.SSHRunner import SSHRunner
+from ethomaster.utils.runner import Runner
 import zmq
 import logging
 from zmq.log.handlers import PUBHandler
 import socket
 from ethomaster import config
-import subprocess
 
 
 class ZeroClient(zerorpc.Client):
 
-    def __init__(self, ssh_address, service_name='CLIENT', logging_port='1460', serializer='default'):
+    def __init__(self,
+                 ssh_address: str,
+                 service_name: str = 'CLIENT',
+                 logging_port: str = '1460',
+                 serializer: str = 'default',
+                 host_is_win: bool = False,
+                 host_is_remote: bool = False):
+        """_summary_
+
+        Args:
+            ssh_address (str): Full string required for ssh login, USER@HOST.
+            service_name (str, optional): _description_. Defaults to 'CLIENT'.
+            logging_port (str, optional): _description_. Defaults to '1460'.
+            serializer (str, optional): _description_. Defaults to 'default'.
+            host_is_win (bool, optional): _description_. Defaults to False.
+            host_is_remote (bool, optional): _description_. Defaults to False.
+        """
         self.SERVICE_NAME = service_name
         self.LOGGING_PORT = logging_port
 
@@ -19,11 +34,12 @@ class ZeroClient(zerorpc.Client):
         ctx.register_serializer(serializer)
         super(ZeroClient, self).__init__(timeout=180, heartbeat=90, context=ctx)
         self._init_network_logger()
-        # for interacting with server process
-        self.sr = SSHRunner(ssh_address)
-        self.pid = None   # pid of server process on remote machine
+
+        self.sr = Runner(ssh_address, host_is_win=host_is_win, host_is_remote=host_is_remote)
+        self.pid = None  # pid of server process on remote machine
 
     def _init_network_logger(self):
+        # TODO: set log levels of logger and handler
         ctx = zmq.Context()
         ctx.LINGER = 0
         pub = ctx.socket(zmq.PUB)
@@ -36,8 +52,7 @@ class ZeroClient(zerorpc.Client):
         # get host name or IP to append to message
         self.hostname = socket.gethostname()
 
-        prefix = "%(asctime)s.%(msecs)03d {0}@{1}:".format(
-            self.SERVICE_NAME, self.hostname)
+        prefix = "%(asctime)s.%(msecs)03d {0}@{1}:".format(self.SERVICE_NAME, self.hostname)
         body = "%(module)s:%(funcName)s:%(lineno)d - %(message)s"
         df = "%Y-%m-%d,%H:%M:%S"
         formatters = {
@@ -45,30 +60,22 @@ class ZeroClient(zerorpc.Client):
             logging.INFO: logging.Formatter(prefix + "%(message)s\n", datefmt=df),
             logging.WARN: logging.Formatter(prefix + body + "\n", datefmt=df),
             logging.ERROR: logging.Formatter(prefix + body + " - %(exc_info)s\n", datefmt=df),
-            logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df)}
+            logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df)
+        }
 
         handler = PUBHandler(pub)
         handler.formatters = formatters
         handler.setLevel(logging.INFO)
         self.log.addHandler(handler)
 
-    def start_server(self, server_name, folder_name='.', warmup=2, timeout=5, remote=False, debug: bool = False):
+    def start_server(self, server_name, folder_name='.', warmup=2, timeout=5, new_console: bool = False):
         self.log.info(f'   {self.SERVICE_NAME} starting')
-        if not remote:
-            if debug:
-                creationflags = subprocess.CREATE_NEW_CONSOLE
-            else:
-                creationflags = 0
-            popen = subprocess.Popen(server_name, creationflags=creationflags)
-            self.pid = popen.pid
-            status = 'unknown'
-        else:
-            cmd = "source ~/.bash_profile;cd {0};nohup {1}".format(
-                folder_name, server_name)
-            self.pid = self.sr.run_and_get_pid(cmd, timeout=timeout)
-            self.log.info(f'   {self.SERVICE_NAME} warmup')
-            time.sleep(warmup)  # wait for server to warm up
-            status = self.is_running_server()
+        cmd = "cd {0};{1}".format(folder_name, server_name)
+        self.sr.run(cmd, timeout=timeout, new_console=new_console, disown=True)
+        self.pid = self.sr.pid(query=cmd)
+        self.log.info(f'   {self.SERVICE_NAME} warmup')
+        time.sleep(warmup)  # wait for server to warm up
+        status = self.sr.is_running(self.pid)
         self.log.info(f'   {self.SERVICE_NAME} done')
         return status
 
@@ -77,17 +84,12 @@ class ZeroClient(zerorpc.Client):
         self.finish()
         self.cleanup()
         self.log.info(f'   {self.SERVICE_NAME} killing')
-        if self.is_running_server():
+        if self.sr.is_running(self.pid):
             self.sr.kill(self.pid)
-        return not self.is_running_server()
+        return not self.sr.is_running(self.pid)
 
-    def get_server_pid(self, query, folder_name, timeout=5):
-        # get PID for server of type "query"
-        return self.sr.get_pid(query)
-        # TEST: or maybe just self._pid() ??
-
-    def is_running_server(self):
-        return self.sr.is_running(self.pid)
+    def get_server_pid(self, query):
+        return self.sr.pid(query)
 
     def close(self):
         pass

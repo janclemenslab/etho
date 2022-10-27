@@ -1,6 +1,9 @@
 import time
 import numpy as np
 import logging
+import zmq
+from zmq.log.handlers import PUBHandler
+import socket
 
 from ethomaster import config
 from ethomaster.utils.config import readconfig, undefaultify
@@ -11,11 +14,8 @@ from ethoservice.CamZeroService import CAM
 from ethoservice.ThuZeroService import THU
 from ethoservice.Opt2ZeroService import OPT2
 from ethoservice.RelayZeroService import REL
+from ethoservice.GCMZeroService import GCM
 
-import zmq
-import logging
-from zmq.log.handlers import PUBHandler
-import socket
 
 logging.basicConfig(level=logging.INFO)
 
@@ -72,12 +72,29 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
     log.info(f'using playlist: {playlistfile}')
     playlist = parse_table(playlistfile)
 
+    if 'GCM' in prot['NODE']['use_services']:
+        if 'host' in prot['GCM']:
+            host_ip = prot['GCM']['host']['ip_address']
+            host_python = prot['GCM']['host']['python_exe']
+            host_save_folder = prot['GCM']['host']['save_folder']
+        gcm = GCM.make(SER, user_name, host_ip, host_save_folder, host_python)
+        cam_params = undefaultify(prot['GCM'])
+        gcm.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 20, cam_params)
+        gcm.init_local_logger('{0}/{1}/{1}_gcm.log'.format(dirname, filename))
+        # img = gcm.attr('test_image')
+        # print('Press any key to continue.')
+        # import cv2
+        # cv2.imshow('Are you happy?', img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+        # gcm.start()
+
     if 'REL' in prot['NODE']['use_services']:
         # rel = start_service(REL, SER, user_name, ip_address, folder_name)
         rel = REL.make(SER, user_name, ip_address, folder_name, remote=True)
         # rel.init_local_logger('{0}/{1}/{1}_rel.log'.format(dirname, filename))
         print(f"   setup with pin {prot['REL']['pin']}, duration {maxduration + 40}")
-        rel.setup(prot['REL']['pin'],  maxduration + 40)        
+        rel.setup(prot['REL']['pin'],  maxduration + 40)
         time.sleep(1)
         print('   starting service:', end='')
         rel.start()
@@ -89,7 +106,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
 
         thu.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
         print(f"   setup with pin {prot['THU']['pin']}, interval {prot['THU']['interval']}, duration {maxduration + 20}")
-        thu.setup(prot['THU']['pin'], prot['THU']['interval'], maxduration + 20)        
+        thu.setup(prot['THU']['pin'], prot['THU']['interval'], maxduration + 20)
         time.sleep(1)
         print('   starting service:', end='')
         thu.start()
@@ -118,7 +135,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
             attenuation = config['ATTENUATION']
             print(f'using global attenuation data (for {host_name}).')
         print(attenuation)
-        
+
         channels_to_keep = prot['SND']['playlist_channels']
         print(f"   selecting channels {channels_to_keep} for SND from playlist.")
         sound_playlist = select_channels_from_playlist(playlist, channels_to_keep)
@@ -134,7 +151,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
                         index_names=False).split('\n')
         unique_rows = [','.join(ele.split()) for ele in unique_rows]
         uni, unique_row_idx, unique_row_inverse = np.unique(unique_rows, return_inverse=True, return_index=True)
-   
+
         # build sound for all unqiue rows in the playlist
         sounds = load_sounds(sound_playlist.iloc[unique_row_idx], fs, attenuation=attenuation,
                              LEDamp=led_amp,
@@ -143,11 +160,11 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
 
         # use unique_row_inverse here to build playlist_items as indices into "sounds"
         playlist_items, totallen = build_playlist(sounds, maxduration, fs,
-                                                  shuffle=shuffle_playback, 
+                                                  shuffle=shuffle_playback,
                                                   sound_order=unique_row_inverse)
 
         log.info(playlist.iloc[unique_row_idx].iloc[playlist_items])
-        
+
         snd = SND.make(SER, user_name, ip_address, folder_name, remote=True)
 
         snd.init_local_logger('{0}/{1}/{1}_snd.log'.format(dirname, filename))
@@ -166,7 +183,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         pulse_params = parse_pulse_parameters(opto_playlist, sounds, fs)
 
         pulse_params = pulse_params.loc[playlist_items, :]
-    
+
 
         # # scale amp by attenuation values - get wavelength from FREQ field in playlist
         # if ip_address in config['ATTENUATION']:  # use node specific attenuation data
@@ -193,7 +210,7 @@ def clientcaller(host_name, ip_address, playlistfile, protocolfile, filename=Non
         print(blink_amps)
 
         opt2 = OPT2.make(SER, user_name, ip_address, folder_name, remote=True)
-        
+
         print(*prot['OPT2'], maxduration)
         opt2.setup(prot['OPT2']['pin'], maxduration, blink_pers, blink_durs, blink_paus, blink_nums, blink_dels, blink_amps)
         opt2.init_local_logger('{0}/{1}/{1}_opt2.log'.format(dirname, filename))
@@ -230,7 +247,7 @@ if __name__ == '__main__':
     ip_address = '192.168.1.9'
     # protocolfilename = '../ethoconfig/protocols/cop_40min.yml'
     protocolfilename = '../ethoconfig/protocols/_cop_test.yml' #10min.yml'
-    
+
     # playlistfilename = 'C:/Users/ncb/ethoconfig/playlists/IPI36_20s2min_test.txt'
     playlistfilename = '../ethoconfig/playlists/mini_test_2022.txt' #cop_IPI36_1s_10min.txt'
     clientcaller(host_name, ip_address, playlistfilename, protocolfilename)

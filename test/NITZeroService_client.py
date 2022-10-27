@@ -1,5 +1,5 @@
 import time
-from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster.head.zeroclient import ZeroClient
 from ethoservice.NITriggerZeroService import NIT
 import pandas as pd
 from ethomaster import config

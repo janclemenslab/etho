@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import threading
-from tqdm import tqdm
 import time
 import numpy as np
 
@@ -126,7 +125,6 @@ class IOTask(daq.Task):
         Calls `self.data_gen` or `self.data_rec` for requesting/processing data.
         """
         # for clean teardown, catch PyDAQmx.DAQmxFunctions.GenStoppedToPreventRegenOfOldSamplesError
-        cnt = 0
         with self._data_lock:
             systemtime = time.time()
             if self.data_gen is not None:
@@ -206,8 +204,6 @@ def data_playlist(sounds, play_order, playlist_info=None, logger=None, name='sta
                 if playlist_info is not None:
                     msg = _format_playlist(playlist_info.loc[pp], playlist_cnt)
                     print(f'{msg}')
-                    # tqdm.write(rich.print(f'{msg}')
-                    rich.print(msg)
                     if logger:
                         logger.info(msg)
             stim = sounds[pp]

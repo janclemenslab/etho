@@ -10,7 +10,7 @@ from pprint import pprint
 import shutil
 
 from ethomaster import config
-from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster.head.zeroclient import ZeroClient
 from ethomaster.utils.config import readconfig, undefaultify
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 

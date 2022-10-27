@@ -1,6 +1,6 @@
 import time
 import subprocess
-from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster.head.zeroclient import ZeroClient
 from ethoservice.ThuAZeroService import THUA
 from ethomaster import config
 

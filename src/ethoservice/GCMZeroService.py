@@ -6,9 +6,10 @@ from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 from .utils import camera as camera
 from .callbacks import callbacks
-from .utils.tui import dict_to_def, dict_to_def_aults
-import rich
-from rich.panel import Panel
+
+
+# logger = logging.getLogger('GCM')
+# logging.basicConfig(level=logging.INFO)
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -22,6 +23,7 @@ class GCM(BaseZeroService):
         self._time_started = None
         self.duration = duration
         self.savefilename = savefilename
+        self.c = None
 
         # set up CAMERA
         self.cam_serialnumber = str(params['cam_serialnumber'])
@@ -42,28 +44,14 @@ class GCM(BaseZeroService):
         self.c.gain = params['gain']
         self.c.framerate = params['frame_rate']
         self.c.start()
-        image, image_ts, system_ts = self.c.get()
-        self.test_image = image
+        self.test_image, image_ts, system_ts = self.c.get()
         self.c.stop()
 
-        iii = self.c.info_imaging()
-        iii['exposure'] = f"{iii['exposure']:1.2f}ms"
-        params['exposure'] = f"{params['shutter_speed']/1_000:1.2f}ms"
-        params['framerate'] = params['frame_rate']
-        params['offsetX'], params['offsetY'], params['width'], params['height'] = params['frame_offx'], params[
-            'frame_offy'], params['frame_width'], params['frame_height']
-
-        hii = self.c.info_hardware()
-        hii.update({k: v if v is not None else 'defaults' for k, v, in params['callbacks'].items()})
-        hii['savefilename'] = self.savefilename
-        hii['duration'] = self.duration
-
-        rich.print(Panel(dict_to_def(hii), title='Hardware'))
-        rich.print(Panel(dict_to_def_aults(iii, params), title='Image settings'))
-
-        self.frame_width, self.frame_height, self.frame_channels = image.shape
+        self.frame_width, self.frame_height, self.frame_channels = self.test_image.shape
         self.framerate = self.c.framerate
         self.nFrames = int(self.framerate * self.duration + 100)
+        self.frameNumber = 0
+        self.prev_framenumber = 0
 
         self.callbacks = []
         self.callback_names = []
@@ -93,6 +81,19 @@ class GCM(BaseZeroService):
         # set up the worker thread
         self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
 
+        iii = self.c.info_imaging()
+        iii['exposure'] = f"{iii['exposure']:1.2f}ms"
+        params['exposure'] = f"{params['shutter_speed']/1_000:1.2f}ms"
+        params['framerate'] = params['frame_rate']
+        params['offsetX'], params['offsetY'], params['width'], params['height'] = params['frame_offx'], params[
+            'frame_offy'], params['frame_width'], params['frame_height']
+
+        hii = self.c.info_hardware()
+        hii.update({k: v if v is not None else 'defaults' for k, v, in params['callbacks'].items()})
+        hii['savefilename'] = self.savefilename
+        hii['duration'] = self.duration
+        self.info = {'hardware': hii, 'image': (iii, params)}
+
     def start(self):
         for callback in self.callbacks:
             callback.start()
@@ -108,7 +109,8 @@ class GCM(BaseZeroService):
 
     def _worker(self, stop_event):
         RUN = True
-        frameNumber = 0
+        self.frameNumber = 0
+        self.prev_framenumber = 0
         self.log.info('started worker')
         self.c.start()
 
@@ -128,8 +130,8 @@ class GCM(BaseZeroService):
                         package = (image, (system_ts, image_ts))
                     callback.send(package)
 
-                frameNumber += 1
-                if frameNumber == self.nFrames:
+                self.frameNumber += 1
+                if self.frameNumber == self.nFrames:
                     self.log.info('Max number of frames reached - stopping.')
                     RUN = False
 
@@ -166,6 +168,16 @@ class GCM(BaseZeroService):
             time.sleep(0.5)
             self.service_stop()
 
+    def progress(self):
+        try:
+            p = super().progress()
+            fn = self.frameNumber
+            p.update({'framenumber': fn, 'framenumber_delta': fn - self.prev_framenumber, 'framenumber_units': 'frames'})
+            self.prev_framenumber = fn
+            return p
+        except:
+            pass
+
     def disp(self):
         pass
 
@@ -192,12 +204,10 @@ if __name__ == '__main__':
         ser = sys.argv[1]
     else:
         ser = 'default'
-
     if len(sys.argv) > 2:
         port = sys.argv[2]
     else:
         port = GCM.SERVICE_PORT
-
     s = GCM(serializer=ser)
-    s.bind(f"tcp://0.0.0.0:{port}")  # broadcast on all IPs
+    s.bind("tcp://0.0.0.0:{0}".format(port))  # broadcast on all IPs
     s.run()

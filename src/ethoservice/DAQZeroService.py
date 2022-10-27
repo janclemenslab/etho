@@ -6,10 +6,6 @@ import copy
 from typing import Iterable, Sequence, Optional, Dict, Any
 from .utils.log_exceptions import for_all_methods, log_exceptions
 from .callbacks import callbacks
-from rich.panel import Panel
-from rich.table import Table
-from .utils.tui import dict_to_def, df_to_table
-import rich
 import logging
 import numpy as np
 
@@ -84,19 +80,6 @@ class DAQ(BaseZeroService):
         self.analog_chans_in = analog_chans_in
         self.digital_chans_out = digital_chans_out
 
-        info: Dict[str, Any] = {
-            'sample rate': f"{fs}Hz",
-            'analog output': self.analog_chans_out,
-            'digital output': self.digital_chans_out,
-            'analog input': self.analog_chans_in,
-            'duration': f"{duration}s",
-            'savefilename': savefilename,
-            'metadata': metadata,
-        }
-
-        rich.print(Panel(dict_to_def(info), title='Information'))
-        rich.print(Panel(df_to_table(playlist_info, Table()), title='Playlist'))
-
         # ANALOG OUTPUT
         if self.analog_chans_out:
             self.taskAO = IOTask(cha_name=self.analog_chans_out, rate=fs, clock_source=clock_source)
@@ -150,6 +133,23 @@ class DAQ(BaseZeroService):
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
         self.status = 'initialized'
+
+
+        self.info: Dict[str, Dict[str, Any]] = dict()
+        self.info['job']:  Dict[str, Any] = {
+            'sample rate': f"{self.fs}Hz",
+            'analog output': self.analog_chans_out,
+            'digital output': self.digital_chans_out,
+            'analog input': self.analog_chans_in,
+            'duration': f"{self.duration}s",
+            'savefilename': self.savefilename,
+            'metadata': self.metadata,
+        }
+        self.info['playlist'] = self.playlist_info
+
+    def information(self):
+        return self.info
+
 
     def start(self):
         self.status = 'running'

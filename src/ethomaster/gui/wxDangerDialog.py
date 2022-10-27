@@ -1,6 +1,5 @@
 import wx
-import ethomaster.head.clientmanager as cm
-from ethomaster.utils.SSHRunner import SSHRunner
+from ethomaster.utils.runner import Runner
 from ethomaster import config
 
 
@@ -10,7 +9,7 @@ class DangerDialog(wx.Dialog):
     def __init__(self, host, *args, **kw):
         super(DangerDialog, self).__init__(*args, **kw)
         self.host = host
-        self.sr = SSHRunner('{0}@{1}'.format(config['GENERAL']['user'], host))
+        self.sr = Runner('{0}@{1}'.format(config['GENERAL']['user'], host))
         self.InitUI()
         self.SetSize((250, 200))
         self.SetTitle("DANGER ZONE")

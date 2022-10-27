@@ -1,14 +1,13 @@
-"""[summary]
-
-TODO: register all methods for logging: `@for_all_methods(log_exceptions(logging.getLogger(__name__)))`
-"""
+"""Callbacks for processing images."""
 import logging
 from xml.dom import NotFoundErr
 import numpy as np
 from . import register_callback
 from ._base import BaseCallback
 from ..utils.concurrent_task import ConcurrentTask
+from ..utils.log_exceptions import for_all_methods, log_exceptions
 from typing import Optional, Dict, Any
+
 try:
     import cv2
     cv2_import_error = None
@@ -26,10 +25,11 @@ try:
     import pyqtgraph as pg
     from pyqtgraph.widgets.RawImageWidget import RawImageWidget
     pyqtgraph_import_error = NotFoundErr
-except ImportError as pyqtgraph_import_error:
+except Exception as pyqtgraph_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
     pass
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class ImageCallback(BaseCallback):
 
     def __init__(self,
@@ -49,6 +49,7 @@ class ImageCallback(BaseCallback):
         self.file_name = file_name
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class ImageDisplayCV2(ImageCallback):
 
@@ -83,6 +84,7 @@ class ImageDisplayCV2(ImageCallback):
         cv2.destroyWindow('display')
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class ImageDisplayPQG(ImageCallback):
 
@@ -125,6 +127,7 @@ class ImageDisplayPQG(ImageCallback):
         # close app and windows here?
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class ImageWriterCV2(ImageCallback):
     """Save images to video using opencv's VideoWriter.
@@ -172,6 +175,7 @@ class ImageWriterCV2(ImageCallback):
         super()._cleanup()
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class ImageWriterCVR(ImageCallback):
     """Round robin videowriter - see ImageWriterVidGear for details.
@@ -194,7 +198,13 @@ class ImageWriterCVR(ImageCallback):
     FRIENDLY_NAME = 'save_vidgear_round'
     TIMESTAMPS_ONLY = False
 
-    def __init__(self, data_source, *, poll_timeout=0.01, max_frames_per_video=100_000, ffmpeg_params: Optional[Dict[str, Any]] = None, **kwargs):
+    def __init__(self,
+                 data_source,
+                 *,
+                 poll_timeout=0.01,
+                 max_frames_per_video=100_000,
+                 ffmpeg_params: Optional[Dict[str, Any]] = None,
+                 **kwargs):
 
         if vidgear_import_error is not None:
             raise vidgear_import_error
@@ -231,6 +241,7 @@ class ImageWriterCVR(ImageCallback):
         super()._cleanup()
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class ImageWriterVidGear(ImageCallback):
     """Write video files using vidgear [](https://abhitronix.github.io/vidgear/latest/).
@@ -285,6 +296,7 @@ class ImageWriterVidGear(ImageCallback):
         super()._cleanup()
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class ImageWriterVPF(ImageCallback):
     """CUDA-accelerated video encoding using Nvidia's VideoProcessingFramework.
@@ -352,6 +364,7 @@ class ImageWriterVPF(ImageCallback):
         self.encFile.close()
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class TimestampWriterHDF(ImageCallback):
     """[summary]
@@ -397,6 +410,7 @@ class TimestampWriterHDF(ImageCallback):
         super()._cleanup()
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class ImageDisplayCenterBackCV2(ImageCallback):
 
@@ -447,6 +461,7 @@ class ImageDisplayCenterBackCV2(ImageCallback):
         cv2.destroyWindow('display')
 
 
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class ImageDisplayCenterTopCV2(ImageCallback):
 

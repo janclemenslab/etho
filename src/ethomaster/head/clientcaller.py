@@ -1,14 +1,11 @@
 import time
 import numpy as np
-import pandas as pd
-import subprocess
 import logging
-import rich
 from itertools import cycle
 from rich.progress import Progress
+from ethoservice.utils.tui import rich_information
 
 from ethomaster import config
-from ethomaster.head.ZeroClient import ZeroClient
 from ethomaster.utils.config import readconfig, undefaultify
 from ethomaster.utils.sound import parse_table, load_sounds, build_playlist
 
@@ -19,7 +16,6 @@ from ethoservice.GCMZeroService import GCM
 
 import threading
 import _thread as thread
-import sys
 
 
 def timed(fn, s, *args, **kwargs):
@@ -49,7 +45,9 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
     dirname = prot['NODE']['savefolder']
     print(filename)
-    if 'python_exe' in config['GENERAL']:
+    if 'python_exe' in prot['NODE']:
+        python_exe = prot['NODE']['python_exe']
+    elif 'python_exe' in config['GENERAL']:
         python_exe = config['GENERAL']['python_exe']
     else:
         python_exe = 'C:/Users/ncb.UG-MGEN/miniconda3/python.exe'
@@ -120,7 +118,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
         daq = DAQ.make(SER, user_name, ip_address, folder_name, python_exe)
 
-        print('sending sound data to {0} - may take a while.'.format(ip_address))
+        # logging.debug('sending sound data to {0} - may take a while.'.format(ip_address))
         daq_params = undefaultify(prot['DAQ'])
         daq.setup(daq_save_filename,
                   playlist_items,
@@ -137,20 +135,23 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
                   metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']},
                   params=daq_params)
         daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(daq_save_folder, filename))
-        print('waiting for camera', end='', flush=True)
-        while gcm.progress()['elapsed'] < 5:
-            time.sleep(1)
-            print('.', end='', flush=True)
-        print(' done.')
+
+        if 'gcm' in services:
+            while services['gcm'].progress()['elapsed'] < 5:
+                time.sleep(.1)
+                print(f"\rWaiting for camera {services['gcm'].progress()['elapsed']: 2.1f}/5.0 seconds", end='', flush=True)
+            print('\n')
+
         daq.start()
-        # logging.info('DAQ started')
         services['daq'] = daq
-    # print('quitting now - protocol will stop automatically on {0}'.format(ip_address))
+
+    for key, s in services.items():
+        rich_information(s.information(), prefix=key)
+
     with Progress() as progress:
         tasks = {}
         for key, s in services.items():
             tasks[key] = progress.add_task(f"[red]{key}", total=s.progress()['total'])
-        # import ipdb;ipdb.set_trace()
 
         while not progress.finished:
             for key, task_id in tasks.items():
@@ -158,7 +159,10 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
                     continue
                 try:
                     p = timed(services[key].progress, 5)
-                    progress.update(task_id, completed=p['elapsed'])
+                    description = None
+                    if 'framenumber' in p:
+                        description = f"{key} {p['framenumber_delta'] / p['elapsed_delta']: 7.2f} fps"
+                    progress.update(task_id, completed=p['elapsed'], description=description)
                 except:  # if call times out, stop progress display - this will stop the display whenever a task times out - not necessarily when a task is done
                     progress.stop_task(task_id)
             time.sleep(1)
@@ -166,6 +170,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
 if __name__ == '__main__':
     ip_address = 'localhost'
+    logging.basicConfig(level=logging.DEBUG)
     protocolfilename = 'ethoconfig/protocols/mic35mm_5min.yml'
     playlistfilename = 'ethoconfig/playlists/0 silence.txt'
     clientcaller(ip_address, playlistfilename, protocolfilename)

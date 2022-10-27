@@ -3,8 +3,6 @@ import os
 import wx
 from ethomaster import config
 import ethomaster.head.client_ephys as client_ephys
-import ethomaster.head.clientmanager as clientmanager
-from ethomaster.gui.wxDangerDialog import DangerDialog
 from ethomaster.gui.wxBusyDialog import BusyDialog
 
 

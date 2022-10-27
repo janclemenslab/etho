@@ -1,6 +1,6 @@
 import time
 import sys
-from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster.head.zeroclient import ZeroClient
 from ethoservice.ThuZeroService import THU
 # from etho import config
 # from ethomaster.utils.config import readconfig

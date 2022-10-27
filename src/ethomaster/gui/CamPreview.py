@@ -5,7 +5,7 @@ import io
 from PIL import Image
 import zmq
 
-from ethomaster.head.ZeroClient import ZeroClient
+from ethomaster.head.zeroclient import ZeroClient
 from ethoservice.CamZeroService import CAM
 from ethomaster.utils.config import readconfig, undefaultify
 

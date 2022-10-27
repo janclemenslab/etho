@@ -7,22 +7,14 @@ import pandas as pd
 import time
 
 
-def dict_to_def(d):
-    s = ''
-    for key, val in d.items():
-        s += f"[bold]{key}[/]:\n   {str(val)}\n"
-    return s
-
-
-def dict_to_def_aults(d, d2):
+def dict_to_def(d, defaults=None):
     s = ''
     for key, val in d.items():
         s += f"[bold]{key}[/]:\n   {str(val)}"
-        if key in d2:
-            s += f" (target: {str(d2[key])})"
+        if defaults is not None and key in defaults:
+            s += f" (target: {str(defaults[key])})"
         s += '\n'
     return s
-
 
 def dict_to_table(d, title=None, key_name='Key', value_names=None):
 
@@ -43,18 +35,17 @@ def dict_to_table(d, title=None, key_name='Key', value_names=None):
 
 def df_to_table(
     pandas_dataframe: pd.DataFrame,
-    rich_table: Table,
     show_index: bool = True,
     index_name: Optional[str] = None,
 ) -> Table:
     """Convert a pandas.DataFrame obj into a rich.Table obj.
     Args:
         pandas_dataframe (DataFrame): A Pandas DataFrame to be converted to a rich Table.
-        rich_table (Table): A rich Table that should be populated by the DataFrame values.
         show_index (bool): Add a column with a row count to the table. Defaults to True.
         index_name (str, optional): The column name to give to the index column. Defaults to None, showing no value.
     Returns:
         Table: The rich Table instance passed, populated with the DataFrame values."""
+    rich_table = Table()
 
     if show_index:
         index_name = str(index_name) if index_name else ""
@@ -69,6 +60,16 @@ def df_to_table(
         rich_table.add_row(*row)
 
     return rich_table
+
+
+def rich_information(info, prefix=''):
+    for key, val in info.items():
+        if isinstance(val, dict):
+            rich.print(Panel(dict_to_def(val), title=f"{prefix}: {key}"))
+        elif isinstance(val, (list, tuple)):
+            rich.print(Panel(dict_to_def(val[0], defaults=val[1]), title=f"{prefix}: {key}"))
+        elif isinstance(val, pd.DataFrame):
+            rich.print(Panel(df_to_table(val), title=f"{prefix}: {key}"))
 
 
 class CameraProgress():
