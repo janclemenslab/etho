@@ -53,8 +53,6 @@ class IOTask(daq.Task):
         if len(set(self.cha_type)) > 1:
             raise ValueError('channels should all be of the same type but are {0}.'.format(set(self.cha_type)))
 
-        self.pbar = tqdm(desc='DAQ', total=duration)
-
         self.cha_name = [dev_name + '/' + ch for ch in cha_name]  # append device name
         self.cha_string = ", ".join(self.cha_name)
         self.num_channels = len(cha_name)
@@ -152,7 +150,6 @@ class IOTask(daq.Task):
                     if self._data is not None:
                         data_rec.send((self._data, systemtime))
             self._newdata_event.set()
-            self.pbar.update(1)
 
         return 0  # The function should return an integer
 

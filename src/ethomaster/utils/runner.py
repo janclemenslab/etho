@@ -1,7 +1,7 @@
 import time
 import subprocess
 import fabric
-from typing import Optional, Tuple, Union, List
+from typing import Optional, Union, List
 import invoke.exceptions
 import logging
 
@@ -53,20 +53,18 @@ class Runner():
         if disown:  # avoids ValueError(cannot give disown and asynchronous at the same time)
             asynchronous = None
 
-        logging.debug(f"Running {cmd} with timeout={timeout}, asynchronous={asynchronous}, disown={disown}, run_local={run_local}, new_console={new_console}.")
-        if self.host_is_remote or not run_local:
-            result = fabric.Connection(self.host).run(cmd, hide=True, timeout=timeout, asynchronous=asynchronous, disown=disown)
+        logging.debug(f"Running {cmd} on {self.host} with timeout={timeout}, asynchronous={asynchronous}, disown={disown}, run_local={run_local}, new_console={new_console}.")
+
+        if self.host_is_remote and not run_local:
+            result = fabric.Connection(self.host, connect_kwargs={'password': 'droso123'}).run(cmd, hide=True, timeout=timeout, asynchronous=asynchronous, disown=disown)
         else :
             # only way to open a new console window is subprocess on windows:
             if new_console and self.host_is_win:
-                subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE)
+                subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE, shell=True, stdout=subprocess.PIPE)
                 result = None
             else:
-                result = fabric.Connection(self.host).local(cmd,
-                                                            hide=True,
-                                                            timeout=timeout,
-                                                            asynchronous=asynchronous,
-                                                            disown=disown)
+                result = invoke.run(cmd, hide=True, timeout=timeout, asynchronous=asynchronous, disown=disown)
+
         return result
 
     def kill(self, pids: Union[int, List[int]]):

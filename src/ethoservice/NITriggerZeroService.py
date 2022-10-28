@@ -1,18 +1,14 @@
-#!/usr/bin/env python
-# required imports
-from .ZeroService import BaseZeroService  # import super class
-import zerorpc  # for starting service in `main()`
-import time    # for timer
-import threading
+from .ZeroService import BaseZeroService
+import time
 import sys
 import numpy as np
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 try:
     import PyDAQmx as daq
-except ImportError as e:
-    print('IGNORE IF ON HEAD')
-    print(e)
+    pydaqmx_import_error = None
+except ImportError as pydaqmx_import_error:
+    pass
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -25,11 +21,14 @@ class NIT(BaseZeroService):
 
     def setup(self, duration, output_channels):
         """Setup the trigger service (intiates the digital output channels).
-        
+
         Args:
             duration (float): Unused - kept to keep the interface same across services [description]
             output_channels (str): , e.g. "/dev1/port0/line0:1"
         """
+        if pydaqmx_import_error is not None:
+            raise pydaqmx_import_error
+
         self._time_started = None
         self.duration = float(duration)
 
@@ -45,15 +44,15 @@ class NIT(BaseZeroService):
 
     def send_trigger(self, state, duration=0.0001):
         """Set the digital output channels to specified state.
-        
+
         Args:
             state ([type]): [description]
-            duration (float, optional): How long the trigger state should last (in seconds). 
+            duration (float, optional): How long the trigger state should last (in seconds).
                                         Will reset to all 0 after the duration.
                                         If None will return immediatelly and keep the trigger state permanent.
                                         Defaults to 0.0001.
         """
-        # if len(state) != self.nb_channels: 
+        # if len(state) != self.nb_channels:
         #     raise ValueError(f"State vector should have same length as the number of digital output channels. Is {len(state)}, should be {'x'}.")
         self.log.info('sending {state} on {output_channels}')
         state = np.array(state, dtype=np.uint8)

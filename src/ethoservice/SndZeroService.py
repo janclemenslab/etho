@@ -1,14 +1,18 @@
 #!/usr/bin/env python
-import pygame
 import numpy as np
 import threading
-import pandas as pd
 from .ZeroService import BaseZeroService
-import zerorpc
 import time
 import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
+
+try:
+    import pygame
+    pygame_import_error = None
+except ImportError as e:
+    pygame_import_error = e
+
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -19,6 +23,9 @@ class SND(BaseZeroService):
     SERVICE_NAME = "SND"
 
     def setup(self, np_sounds, playlist, playlist_items, duration, fs):
+        if pygame_import_error is not None:
+            raise pygame_import_error
+
         self.duration = duration
         self._time_started = None
         self.log.info('duration {0} seconds'.format(self.duration))

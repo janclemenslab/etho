@@ -13,9 +13,9 @@ try:
     from PyDAQmx.DAQmxCallBack import *
     from PyDAQmx.DAQmxConstants import *
     from PyDAQmx.DAQmxFunctions import *
-except ImportError as e:
-    print('IGNORE IF ON HEAD')
-    print(e)
+    pydaqmx_import_error = None
+except ImportError as pydaqmx_import_error:
+    pass
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -28,14 +28,17 @@ class ANA(BaseZeroService):
 
     def setup(self, duration, output_channels):
         """Setup the trigger service (intiates the digital output channels).
-        
+
         Args:
             duration (float): Unused - kept to keep the interface same across services [description]
             output_channels (str): , e.g. "/dev1/port0/line0:1"
         """
+        if pydaqmx_import_error is not None:
+            raise pydaqmx_import_error
+
         self._time_started = None
         self.duration = float(duration)
-        
+
         self.samples_read = daq.int32()
         dev_name = '/Dev1'
         cha_name = ['ao2', 'ao3']
@@ -49,23 +52,23 @@ class ANA(BaseZeroService):
         self.task = daq.Task()
         self.task.CreateAOVoltageChan(self.cha_string, "", -limits, limits, DAQmx_Val_Volts, None)
         self.task.StartTask()
-        
+
     def set_value(self, state, duration=0.0001):
         """Set the digital output channels to specified state.
-        
+
         Args:
             state ([type]): [description]
-            duration (float, optional): How long the trigger state should last (in seconds). 
+            duration (float, optional): How long the trigger state should last (in seconds).
                                         Will reset to all 0 after the duration.
                                         If None will return immediatelly and keep the trigger state permanent.
                                         Defaults to 0.0001.
         """
-        # if len(state) != self.nb_channels: 
+        # if len(state) != self.nb_channels:
         #     raise ValueError(f"State vector should have same length as the number of digital output channels. Is {len(state)}, should be {'x'}.")
         self.log.info('sending {state} on {output_channels}')
         self.task.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
                                     self._data * state, daq.byref(self.samples_read), None)
-        
+
         # This is currently blocking - not so great
         if duration is not None:
             time.sleep(duration)  # alternatively could  return immediately using a threaded timer

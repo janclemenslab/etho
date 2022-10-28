@@ -57,22 +57,23 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
         self._time_started = None
         self.duration = None
+        self.prev_elapsed = 0
         self.info = dict()
 
     @classmethod
-    def make(cls, SER, user_name, ip_address, folder_name, python_exe='python', host_is_remote=False, port=None):
+    def make(cls, SER, user, host, folder_name, python_exe='python', host_is_remote=False, port=None):
         import ethomaster.head  # only works on the head node
         if port is None:
             port = cls.SERVICE_PORT
 
         server_name = '{0} -m {1} {2}'.format(python_exe, cls.__module__, SER)
         logging.debug(f'initializing {cls.SERVICE_NAME} at port {port}.')
-        service = ethomaster.head.zeroclient.ZeroClient("{0}@{1}".format(user_name, ip_address), service_name=cls.__module__, serializer=SER, host_is_remote=host_is_remote)
+        service = ethomaster.head.zeroclient.ZeroClient("{0}@{1}".format(user, host), service_name=cls.__module__, serializer=SER, host_is_remote=host_is_remote)
         logging.debug('   starting server:', end='')
         ret = service.start_server(server_name, folder_name, warmup=1)
         logging.debug(f'{"success" if ret else "FAILED"}.')
         logging.debug('   connecting to server:', end='')
-        ret = service.connect("tcp://{0}:{1}".format(ip_address, port))
+        ret = service.connect("tcp://{0}:{1}".format(host, port))
         logging.debug(f'{"success" if ret else "FAILED"}.')
         return service
 

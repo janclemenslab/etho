@@ -1,5 +1,6 @@
 import time
 import numpy as np
+import cv2
 import logging
 from itertools import cycle
 from rich.progress import Progress
@@ -31,65 +32,63 @@ def timed(fn, s, *args, **kwargs):
     return result
 
 
-def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
+def clientcaller(host: str, protocolfile: str, playlistfile: str = None, save_prefix: str = None):
     # load config/protocols
     prot = readconfig(protocolfile)
-    print(prot)
-    maxduration = prot['NODE']['maxduration']
-    user_name = prot['NODE']['user']
-    folder_name = prot['NODE']['folder']
-    SER = prot['NODE']['serializer']
+    logging.debug(prot)
+
+    defaults = config['GENERAL']
+    defaults.update(prot['NODE'])
 
     # unique file name for video and node-local logs
-    if filename is None:
-        filename = '{0}-{1}'.format(ip_address, time.strftime('%Y%m%d_%H%M%S'))
-    dirname = prot['NODE']['savefolder']
-    print(filename)
-    if 'python_exe' in prot['NODE']:
-        python_exe = prot['NODE']['python_exe']
-    elif 'python_exe' in config['GENERAL']:
-        python_exe = config['GENERAL']['python_exe']
-    else:
-        python_exe = 'C:/Users/ncb.UG-MGEN/miniconda3/python.exe'
+    if save_prefix is None:
+        save_prefix = f'{0}-{1}'.format(defaults['host'], time.strftime('%Y%m%d_%H%M%S'))
+    logging.info(f"Saving as {save_prefix}.")
+
 
     services = {}
     if 'THUA' in prot['NODE']['use_services']:
-        thua = THUA.make(SER, user_name, ip_address, folder_name, python_exe)
-        print(prot['THUA'])
-        thua.setup(prot['THUA']['port'], prot['THUA']['interval'], maxduration + 10)
-        thua.init_local_logger('{0}/{1}/{1}_thu.log'.format(dirname, filename))
+        this = defaults.copy()
+        # update `this`` with service specific host params
+        if 'host' in prot['THUA']:
+            this.update(prot['THUA']['host'])
+        thua = THUA.make(this['serializer'], this['user'], this['host'], this['working_directory'], this['python_exe'])
+        thua.setup(prot['THUA']['port'], prot['THUA']['interval'], this['maxduration'] + 10)
+        thua.init_local_logger('{0}/{1}/{1}_thu.log'.format(this['save_directory'], save_prefix))
         thua.start()
         services['THUA'] = thua
 
-    if 'GCM' in prot['NODE']['use_services']:
-        gcm = GCM.make(SER, user_name, ip_address, folder_name, python_exe)
+    if 'GCM' in prot['NODE']['use_services'] and 'GCM' in prot:
+        this = defaults.copy()
+        # update `this`` with service specific host params
+        if 'host' in prot['GCM']:
+            this.update(prot['GCM']['host'])
+
+        gcm = GCM.make(this['serializer'], this['user'], this['host'], this['working_directory'], this['python_exe'])
         cam_params = undefaultify(prot['GCM'])
-        gcm.setup('{0}/{1}/{1}'.format(dirname, filename), maxduration + 20, cam_params)
-        gcm.init_local_logger('{0}/{1}/{1}_gcm.log'.format(dirname, filename))
+        gcm.setup('{0}/{1}/{1}'.format(this['save_directory'], save_prefix), this['maxduration'] + 20, cam_params)
+        gcm.init_local_logger('{0}/{1}/{1}_gcm.log'.format(this['save_directory'], save_prefix))
+
         img = gcm.attr('test_image')
         print('Press any key to continue.')
-        import cv2
-        cv2.imshow('Are you happy?',img)
+        cv2.imshow('Test image. Are you okay with this?',img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         gcm.start()
         services['camera'] = gcm
 
     if 'DAQ' in prot['NODE']['use_services']:
-        if prot['DAQ']['run_locally']:
-            print('   Running DAQ job locally.')
-            ip_address = 'localhost'
-            daq_save_folder = 'C:/Users/ncb/data'
-        else:
-            daq_save_folder = dirname
-        fs = prot['DAQ']['samplingrate']
-        shuffle_playback = prot['DAQ']['shuffle']
+        this = defaults.copy()
+        # update `this`` with service specific host params
+        if 'host' in prot['GCM']:
+            this.update(prot['GCM']['host'])
 
+        fs = prot['DAQ']['samplingrate']
         playlist = parse_table(playlistfile)
 
-        if ip_address in config['ATTENUATION']:  # use node specific attenuation data
-            attenuation = config['ATTENUATION'][ip_address]
-            print(f'using attenuation data specific to {ip_address}.')
+        if this['host'] in config['ATTENUATION']:  # use node specific attenuation data
+            attenuation = config['ATTENUATION'][this['host']]
+            logging.info(f"Using attenuation data specific to {this['host']}.")
         else:
             attenuation = config['ATTENUATION']
 
@@ -99,10 +98,10 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
                              LEDamp=prot['DAQ']['ledamp'],
                              stimfolder=config['HEAD']['stimfolder'])
         sounds = [sound.astype(np.float64) for sound in sounds]
-        playlist_items, totallen = build_playlist(sounds, maxduration, fs, shuffle=shuffle_playback)
-        if maxduration == -1:
-            print(f'setting maxduration from playlist to {totallen}.')
-            maxduration = totallen
+        playlist_items, totallen = build_playlist(sounds, this['maxduration'], fs, shuffle=prot['DAQ']['shuffle'])
+        if this['maxduration'] == -1:
+            logging.info(f"Setting maxduration from playlist to {totallen}.")
+            this['maxduration'] = totallen
             playlist_items = cycle(playlist_items)  # iter(playlist_items)
         else:
             playlist_items = cycle(playlist_items)
@@ -114,16 +113,14 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
         else:
             digital_data = None
             analog_data = sounds
-        daq_save_filename = '{0}/{1}/{1}_daq.h5'.format(daq_save_folder, filename)
 
-        daq = DAQ.make(SER, user_name, ip_address, folder_name, python_exe)
+        daq = DAQ.make(this['serializer'], this['user'], this['host'], this['working_directory'], this['python_exe'])
 
-        # logging.debug('sending sound data to {0} - may take a while.'.format(ip_address))
         daq_params = undefaultify(prot['DAQ'])
-        daq.setup(daq_save_filename,
+        daq.setup('{0}/{1}/{1}'.format(this['save_directory'], save_prefix),
                   playlist_items,
                   playlist,
-                  maxduration,
+                  this['maxduration'],
                   fs,
                   clock_source=prot['DAQ']['clock_source'],
                   nb_inputsamples_per_cycle=prot['DAQ']['nb_inputsamples_per_cycle'],
@@ -134,7 +131,7 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
                   digital_data_out=digital_data,
                   metadata={'analog_chans_in_info': prot['DAQ']['analog_chans_in_info']},
                   params=daq_params)
-        daq.init_local_logger('{0}/{1}/{1}_daq.log'.format(daq_save_folder, filename))
+        daq.init_local_logger(f"{this['save_directory']}/{save_prefix}/{save_prefix}_daq.log")
 
         if 'gcm' in services:
             while services['gcm'].progress()['elapsed'] < 5:
@@ -169,8 +166,8 @@ def clientcaller(ip_address, playlistfile, protocolfile, filename=None):
 
 
 if __name__ == '__main__':
-    ip_address = 'localhost'
+    host = 'localhost'
     logging.basicConfig(level=logging.DEBUG)
-    protocolfilename = 'ethoconfig/protocols/mic35mm_5min.yml'
-    playlistfilename = 'ethoconfig/playlists/0 silence.txt'
-    clientcaller(ip_address, playlistfilename, protocolfilename)
+    protocol = 'ethoconfig/protocols/mic35mm_5min.yml'
+    playlist = 'ethoconfig/playlists/0 silence.txt'
+    clientcaller(host, protocol, playlist)

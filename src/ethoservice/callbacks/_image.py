@@ -140,7 +140,7 @@ class ImageWriterCV2(ImageCallback):
         - opencv: `mamba install opencv -c conda-forge`
 
     Raises:
-        vidgear_import_error: If VidGear could not be imported.
+        cv2_import_error: If cv2 (opencv) could not be imported.
 
     Args:
         ImageCallback (_type_): _description_
@@ -188,7 +188,7 @@ class ImageWriterCVR(ImageCallback):
     callbacks:
         save_vidgear:
             ffmpeg_params:  # dict with parameters to pass to ffmpeg
-                crf: 16
+                -crf: 16
             max_frames_per_video: 100_000  # number of frames after which to switch to new video file
     ```
 
@@ -259,7 +259,7 @@ class ImageWriterVidGear(ImageCallback):
     callbacks:
         save_vidgear:
             ffmpeg_params:  # dict with parameters to pass to ffmpeg
-                crf: 16
+                -crf: 16
     ```
 
     Raises:

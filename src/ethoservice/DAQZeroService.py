@@ -74,7 +74,9 @@ class DAQ(BaseZeroService):
 
         self._time_started = None
         self.duration = duration
+        self.fs = fs
         self.savefilename = savefilename
+        self.metadata = metadata
 
         self.analog_chans_out = analog_chans_out
         self.analog_chans_in = analog_chans_in
@@ -146,10 +148,6 @@ class DAQ(BaseZeroService):
             'metadata': self.metadata,
         }
         self.info['playlist'] = self.playlist_info
-
-    def information(self):
-        return self.info
-
 
     def start(self):
         self.status = 'running'

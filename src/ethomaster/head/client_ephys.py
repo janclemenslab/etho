@@ -14,7 +14,6 @@ from ethomaster.utils.shuffled_cycle import shuffled_cycle
 from ethomaster.utils.config import readconfig, saveconfig, undefaultify
 
 from ethoservice.DAQZeroService import DAQ
-import PyDAQmx.DAQmxFunctions
 
 logging.basicConfig(level=logging.INFO)
 
