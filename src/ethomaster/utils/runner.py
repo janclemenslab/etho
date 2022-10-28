@@ -11,10 +11,11 @@ logger = logging.getLogger(__name__)
 class Runner():
     """Manages remote processes."""
 
-    def __init__(self, host: str, host_is_win: bool = False, host_is_remote: bool = False):
+    def __init__(self, host: str, host_is_win: bool = False, host_is_remote: bool = False, python_exe: str = 'python'):
         self.host = host
         self.host_is_win = host_is_win
         self.host_is_remote = host_is_remote
+        self.python_exe = python_exe
         # get host_name for ping
         token = host.split('@')
         if len(token) == 1:  # host_name
@@ -97,7 +98,7 @@ class Runner():
 
         # get list of running processes on host
         py_code = "import psutil; import pprint; pprint.pprint([{'pid': p.info['pid'], 'cmdline': p.info['cmdline']} for p in psutil.process_iter(attrs=['cmdline', 'pid'])])"
-        cmd = f'python -c "{py_code}"'
+        cmd = f'{self.python_exe} -c "{py_code}"'
         result = self.run(cmd)
         process_list = eval(result.stdout)
 

@@ -60,18 +60,21 @@ def clientcaller(host: str, protocolfile: str, playlistfile: str = None, save_pr
 
     if 'GCM' in prot['NODE']['use_services'] and 'GCM' in prot:
         this = defaults.copy()
-        # update `this`` with service specific host params
+        # update `this` with service specific host params
+        host_is_remote = False
         if 'host' in prot['GCM']:
             this.update(prot['GCM']['host'])
+            host_is_remote = True
 
-        gcm = GCM.make(this['serializer'], this['user'], this['host'], this['working_directory'], this['python_exe'])
+        gcm = GCM.make(this['serializer'], this['user'], this['host'], this['working_directory'], this['python_exe'],
+                       host_is_remote=host_is_remote)
         cam_params = undefaultify(prot['GCM'])
         gcm.setup('{0}/{1}/{1}'.format(this['save_directory'], save_prefix), this['maxduration'] + 20, cam_params)
         gcm.init_local_logger('{0}/{1}/{1}_gcm.log'.format(this['save_directory'], save_prefix))
 
         img = gcm.attr('test_image')
         print('Press any key to continue.')
-        cv2.imshow('Test image. Are you okay with this?',img)
+        cv2.imshow('Test image. Are you okay with this?', img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
         gcm.start()

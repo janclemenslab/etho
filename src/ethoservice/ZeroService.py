@@ -61,14 +61,19 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.info = dict()
 
     @classmethod
-    def make(cls, SER, user, host, folder_name, python_exe='python', host_is_remote=False, port=None):
+    def make(cls, SER, user, host, folder_name, python_exe='python', host_is_remote=False, host_is_win=True, port=None):
         import ethomaster.head.zeroclient  # only works on the head node
         if port is None:
             port = cls.SERVICE_PORT
 
         server_name = '{0} -m {1} {2}'.format(python_exe, cls.__module__, SER)
         logging.debug(f'initializing {cls.SERVICE_NAME} at port {port}.')
-        service = ethomaster.head.zeroclient.ZeroClient("{0}@{1}".format(user, host), service_name=cls.__module__, serializer=SER, host_is_remote=host_is_remote)
+        service = ethomaster.head.zeroclient.ZeroClient("{0}@{1}".format(user, host),
+                                                        service_name=cls.__module__,
+                                                        serializer=SER,
+                                                        host_is_remote=host_is_remote,
+                                                        host_is_win=host_is_win,
+                                                        python_exe=python_exe)
         logging.debug('   starting server:', end='')
         ret = service.start_server(server_name, folder_name, warmup=1)
         logging.debug(f'{"success" if ret else "FAILED"}.')
@@ -180,7 +185,12 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     def progress(self):
         try:
             elapsed = self._time_elapsed()
-            p = {'total': self.duration, 'elapsed': elapsed, 'elapsed_delta': elapsed - self.prev_elapsed, 'elapsed_units': 'seconds'}
+            p = {
+                'total': self.duration,
+                'elapsed': elapsed,
+                'elapsed_delta': elapsed - self.prev_elapsed,
+                'elapsed_units': 'seconds'
+            }
             self.prev_elapsed = elapsed
             return p
         except:

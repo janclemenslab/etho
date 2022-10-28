@@ -16,7 +16,8 @@ class ZeroClient(zerorpc.Client):
                  logging_port: str = '1460',
                  serializer: str = 'default',
                  host_is_win: bool = False,
-                 host_is_remote: bool = False):
+                 host_is_remote: bool = False,
+                 python_exe: str = 'python'):
         """_summary_
 
         Args:
@@ -35,7 +36,7 @@ class ZeroClient(zerorpc.Client):
         super(ZeroClient, self).__init__(timeout=180, heartbeat=90, context=ctx)
         self._init_network_logger()
 
-        self.sr = Runner(ssh_address, host_is_win=host_is_win, host_is_remote=host_is_remote)
+        self.sr = Runner(ssh_address, host_is_win=host_is_win, host_is_remote=host_is_remote, python_exe=python_exe)
         self.pid = None  # pid of server process on remote machine
 
     def _init_network_logger(self):
