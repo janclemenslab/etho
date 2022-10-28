@@ -4,34 +4,44 @@ For experiment-specific settings.
 ### Make
 [yaml](pyyaml.org) format. The following fields are supported:
 ```yaml
-# define defaults - can be overriden in protocols/headers
 NODE: # node-specific parameters and parameters that apply to all service (e.g. maxduration)
   user: ncb # default user
-  folder: C:/Users/ncb/ # default working directory
-  savefolder: C:/Users/ncb/data # this is where the recordings will be saved
+  working_directory: C:/Users/ncb/ # default working directory
+  save_directory: C:/Users/ncb/data # this is where the recordings will be saved
   maxduration: 90 # seconds
   use_services: [GCM, DAQ]  # list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names
   serializer: pickle  # save default
+  python_exe: C:/miniconda/envs/etho/python.exe  # run this prot in specific env
+```
 
+```yaml
 # SERVICE specific parameters
-GCM:
-  cam_type: Ximea  # or Spinnaker (FlyCapture is not implemented yet - use PTG service)
-  frame_rate: 1000.0 # frames per second
-  frame_width: 640 # pixels
-  frame_height: 200 ##440 # pixels
-  shutter_speed: 50 # ns=1.5ms??
-  frame_offx: 78
-  frame_offy: 10
+GCM:  # generic camera interface with different backends (`cam_type`)
+  cam_type: Ximea  # or Spinnaker or FlyCapture2
+  frame_rate: 100.0  # frames per second
+  frame_width: 640  # pixels
+  frame_height: 200  # pixels
+  shutter_speed: 5_000 # ns=5ms
+  frame_offx: 78  # pixels
+  frame_offy: 10  # pixels
   brightness: 0.0
   exposure: 0.0
   gamma: 1.0
   gain: 0.0
   cam_serialnumber: 30959651  # MQ013CG-ON
+  host:  # individual services can run on specific hosts
+    name: 192.168.1.42
+    user: ncb
+    python_exe: C:/miniconda/envs/etho/python.exe
+    save_directory: C:/Users/ncb/data
   callbacks:
     save_avi:  # save frames as avi using opencv VideoWriter (has no params)
-    save_avi_fast:  # save frames as avi using GPU-based VideoProcessingFramework (use either `save_avi_fast`, or `save_avi`, NEVER BOTH!!)
-       VPF_bin_path: C:/Users/ncb/vpf/bin3.7  # path to the directory containing the binaries for VPF
-    save_timestamps:
+    save_avi_vidread:  # save frames as avi using VidRead
+      ffmpeg_params:  # configure ffmpeg backend - need to prepend `-` to each param
+        -crf: 16
+    save_avi_fast:  # or save frames as avi using Nvidia's GPU-based VideoProcessingFramework
+      VPF_bin_path: C:/Users/ncb/vpf/bin3.7  # path to the directory containing the binaries for VPF
+    save_timestamps:  # save timestamps for each frame to h5 file
     disp:  # plot frames using opencv
     disp_fast:  # plot frames using pyqtgraph (faster?)
 
@@ -57,7 +67,7 @@ CAM:  # pi camera
   frameheight: 1000 # pixels
   shutterspeed: 10000 # ns=10ms
   annotate_frame_num: False # print frame number in each frame
-  # unused but probably useful
+  # currently unused picamera options but probably useful
   exposuremode: 'fixedfps'
   video_denoise: False
 
