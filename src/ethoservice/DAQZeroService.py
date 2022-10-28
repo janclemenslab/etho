@@ -12,9 +12,9 @@ import numpy as np
 
 try:
     from .utils.IOTask import *
-    import_error = None
-except ImportError as e:
-    import_error = e
+    daqmx_import_error = None
+except (ImportError, NameError) as daqmx_import_error:
+    pass
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -69,8 +69,8 @@ class DAQ(BaseZeroService):
         """
         self.status = 'initializing'
 
-        if import_error is not None:
-            raise ImportError(e)
+        if daqmx_import_error is not None:
+            raise ImportError(daqmx_import_error)
 
         self._time_started = None
         self.duration = duration
