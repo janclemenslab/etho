@@ -77,6 +77,7 @@ class DAQ(BaseZeroService):
         self.fs = fs
         self.savefilename = savefilename
         self.metadata = metadata
+        self.playlist_info = playlist_info
 
         self.analog_chans_out = analog_chans_out
         self.analog_chans_in = analog_chans_in
