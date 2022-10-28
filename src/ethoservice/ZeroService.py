@@ -62,7 +62,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
     @classmethod
     def make(cls, SER, user, host, folder_name, python_exe='python', host_is_remote=False, port=None):
-        import ethomaster.head  # only works on the head node
+        import ethomaster.head.zeroclient  # only works on the head node
         if port is None:
             port = cls.SERVICE_PORT
 
