@@ -64,8 +64,7 @@ class Frame(wx.Frame):
         if playlistName and protocolName:
             self.SetStatusText("playlist: {0}, prot: {1}".format(playlistName, protocolName))
             message = "starting playlist {0} with prot {1} on {2}".format(playlistName, protocolName, self.host)
-            args = (self.host, os.path.join(self.playlistfolder, playlistName),
-                               os.path.join(self.protocolfolder, protocolName))
+            args = (self.host, os.path.join(self.protocolfolder, protocolName), os.path.join(self.playlistfolder, playlistName))
             print(message)
             BusyDialog(self, size=(300,150)).run(clientcaller.clientcaller, args, message=message)
         else:
