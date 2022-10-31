@@ -1,7 +1,7 @@
 import time
-from ethomaster.head.zeroclient import ZeroClient
-from ethoservice.ThuZeroService import THU
-from ethomaster import config
+from etho.utils.zeroclient import ZeroClient
+from etho.services.ThuZeroService import THU
+from etho import config
 
 
 ser = 'pickle'
@@ -18,7 +18,7 @@ print([THU.SERVICE_PORT, THU.SERVICE_NAME])
 
 pin = 4
 delay = 20
-duration = 200
+duration = 10
 thu.setup(pin, delay, duration)
 thu.init_local_logger('testest/test_thu.log')
 print(thu.progress())

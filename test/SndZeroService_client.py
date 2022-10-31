@@ -1,6 +1,6 @@
 import numpy as np
 from etho.head.ZeroClient import ZeroClient
-from ethoservice.SndZeroService import SND
+from services.SndZeroService import SND
 import pandas as pd
 from etho import config
 from etho.utils.sound import *

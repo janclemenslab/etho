@@ -1,6 +1,6 @@
 import time
 from etho.head.ZeroClient import ZeroClient
-from ethoservice.CamZeroService import CAM
+from services.CamZeroService import CAM
 
 ssh_address = 'ncb@rpi8'
 ip_address = 'rpi8'

@@ -1,4 +1,4 @@
-from ethomaster.utils.shuffled_cycle import shuffled_cycle
+from utils.shuffled_cycle import shuffled_cycle
 
 
 def test_shuffled_cycle():

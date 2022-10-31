@@ -1,9 +1,9 @@
 import time
 import numpy as np
 from etho.head.ZeroClient import ZeroClient
-from ethoservice.SndZeroService import SND
-from ethoservice.CamZeroService import CAM
-from ethoservice.ThuZeroService import THU
+from services.SndZeroService import SND
+from services.CamZeroService import CAM
+from services.ThuZeroService import THU
 import pandas as pd
 from etho import config
 from etho.utils.sound import *

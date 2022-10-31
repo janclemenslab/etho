@@ -1,9 +1,9 @@
 import time
-from ethomaster.head.zeroclient import ZeroClient
-from ethoservice.NITriggerZeroService import NIT
+from utils.zeroclient import ZeroClient
+from services.NITriggerZeroService import NIT
 import pandas as pd
-from ethomaster import config
-from ethomaster.utils.config import readconfig
+from .. import config
+from utils.config import readconfig
 import numpy as np
 import subprocess
 import defopt

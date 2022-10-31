@@ -18,6 +18,5 @@ Ethodrome documentation
    Callbacks <callbacks>
    Scanimage <scanimage_client>
    Raspberry PI <rpi>
-   Ethoservice API <api_ethoservice>
-   Ethomaster API <api_ethomaster>
+   Etho API <api_ethoservice>
 

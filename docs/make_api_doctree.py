@@ -5,7 +5,7 @@ ignore_modules = [
 ]
 
 def make_api_doctree():
-    for folder in ['ethoservice', 'ethomaster']:
+    for folder in ['etho']:
         doctree = ""
         for root, dirs, files in os.walk(f"../src/{folder}"):
             # remove leading "../src/"

@@ -1,8 +1,8 @@
 import time
 import subprocess
-from ethomaster.head.zeroclient import ZeroClient
-from ethoservice.ThuAZeroService import THUA
-from ethomaster import config
+from etho.utils.zeroclient import ZeroClient
+from etho.services.ThuAZeroService import THUA
+from etho import config
 
 
 ip_address = 'localhost'

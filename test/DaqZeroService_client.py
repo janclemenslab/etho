@@ -1,6 +1,6 @@
 import time
 from etho.head.ZeroClient import ZeroClient
-from ethoservice.DAQZeroService import DAQ
+from services.DAQZeroService import DAQ
 import pandas as pd
 from etho import config
 from etho.utils.sound2 import *
