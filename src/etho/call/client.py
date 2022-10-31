@@ -18,6 +18,8 @@ from ..services.GCMZeroService import GCM
 
 import threading
 import _thread as thread
+import defopt
+from typing import Optional
 
 
 def timed(fn, s, *args, **kwargs):
@@ -33,7 +35,16 @@ def timed(fn, s, *args, **kwargs):
     return result
 
 
-def clientcaller(host: str, protocolfile: str, playlistfile: str = None, save_prefix: str = None, show_test_image: bool = False):
+def clientcaller(host: str, protocolfile: str, playlistfile: Optional[str] = None, *, save_prefix: Optional[str] = None, show_test_image: bool = False):
+    """_summary_
+
+    Args:
+        host (str): _description_
+        protocolfile (str): _description_
+        playlistfile (Optional[str]): _description_.
+        save_prefix (Optional[str]): _description_.
+        show_test_image (bool): _description_.
+    """
     # load config/protocols
     prot = readconfig(protocolfile)
     logging.debug(prot)
@@ -55,7 +66,7 @@ def clientcaller(host: str, protocolfile: str, playlistfile: str = None, save_pr
         if 'host' in prot['THUA']:
             this.update(prot['THUA']['host'])
         thua = THUA.make(this['serializer'], this['user'], this['host'], this['working_directory'], this['python_exe'])
-        thua.setup(['THUA']['port'], prot['THUA']['interval'], this['maxduration'] + 10)
+        thua.setup(prot['THUA']['port'], prot['THUA']['interval'], this['maxduration'] + 10)
         thua.init_local_logger('{0}/{1}/{1}_thu.log'.format(this['save_directory'], save_prefix))
         thua.start()
         services['THUA'] = thua
@@ -171,8 +182,5 @@ def clientcaller(host: str, protocolfile: str, playlistfile: str = None, save_pr
 
 
 if __name__ == '__main__':
-    host = 'localhost'
     logging.basicConfig(level=logging.DEBUG)
-    protocol = 'ethoconfig/protocols/mic35mm_5min.yml'
-    playlist = 'ethoconfig/playlists/0 silence.txt'
-    clientcaller(host, protocol, playlist)
+    defopt.run(clientcaller)
