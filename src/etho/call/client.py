@@ -33,7 +33,7 @@ def timed(fn, s, *args, **kwargs):
     return result
 
 
-def clientcaller(host: str, protocolfile: str, playlistfile: str = None, save_prefix: str = None):
+def clientcaller(host: str, protocolfile: str, playlistfile: str = None, save_prefix: str = None, show_test_image: bool = False):
     # load config/protocols
     prot = readconfig(protocolfile)
     logging.debug(prot)
@@ -72,12 +72,13 @@ def clientcaller(host: str, protocolfile: str, playlistfile: str = None, save_pr
         cam_params = undefaultify(prot['GCM'])
         gcm.setup(f"{this['save_directory']}/{save_prefix}/{save_prefix}", this['maxduration'] + 20, cam_params)
         gcm.init_local_logger('{0}/{1}/{1}_gcm.log'.format(this['save_directory'], save_prefix))
-
-        img = gcm.attr('test_image')
-        print('Press any key to continue.')
-        cv2.imshow('Test image. Are you okay with this?', img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        if show_test_image:
+            img = gcm.attr('test_image')
+            print('Press any key to continue.')
+            cv2.imshow('Test image. Are you okay with this?', img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            cv2.waitKey(1)  # second call required for window to be closed on mac
         gcm.start()
         services['camera'] = gcm
 
