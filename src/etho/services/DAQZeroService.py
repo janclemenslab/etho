@@ -9,9 +9,8 @@ from .callbacks import callbacks
 import logging
 import numpy as np
 
-
 try:
-    from .utils.IOTask import *
+    from .daq.IOTask import *
     daqmx_import_error = None
 except (ImportError, NameError) as daqmx_import_error:
     pass
