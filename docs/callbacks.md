@@ -6,7 +6,7 @@ Each services loops over individual frames (camera) or chunks of data (DAQ) - ca
 - protocol `callback`...
 - event loop
 
-## Anatomy of a callback (make you're own)
+## Anatomy of a callback (make your own)
 ```
 class CoolCallback(BaseCallback):
     pass
