@@ -135,7 +135,7 @@ class HelloFrame(wx.Frame):
 
         # and a status bar
         self.CreateStatusBar()
-        self.SetStatusText("ethodrome")
+        self.SetStatusText("etho")
 
         self.logger = wx.TextCtrl(self, size=(1000, 2000), style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_DONTWRAP)
         font1 = wx.Font(8, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Consolas')
@@ -271,6 +271,6 @@ if __name__ == '__main__':
     # When this module is run (not imported) then create the app, the
     # frame, show it, and start the event loop.
     app = wx.App()
-    frm = HelloFrame(None, title='ethodrome', size=(600, 300))
+    frm = HelloFrame(None, title='etho', size=(600, 300))
     frm.Show()
     app.MainLoop()

@@ -20,10 +20,10 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-setup(name='ethodrome',
+setup(name='etho',
       version=find_version("src/etho/__init__.py"),
-      description='ethodrome',
-      url='http://github.com/janclemenslab/ethodrome',
+      description='etho',
+      url='http://github.com/janclemenslab/etho',
       author='Jan Clemens',
       author_email='clemensjan@googlemail.com',
       license='MIT',

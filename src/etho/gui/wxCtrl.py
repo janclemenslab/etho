@@ -50,7 +50,7 @@ class Frame(wx.Frame):
         self.SetSizer(sizer)
 
         self.CreateStatusBar()
-        self.SetStatusText("ethodrome")
+        self.SetStatusText("etho")
 
         self.Fit()
         self.Bind(wx.EVT_CLOSE, self.OnClose)
