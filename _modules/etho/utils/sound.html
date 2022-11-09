@@ -1,0 +1,537 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+
+    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
+        <title>etho.utils.sound - ethodrome documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">ethodrome  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../configuration/configuration.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/global.html">Global configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/protocol.html">Experimental protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/playlist.html">Stimulus playlists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/calibration_speaker.html">Speaker calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/calibration_led.html">LED calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../scanimage_client.html">Scanimage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rpi.html">Raspberry PI</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.config.html">etho.utils.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.sound.html">etho.utils.sound</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.tui.html">etho.utils.tui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.dlp.dlp_make_warpfiles.html">etho.services.dlp.dlp_make_warpfiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.dlp.dlp_runners.html">etho.services.dlp.dlp_runners</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <h1>Source code for etho.utils.sound</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">scipy.io.wavfile</span> <span class="k">as</span> <span class="nn">wav</span>
+<span class="kn">import</span> <span class="nn">scipy.signal</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+
+
+<div class="viewcode-block" id="parse_cell"><a class="viewcode-back" href="../../../api/etho.utils.sound.html#etho.utils.sound.parse_cell">[docs]</a><span class="k">def</span> <span class="nf">parse_cell</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Callable</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Cast cell to desired type and wrap into list.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">token</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">dtype</span><span class="p">:</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="p">[</span><span class="n">dtype</span><span class="p">(</span><span class="n">tok</span><span class="p">)</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">token</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">token</span></div>
+
+
+<div class="viewcode-block" id="parse_table"><a class="viewcode-back" href="../../../api/etho.utils.sound.html#etho.utils.sound.parse_table">[docs]</a><span class="k">def</span> <span class="nf">parse_table</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                <span class="n">dtypes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+                <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Parse table to desired types.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table - either string (filepath pointing to playlist file) or dataframe</span>
+<span class="sd">        dtypes - types each col to cast to - methods which return the desired type</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        table (dataframe)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">row_values</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tb</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row_values</span><span class="p">):</span>
+            <span class="n">tb</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_cell</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tb</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">normalize_table</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="normalize_table"><a class="viewcode-back" href="../../../api/etho.utils.sound.html#etho.utils.sound.normalize_table">[docs]</a><span class="k">def</span> <span class="nf">normalize_table</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Make sure each cell in a row has one entry for stimFileName.</span>
+
+<span class="sd">    E.g. if two stimFileName but only one intensity, will duplicate the intensity entries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># strict - throw error in case of inconsistencies</span>
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">row_values</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tb</span><span class="p">):</span>
+        <span class="n">nchans</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>         <span class="c1"># 1. get n stim channels from len(stimFileName)</span>
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row_values</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">nchans</span><span class="p">:</span>
+                <span class="n">tb</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="n">nchans</span>        <span class="c1"># 2. fill remaining cols to match len(stimFileName)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tb</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="select_channels_from_playlist"><a class="viewcode-back" href="../../../api/etho.utils.sound.html#etho.utils.sound.select_channels_from_playlist">[docs]</a><span class="k">def</span> <span class="nf">select_channels_from_playlist</span><span class="p">(</span><span class="n">playlist</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">channels_to_keep</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;[summary]</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        playlist (pd.DataFrame): [description]</span>
+<span class="sd">        channels_to_keep (List[str]): [description]</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: playlist with selected channels</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">playlist_new</span> <span class="o">=</span> <span class="n">playlist</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">col_name</span><span class="p">,</span> <span class="n">col_data</span> <span class="ow">in</span> <span class="n">playlist_new</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">row_name</span><span class="p">,</span> <span class="n">row_data</span> <span class="ow">in</span> <span class="n">col_data</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row_data</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                <span class="c1"># playlist_new.set_value(row_name, col_name, [row_data[channel] for channel in channels_to_keep])</span>
+                <span class="n">playlist_new</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">row_name</span><span class="p">,</span> <span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_data</span><span class="p">[</span><span class="n">channel</span><span class="p">]</span> <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">channels_to_keep</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="c1"># playlist_new.set_value(row_name, col_name, np.array(row_data)[channels_to_keep])</span>
+                <span class="n">playlist_new</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">row_name</span><span class="p">,</span> <span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row_data</span><span class="p">)[</span><span class="n">channels_to_keep</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">playlist_new</span></div>
+
+
+<div class="viewcode-block" id="parse_pulse_parameters"><a class="viewcode-back" href="../../../api/etho.utils.sound.html#etho.utils.sound.parse_pulse_parameters">[docs]</a><span class="k">def</span> <span class="nf">parse_pulse_parameters</span><span class="p">(</span><span class="n">playlist</span><span class="p">,</span> <span class="n">sounds</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;[summary]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        playlist ([type]): [description]</span>
+<span class="sd">        sounds ([type]): list of np.arrays, the length of which  determines the trial period</span>
+<span class="sd">        fs (float): sampling rate for translating nb_samples in sounds to seconds</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        [type]: [description]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">nb_led</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">playlist</span><span class="o">.</span><span class="n">stimFileName</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># max over rows of len(stimFileNames) - 2</span>
+    <span class="n">blink_durs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nb_led</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+    <span class="n">blink_paus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">blink_durs</span><span class="p">)</span>
+    <span class="n">blink_nums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">blink_durs</span><span class="p">)</span>
+    <span class="n">blink_dels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">blink_durs</span><span class="p">)</span>
+    <span class="n">blink_amps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">blink_durs</span><span class="p">)</span>
+    <span class="n">pulse_params</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">,</span> <span class="s1">&#39;pause&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;delay&#39;</span><span class="p">,</span> <span class="s1">&#39;amplitude&#39;</span><span class="p">,</span> <span class="s1">&#39;trial_period&#39;</span><span class="p">],</span>
+                                <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">playlist</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        
+        <span class="k">for</span> <span class="n">stim_num</span><span class="p">,</span> <span class="n">stim_amp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">intensity</span><span class="p">):</span>
+            <span class="n">blink_amps</span><span class="p">[</span><span class="n">stim_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">stim_amp</span>
+        <span class="n">pulse_params</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;amplitude&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">intensity</span>
+
+        <span class="k">for</span> <span class="n">stim_num</span><span class="p">,</span> <span class="n">stim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">stimFileName</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">stim</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;PUL&#39;</span><span class="p">):</span>
+                <span class="n">blink_durs</span><span class="p">[</span><span class="n">stim_num</span><span class="p">],</span> <span class="n">blink_paus</span><span class="p">[</span><span class="n">stim_num</span><span class="p">],</span> <span class="n">blink_nums</span><span class="p">[</span><span class="n">stim_num</span><span class="p">],</span> <span class="n">blink_dels</span><span class="p">[</span><span class="n">stim_num</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">stim</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="n">pulse_params</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">blink_durs</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">pulse_params</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;pause&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">blink_paus</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">pulse_params</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">blink_nums</span>
+        <span class="n">pulse_params</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;delay&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">blink_dels</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">pulse_params</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;trial_period&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sounds</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">fs</span>
+    <span class="k">return</span> <span class="n">pulse_params</span></div>
+
+
+<div class="viewcode-block" id="make_sine"><a class="viewcode-back" href="../../../api/etho.utils.sound.html#etho.utils.sound.make_sine">[docs]</a><span class="k">def</span> <span class="nf">make_sine</span><span class="p">(</span><span class="n">frequency</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">samplingrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Make sinusoidal from parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        frequency [Hz], phase [pi], duration [ms], samplingrate [Hz]</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        np.array with stimulus waveform</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">samplingrate</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">t</span> <span class="o">*</span> <span class="n">frequency</span> <span class="o">+</span> <span class="n">phase</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="make_pulse"><a class="viewcode-back" href="../../../api/etho.utils.sound.html#etho.utils.sound.make_pulse">[docs]</a><span class="k">def</span> <span class="nf">make_pulse</span><span class="p">(</span><span class="n">pulseDur</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pulsePau</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pulseNumber</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pulseDelay</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">samplingrate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Make square pulse train.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pulseDur [ms], pulsePau [ms], pulseNumber, pulseDelay [ms], samplingrate [Hz]</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        np.array with stimulus waveform</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">intp</span><span class="p">(</span><span class="n">samplingrate</span> <span class="o">*</span> <span class="n">pulseDur</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),)),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">intp</span><span class="p">(</span><span class="n">samplingrate</span> <span class="o">*</span> <span class="n">pulsePau</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),))))</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">intp</span><span class="p">(</span><span class="n">pulseNumber</span><span class="p">),))</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">intp</span><span class="p">(</span><span class="n">samplingrate</span> <span class="o">*</span> <span class="n">pulseDelay</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">),)),</span> <span class="n">x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="build_playlist"><a class="viewcode-back" href="../../../api/etho.utils.sound.html#etho.utils.sound.build_playlist">[docs]</a><span class="k">def</span> <span class="nf">build_playlist</span><span class="p">(</span><span class="n">soundlist</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">],</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sound_order</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Block-shuffle playlist and concatenate to duration.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">sound_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sound_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">soundlist</span><span class="p">))</span>
+
+    <span class="n">totallen</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">playlist_items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="c1"># add sounds to list as long as total duration is shorter than max duration</span>
+        <span class="k">while</span> <span class="n">totallen</span> <span class="o">&lt;</span> <span class="n">duration</span><span class="p">:</span>
+            <span class="c1"># re-shuffle at the end of each block</span>
+            <span class="k">if</span> <span class="n">shuffle</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">playlist_items</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">sound_order</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">sound_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">sound_order</span><span class="p">)</span>
+
+            <span class="n">next_item</span> <span class="o">=</span> <span class="n">sound_order</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">playlist_items</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">sound_order</span><span class="p">)]</span>
+            <span class="n">playlist_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_item</span><span class="p">)</span>
+            <span class="n">totallen</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">soundlist</span><span class="p">[</span><span class="n">playlist_items</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="o">/</span> <span class="n">fs</span>
+    <span class="k">elif</span> <span class="n">duration</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>  <span class="c1"># play sound_order once</span>
+        <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+            <span class="n">sound_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">sound_order</span><span class="p">)</span>
+        <span class="n">playlist_items</span> <span class="o">=</span> <span class="n">sound_order</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        
+        <span class="c1"># get total duration of playlist</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">playlist_items</span><span class="p">:</span>
+            <span class="n">totallen</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">soundlist</span><span class="p">[</span><span class="n">item</span><span class="p">])</span> <span class="o">/</span> <span class="n">fs</span>
+    <span class="k">return</span> <span class="n">playlist_items</span><span class="p">,</span> <span class="n">totallen</span></div>
+
+
+<span class="k">def</span> <span class="nf">load_sounds</span><span class="p">(</span><span class="n">playlist</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">fs</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">attenuation</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">LEDamp</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">stimfolder</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">cast2int</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">aslist</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">stim_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;stimulus&#39;</span><span class="p">):</span>
+    <span class="n">sounddata</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">row_name</span><span class="p">,</span> <span class="n">listitem</span> <span class="ow">in</span> <span class="n">playlist</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">mirror_led_channel</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">xx</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">listitem</span><span class="o">.</span><span class="n">stimFileName</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">stimIdx</span><span class="p">,</span> <span class="n">stimName</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">listitem</span><span class="o">.</span><span class="n">stimFileName</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">stimName</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;SIN&#39;</span><span class="p">:</span>  <span class="c1"># SIN_FREQ_PHASE_DURATION</span>
+                <span class="c1"># print(&#39;sine&#39;)</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">stimName</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">token</span><span class="p">]</span>
+                <span class="n">freq</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">duration</span> <span class="o">=</span> <span class="n">token</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">make_sine</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">stimName</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;PUL&#39;</span><span class="p">:</span>  <span class="c1"># PUL_DUR_PAU_NUM_DEL</span>
+                <span class="c1"># print(&#39;pulse&#39;)</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="n">stimName</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+                <span class="n">token</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">token</span><span class="p">]</span>
+                <span class="n">pulsedur</span><span class="p">,</span> <span class="n">pulsepause</span><span class="p">,</span> <span class="n">pulsenumber</span><span class="p">,</span> <span class="n">pulsedelay</span> <span class="o">=</span> <span class="n">token</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">make_pulse</span><span class="p">(</span><span class="n">pulsedur</span><span class="p">,</span> <span class="n">pulsepause</span><span class="p">,</span> <span class="n">pulsenumber</span><span class="p">,</span> <span class="n">pulsedelay</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">stimName</span> <span class="o">==</span> <span class="s1">&#39;MIRROR_LED&#39;</span><span class="p">:</span>  <span class="c1"># this channel contains a pulse train which mirrors the sound from another channel</span>
+                <span class="n">mirror_led_channel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stimIdx</span><span class="p">)</span>  <span class="c1"># mirror led</span>
+            <span class="k">elif</span> <span class="n">stimName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.wav&#39;</span><span class="p">):</span>  <span class="c1"># WAV file</span>
+                <span class="c1"># return time x channels</span>
+                <span class="n">wav_rate</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">wav</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stimfolder</span><span class="p">,</span> <span class="n">stimName</span><span class="p">))</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">/</span> <span class="mi">32768</span>
+                <span class="k">if</span> <span class="n">wav_rate</span> <span class="o">!=</span> <span class="n">fs</span><span class="p">:</span>  <span class="c1"># resample to fs</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">resample_poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">fs</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">wav_rate</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">stimName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.h5&#39;</span><span class="p">):</span>  <span class="c1"># HDF5 file</span>
+                <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stimfolder</span><span class="p">,</span> <span class="n">stimName</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">stim_key</span><span class="p">][:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="c1"># else:</span>
+            <span class="c1">#     x = None</span>
+
+            <span class="c1"># if `attenuation` arg is provided:</span>
+            <span class="k">if</span> <span class="n">attenuation</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">attenuation</span><span class="p">[</span><span class="n">listitem</span><span class="o">.</span><span class="n">freq</span><span class="p">[</span><span class="n">stimIdx</span><span class="p">]])</span>
+            <span class="c1"># set_volume</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">listitem</span><span class="o">.</span><span class="n">intensity</span><span class="p">[</span><span class="n">stimIdx</span><span class="p">])</span>  <span class="c1"># &quot;* 20&quot; NOT USED FOR DAQ</span>
+
+                <span class="c1"># pre/post pend silence</span>
+                <span class="n">sample_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intp</span><span class="p">(</span><span class="n">listitem</span><span class="o">.</span><span class="n">silencePre</span><span class="p">[</span><span class="n">stimIdx</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>
+                <span class="n">sample_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">intp</span><span class="p">(</span><span class="n">listitem</span><span class="o">.</span><span class="n">silencePost</span><span class="p">[</span><span class="n">stimIdx</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>
+                <span class="n">sample_sound</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">sample_start</span><span class="p">,)))</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">sample_end</span><span class="p">,)))</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">xx</span><span class="p">[</span><span class="n">stimIdx</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">non_mirror_led_chan</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xx</span><span class="p">)))</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">mirror_led_channel</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">chan</span> <span class="ow">in</span> <span class="n">mirror_led_channel</span><span class="p">:</span>
+            <span class="n">xLED</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">xx</span><span class="p">[</span><span class="n">non_mirror_led_chan</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># second channel is all zeros unless we mirrorsound</span>
+            <span class="c1"># copy channel for led</span>
+            <span class="c1"># duration of the LED pattern at least 100ms if possible so it registers in video</span>
+            <span class="n">minLEDduration</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">fs</span>  <span class="c1"># at least 3s</span>
+            <span class="c1"># set to minimal duration</span>
+            <span class="n">LEDduration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">((</span><span class="n">sample_sound</span><span class="p">,</span> <span class="n">minLEDduration</span><span class="p">))</span>
+            <span class="c1"># prevent overflow (if 100ms exceeds duration of sound)</span>
+            <span class="n">LEDduration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">((</span><span class="n">xLED</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">sample_start</span><span class="p">,</span> <span class="n">LEDduration</span><span class="p">))</span>
+            <span class="c1"># parameters of the LED pattern</span>
+            <span class="n">pdur</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># ms</span>
+            <span class="n">ppau</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># ms</span>
+            <span class="n">pdel</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># ms</span>
+            <span class="n">LEDpattern</span> <span class="o">=</span> <span class="n">make_pulse</span><span class="p">(</span><span class="n">pdur</span><span class="p">,</span> <span class="n">ppau</span><span class="p">,</span> <span class="n">LEDduration</span> <span class="o">/</span> <span class="p">(</span><span class="n">pdur</span> <span class="o">+</span> <span class="n">ppau</span><span class="p">)</span> <span class="o">/</span> <span class="n">fs</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">pdel</span><span class="p">,</span> <span class="n">fs</span><span class="p">)</span>
+            <span class="n">xLED</span><span class="p">[</span><span class="n">sample_start</span><span class="p">:</span><span class="n">sample_start</span> <span class="o">+</span> <span class="n">LEDpattern</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">LEDpattern</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">LEDamp</span><span class="p">)</span>
+            <span class="n">xx</span><span class="p">[</span><span class="n">chan</span><span class="p">]</span> <span class="o">=</span> <span class="n">xLED</span>
+
+        <span class="c1"># make sure each channel in xx has the same length</span>
+        <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">xx</span><span class="p">])</span>
+        <span class="n">xx</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span> <span class="n">ii</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">max_len</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">ii</span><span class="p">),)))</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">xx</span><span class="p">]</span>
+        <span class="n">xx</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xx</span><span class="p">]</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># TODO: move these backend-specific things out of this function</span>
+        <span class="k">if</span> <span class="n">cast2int</span><span class="p">:</span>  <span class="c1"># needed for RPI - gets sound as int16 at max range, do not do this for DAQ!!</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">aslist</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">sounddata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sounddata</span>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Jan Clemens
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
+    <script src="../../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
+    </body>
+</html>

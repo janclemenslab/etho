@@ -1,0 +1,48 @@
+# Installation
+
+## Python packages
+- install miniconda
+- install conda packages: `mamba create python=3.9 numpy scipy h5py wxpython opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil -c conda-forge -n etho -y`
+- notes:
+   - on the rpi PC install `pandas=0.23` and `python=3.7` instead
+   - if you want to use the old flycapture SDK (needed for some older FLIR/PointGrey cameras), install `python=3.6` instead
+   - saving videos using vidread: `pip install vidread[core]`
+   - display frames with pyqtgraph: mamba install pyqtgraph -c conda-forge`
+- install custom repos:
+  - zerorpc fork: `pip install git+https://github.com/postpop/zerorpc-python --no-deps`
+  - etho: `pip install git+https://github.com/janclemenslab/etho --no-deps`
+- control.bat: `C:/Users/ncb/.conda/envs/etho/python.exe -m etho.gui.wxCtrl_ephys` (wxCtrl_ephys will be different)
+
+## Hardware specific drivers and SDKs
+- ximea cameras: [https://www.ximea.com/support/wiki/apis/python]()
+- flycapture (old FLIR/PointGrey SDK) cameras: [https://www.flir.com/products/flycapture-sdk/]() (only works with python 3.6)
+- spinnaker (new FLIR/PointGrey SDK) cameras: [https://www.flir.eu/products/spinnaker-sdk/]() (only works up to python 3.8)
+- ni daqmx driver:
+   - driver [https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html]()
+   - python: `pip install pydaqmx`
+- lighcrafter stuff?
+
+### Raspbery PI
+- gpiozero [https://gpiozero.readthedocs.io/en/stable/installing.html]()
+- picamera should come pre-install in raspbian [https://picamera.readthedocs.io/en/latest/install.html](): `sudo pip install "picamera[array]"`
+- soundboard
+- Temperature and humidity sensor adafruit_dht: [https://docs.circuitpython.org/projects/dht/en/latest/](): `pip3 install adafruit-circuitpython-dht`, `sudo apt-get install libgpiod2`
+
+## Set up passwordless SSH
+
+First, open a terminal and execute the following command to generate public/private RSA key pair:
+```
+ssh-keygen
+```
+`ssh-keygen` generates public/private rsa key pair. You can click enter without entering anything for a default file location and empty passphrase.
+
+Your public key has been saved in C:\Users\[username]/.ssh/id_rsa.pub if you didn’t change the file location.
+Open id_rsa.pub with a text editor so that we can append the generated SSH public key to existing keys in the destination server.
+
+Connect to the destination server using ssh and your password from PowerShell.
+Open the “authorized_keys” file with an editor:
+```
+code ~/.ssh/authorized_keys
+```
+
+Copy the contents of the “id_rsa.pub” (which was open in Notepad++) and append to the “authorized_keys” file in the server.
