@@ -54,10 +54,9 @@ class Runner():
         if disown:  # avoids ValueError(cannot give disown and asynchronous at the same time)
             asynchronous = None
 
-        logging.debug(
-            f"Running {cmd} on {self.host} with timeout={timeout}, asynchronous={asynchronous}, disown={disown}, run_local={run_local}, new_console={new_console}."
-        )
-        print(cmd)
+        logging.debug(f"Running {cmd} with the following parameters:")
+        logging.debug(f"{self.host} with timeout={timeout}, asynchronous={asynchronous}, disown={disown}, run_local={run_local}, new_console={new_console}.")
+
         if self.host_is_remote and not run_local:
             shell = 'cmd.exe' if self.host_is_win else None  # control shell since powershell and cmd require different separators for commands - cmd.exe wants ; and fails with &&
             result = fabric.Connection(self.host).run(cmd, hide=True, timeout=timeout, asynchronous=asynchronous, disown=disown, shell=shell)

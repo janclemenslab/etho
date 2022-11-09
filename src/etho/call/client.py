@@ -179,6 +179,7 @@ def clientcaller(host: str, protocolfile: str, playlistfile: Optional[str] = Non
                 except:  # if call times out, stop progress display - this will stop the display whenever a task times out - not necessarily when a task is done
                     progress.stop_task(task_id)
             time.sleep(1)
+    logging.info(f"Done with experiment {save_prefix}.")
 
 
 if __name__ == '__main__':
