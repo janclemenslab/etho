@@ -1,5 +1,5 @@
 import pandas as pd
-from utils.sound import parse_table, load_sounds
+from etho.utils.sound import parse_table, load_sounds
 import matplotlib.pyplot as plt
 plt.ion()
 

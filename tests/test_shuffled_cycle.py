@@ -1,4 +1,4 @@
-from utils.shuffled_cycle import shuffled_cycle
+from etho.utils.shuffled_cycle import shuffled_cycle
 
 
 def test_shuffled_cycle():

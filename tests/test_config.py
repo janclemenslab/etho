@@ -1,7 +1,5 @@
-from utils.config import readconfig
+from etho.utils.config import readconfig
 
-# def test_global_config():
-#     assert len(config)>0, 'could not read global config file `~/.ethoconfig.ini`'
 
 def test_yaml_types():
     cfg = readconfig('tests/test_config.yaml')
