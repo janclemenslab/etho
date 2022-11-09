@@ -14,6 +14,12 @@ Developer API
 .. autosummary::
    :toctree: api
 
+   etho.utils.config
+   etho.utils.runner
+   etho.utils.shuffled_cycle
+   etho.utils.sound
+   etho.utils.tui
+   etho.utils.zeroclient
    etho.call.client
    etho.call.ephys
    etho.call.panoptikum
@@ -50,15 +56,9 @@ Developer API
    etho.services.camera.flycapture2
    etho.services.camera.spinnaker
    etho.services.camera.ximea
-   etho.services.daq.IOTask
-   etho.services.dlp.dlp_make_warpfiles
-   etho.services.dlp.dlp_runners
    etho.services.utils.concurrent_task
    etho.services.utils.delay_pwmled
    etho.services.utils.log_exceptions
-   etho.utils.config
-   etho.utils.runner
-   etho.utils.shuffled_cycle
-   etho.utils.sound
-   etho.utils.tui
-   etho.utils.zeroclient
+   etho.services.dlp.dlp_make_warpfiles
+   etho.services.dlp.dlp_runners
+   etho.services.daq.IOTask

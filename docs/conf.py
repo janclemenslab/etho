@@ -12,8 +12,8 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../src'))
 
+sys.path.insert(0, os.path.abspath('../src'))
 
 # -- Project information -----------------------------------------------------
 
@@ -21,18 +21,23 @@ project = 'ethodrome'
 copyright = '2021, Jan Clemens'
 author = 'Jan Clemens'
 
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.coverage",
-              "sphinx.ext.napoleon", "sphinx.ext.viewcode",
-              "myst_nb",
-              "sphinx.ext.autosummary",
-              "sphinx_panels",
-            ]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+    "myst_nb",
+    "sphinx.ext.autosummary",
+    "sphinx_panels",
+    "sphinxcontrib.images",
+    'sphinx.ext.autosectionlabel',
+    "sphinx_inline_tabs",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -45,6 +50,12 @@ master_doc = "index"
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+# html_logo = 'images/icon.png'
+html_theme_options = {
+    'display_version': True,
+    'sidebar_hide_name': True,
+    "collapse_navigation": False,
+}
 
 # Autosummary linkcode resolution
 # https://www.sphinx-doc.org/en/master/usage/extensions/linkcode.html
@@ -61,12 +72,14 @@ def linkcode_resolve(domain, info):
         filename = docs.utils.resolve(info["module"], info["fullname"])
         if filename is None:
             return None
-        return f"https://github.com/janclemenslab/ethodrome/blob/master/{filename}"
+        return f"https://github.com/janclemenslab/etho/blob/master/{filename}"
     except:
         print(info)
         raise
 
+
 autosummary_generate = True
+autoclass_content = 'both'
 
 # Enable automatic role inference as a Python object for autodoc.
 # This automatically converts object references to their appropriate role,
@@ -74,8 +87,6 @@ autosummary_generate = True
 #   Ex: `MyClass` -> :class:`MyClass`
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-default_role
 default_role = "py:obj"
-
-
 
 # -- Options for HTML output -------------------------------------------------
 

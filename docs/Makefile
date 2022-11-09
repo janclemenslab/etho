@@ -14,6 +14,10 @@ help:
 
 .PHONY: help Makefile
 
+push:
+	ghp-import -n -p -f _build/html -r https://github.com/janclemenslab/etho/
+
+
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 clean:
