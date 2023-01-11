@@ -28,7 +28,7 @@ class TMP(BaseZeroService):
         self._thread_stopper = threading.Event()
         # and/or via a timer
         if self.duration > 0:
-            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
+            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={"stop_service": True})
         #
         self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
 
@@ -37,11 +37,11 @@ class TMP(BaseZeroService):
 
         # background jobs should be run and controlled via a thread
         self._worker_thread.start()
-        self.log.info('started')
-        if hasattr(self, '_thread_timer'):
-            self.log.info('duration {0} seconds'.format(self.duration))
+        self.log.info("started")
+        if hasattr(self, "_thread_timer"):
+            self.log.info("duration {0} seconds".format(self.duration))
             self._thread_timer.start()
-            self.log.info('finish timer started')
+            self.log.info("finish timer started")
 
     def _worker(self, stop_event):
         RUN = True
@@ -49,14 +49,14 @@ class TMP(BaseZeroService):
             pass  # APPLICATION SPECIFIC RUN CODE HERE
 
     def finish(self, stop_service=False):
-        self.log.warning('stopping')
+        self.log.warning("stopping")
         # stop thread if necessary
-        if hasattr(self, '_thread_stopper'):
+        if hasattr(self, "_thread_stopper"):
             self._thread_stopper.set()
-        if hasattr(self, '_thread_timer'):
+        if hasattr(self, "_thread_timer"):
             self._thread_timer.cancel()
         # clean up code here
-        self.log.warning('   stopped ')
+        self.log.warning("   stopped ")
         # mode log file and savefilename
         if stop_service:
             time.sleep(2)
@@ -83,15 +83,15 @@ class TMP(BaseZeroService):
             return None
 
 
-def cli(serializer: str = 'default', port: Optional[str] = None):
+def cli(serializer: str = "default", port: Optional[str] = None):
     if port is None:
         port = TMP.SERVICE_PORT
     s = TMP(serializer=serializer)
     s.bind("tcp://0.0.0.0:{0}".format(port))  # broadcast on all IPs
-    print('running TMPZeroService')
+    print("running TMPZeroService")
     s.run()
-    print('done')
+    print("done")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     defopt.run(cli)

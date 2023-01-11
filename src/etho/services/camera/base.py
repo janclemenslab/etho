@@ -8,8 +8,7 @@ def gray2rgb(image: np.ndarray) -> np.ndarray:
     return image
 
 
-class BaseCam():
-
+class BaseCam:
     def __init__(self, serialnumber: int):
         """[summary]
 
@@ -118,18 +117,22 @@ class BaseCam():
         pass
 
     def info_hardware(self):
-        return {'Serial number': self.serialnumber,
-                'Camera model': self.__class__,
+        return {
+            "Serial number": self.serialnumber,
+            "Camera model": self.__class__,
         }
 
     def info_imaging(self):
         x0, y0, x, y = self.roi
-        info = {'width': x, 'height': y,
-                'offsetX': x0, 'offsetY': y0,
-                'exposure': self.exposure / 1_000,
-                'brightness': self.brightness,
-                'gamma': self.gamma,
-                'gain': self.gain,
-                'framerate': self.framerate,
-                }
+        info = {
+            "width": x,
+            "height": y,
+            "offsetX": x0,
+            "offsetY": y0,
+            "exposure": self.exposure / 1_000,
+            "brightness": self.brightness,
+            "gamma": self.gamma,
+            "gain": self.gain,
+            "framerate": self.framerate,
+        }
         return info

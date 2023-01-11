@@ -2,13 +2,14 @@
 import wx
 import sys  # for command line args
 from .CamPreview import camPreview
+
 SIZE = (1000, 500)  # size of preview window
 
 
 def pil_to_wx(image):
     image.thumbnail(SIZE)  # resize to fit into window - this operation is inplace
     width, height = image.size  # get actual new image size
-    buffer = image.convert('RGB').tobytes()  # convert to RGB and byte stream
+    buffer = image.convert("RGB").tobytes()  # convert to RGB and byte stream
     bitmap = wx.Bitmap.FromBuffer(width, height, buffer)  # convert byte stream to wx bitmap
     return bitmap
 
@@ -36,7 +37,7 @@ class Panel(wx.Panel):
 class Frame(wx.Frame):
     def __init__(self, host: str, protocol_filename: str = None):
         style = wx.DEFAULT_FRAME_STYLE & ~wx.RESIZE_BORDER & ~wx.MAXIMIZE_BOX
-        super(Frame, self).__init__(None, -1, '{0} preview'.format(host), style=style)
+        super(Frame, self).__init__(None, -1, "{0} preview".format(host), style=style)
         self.panel = Panel(self, camPreview(host, protocol_filename))
         self.Fit()
         self.Bind(wx.EVT_CLOSE, self.OnClose)
@@ -54,8 +55,8 @@ def main(host: str, protocol_filename: str = None):
     app.MainLoop()
 
 
-if __name__ == '__main__':
-    '''USAGE: `python ./wxCam.py HOSTNAME`'''
-    if len(sys.argv)>1:
+if __name__ == "__main__":
+    """USAGE: `python ./wxCam.py HOSTNAME`"""
+    if len(sys.argv) > 1:
         host = sys.argv[1]
         main(host)

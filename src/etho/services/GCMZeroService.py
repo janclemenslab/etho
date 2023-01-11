@@ -26,8 +26,8 @@ class GCM(BaseZeroService):
         self.c = None
 
         # set up CAMERA
-        self.cam_serialnumber = str(params['cam_serialnumber'])
-        self.cam_type = params['cam_type']
+        self.cam_serialnumber = str(params["cam_serialnumber"])
+        self.cam_type = params["cam_type"]
         assert self.cam_type in camera.make.keys()
         self.c = camera.make[self.cam_type](self.cam_serialnumber)
         try:
@@ -37,12 +37,12 @@ class GCM(BaseZeroService):
             self.c.reset()
             self.c.init()
 
-        self.c.roi = [params['frame_offx'], params['frame_offy'], params['frame_width'], params['frame_height']]
-        self.c.exposure = params['shutter_speed']
-        self.c.brightness = params['brightness']
-        self.c.gamma = params['gamma']
-        self.c.gain = params['gain']
-        self.c.framerate = params['frame_rate']
+        self.c.roi = [params["frame_offx"], params["frame_offy"], params["frame_width"], params["frame_height"]]
+        self.c.exposure = params["shutter_speed"]
+        self.c.brightness = params["brightness"]
+        self.c.gamma = params["gamma"]
+        self.c.gain = params["gain"]
+        self.c.framerate = params["frame_rate"]
         self.c.start()
         self.test_image, image_ts, system_ts = self.c.get()
         self.c.stop()
@@ -56,12 +56,12 @@ class GCM(BaseZeroService):
         self.callbacks = []
         self.callback_names = []
         common_task_kwargs = {
-            'file_name': self.savefilename,
-            'frame_rate': self.framerate,
-            'frame_height': self.frame_height,
-            'frame_width': self.frame_width
+            "file_name": self.savefilename,
+            "frame_rate": self.framerate,
+            "frame_height": self.frame_height,
+            "frame_width": self.frame_width,
         }
-        for cb_name, cb_params in params['callbacks'].items():
+        for cb_name, cb_params in params["callbacks"].items():
             if cb_params is not None:
                 task_kwargs = {**common_task_kwargs, **cb_params}
             else:
@@ -76,27 +76,31 @@ class GCM(BaseZeroService):
         # and/or via a timer
 
         if self.duration > 0:
-            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
+            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={"stop_service": True})
 
         # set up the worker thread
         self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
 
         iii = self.c.info_imaging()
-        iii['exposure'] = f"{iii['exposure']:1.2f}ms"
-        params['exposure'] = f"{params['shutter_speed']/1_000:1.2f}ms"
-        params['framerate'] = params['frame_rate']
-        params['offsetX'], params['offsetY'], params['width'], params['height'] = params['frame_offx'], params[
-            'frame_offy'], params['frame_width'], params['frame_height']
+        iii["exposure"] = f"{iii['exposure']:1.2f}ms"
+        params["exposure"] = f"{params['shutter_speed']/1_000:1.2f}ms"
+        params["framerate"] = params["frame_rate"]
+        params["offsetX"], params["offsetY"], params["width"], params["height"] = (
+            params["frame_offx"],
+            params["frame_offy"],
+            params["frame_width"],
+            params["frame_height"],
+        )
 
         hii = self.c.info_hardware()
         self.log.info(params)
         try:
-            hii.update({k: v if v is not None else 'defaults' for k, v, in params['callbacks'].items()})
+            hii.update({k: v if v is not None else "defaults" for k, v, in params["callbacks"].items()})
         except AttributeError:
             pass
-        hii['savefilename'] = self.savefilename
-        hii['duration'] = self.duration
-        self.info = {'hardware': hii, 'image': (iii, params)}
+        hii["savefilename"] = self.savefilename
+        hii["duration"] = self.duration
+        self.info = {"hardware": hii, "image": (iii, params)}
 
     def start(self):
         for callback in self.callbacks:
@@ -105,17 +109,17 @@ class GCM(BaseZeroService):
 
         # background jobs should be run and controlled via a thread
         self._worker_thread.start()
-        self.log.debug('started')
-        if hasattr(self, '_thread_timer'):
-            self.log.debug('duration {0} seconds'.format(self.duration))
+        self.log.debug("started")
+        if hasattr(self, "_thread_timer"):
+            self.log.debug("duration {0} seconds".format(self.duration))
             self._thread_timer.start()
-            self.log.debug('finish timer started')
+            self.log.debug("finish timer started")
 
     def _worker(self, stop_event):
         RUN = True
         self.frameNumber = 0
         self.prev_framenumber = 0
-        self.log.info('started worker')
+        self.log.info("started worker")
         self.c.start()
 
         while RUN:
@@ -123,12 +127,12 @@ class GCM(BaseZeroService):
 
                 out = self.c.get()
                 if out is None:
-                    raise ValueError('Image is None')
+                    raise ValueError("Image is None")
                 else:
                     image, image_ts, system_ts = out
 
                 for callback_name, callback in zip(self.callback_names, self.callbacks):
-                    if 'timestamps' in callback_name:
+                    if "timestamps" in callback_name:
                         package = (0, (system_ts, image_ts))
                     else:
                         package = (image, (system_ts, image_ts))
@@ -136,7 +140,7 @@ class GCM(BaseZeroService):
 
                 self.frameNumber += 1
                 if self.frameNumber == self.nFrames:
-                    self.log.info('Max number of frames reached - stopping.')
+                    self.log.info("Max number of frames reached - stopping.")
                     RUN = False
 
             except ValueError as e:
@@ -147,12 +151,12 @@ class GCM(BaseZeroService):
                 self.log.exception(e, exc_info=True)
 
     def finish(self, stop_service=False):
-        self.log.warning('stopping')
+        self.log.warning("stopping")
 
         # stop thread if necessary
-        if hasattr(self, '_thread_stopper'):
+        if hasattr(self, "_thread_stopper"):
             self._thread_stopper.set()
-        if hasattr(self, '_thread_timer'):
+        if hasattr(self, "_thread_timer"):
             self._thread_timer.cancel()
 
         # clean up code here
@@ -167,7 +171,7 @@ class GCM(BaseZeroService):
             except:
                 pass
 
-        self.log.warning('   stopped ')
+        self.log.warning("   stopped ")
         if stop_service:
             time.sleep(0.5)
             self.service_stop()
@@ -176,7 +180,7 @@ class GCM(BaseZeroService):
         try:
             p = super().progress()
             fn = self.frameNumber
-            p.update({'framenumber': fn, 'framenumber_delta': fn - self.prev_framenumber, 'framenumber_units': 'frames'})
+            p.update({"framenumber": fn, "framenumber_delta": fn - self.prev_framenumber, "framenumber_units": "frames"})
             self.prev_framenumber = fn
             return p
         except:
@@ -203,11 +207,11 @@ class GCM(BaseZeroService):
             return None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) > 1:
         ser = sys.argv[1]
     else:
-        ser = 'default'
+        ser = "default"
     if len(sys.argv) > 2:
         port = sys.argv[2]
     else:

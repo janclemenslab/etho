@@ -4,8 +4,10 @@ import sys
 import numpy as np
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
+
 try:
     import PyDAQmx as daq
+
     pydaqmx_import_error = None
 except ImportError as pydaqmx_import_error:
     pass
@@ -54,30 +56,30 @@ class NIT(BaseZeroService):
         """
         # if len(state) != self.nb_channels:
         #     raise ValueError(f"State vector should have same length as the number of digital output channels. Is {len(state)}, should be {'x'}.")
-        self.log.info('sending {state} on {output_channels}')
+        self.log.info("sending {state} on {output_channels}")
         state = np.array(state, dtype=np.uint8)
         self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, state, None, None)
         if duration is not None:
             time.sleep(duration)  # alternatively could  return immediately using a threaded timer
-            self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, 0*state, None, None)
-        self.log.info('   success.')
+            self.task.WriteDigitalLines(1, 1, 10.0, daq.DAQmx_Val_GroupByChannel, 0 * state, None, None)
+        self.log.info("   success.")
 
     def start(self):
         pass
 
     def finish(self, stop_service=False):
-        self.log.warning('stopping')
+        self.log.warning("stopping")
         self.task.StopTask()
 
         # clean up code here
-        self.log.warning('   stopped ')
+        self.log.warning("   stopped ")
         # mode log file and savefilename
         if stop_service:
             time.sleep(2)
             self.service_stop()
 
     def is_busy(self):
-        return True # should return True/False
+        return True  # should return True/False
 
     def test(self):
         return True
@@ -88,11 +90,11 @@ class NIT(BaseZeroService):
         return True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) > 1:
         ser = sys.argv[1]
     else:
-        ser = 'default'
+        ser = "default"
     s = NIT(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(NIT.SERVICE_PORT))  # broadcast on all IPs
     s.run()

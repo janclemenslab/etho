@@ -3,13 +3,12 @@ from itertools import repeat, cycle, chain
 from .log_exceptions import for_all_methods, log_exceptions
 import logging
 
+
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class Delay_PWMLED(gpiozero.PWMLED):
-
     def __init__(self, pin=None, active_high=True, initial_value=0, frequency=100, pin_factory=None):
         super().__init__(pin, active_high, initial_value, frequency, pin_factory)
 
-    
     def blink(self, on_time=1, off_time=1, initial_delay=0, n=None, value=1, background=True):
         """
         Make the device turn on and off repeatedly.
@@ -39,24 +38,18 @@ class Delay_PWMLED(gpiozero.PWMLED):
         """
         self._stop_blink()
         self._blink_thread = gpiozero.threads.GPIOThread(
-            target=self._blink_device,
-            args=(on_time, off_time, initial_delay, n, value)
+            target=self._blink_device, args=(on_time, off_time, initial_delay, n, value)
         )
         self._blink_thread.start()
         if not background:
             self._blink_thread.join()
             self._blink_thread = None
 
-
-    def _blink_device(
-            self, on_time, off_time, initial_delay=0, n=1, value=1, fps=25):
+    def _blink_device(self, on_time, off_time, initial_delay=0, n=1, value=1, fps=25):
         sequence = []
         sequence.append((value, on_time))
         sequence.append((0, off_time))
-        sequence = (
-                cycle(sequence) if n is None else
-                chain.from_iterable(repeat(sequence, n))
-                )
+        sequence = cycle(sequence) if n is None else chain.from_iterable(repeat(sequence, n))
         if initial_delay > 0:  # prepend delay
             value, delay = (0, initial_delay)
             self._write(value)
@@ -65,4 +58,3 @@ class Delay_PWMLED(gpiozero.PWMLED):
             self._write(value)
             if self._blink_thread.stopping.wait(delay):
                 break
-

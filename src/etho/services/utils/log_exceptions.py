@@ -2,7 +2,7 @@ import logging
 
 
 def for_all_methods(decorator):
-    """"Decorates all methods of a class with 'decorator'."""
+    """ "Decorates all methods of a class with 'decorator'."""
 
     def decorate(cls):
         for attr in cls.__dict__:  # there's propably a better way to do this
@@ -24,7 +24,6 @@ def log_exceptions(logger=None):
         logger = logging.getLogger(__name__)
 
     def decorator(func):
-
         def wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs)

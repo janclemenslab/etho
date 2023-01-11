@@ -4,8 +4,7 @@ from ..utils.concurrent_task import ConcurrentTask
 from . import register_callback
 
 
-class BaseCallback():
-
+class BaseCallback:
     def __init__(self, data_source, poll_timeout: float = None, rate: float = 0, **kwargs):
         self.data_source = data_source
         self.poll_timeout = poll_timeout
@@ -20,7 +19,7 @@ class BaseCallback():
         obj._run()
 
     @classmethod
-    def make_concurrent(cls, comms='queue', **kwargs):
+    def make_concurrent(cls, comms="queue", **kwargs):
         return ConcurrentTask(task=cls.make_run, comms=comms, **kwargs)
 
     def start(self):
@@ -68,6 +67,7 @@ class BaseCallback():
 
 
 @register_callback
-class BroadcastCallback():
+class BroadcastCallback:
     """broadcast data w/o acting on it."""
+
     pass

@@ -16,7 +16,7 @@ class SharedNumpyArray:
     Contains functions for synchronized read/write access and a staleness indicator.
     """
 
-    WHOAMI = 'array'
+    WHOAMI = "array"
 
     def __init__(self, shape, ctype=ctypes.c_double):
         """[summary]
@@ -30,7 +30,7 @@ class SharedNumpyArray:
         self.first = True
         # indicator whether the current array values are "fresh"
         # stale is set to False upon `put` and to True on `get`
-        self._stale = mp.RawValue('b', True)
+        self._stale = mp.RawValue("b", True)
         # add one more RawValue for system_time?
 
         # common lock to sync read/write access
@@ -42,8 +42,7 @@ class SharedNumpyArray:
         # add one more RawValue for system_time?
         with self._lock:
             # create array in shared memory segment
-            self._shared_array_base = mp.RawArray(
-                ctype, int(np.prod(self.shape)))
+            self._shared_array_base = mp.RawArray(ctype, int(np.prod(self.shape)))
 
     @property
     def stale(self):
@@ -84,14 +83,14 @@ class SharedNumpyArray:
             self._stale.value = False
 
     def close(self):
-        del(self)
+        del self
 
 
-class Faucet():
+class Faucet:
     """Wrapper for Pipe connection objects that exposes
     `get` function for common interface with Queues."""
 
-    WHOAMI = 'pipe'
+    WHOAMI = "pipe"
 
     def __init__(self, connection: multiprocessing.connection.Connection):
         """Wraps Connection object returned when calling Pipe and
@@ -108,7 +107,7 @@ class Faucet():
         self.close = self.connection.close
         self.closed = self.connection.closed
 
-    def get(self, block: bool = True, timeout: Optional[float] = 0.001, empty_value: Any =None) -> Any:
+    def get(self, block: bool = True, timeout: Optional[float] = 0.001, empty_value: Any = None) -> Any:
         """Mimics the logic of the `Queue.get`.
 
         Args:
@@ -148,12 +147,12 @@ def NumpyArray(shape=(1,), ctype=ctypes.c_double):
     return sender, receiver
 
 
-class ConcurrentTask():
+class ConcurrentTask:
     """Helper class for running tasks in independent
     processes with communication tools attached."""
 
-    def __init__(self, task, task_kwargs={}, comms='queue', comms_kwargs={}, taskstopsignal=None):
-        """ [summary]
+    def __init__(self, task, task_kwargs={}, comms="queue", comms_kwargs={}, taskstopsignal=None):
+        """[summary]
 
         Args:
             task ([type]): First arg to task must be the end of the comms and is provided via `args`.
@@ -176,8 +175,7 @@ class ConcurrentTask():
         elif self.comms == "array":
             self._sender, self._receiver = NumpyArray(**comms_kwargs)
         else:
-            raise ValueError(
-                f'Unknown comms {comms} - allowed values are "pipe", "queue", "array"')
+            raise ValueError(f'Unknown comms {comms} - allowed values are "pipe", "queue", "array"')
 
         # delegate send calls from sender
         self.send = self._sender.send
@@ -185,8 +183,9 @@ class ConcurrentTask():
         self._process = Process(target=task, args=(self._receiver,), kwargs=task_kwargs)
         self.start = self._process.start
 
-    def finish(self, verbose: bool = False, sleepduration: float = 1,
-               sleepcycletimeout: int = 5, maxsleepcycles: int = 100000000):
+    def finish(
+        self, verbose: bool = False, sleepduration: float = 1, sleepcycletimeout: int = 5, maxsleepcycles: int = 100000000
+    ):
         if self.comms == "queue":
             sleepcounter = 0
             try:
@@ -202,14 +201,15 @@ class ConcurrentTask():
                 except NotImplementedError:  # catch python bug on OSX
                     break
                 sleepcounter += 1
-                queuehasnotchanged = (queuesize == self._sender.qsize())
+                queuehasnotchanged = queuesize == self._sender.qsize()
                 if queuehasnotchanged:
                     queuehasnotchangedcounter += 1
                 else:
                     queuehasnotchangedcounter = 0
                 if verbose:
-                    sys.stdout.write('\r   waiting {} seconds for {} frames to self.'.format(
-                        sleepcounter, self._sender.qsize()))  # frame interval in ms
+                    sys.stdout.write(
+                        "\r   waiting {} seconds for {} frames to self.".format(sleepcounter, self._sender.qsize())
+                    )  # frame interval in ms
 
     def close(self, sleep_time: float = 0.5):
         self.send(self.taskstopsignal)

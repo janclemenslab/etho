@@ -5,8 +5,10 @@ from .utils.log_exceptions import for_all_methods, log_exceptions
 import time
 import logging
 import sys
+
 try:
     from .utils.delay_pwmled import Delay_PWMLED
+
     import_error = None
 except ImportError as import_error:
     pass
@@ -20,7 +22,7 @@ class OPT2(BaseZeroService):
 
     LOGGING_PORT = 1452
     SERVICE_PORT = 4252
-    SERVICE_NAME = 'OPT2'
+    SERVICE_NAME = "OPT2"
 
     def setup(self, pins, duration, blink_pers, blink_durs, blink_paus, blink_nums, blink_dels, blink_amps):
         """Setup up service
@@ -56,11 +58,10 @@ class OPT2(BaseZeroService):
         self.trial = -1
         self._thread_stopper = threading.Event()
         if duration > 0:
-            self._thread_timer = threading.Timer(interval=self.duration, function=self.finish, kwargs={'stop_service': True})
+            self._thread_timer = threading.Timer(interval=self.duration, function=self.finish, kwargs={"stop_service": True})
         self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
         for led in self.LEDs:
             led.blink(on_time=0.1, off_time=0, initial_delay=0, value=0, n=1)
-
 
     def start(self):
         self._time_started = time.time()
@@ -69,10 +70,10 @@ class OPT2(BaseZeroService):
         self._worker_thread.start()
 
         if self.duration > 0:
-            self.log.info('duration {0} seconds'.format(self.duration))
+            self.log.info("duration {0} seconds".format(self.duration))
             # will execute FINISH after N seconds
             self._thread_timer.start()
-            self.log.info('finish timer started')
+            self.log.info("finish timer started")
 
     def _worker(self, stop_event):
         # schedule next execution - waits self.LED_blinkinterval seconds before running the _worker function again
@@ -80,26 +81,33 @@ class OPT2(BaseZeroService):
             self.trial += 1
             threading.Timer(interval=self.LED_blinkinterval[self.trial], function=self._worker, args=[stop_event]).start()
             # turn on LED
-            for led, dur, pau, num, amp, dely in zip(self.LEDs, self.LED_blinkduration[self.trial], self.LED_blinkpause[self.trial], self.LED_blinknumber[self.trial], self.LED_blinkamplitude[self.trial], self.LED_blinkdelay[self.trial]):
-                logging.info(f'{led}, {dur}, {pau}, {num}, {amp}, {dely}')
+            for led, dur, pau, num, amp, dely in zip(
+                self.LEDs,
+                self.LED_blinkduration[self.trial],
+                self.LED_blinkpause[self.trial],
+                self.LED_blinknumber[self.trial],
+                self.LED_blinkamplitude[self.trial],
+                self.LED_blinkdelay[self.trial],
+            ):
+                logging.info(f"{led}, {dur}, {pau}, {num}, {amp}, {dely}")
                 # led.value = amp
                 led.blink(on_time=dur, off_time=pau, initial_delay=dely, value=amp, n=num)
 
     def finish(self, stop_service=False):
-        self.log.warning('stopping')
-        if hasattr(self, '_thread_stopper'):
-            self.log.info('stoppping thread stopper')
+        self.log.warning("stopping")
+        if hasattr(self, "_thread_stopper"):
+            self.log.info("stoppping thread stopper")
             self._thread_stopper.set()
-        if hasattr(self, '_thread_timer'):
-            self.log.info('cancelling thread timer')
+        if hasattr(self, "_thread_timer"):
+            self.log.info("cancelling thread timer")
             self._thread_timer.cancel()
             # self.log.info('joining thread timer')
             # self._thread_timer.join()
         # if hasattr(self, '_worker_thread'):
         #     self._worker_thread.join()
-        self.log.info('turning off LED')
+        self.log.info("turning off LED")
         self._turn_off()
-        self.log.warning('   stopped ')
+        self.log.warning("   stopped ")
         if stop_service:
             self.service_stop()
 
@@ -132,15 +140,15 @@ class OPT2(BaseZeroService):
 
     def cleanup(self):
         self.finish()
-        if hasattr(self, '_queue_thread'):
-            del(self._queue_thread)
+        if hasattr(self, "_queue_thread"):
+            del self._queue_thread
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) > 1:
         ser = sys.argv[1]
     else:
-        ser = 'default'
+        ser = "default"
     s = OPT2(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(s.SERVICE_PORT))
     s.run()

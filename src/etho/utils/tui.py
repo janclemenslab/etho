@@ -8,25 +8,26 @@ import time
 
 
 def dict_to_def(d, defaults=None):
-    s = ''
+    s = ""
     for key, val in d.items():
         s += f"[bold]{key}[/]:\n   {str(val)}"
         if defaults is not None and key in defaults:
             s += f" (target: {str(defaults[key])})"
-        s += '\n'
+        s += "\n"
     return s
 
-def dict_to_table(d, title=None, key_name='Key', value_names=None):
+
+def dict_to_table(d, title=None, key_name="Key", value_names=None):
 
     table = Table(title=title)
 
     table.add_column(key_name, justify="right", style="cyan", no_wrap=True)
     if value_names is None:
         first_key = list(d.keys())[0]
-        value_names = [f'Value {cnt}' for cnt, _ in enumerate(d[first_key])]
+        value_names = [f"Value {cnt}" for cnt, _ in enumerate(d[first_key])]
 
     for value_name in value_names:
-        table.add_column(value_name, justify='left', style="magenta")
+        table.add_column(value_name, justify="left", style="magenta")
 
     for key, val in d.items():
         table.add_row(key, *[str(v) for v in val])
@@ -62,7 +63,7 @@ def df_to_table(
     return rich_table
 
 
-def rich_information(info, prefix=''):
+def rich_information(info, prefix=""):
     for key, val in info.items():
         if isinstance(val, dict):
             rich.print(Panel(dict_to_def(val), title=f"{prefix}: {key}"))
@@ -72,8 +73,7 @@ def rich_information(info, prefix=''):
             rich.print(Panel(df_to_table(val), title=f"{prefix}: {key}"))
 
 
-class CameraProgress():
-
+class CameraProgress:
     def __init__(self, nbFrames: int):
         self.prev_t: Optional[float] = None
         self.prev_n: Optional[int] = None
@@ -93,13 +93,13 @@ class CameraProgress():
             prgrs = []
             for pos in range(prgrs_len):
                 if pos < prgrs_cut:
-                    prgrs.append('█')
+                    prgrs.append("█")
                 else:
-                    prgrs.append('░')
+                    prgrs.append("░")
 
             progressbar = f"\rCamera: [{''.join(prgrs)}] {int(number_of_frames): {self.nDigits}d}/{self.nbFrames} frames at {current_frame_rate:1.2f} fps    "
             if payload is not None:
                 progressbar += f"{payload}"
-            print(progressbar, end='')
+            print(progressbar, end="")
         self.prev_t = t
         self.prev_n = number_of_frames

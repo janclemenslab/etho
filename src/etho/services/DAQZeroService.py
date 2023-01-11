@@ -11,6 +11,7 @@ import numpy as np
 
 try:
     from .daq.IOTask import *
+
     daqmx_import_error = None
 except (ImportError, NameError) as daqmx_import_error:
     pass
@@ -18,29 +19,31 @@ except (ImportError, NameError) as daqmx_import_error:
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class DAQ(BaseZeroService):
-    '''Bundles and synchronizes analog/digital input and output tasks.'''
+    """Bundles and synchronizes analog/digital input and output tasks."""
 
     LOGGING_PORT = 1449  # set this to range 1420-1460
     SERVICE_PORT = 4249  # last to digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "DAQ"  # short, uppercase, 3-letter ID of the service (equals class name)
 
-    def setup(self,
-              savefilename: str = None,
-              play_order: Iterable = None,
-              playlist_info=None,
-              duration: float = -1,
-              fs: int = 10000,
-              display=False,
-              realtime=False,
-              nb_inputsamples_per_cycle=None,
-              clock_source=None,
-              analog_chans_out: Optional[Sequence[str]] = None,
-              analog_chans_in: Sequence[str] = ['ai0'],
-              digital_chans_out: Optional[Sequence[str]] = None,
-              analog_data_out: Optional[Sequence[np.ndarray]] = None,
-              digital_data_out: Optional[Sequence] = None,
-              metadata: Optional[Dict] = None,
-              params=None):
+    def setup(
+        self,
+        savefilename: str = None,
+        play_order: Iterable = None,
+        playlist_info=None,
+        duration: float = -1,
+        fs: int = 10000,
+        display=False,
+        realtime=False,
+        nb_inputsamples_per_cycle=None,
+        clock_source=None,
+        analog_chans_out: Optional[Sequence[str]] = None,
+        analog_chans_in: Sequence[str] = ["ai0"],
+        digital_chans_out: Optional[Sequence[str]] = None,
+        analog_data_out: Optional[Sequence[np.ndarray]] = None,
+        digital_data_out: Optional[Sequence] = None,
+        metadata: Optional[Dict] = None,
+        params=None,
+    ):
         """[summary]
 
         Args:
@@ -66,7 +69,7 @@ class DAQ(BaseZeroService):
         Raises:
             ValueError: [description]
         """
-        self.status = 'initializing'
+        self.status = "initializing"
 
         if daqmx_import_error is not None:
             raise ImportError(daqmx_import_error)
@@ -87,10 +90,10 @@ class DAQ(BaseZeroService):
             self.taskAO = IOTask(cha_name=self.analog_chans_out, rate=fs, clock_source=clock_source)
             if analog_data_out[0].shape[-1] is not len(self.analog_chans_out):
                 raise ValueError(
-                    f'Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]}).'
+                    f"Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]})."
                 )
             play_order_new = copy.deepcopy(play_order)
-            self.taskAO.data_gen = data_playlist(analog_data_out, play_order_new, playlist_info, self.log, name='AO')
+            self.taskAO.data_gen = data_playlist(analog_data_out, play_order_new, playlist_info, self.log, name="AO")
             if clock_source is None:
                 self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             else:
@@ -99,32 +102,34 @@ class DAQ(BaseZeroService):
         if self.digital_chans_out:
             self.taskDO = IOTask(cha_name=self.digital_chans_out, rate=fs, clock_source=clock_source)
             play_order_new = copy.deepcopy(play_order)
-            self.taskDO.data_gen = data_playlist(digital_data_out, play_order_new, name='DO')
+            self.taskDO.data_gen = data_playlist(digital_data_out, play_order_new, name="DO")
             if clock_source is None:
                 self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             else:
                 self.taskDO.DisableStartTrig()
         # ANALOG INPUT
         if self.analog_chans_in:
-            self.taskAI = IOTask(cha_name=self.analog_chans_in,
-                                 rate=fs,
-                                 nb_inputsamples_per_cycle=nb_inputsamples_per_cycle,
-                                 clock_source=clock_source,
-                                 duration=self.duration)
+            self.taskAI = IOTask(
+                cha_name=self.analog_chans_in,
+                rate=fs,
+                nb_inputsamples_per_cycle=nb_inputsamples_per_cycle,
+                clock_source=clock_source,
+                duration=self.duration,
+            )
             self.taskAI.data_rec = []
 
             self.callbacks = []
             if metadata is None:
                 metadata = {}
-            attrs = {'rate': fs, 'analog_chans_in': analog_chans_in, **metadata}
+            attrs = {"rate": fs, "analog_chans_in": analog_chans_in, **metadata}
             common_task_kwargs = {
-                'file_name': self.savefilename,
-                'nb_inputsamples_per_cycle': nb_inputsamples_per_cycle,
-                'nb_analog_chans_in': len(analog_chans_in),
-                'attrs': attrs
+                "file_name": self.savefilename,
+                "nb_inputsamples_per_cycle": nb_inputsamples_per_cycle,
+                "nb_analog_chans_in": len(analog_chans_in),
+                "attrs": attrs,
             }
 
-            for cb_name, cb_params in params['callbacks'].items():
+            for cb_name, cb_params in params["callbacks"].items():
                 if cb_params is not None:
                     task_kwargs = {**common_task_kwargs, **cb_params}
                 else:
@@ -133,24 +138,23 @@ class DAQ(BaseZeroService):
                 self.taskAI.data_rec.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
 
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
-            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
-        self.status = 'initialized'
-
+            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={"stop_service": True})
+        self.status = "initialized"
 
         self.info: Dict[str, Dict[str, Any]] = dict()
-        self.info['job']:  Dict[str, Any] = {
-            'sample rate': f"{self.fs}Hz",
-            'analog output': self.analog_chans_out,
-            'digital output': self.digital_chans_out,
-            'analog input': self.analog_chans_in,
-            'duration': f"{self.duration}s",
-            'savefilename': self.savefilename,
-            'metadata': self.metadata,
+        self.info["job"]: Dict[str, Any] = {
+            "sample rate": f"{self.fs}Hz",
+            "analog output": self.analog_chans_out,
+            "digital output": self.digital_chans_out,
+            "analog input": self.analog_chans_in,
+            "duration": f"{self.duration}s",
+            "savefilename": self.savefilename,
+            "metadata": self.metadata,
         }
-        self.info['playlist'] = self.playlist_info
+        self.info["playlist"] = self.playlist_info
 
     def start(self):
-        self.status = 'running'
+        self.status = "running"
 
         self._time_started = time.time()
 
@@ -167,40 +171,40 @@ class DAQ(BaseZeroService):
         # Start the AI task - generates AI start trigger and triggers the output tasks
         self.taskAI.StartTask()
 
-        self.log.debug('started')
-        if hasattr(self, '_thread_timer'):
-            self.log.debug('duration {0} seconds'.format(self.duration))
+        self.log.debug("started")
+        if hasattr(self, "_thread_timer"):
+            self.log.debug("duration {0} seconds".format(self.duration))
             self._thread_timer.start()
-            self.log.debug('finish timer started')
+            self.log.debug("finish timer started")
 
     def finish(self, stop_service=False):
-        self.status = 'finishing'
-        self.log.warning('stopping')
-        if hasattr(self, '_thread_stopper'):
+        self.status = "finishing"
+        self.log.warning("stopping")
+        if hasattr(self, "_thread_stopper"):
             self._thread_stopper.set()
-        if hasattr(self, '_thread_timer'):
+        if hasattr(self, "_thread_timer"):
             self._thread_timer.cancel()
 
         # stop tasks and properly close callbacks (e.g. flush data to disk and close file)
-        if hasattr(self, 'digital_chans_out') and self.digital_chans_out:
+        if hasattr(self, "digital_chans_out") and self.digital_chans_out:
             try:
                 self.taskDO.StopTask()
             except GenStoppedToPreventRegenOfOldSamplesError as e:
                 pass
-            print('\n   stoppedDO')
+            print("\n   stoppedDO")
             self.taskDO.stop()
 
-        if hasattr(self, 'analog_chans_out') and self.analog_chans_out:
+        if hasattr(self, "analog_chans_out") and self.analog_chans_out:
             try:
                 self.taskAO.StopTask()
             except GenStoppedToPreventRegenOfOldSamplesError as e:
                 pass
-            print('\n   stoppedAO')
+            print("\n   stoppedAO")
             self.taskAO.stop()
 
         # stop this last since this is the trigger/master clock - NO! AI is...
         self.taskAI.StopTask()
-        print('\n   stoppedAI')
+        print("\n   stoppedAI")
         self.taskAI.stop()
         # maybe this won't be necessary
         for task in self.taskAI.data_rec:
@@ -216,7 +220,7 @@ class DAQ(BaseZeroService):
             self.taskDO.ClearTask()
         self.taskAI.ClearTask()
 
-        self.log.warning('   stopped ')
+        self.log.warning("   stopped ")
         if stop_service:
             time.sleep(0.5)
             self.service_stop()
@@ -261,12 +265,12 @@ class DAQ(BaseZeroService):
             return None
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) > 1:
         ser = sys.argv[1]
     else:
-        ser = 'default'
-    logging.info('Starting DAQ service')
+        ser = "default"
+    logging.info("Starting DAQ service")
     s = DAQ(serializer=ser)  # expose class via zerorpc
     s.bind("tcp://0.0.0.0:{0}".format(DAQ.SERVICE_PORT))  # broadcast on all IPs
     s.run()

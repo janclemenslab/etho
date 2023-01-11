@@ -4,6 +4,7 @@ from .. import config
 from . import wxCtrl_rpi
 from threading import Thread
 from pubsub import pub
+
 # from wx.lib.pubsub import pub
 import logging
 import zmq
@@ -23,8 +24,7 @@ def ping(host):
     parameters = "-n 1 -w 1000" if platform.system().lower() == "windows" else "-c 1 -W 1"
     suffix = ">nul 2>&1" if platform.system().lower() == "windows" else ">/dev/null 2>&1"
     # Pinging (">/dev/null 2>&1" supresses output)
-    exit_code = os.system(
-        "ping {0} {1}{2}".format(parameters, host, suffix))
+    exit_code = os.system("ping {0} {1}{2}".format(parameters, host, suffix))
     # 0=success
     return exit_code == 0
 
@@ -40,42 +40,40 @@ def exepool(func, args):
             try:
                 out[url] = future.result()
             except Exception as exc:
-                print('%r generated an exception: %s' % (url, exc))
+                print("%r generated an exception: %s" % (url, exc))
     return out
 
 
 # TODO Run this in background and automatically update gui using pubsub https://wiki.wxpython.org/ModelViewController
 class Model:
-
     def __init__(self):
         # this should happen in config!!
-        self.hosts = config['GENERAL']['hosts']
-        self.host_ips = config['GENERAL']['hosts'].values()
-        self.host_names = config['GENERAL']['hosts'].keys()
+        self.hosts = config["GENERAL"]["hosts"]
+        self.host_ips = config["GENERAL"]["hosts"].values()
+        self.host_names = config["GENERAL"]["hosts"].keys()
         self.host_ip2names = {ip: name for ip, name in zip(self.host_ips, self.host_names)}
         self.host_status = exepool(ping, self.host_ips)
 
     def rescan(self):
-        print('RESCANNING - listing clients:')
+        print("RESCANNING - listing clients:")
         self.host_status = exepool(ping, self.host_ips)
         print(self.host_status)
-        print('RESCANNING - listing running services:')
+        print("RESCANNING - listing running services:")
 
 
 class WorkThread(Thread):
-
     def __init__(self):
         """Init Worker Thread Class."""
         Thread.__init__(self)
         self.stop_work_thread = 0
 
-        logger = logging.getLogger('')
+        logger = logging.getLogger("")
         logger.setLevel(logging.INFO)
         # __ to console logger
         console = logging.StreamHandler()
         # console.setLevel(logging.DEBUG)
         # formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
-        formatter = logging.Formatter('%(levelname)-8s %(message)s')
+        formatter = logging.Formatter("%(levelname)-8s %(message)s")
         # tell the handler to use this format
         console.setFormatter(formatter)
         console.setLevel(logging.INFO)
@@ -83,19 +81,19 @@ class WorkThread(Thread):
         logger.addHandler(console)
 
         # subscribe to all logging ports
-        logging_ports = range(int(config['LOGGER']['portrange'][0]), int(config['LOGGER']['portrange'][1]))
+        logging_ports = range(int(config["LOGGER"]["portrange"][0]), int(config["LOGGER"]["portrange"][1]))
         ctx = zmq.Context()
         sub = ctx.socket(zmq.SUB)
-        sub.setsockopt_string(zmq.SUBSCRIBE, '')
+        sub.setsockopt_string(zmq.SUBSCRIBE, "")
         for port in logging_ports:
-            sub.bind('tcp://0.0.0.0:{0}'.format(port))
+            sub.bind("tcp://0.0.0.0:{0}".format(port))
         self.sub = sub
         self.logger = logger
         self.start()  # start the thread
         self.val = 0
 
     def run(self):
-        print('LISTENING FOR MESSAGES')
+        print("LISTENING FOR MESSAGES")
 
         while True:
             if self.stop_work_thread == 1:
@@ -107,10 +105,10 @@ class WorkThread(Thread):
                 # get level-appropriate logging function
                 # log = getattr(self.logger, level.decode('utf8').lower())
                 # log(message.decode('utf8').rstrip())
-                wx.CallAfter(pub.sendMessage, "update", step=message.decode('utf8').rstrip())
+                wx.CallAfter(pub.sendMessage, "update", step=message.decode("utf8").rstrip())
             except zmq.error.Again as e:
                 pass
-            time.sleep(.01)
+            time.sleep(0.01)
 
             # wx.CallAfter(pub.sendMessage, "update", step=self.val)
         wx.CallAfter(pub.sendMessage, "finish")
@@ -127,7 +125,7 @@ class HelloFrame(wx.Frame):
         # ensure the parent's __init__ is called
         super(HelloFrame, self).__init__(*args, **kw)
 
-        print('pinging hosts')
+        print("pinging hosts")
         self.model = Model()
 
         # create a menu bar
@@ -138,7 +136,7 @@ class HelloFrame(wx.Frame):
         self.SetStatusText("etho")
 
         self.logger = wx.TextCtrl(self, size=(1000, 2000), style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_DONTWRAP)
-        font1 = wx.Font(8, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Consolas')
+        font1 = wx.Font(8, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u"Consolas")
         self.logger.SetFont(font1)
 
         # text
@@ -153,7 +151,7 @@ class HelloFrame(wx.Frame):
         masterSizer = wx.BoxSizer(wx.HORIZONTAL)
         topSizer = wx.BoxSizer(wx.VERTICAL)
         # color based on true value (is_online)
-        colors = {True: '#AAFFAA', False: '#FFAAAA'}
+        colors = {True: "#AAFFAA", False: "#FFAAAA"}
         for name in self.model.host_names:
             ip = self.model.hosts[name]
             status = self.model.host_status[ip]
@@ -216,7 +214,7 @@ class HelloFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnAbout, aboutItem)
 
     def onUpdate(self, step):
-        step = str(step) + '\n'
+        step = str(step) + "\n"
         self.logger.AppendText(step)
 
     def onCancel(self, event):
@@ -251,7 +249,7 @@ class HelloFrame(wx.Frame):
 
     def OnClick(self, event):
         name, ip = event.GetEventObject().name, event.GetEventObject().ip
-        self.PushStatusText('configure {0}'.format(ip, name))
+        self.PushStatusText("configure {0}".format(ip, name))
         wxCtrl_rpi.main(name, ip)
         try:
             self.PopStatusText()
@@ -267,10 +265,10 @@ class HelloFrame(wx.Frame):
         wx.MessageBox("This is a wxPython Hello World sample", "About Hello World 2", wx.OK | wx.ICON_INFORMATION)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # When this module is run (not imported) then create the app, the
     # frame, show it, and start the event loop.
     app = wx.App()
-    frm = HelloFrame(None, title='etho', size=(600, 300))
+    frm = HelloFrame(None, title="etho", size=(600, 300))
     frm.Show()
     app.MainLoop()

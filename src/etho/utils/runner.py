@@ -8,30 +8,32 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class Runner():
+class Runner:
     """Manages remote processes."""
 
-    def __init__(self, host: str, host_is_win: bool = False, host_is_remote: bool = False, python_exe: str = 'python'):
+    def __init__(self, host: str, host_is_win: bool = False, host_is_remote: bool = False, python_exe: str = "python"):
         self.host = host
         self.host_is_win = host_is_win
         self.host_is_remote = host_is_remote
         self.python_exe = python_exe
         # get host_name for ping
-        token = host.split('@')
+        token = host.split("@")
         if len(token) == 1:  # host_name
-            self.user_name = ''
+            self.user_name = ""
             self.host_name = token[0]
         else:  # user_name@host_name
             self.user_name = token[0]
             self.host_name = token[1]
 
-    def run(self,
-            cmd: str,
-            timeout: Optional[float] = None,
-            asynchronous: Optional[bool] = False,
-            disown: bool = False,
-            run_local: bool = False,
-            new_console: bool = False) -> Union[invoke.runners.Result, invoke.runners.Promise, None]:
+    def run(
+        self,
+        cmd: str,
+        timeout: Optional[float] = None,
+        asynchronous: Optional[bool] = False,
+        disown: bool = False,
+        run_local: bool = False,
+        new_console: bool = False,
+    ) -> Union[invoke.runners.Result, invoke.runners.Promise, None]:
         """_summary_
 
         Args:
@@ -55,11 +57,17 @@ class Runner():
             asynchronous = None
 
         logging.debug(f"Running {cmd} with the following parameters:")
-        logging.debug(f"{self.host} with timeout={timeout}, asynchronous={asynchronous}, disown={disown}, run_local={run_local}, new_console={new_console}.")
+        logging.debug(
+            f"{self.host} with timeout={timeout}, asynchronous={asynchronous}, disown={disown}, run_local={run_local}, new_console={new_console}."
+        )
 
         if self.host_is_remote and not run_local:
-            shell = 'cmd.exe' if self.host_is_win else None  # control shell since powershell and cmd require different separators for commands - cmd.exe wants ; and fails with &&
-            result = fabric.Connection(self.host).run(cmd, hide=True, timeout=timeout, asynchronous=asynchronous, disown=disown, shell=shell)
+            shell = (
+                "cmd.exe" if self.host_is_win else None
+            )  # control shell since powershell and cmd require different separators for commands - cmd.exe wants ; and fails with &&
+            result = fabric.Connection(self.host).run(
+                cmd, hide=True, timeout=timeout, asynchronous=asynchronous, disown=disown, shell=shell
+            )
         else:
             # only way to open a new console window is subprocess on windows:
             if new_console and self.host_is_win:
@@ -79,17 +87,17 @@ class Runner():
 
         for pid in pids:
             logging.debug(f"Killing process with pid {pid}.")
-            self.run(f'kill {pid}', asynchronous=False)
+            self.run(f"kill {pid}", asynchronous=False)
 
     def kill_python(self):
         """Kill all python processes."""
         logging.debug(f"Killing python processes.")
         if self.host_is_win:
-            pids = self.pid(query='python.exe')
+            pids = self.pid(query="python.exe")
             if pids:
                 self.kill(pids)
         else:
-            self.run('pkill python', remote=True)
+            self.run("pkill python", remote=True)
 
     def kill_service(self, service_name):
         pids = self.pid(query=service_name)
@@ -109,10 +117,10 @@ class Runner():
         # filter process list
         pids = []
         for process in process_list:
-            if process['cmdline'] is not None:
-                cmd = ' '.join(process['cmdline'])
+            if process["cmdline"] is not None:
+                cmd = " ".join(process["cmdline"])
                 if query in cmd and py_code not in cmd:
-                    pids.append(process['pid'])
+                    pids.append(process["pid"])
 
         return pids
 
@@ -156,8 +164,8 @@ class Runner():
         return self.is_online()
 
 
-if __name__ == '__main__':
-    sr = Runner('ncb@UKME04-13CW', host_is_win=True)
+if __name__ == "__main__":
+    sr = Runner("ncb@UKME04-13CW", host_is_win=True)
     print(sr.host)
     # sr.kill_python()
     print("starting long running process")

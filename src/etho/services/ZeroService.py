@@ -39,7 +39,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     SERVICE_PORT: Optional[int] = None  # network port for communicating with the head
     SERVICE_NAME: Optional[str] = None
 
-    def __init__(self, *args, serializer: str = 'default', head_ip: str = '192.168.1.1', **kwargs):
+    def __init__(self, *args, serializer: str = "default", head_ip: str = "192.168.1.1", **kwargs):
         """[summary]
 
         Args:
@@ -61,37 +61,42 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.info = dict()
 
     @classmethod
-    def make(cls,
-             SER,
-             user,
-             host,
-             folder_name,
-             python_exe='python',
-             host_is_remote: bool = False,
-             host_is_win: bool = True,
-             port=None,
-             new_console: bool = False):
+    def make(
+        cls,
+        SER,
+        user,
+        host,
+        folder_name,
+        python_exe="python",
+        host_is_remote: bool = False,
+        host_is_win: bool = True,
+        port=None,
+        new_console: bool = False,
+    ):
         from ..utils.zeroclient import ZeroClient  # only works on the head node
+
         if port is None:
             port = cls.SERVICE_PORT
 
-        server_name = '{0} -m {1} {2}'.format(python_exe, cls.__module__, SER)
-        logging.debug(f'initializing {cls.SERVICE_NAME} at port {port}.')
-        service = ZeroClient("{0}@{1}".format(user, host),
-                             service_name=cls.__module__,
-                             serializer=SER,
-                             host_is_remote=host_is_remote,
-                             host_is_win=host_is_win,
-                             python_exe=python_exe)
-        logging.debug('   starting server:', end='')
+        server_name = "{0} -m {1} {2}".format(python_exe, cls.__module__, SER)
+        logging.debug(f"initializing {cls.SERVICE_NAME} at port {port}.")
+        service = ZeroClient(
+            "{0}@{1}".format(user, host),
+            service_name=cls.__module__,
+            serializer=SER,
+            host_is_remote=host_is_remote,
+            host_is_win=host_is_win,
+            python_exe=python_exe,
+        )
+        logging.debug("   starting server:", end="")
         ret = service.start_server(server_name, folder_name, warmup=1, new_console=new_console)
         logging.debug(f'{"success" if ret else "FAILED"}.')
-        logging.debug('   connecting to server:', end='')
+        logging.debug("   connecting to server:", end="")
         ret = service.connect("tcp://{0}:{1}".format(host, port))
         logging.debug(f'{"success" if ret else "FAILED"}.')
         return service
 
-    def _init_network_logger(self, head_ip: str = '192.168.1.1', log_level: int = logging.INFO):
+    def _init_network_logger(self, head_ip: str = "192.168.1.1", log_level: int = logging.INFO):
         """Initialize logger that publishes messages over the network format.
 
         For live display of messages on head node (see ethomaster.head.headlogger).
@@ -104,7 +109,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         ctx = zmq.Context()
         ctx.LINGER = 0
         pub = ctx.socket(zmq.PUB)
-        pub.connect('tcp://{0}:{1}'.format(head_ip, self.LOGGING_PORT))
+        pub.connect("tcp://{0}:{1}".format(head_ip, self.LOGGING_PORT))
         self.log = logging.getLogger((__name__))
         self.log.setLevel(log_level)
 
@@ -119,7 +124,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             logging.INFO: logging.Formatter(prefix + "%(message)s\n", datefmt=df),
             logging.WARN: logging.Formatter(prefix + body + "\n", datefmt=df),
             logging.ERROR: logging.Formatter(prefix + body + " - %(exc_info)s\n", datefmt=df),
-            logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df)
+            logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df),
         }
 
         # setup log handler which publishe all log messages to the network
@@ -157,8 +162,9 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.filelogger.setLevel(logging.INFO)  # catch all messages
 
         # create a logging format
-        formatter = logging.Formatter("%(asctime)s.%(msecs)03d {0}@{1}: %(message)s".format(self.SERVICE_NAME, self.hostname),
-                                      datefmt="%Y-%m-%d,%H:%M:%S")
+        formatter = logging.Formatter(
+            "%(asctime)s.%(msecs)03d {0}@{1}: %(message)s".format(self.SERVICE_NAME, self.hostname), datefmt="%Y-%m-%d,%H:%M:%S"
+        )
         self.filelogger.setFormatter(formatter)
         # add the handlers to the logger
         self.log.addHandler(self.filelogger)
@@ -195,10 +201,10 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         try:
             elapsed = self._time_elapsed()
             p = {
-                'total': self.duration,
-                'elapsed': elapsed,
-                'elapsed_delta': elapsed - self.prev_elapsed,
-                'elapsed_units': 'seconds'
+                "total": self.duration,
+                "elapsed": elapsed,
+                "elapsed_delta": elapsed - self.prev_elapsed,
+                "elapsed_units": "seconds",
             }
             self.prev_elapsed = elapsed
             return p
@@ -206,7 +212,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             pass
 
     def ping(self):
-        self.log.info('pong')
+        self.log.info("pong")
         return "pong"
 
     def service_start(self, ip_address: str = "tcp://0.0.0.0"):
@@ -226,19 +232,19 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         try:
             self.stop()
         except Exception as e:
-            self.log.debug('stopnot', exc_info=e)
+            self.log.debug("stopnot", exc_info=e)
         self.log.warning("   done")
         self._flush_loggers()
         self.service_kill()
 
     def service_kill(self):
-        self.log.warning('   kill process {0}'.format(self._getpid()))
+        self.log.warning("   kill process {0}".format(self._getpid()))
         iswin = sys.platform == "win32"
         if iswin:
             # run this in subprocess so the function returns - running this via os.system(...) will kill the process but not return
-            subprocess.Popen('taskkill /F /PID {0}'.format(self._getpid()))
+            subprocess.Popen("taskkill /F /PID {0}".format(self._getpid()))
         else:
-            os.system('kill {0}'.format(self._getpid()))
+            os.system("kill {0}".format(self._getpid()))
 
     def _getpid(self):
         return os.getpid()

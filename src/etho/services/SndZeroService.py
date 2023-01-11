@@ -9,10 +9,10 @@ import logging
 
 try:
     import pygame
+
     pygame_import_error = None
 except ImportError as e:
     pygame_import_error = e
-
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
@@ -28,7 +28,7 @@ class SND(BaseZeroService):
 
         self.duration = duration
         self._time_started = None
-        self.log.info('duration {0} seconds'.format(self.duration))
+        self.log.info("duration {0} seconds".format(self.duration))
         # init sound engine
         pygame.mixer.pre_init(frequency=fs, size=-16, channels=2, buffer=4096)
         pygame.mixer.init()
@@ -40,7 +40,7 @@ class SND(BaseZeroService):
         self.log.info(pygame.mixer.get_init())
         # np arrays -> pygame sndarrays
         self.playlist = playlist
-        self.log.info('playlist')
+        self.log.info("playlist")
         self.log.info(self.playlist.to_csv())
         self.soundlist = list()
         for np_sound in np_sounds:
@@ -50,14 +50,13 @@ class SND(BaseZeroService):
 
         self.playlist_items = playlist_items
         self._thread_stopper = threading.Event()
-        self._queue_thread = threading.Thread(
-            target=self._queue_sounds, args=(self._thread_stopper,))
+        self._queue_thread = threading.Thread(target=self._queue_sounds, args=(self._thread_stopper,))
 
     def start(self):
         self._time_started = time.time()
         self._queue_thread.start()
         # TODO: log playlist etc
-        self.log.info('started')
+        self.log.info("started")
 
     def _queue_next(self):
         if self.playlist_items:
@@ -74,19 +73,19 @@ class SND(BaseZeroService):
                 msg = _format_playlist(self.playlist.iloc[self.current_item], playlist_cnt)
                 self.log.info(msg)
             if not self.playlist_items and not self.is_busy():
-                self.log.warning('playlist empty and no playback running - stop queueing')
+                self.log.warning("playlist empty and no playback running - stop queueing")
                 RUN = False
-        self.log.warning('playlist empty - stopping service')
+        self.log.warning("playlist empty - stopping service")
         self.finish(stop_service=True)
 
     def finish(self, stop_service=False):
-        self.log.warning('stopping playback')
-        if hasattr(self, '_thread_stopper'):
+        self.log.warning("stopping playback")
+        if hasattr(self, "_thread_stopper"):
             self._thread_stopper.set()
 
         if pygame.mixer.get_init():
             pygame.mixer.stop()
-        self.log.warning('   stopped playback')
+        self.log.warning("   stopped playback")
         self._flush_loggers()
         if stop_service:
             time.sleep(1)
@@ -103,8 +102,8 @@ class SND(BaseZeroService):
 
     def cleanup(self):
         self.finish()
-        if hasattr(self, '_queue_thread'):
-            del(self._queue_thread)
+        if hasattr(self, "_queue_thread"):
+            del self._queue_thread
         pygame.mixer.quit()
         return True
 
@@ -116,17 +115,17 @@ class SND(BaseZeroService):
 
 
 def _format_playlist(playlist, cnt):
-    string = f'cnt: {cnt}; '
+    string = f"cnt: {cnt}; "
     for key, val in playlist.items():
-        string += f'{key}: {val}; '
+        string += f"{key}: {val}; "
     return string
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) > 1:
         ser = sys.argv[1]
     else:
-        ser = 'default'
+        ser = "default"
     s = SND(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(SND.SERVICE_PORT))
     s.run()

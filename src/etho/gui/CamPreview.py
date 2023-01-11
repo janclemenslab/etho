@@ -1,6 +1,6 @@
-'''
+"""
 Receives a live video stream from the pi using ZeroMQ
-'''
+"""
 import io
 from PIL import Image
 import zmq
@@ -10,13 +10,14 @@ from ..utils.config import readconfig, undefaultify
 
 from ..services.CamZeroService import CAM
 
-def camPreview(host, protocol_filename: str = None, user: str = 'ncb'):
 
-    cam_server_name = 'python -m {0}'.format(CAM.__module__)
-    folder_name = '~/'
+def camPreview(host, protocol_filename: str = None, user: str = "ncb"):
+
+    cam_server_name = "python -m {0}".format(CAM.__module__)
+    folder_name = "~/"
     cam_service_port = CAM.SERVICE_PORT
 
-    cam = ZeroClient('{0}@{1}'.format(user, host))
+    cam = ZeroClient("{0}@{1}".format(user, host))
     cam.start_server(cam_server_name, folder_name, warmup=1, remote=True)
     cam.connect("tcp://{0}:{1}".format(host, cam_service_port))
     print([CAM.SERVICE_PORT, CAM.SERVICE_NAME])
@@ -25,14 +26,14 @@ def camPreview(host, protocol_filename: str = None, user: str = 'ncb'):
 
     context = zmq.Context()
     zmq_socket = context.socket(zmq.SUB)
-    zmq_socket.setsockopt(zmq.SUBSCRIBE, b'')
+    zmq_socket.setsockopt(zmq.SUBSCRIBE, b"")
     zmq_socket.setsockopt(zmq.CONFLATE, 1)
     zmq_socket.connect("tcp://{}:5557".format(host))
 
     cam_was_running = cam.is_busy()
     if not cam_was_running:
         if protocol_filename is not None:
-            print(f' starting cam with params from {protocol_filename}.')
+            print(f" starting cam with params from {protocol_filename}.")
             prot = undefaultify(readconfig(protocol_filename)["CAM"])
             print(prot)
             if prot is not None:
@@ -40,7 +41,7 @@ def camPreview(host, protocol_filename: str = None, user: str = 'ncb'):
             else:
                 cam.setup(None, 0)
         else:
-            print(f' starting cam with default params.')
+            print(f" starting cam with default params.")
             cam.setup(None, 0)  # , **prot)
         cam.start()
 
@@ -59,20 +60,20 @@ def camPreview(host, protocol_filename: str = None, user: str = 'ncb'):
 
     finally:
         if not cam_was_running:
-            print('stopping server:')
+            print("stopping server:")
             cam.finish()
             try:
-                print('CAM: {0}'.format(cam.stop_server()))
+                print("CAM: {0}".format(cam.stop_server()))
             except Exception as e:
                 print(e)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import cv2
     import numpy as np
     import time
 
-    host = 'rpi3'
+    host = "rpi3"
     cv2.startWindowThread()
     cv2.namedWindow(host, cv2.WINDOW_NORMAL)
 

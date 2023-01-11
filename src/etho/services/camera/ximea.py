@@ -5,6 +5,7 @@ from .base import BaseCam, gray2rgb
 
 try:
     from ximea import xiapi
+
     ximea_error = None
 except ImportError as e:
     ximea_error = e
@@ -12,7 +13,7 @@ except ImportError as e:
 
 class Ximea(BaseCam):
 
-    NAME = 'XIM'
+    NAME = "XIM"
 
     def __init__(self, serialnumber):
         if ximea_error is not None:
@@ -26,10 +27,10 @@ class Ximea(BaseCam):
         self.c = xiapi.Camera()
         self.c.open_device_by_SN(self.serialnumber)
         # HARDCODED
-        self.c.set_downsampling('XI_DWN_2x2')
-        self.c.set_downsampling_type('XI_SKIPPING')
+        self.c.set_downsampling("XI_DWN_2x2")
+        self.c.set_downsampling_type("XI_SKIPPING")
 
-        self.c.set_imgdataformat('XI_MONO8')
+        self.c.set_imgdataformat("XI_MONO8")
         self.c.set_limit_bandwidth(self.c.get_limit_bandwidth_maximum())
         self.timestamp_offset = self._estimate_timestamp_offset()
 
@@ -45,8 +46,11 @@ class Ximea(BaseCam):
         return image, image_timestamp, system_timestamp
 
     def _min_max_inc(self, prop, value=None, set_value=True):
-        min_val, max_val, inc = self.c.get_param(prop + ':min'), self.c.get_param(prop + ':max'), self.c.get_param(prop +
-                                                                                                                   ':inc')
+        min_val, max_val, inc = (
+            self.c.get_param(prop + ":min"),
+            self.c.get_param(prop + ":max"),
+            self.c.get_param(prop + ":inc"),
+        )
 
         prop_type = type(self.c.get_param(prop))
         if value is not None:
@@ -96,12 +100,12 @@ class Ximea(BaseCam):
             self.c.set_width(x)
             self.c.set_height(y)
         except ValueError:
-            raise ValueError('Need 4-tuple with x0_y0_x_y')
+            raise ValueError("Need 4-tuple with x0_y0_x_y")
         else:
-            self._min_max_inc('offsetX', x0)
-            self._min_max_inc('offsetY', y0)
-            self._min_max_inc('width', x)
-            self._min_max_inc('height', y)
+            self._min_max_inc("offsetX", x0)
+            self._min_max_inc("offsetY", y0)
+            self._min_max_inc("width", x)
+            self._min_max_inc("height", y)
 
     @property
     def exposure(self):
@@ -119,7 +123,7 @@ class Ximea(BaseCam):
 
     @framerate.setter
     def framerate(self, value: float):
-        self.c.set_acq_timing_mode('XI_ACQ_TIMING_MODE_FRAME_RATE')
+        self.c.set_acq_timing_mode("XI_ACQ_TIMING_MODE_FRAME_RATE")
         self.c.set_framerate(float(value))
 
     @property

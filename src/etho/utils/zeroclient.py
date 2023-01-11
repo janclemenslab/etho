@@ -9,15 +9,16 @@ from .. import config
 
 
 class ZeroClient(zerorpc.Client):
-
-    def __init__(self,
-                 ssh_address: str,
-                 service_name: str = 'CLIENT',
-                 logging_port: str = '1460',
-                 serializer: str = 'default',
-                 host_is_win: bool = False,
-                 host_is_remote: bool = False,
-                 python_exe: str = 'python'):
+    def __init__(
+        self,
+        ssh_address: str,
+        service_name: str = "CLIENT",
+        logging_port: str = "1460",
+        serializer: str = "default",
+        host_is_win: bool = False,
+        host_is_remote: bool = False,
+        python_exe: str = "python",
+    ):
         """_summary_
 
         Args:
@@ -44,8 +45,8 @@ class ZeroClient(zerorpc.Client):
         ctx = zmq.Context()
         ctx.LINGER = 0
         pub = ctx.socket(zmq.PUB)
-        head_ip = config['HEAD']['name']
-        pub.connect('tcp://{0}:{1}'.format(head_ip, self.LOGGING_PORT))
+        head_ip = config["HEAD"]["name"]
+        pub.connect("tcp://{0}:{1}".format(head_ip, self.LOGGING_PORT))
 
         self.log = logging.getLogger()
         self.log.setLevel(logging.INFO)
@@ -61,7 +62,7 @@ class ZeroClient(zerorpc.Client):
             logging.INFO: logging.Formatter(prefix + "%(message)s\n", datefmt=df),
             logging.WARN: logging.Formatter(prefix + body + "\n", datefmt=df),
             logging.ERROR: logging.Formatter(prefix + body + " - %(exc_info)s\n", datefmt=df),
-            logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df)
+            logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df),
         }
 
         handler = PUBHandler(pub)
@@ -69,22 +70,22 @@ class ZeroClient(zerorpc.Client):
         handler.setLevel(logging.INFO)
         self.log.addHandler(handler)
 
-    def start_server(self, server_name, folder_name='.', warmup=2, timeout=5, new_console: bool = False):
-        self.log.info(f'   {self.SERVICE_NAME} starting')
+    def start_server(self, server_name, folder_name=".", warmup=2, timeout=5, new_console: bool = False):
+        self.log.info(f"   {self.SERVICE_NAME} starting")
         cmd = "cd {0} && {1}".format(folder_name, server_name)
         self.sr.run(cmd, timeout=timeout, new_console=new_console, disown=True)
         self.pid = self.sr.pid(query=cmd)
-        self.log.info(f'   {self.SERVICE_NAME} warmup')
+        self.log.info(f"   {self.SERVICE_NAME} warmup")
         time.sleep(warmup)  # wait for server to warm up
         status = self.sr.is_running(self.pid)
-        self.log.info(f'   {self.SERVICE_NAME} done')
+        self.log.info(f"   {self.SERVICE_NAME} done")
         return status
 
     def stop_server(self):
-        self.log.info(f'   {self.SERVICE_NAME} finish and cleanup')
+        self.log.info(f"   {self.SERVICE_NAME} finish and cleanup")
         self.finish()
         self.cleanup()
-        self.log.info(f'   {self.SERVICE_NAME} killing')
+        self.log.info(f"   {self.SERVICE_NAME} killing")
         if self.sr.is_running(self.pid):
             self.sr.kill(self.pid)
         return not self.sr.is_running(self.pid)

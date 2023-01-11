@@ -5,6 +5,7 @@ from .base import BaseCam
 
 try:
     import PySpin
+
     pyspin_error = None
 except ImportError as e:
     pyspin_error = e
@@ -12,7 +13,7 @@ except ImportError as e:
 
 class Spinnaker(BaseCam):
 
-    NAME = 'SPN'
+    NAME = "SPN"
 
     def __init__(self, serialnumber):
         if pyspin_error is not None:
@@ -41,33 +42,34 @@ class Spinnaker(BaseCam):
         # trigger overlap -> ReadOut - for faster frame rates
         self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
 
-    def _set_gpio(self, line='Line2'):
+    def _set_gpio(self, line="Line2"):
         # from PySpin/Examples/Python3/CounterAndTimer.py
         # from https://github.com/CapAI/misc/blob/a22cd50e90018c03cde3c1339aa622185502bb05/spinnaker/pyspin/Examples/Python3/CounterAndTimer.py#L193
         nodemap = self.c.GetNodeMap()
-        node_line_selector = PySpin.CEnumerationPtr(nodemap.GetNode('LineSelector'))
+        node_line_selector = PySpin.CEnumerationPtr(nodemap.GetNode("LineSelector"))
         if not PySpin.IsAvailable(node_line_selector) or not PySpin.IsWritable(node_line_selector):
-            print('\nUnable to set Line Selector (enumeration retrieval). Aborting...\n')
+            print("\nUnable to set Line Selector (enumeration retrieval). Aborting...\n")
             return False
 
         entry_line_selector_line = node_line_selector.GetEntryByName(line)
         if not PySpin.IsAvailable(entry_line_selector_line) or not PySpin.IsReadable(entry_line_selector_line):
-            print('\nUnable to set Line Selector (entry retrieval). Aborting...\n')
+            print("\nUnable to set Line Selector (entry retrieval). Aborting...\n")
             return False
 
         line_selector_line = entry_line_selector_line.GetValue()
         node_line_selector.SetIntValue(line_selector_line)
 
         # Set Line Source for Selected Line to Counter 0 Active
-        node_line_source = PySpin.CEnumerationPtr(nodemap.GetNode('LineSource'))
+        node_line_source = PySpin.CEnumerationPtr(nodemap.GetNode("LineSource"))
         if not PySpin.IsAvailable(node_line_source) or not PySpin.IsWritable(node_line_source):
-            print('\nUnable to set Line Source (enumeration retrieval). Aborting...\n')
+            print("\nUnable to set Line Source (enumeration retrieval). Aborting...\n")
             return False
 
-        entry_line_source_counter_0_active = node_line_source.GetEntryByName('ExposureActive')
-        if not PySpin.IsAvailable(entry_line_source_counter_0_active) \
-                or not PySpin.IsReadable(entry_line_source_counter_0_active):
-            print('\nUnable to set Line Source (entry retrieval). Aborting...\n')
+        entry_line_source_counter_0_active = node_line_source.GetEntryByName("ExposureActive")
+        if not PySpin.IsAvailable(entry_line_source_counter_0_active) or not PySpin.IsReadable(
+            entry_line_source_counter_0_active
+        ):
+            print("\nUnable to set Line Source (entry retrieval). Aborting...\n")
             return False
 
         line_source_counter_0_active = entry_line_source_counter_0_active.GetValue()
@@ -103,7 +105,7 @@ class Spinnaker(BaseCam):
         try:
             x0, y0, x, y = x0_y0_x_y
         except ValueError:
-            raise ValueError('Need 4-tuple with x0_y0_x_y')
+            raise ValueError("Need 4-tuple with x0_y0_x_y")
         else:
             self._min_max_inc(self.c.Width, int(x))
             self._min_max_inc(self.c.Height, int(y))

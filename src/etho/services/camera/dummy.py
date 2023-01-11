@@ -6,7 +6,6 @@ import cv2
 
 
 class Dummy(BaseCam):
-
     def __init__(self, serialnumber: int):
         """Dummy cam returning noise frames for testing.
 
@@ -40,14 +39,16 @@ class Dummy(BaseCam):
         image_timestamp = system_timestamp - self._t0
 
         image = np.random.randint(0, 64, size=(self._roi[2], self._roi[3], 3), dtype=np.uint8)
-        image = cv2.putText(image,
-                            f"{image_timestamp: 1.3f} s",
-                            org=(20, 100),
-                            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                            fontScale=1,
-                            color=(128, 64, 96),
-                            thickness=2,
-                            lineType=2)
+        image = cv2.putText(
+            image,
+            f"{image_timestamp: 1.3f} s",
+            org=(20, 100),
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=1,
+            color=(128, 64, 96),
+            thickness=2,
+            lineType=2,
+        )
 
         return image, image_timestamp, system_timestamp
 
@@ -125,14 +126,14 @@ class Dummy(BaseCam):
     def info_imaging(self):
         x0, y0, x, y = self.roi
         info = {
-            'width': x,
-            'height': y,
-            'offsetX': x0,
-            'offsetY': y0,
-            'exposure': self.exposure / 1_000,
-            'brightness': self.brightness,
-            'gamma': self.gamma,
-            'gain': self.gain,
-            'framerate': self.framerate,
+            "width": x,
+            "height": y,
+            "offsetX": x0,
+            "offsetY": y0,
+            "exposure": self.exposure / 1_000,
+            "brightness": self.brightness,
+            "gamma": self.gamma,
+            "gain": self.gain,
+            "framerate": self.framerate,
         }
         return info

@@ -6,13 +6,14 @@ from .base import BaseCam, gray2rgb
 
 try:
     import PyCapture2
+
     pycapture_error = None
 except ImportError as e:
     pycapture_error = e
 
 
 class FlyCapture2(BaseCam):
-    NAME = 'CAP'
+    NAME = "CAP"
 
     def __init__(self, serialnumber):
         if pycapture_error is not None:
@@ -50,7 +51,7 @@ class FlyCapture2(BaseCam):
             self.im = self.c.retrieveBuffer()
             system_ts = time.time()
         except PyCapture2.Fc2error as fc2Err:
-            raise ValueError('Image is None.')
+            raise ValueError("Image is None.")
 
         # convert timestamp
         ts = self.im.getTimeStamp()
@@ -76,7 +77,7 @@ class FlyCapture2(BaseCam):
         try:
             x0, y0, x, y = x0_y0_x_y
         except ValueError:
-            raise ValueError(F"Input {x0_y0_x_y} should be a 4-tuple.")
+            raise ValueError(f"Input {x0_y0_x_y} should be a 4-tuple.")
         try:
             fmt7_img_set = PyCapture2.Format7ImageSettings(0, x0, y0, x, y, PyCapture2.PIXEL_FORMAT.MONO8)
             fmt7_pkt_inf, isValid = self.c.validateFormat7Settings(fmt7_img_set)
@@ -84,10 +85,10 @@ class FlyCapture2(BaseCam):
         except Exception as e:
             logging.exception(f"Failed setting ROI from input {x0_y0_x_y}", exc_info=e)
             self.c.setFormat7Configuration(100.0, offsetX=0, offsetY=0)
-            x = self._min_max_inc('width', int(x), set_value=False)
-            y = self._min_max_inc('height', int(y), set_value=False)
-            x0 = self._min_max_inc('offsetX', int(x0), set_value=False)
-            y0 = self._min_max_inc('offsetY', int(y0), set_value=False)
+            x = self._min_max_inc("width", int(x), set_value=False)
+            y = self._min_max_inc("height", int(y), set_value=False)
+            x0 = self._min_max_inc("offsetX", int(x0), set_value=False)
+            y0 = self._min_max_inc("offsetY", int(y0), set_value=False)
             logging.info(f"Trying again with these values {[x0, y0, x, y]}")
             try:
                 fmt7_img_set = PyCapture2.Format7ImageSettings(0, x0, y0, x, y, PyCapture2.PIXEL_FORMAT.MONO8)
@@ -100,15 +101,16 @@ class FlyCapture2(BaseCam):
 
     def _min_max_inc(self, prop: str, value: int = None, set_value=True):
         info, isValid = self.c.getFormat7Info(PyCapture2.MODE.MODE_0)
-        prop_map = {'width': {'max_val': info.maxWidth, 'min_val': info.minWidth, 'inc': info.imageHStepSize},
-                    'height': {'max_val': info.maxHeight, 'min_val': info.minHeight, 'inc': info.imageVStepSize},
-                    'offsetX': {'max_val': info.maxWidth, 'min_val': 0, 'inc': info.offsetHStepSize},
-                    'offsetY': {'max_val': info.maxHeight, 'min_val': 0, 'inc': info.offsetVStepSize},
-                    }
+        prop_map = {
+            "width": {"max_val": info.maxWidth, "min_val": info.minWidth, "inc": info.imageHStepSize},
+            "height": {"max_val": info.maxHeight, "min_val": info.minHeight, "inc": info.imageVStepSize},
+            "offsetX": {"max_val": info.maxWidth, "min_val": 0, "inc": info.offsetHStepSize},
+            "offsetY": {"max_val": info.maxHeight, "min_val": 0, "inc": info.offsetVStepSize},
+        }
 
         if value is not None:
-            value = np.clip(value, prop_map[prop]['min_val'], prop_map[prop]['max_val'])
-            value = np.round(value / prop_map[prop]['inc']) * prop_map[prop]['inc']
+            value = np.clip(value, prop_map[prop]["min_val"], prop_map[prop]["max_val"])
+            value = np.round(value / prop_map[prop]["inc"]) * prop_map[prop]["inc"]
             if set_value:
                 self.c.setFormat7Configuration(100.0, **{prop: int(value)})
                 imageSettings, packetSize, percentage = self.c.getFormat7Configuration()
@@ -121,7 +123,9 @@ class FlyCapture2(BaseCam):
 
     @brightness.setter
     def brightness(self, value: float):
-        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.BRIGHTNESS, absValue=float(value), absControl=True, autoManualMode=True)
+        self.c.setProperty(
+            type=PyCapture2.PROPERTY_TYPE.BRIGHTNESS, absValue=float(value), absControl=True, autoManualMode=True
+        )
 
     @property
     def exposure(self):
@@ -178,12 +182,13 @@ class FlyCapture2(BaseCam):
 
     def info_hardware(self):
         cam_info = self.c.getCameraInfo()
-        info = {'Serial number': cam_info.serialNumber,
-                'Camera model': cam_info.modelName.decode('utf-8'),
-                'Camera vendor': cam_info.vendorName.decode('utf-8'),
-                'Sensor': cam_info.sensorInfo.decode('utf-8'),
-                'Resolution': cam_info.sensorResolution.decode('utf-8'),
-                'Firmware version': cam_info.firmwareVersion.decode('utf-8'),
-                'Firmware build time': cam_info.firmwareBuildTime.decode('utf-8'),
+        info = {
+            "Serial number": cam_info.serialNumber,
+            "Camera model": cam_info.modelName.decode("utf-8"),
+            "Camera vendor": cam_info.vendorName.decode("utf-8"),
+            "Sensor": cam_info.sensorInfo.decode("utf-8"),
+            "Resolution": cam_info.sensorResolution.decode("utf-8"),
+            "Firmware version": cam_info.firmwareVersion.decode("utf-8"),
+            "Firmware build time": cam_info.firmwareBuildTime.decode("utf-8"),
         }
         return info

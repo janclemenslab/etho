@@ -7,8 +7,10 @@ import os
 import sys
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
+
 try:
     import picamera
+
     picamera_error = None
 except Exception as picamera_error:
     pass
@@ -23,12 +25,12 @@ def frame_server():
     RUN = True
     try:
         while RUN:
-            camera = (yield)
+            camera = yield
             if camera is None:
                 RUN = False
             else:
                 stream = io.BytesIO()
-                camera.capture(stream, use_video_port=True, format='jpeg')
+                camera.capture(stream, use_video_port=True, format="jpeg")
                 stream.seek(0)
                 zmq_socket.send(stream.read())
     except:  # GeneratorExit:
@@ -49,16 +51,18 @@ class CAM(BaseZeroService):
 
     LOGGING_PORT = 1442
     SERVICE_PORT = 4242
-    SERVICE_NAME = 'CAM'
+    SERVICE_NAME = "CAM"
 
-    def setup(self,
-              savefilename,
-              duration,
-              bitrate=10000000,
-              resolution=(1640, 922),
-              framerate=40,
-              shutterspeed=10 * 1000,
-              annotate_frame_num=False):
+    def setup(
+        self,
+        savefilename,
+        duration,
+        bitrate=10000000,
+        resolution=(1640, 922),
+        framerate=40,
+        shutterspeed=10 * 1000,
+        annotate_frame_num=False,
+    ):
         """Initialize recording.
 
         Args:
@@ -76,7 +80,7 @@ class CAM(BaseZeroService):
         self.camera.framerate = framerate  # fps
         self.camera.shutter_speed = shutterspeed  # us
         self.camera.zoom = [0, 0.1, 1.0, 1]
-        self.camera.awb_mode = 'off'
+        self.camera.awb_mode = "off"
         self.camera.awb_gains = (113 / 128, 99 / 128)
 
         # as framenumber in frame <-display timestamp!!
@@ -84,34 +88,34 @@ class CAM(BaseZeroService):
         self.duration = duration
         self.bitrate = bitrate
         if savefilename is None:
-            self.savefilename = '/dev/null'
-            self.format = 'h264'
+            self.savefilename = "/dev/null"
+            self.format = "h264"
         else:
             self.savefilename = savefilename
             os.makedirs(os.path.dirname(savefilename), exist_ok=True)
             self.format = None
-            self.log.info('   will save to {}'.format(self.savefilename))
+            self.log.info("   will save to {}".format(self.savefilename))
         self._time_started = None
 
     def start(self):
-        self.log.info('starting recording')
+        self.log.info("starting recording")
         if self.camera.recording:
-            self.log.warning('    stop running recording')
+            self.log.warning("    stop running recording")
             self.finish()
         self.camera.start_recording(self.savefilename, format=self.format, bitrate=self.bitrate)
-        self.log.info('started recording')
+        self.log.info("started recording")
         if self.duration > 0:
-            self.log.info('duration {0} seconds'.format(self.duration))
+            self.log.info("duration {0} seconds".format(self.duration))
             # will execute FINISH after N seconds
-            t = Timer(self.duration, self.finish, kwargs={'stop_service': True})
+            t = Timer(self.duration, self.finish, kwargs={"stop_service": True})
             t.start()
-            self.log.info('finish timer started')
+            self.log.info("finish timer started")
         self._time_started = time.time()
-        self.log.debug('started')
+        self.log.debug("started")
 
     def finish(self, stop_service=False):
         self.log.warning("stopping recording")
-        if hasattr(self, 'camera') and self.camera.recording:
+        if hasattr(self, "camera") and self.camera.recording:
             self.camera.stop_recording()
             self.log.warning("   stopped recording")
         else:
@@ -126,7 +130,7 @@ class CAM(BaseZeroService):
             self.fs.send(self.camera)
 
     def is_busy(self):
-        if hasattr(self, 'camera'):
+        if hasattr(self, "camera"):
             return self.camera.recording
         else:
             return None
@@ -141,17 +145,17 @@ class CAM(BaseZeroService):
         return True
 
     def cleanup(self):
-        if hasattr(self, 'camera'):
+        if hasattr(self, "camera"):
             self.camera.close()
         return True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # expose as ZeroService
     if len(sys.argv) > 1:
         ser = sys.argv[1]
     else:
-        ser = 'default'
+        ser = "default"
     s = CAM(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(CAM.SERVICE_PORT))
     s.run()

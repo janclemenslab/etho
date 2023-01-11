@@ -1,14 +1,16 @@
 from .ZeroService import BaseZeroService  # import super class
-import time    # for timer
+import time  # for timer
 import sys
 import numpy as np
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
+
 try:
     import PyDAQmx as daq
     from PyDAQmx.DAQmxCallBack import *
     from PyDAQmx.DAQmxConstants import *
     from PyDAQmx.DAQmxFunctions import *
+
     pydaqmx_import_error = None
 except ImportError as pydaqmx_import_error:
     pass
@@ -36,9 +38,9 @@ class ANA(BaseZeroService):
         self.duration = float(duration)
 
         self.samples_read = daq.int32()
-        dev_name = '/Dev1'
-        cha_name = ['ao2', 'ao3']
-        self.cha_name = [dev_name + '/' + ch for ch in cha_name]  # append device name
+        dev_name = "/Dev1"
+        cha_name = ["ao2", "ao3"]
+        self.cha_name = [dev_name + "/" + ch for ch in cha_name]  # append device name
         self.cha_string = ", ".join(self.cha_name)
         self.num_channels = len(cha_name)
         self.num_samples_per_chan = 10_000
@@ -61,33 +63,47 @@ class ANA(BaseZeroService):
         """
         # if len(state) != self.nb_channels:
         #     raise ValueError(f"State vector should have same length as the number of digital output channels. Is {len(state)}, should be {'x'}.")
-        self.log.info('sending {state} on {output_channels}')
-        self.task.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
-                                    self._data * state, daq.byref(self.samples_read), None)
+        self.log.info("sending {state} on {output_channels}")
+        self.task.WriteAnalogF64(
+            self._data.shape[0],
+            0,
+            DAQmx_Val_WaitInfinitely,
+            DAQmx_Val_GroupByScanNumber,
+            self._data * state,
+            daq.byref(self.samples_read),
+            None,
+        )
 
         # This is currently blocking - not so great
         if duration is not None:
             time.sleep(duration)  # alternatively could  return immediately using a threaded timer
-            self.task.WriteAnalogF64(self._data.shape[0], 0, DAQmx_Val_WaitInfinitely, DAQmx_Val_GroupByScanNumber,
-                                     self._data * 0, daq.byref(self.samples_read), None)
-        self.log.info('   success.')
+            self.task.WriteAnalogF64(
+                self._data.shape[0],
+                0,
+                DAQmx_Val_WaitInfinitely,
+                DAQmx_Val_GroupByScanNumber,
+                self._data * 0,
+                daq.byref(self.samples_read),
+                None,
+            )
+        self.log.info("   success.")
 
     def start(self):
         pass
 
     def finish(self, stop_service=False):
-        self.log.warning('stopping')
+        self.log.warning("stopping")
         self.task.StopTask()
 
         # clean up code here
-        self.log.warning('   stopped ')
+        self.log.warning("   stopped ")
         # mode log file and savefilename
         if stop_service:
             time.sleep(2)
             self.service_stop()
 
     def is_busy(self):
-        return True # should return True/False
+        return True  # should return True/False
 
     def test(self):
         return True
@@ -98,11 +114,11 @@ class ANA(BaseZeroService):
         return True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) > 1:
         ser = sys.argv[1]
     else:
-        ser = 'default'
+        ser = "default"
     s = ANA(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(ANA.SERVICE_PORT))  # broadcast on all IPs
     s.run()
