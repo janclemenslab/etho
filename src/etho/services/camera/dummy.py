@@ -8,7 +8,7 @@ import cv2
 class Dummy(BaseCam):
 
     def __init__(self, serialnumber: int):
-        """Dummy cam returning noise frames
+        """Dummy cam returning noise frames for testing.
 
         Args:
             serialnumber ([type]): [description]
