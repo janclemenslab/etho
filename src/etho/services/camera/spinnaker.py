@@ -48,42 +48,43 @@ class Spinnaker(BaseCam):
         nodemap = self.c.GetNodeMap()
 
         # Select line to control
-        node_line_selector = PySpin.CEnumerationPtr(nodemap.GetNode('LineSelector'))
+        node_line_selector = PySpin.CEnumerationPtr(nodemap.GetNode("LineSelector"))
         if not PySpin.IsAvailable(node_line_selector) or not PySpin.IsWritable(node_line_selector):
-            print('\nUnable to set Line Selector (enumeration retrieval). Aborting...\n')
+            print("\nUnable to set Line Selector (enumeration retrieval). Aborting...\n")
             return False
         entry_line_selector_line = node_line_selector.GetEntryByName(line)
         if not PySpin.IsAvailable(entry_line_selector_line) or not PySpin.IsReadable(entry_line_selector_line):
-            print('\nUnable to set Line Selector (entry retrieval). Aborting...\n')
+            print("\nUnable to set Line Selector (entry retrieval). Aborting...\n")
             return False
 
         line_selector_line = entry_line_selector_line.GetValue()
         node_line_selector.SetIntValue(line_selector_line)
 
         # Set Line MODE for Selected Line to ExposureActive
-        node_line_mode = PySpin.CEnumerationPtr(nodemap.GetNode('LineMode'))
+        node_line_mode = PySpin.CEnumerationPtr(nodemap.GetNode("LineMode"))
         if not PySpin.IsAvailable(node_line_mode) or not PySpin.IsWritable(node_line_mode):
-            print('\nUnable to set Line Mode (enumeration retrieval). Aborting...\n')
+            print("\nUnable to set Line Mode (enumeration retrieval). Aborting...\n")
             return False
 
-        output_line_selector_line = node_line_mode.GetEntryByName('Output')
+        output_line_selector_line = node_line_mode.GetEntryByName("Output")
         if not PySpin.IsAvailable(output_line_selector_line) or not PySpin.IsReadable(output_line_selector_line):
-            print('\nUnable to set Line Mode (entry retrieval). Aborting...\n')
+            print("\nUnable to set Line Mode (entry retrieval). Aborting...\n")
             return False
 
         line_selector_line = output_line_selector_line.GetValue()
         node_line_mode.SetIntValue(line_selector_line)
 
         # Set Line SOURCE for Selected Line to ExposureActive
-        node_line_source = PySpin.CEnumerationPtr(nodemap.GetNode('LineSource'))
+        node_line_source = PySpin.CEnumerationPtr(nodemap.GetNode("LineSource"))
         if not PySpin.IsAvailable(node_line_source) or not PySpin.IsWritable(node_line_source):
-            print('\nUnable to set Line Source (enumeration retrieval). Aborting...\n')
+            print("\nUnable to set Line Source (enumeration retrieval). Aborting...\n")
             return False
 
-        entry_line_source_counter_0_active = node_line_source.GetEntryByName('ExposureActive')
-        if not PySpin.IsAvailable(entry_line_source_counter_0_active) \
-                or not PySpin.IsReadable(entry_line_source_counter_0_active):
-            print('\nUnable to set Line Source (entry retrieval). Aborting...\n')
+        entry_line_source_counter_0_active = node_line_source.GetEntryByName("ExposureActive")
+        if not PySpin.IsAvailable(entry_line_source_counter_0_active) or not PySpin.IsReadable(
+            entry_line_source_counter_0_active
+        ):
+            print("\nUnable to set Line Source (entry retrieval). Aborting...\n")
             return False
 
         line_source_counter_0_active = entry_line_source_counter_0_active.GetValue()
