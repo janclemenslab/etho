@@ -52,7 +52,6 @@ class Spinnaker(BaseCam):
         if not PySpin.IsAvailable(node_line_selector) or not PySpin.IsWritable(node_line_selector):
             print('\nUnable to set Line Selector (enumeration retrieval). Aborting...\n')
             return False
-
         entry_line_selector_line = node_line_selector.GetEntryByName(line)
         if not PySpin.IsAvailable(entry_line_selector_line) or not PySpin.IsReadable(entry_line_selector_line):
             print('\nUnable to set Line Selector (entry retrieval). Aborting...\n')
