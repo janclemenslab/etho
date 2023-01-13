@@ -42,19 +42,32 @@ class Spinnaker(BaseCam):
         # trigger overlap -> ReadOut - for faster frame rates
         self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
 
-    def _set_gpio(self, line="Line2"):
+        self.enable_gpio_strobe()
+
+    def enable_gpio_strobe(self):
+        self._set_gpio_strobe(self, enable=True)
+
+    def disable_gpio_strobe(self):
+        self._set_gpio_strobe(self, enable=False)
+
+    def _set_gpio_strobe(self, line: str = "Line2", enable: bool = True):
         # from PySpin/Examples/Python3/CounterAndTimer.py
         # from https://github.com/CapAI/misc/blob/a22cd50e90018c03cde3c1339aa622185502bb05/spinnaker/pyspin/Examples/Python3/CounterAndTimer.py#L193
+        if enable:
+            line_mode = "Output"
+        else:
+            line_mode = "Input"
+
         nodemap = self.c.GetNodeMap()
 
         # Select line to control
         node_line_selector = PySpin.CEnumerationPtr(nodemap.GetNode("LineSelector"))
         if not PySpin.IsAvailable(node_line_selector) or not PySpin.IsWritable(node_line_selector):
-            print("\nUnable to set Line Selector (enumeration retrieval). Aborting...\n")
+            print("Unable to set Line Selector (enumeration retrieval). Aborting...")
             return False
         entry_line_selector_line = node_line_selector.GetEntryByName(line)
         if not PySpin.IsAvailable(entry_line_selector_line) or not PySpin.IsReadable(entry_line_selector_line):
-            print("\nUnable to set Line Selector (entry retrieval). Aborting...\n")
+            print("Unable to set Line Selector (entry retrieval). Aborting...")
             return False
 
         line_selector_line = entry_line_selector_line.GetValue()
@@ -63,12 +76,11 @@ class Spinnaker(BaseCam):
         # Set Line MODE for Selected Line to ExposureActive
         node_line_mode = PySpin.CEnumerationPtr(nodemap.GetNode("LineMode"))
         if not PySpin.IsAvailable(node_line_mode) or not PySpin.IsWritable(node_line_mode):
-            print("\nUnable to set Line Mode (enumeration retrieval). Aborting...\n")
+            print("Unable to set Line Mode (enumeration retrieval). Aborting...")
             return False
-
-        output_line_selector_line = node_line_mode.GetEntryByName("Output")
+        output_line_selector_line = node_line_mode.GetEntryByName(line_mode)
         if not PySpin.IsAvailable(output_line_selector_line) or not PySpin.IsReadable(output_line_selector_line):
-            print("\nUnable to set Line Mode (entry retrieval). Aborting...\n")
+            print("Unable to set Line Mode (entry retrieval). Aborting...")
             return False
 
         line_selector_line = output_line_selector_line.GetValue()
@@ -77,18 +89,15 @@ class Spinnaker(BaseCam):
         # Set Line SOURCE for Selected Line to ExposureActive
         node_line_source = PySpin.CEnumerationPtr(nodemap.GetNode("LineSource"))
         if not PySpin.IsAvailable(node_line_source) or not PySpin.IsWritable(node_line_source):
-            print("\nUnable to set Line Source (enumeration retrieval). Aborting...\n")
+            print("Unable to set Line Source (enumeration retrieval). Aborting...")
+            return False
+        entry_exposure_active = node_line_source.GetEntryByName("ExposureActive")
+        if not PySpin.IsAvailable(entry_exposure_active) or not PySpin.IsReadable(entry_exposure_active):
+            print("Unable to set Line Source (entry retrieval). Aborting...")
             return False
 
-        entry_line_source_counter_0_active = node_line_source.GetEntryByName("ExposureActive")
-        if not PySpin.IsAvailable(entry_line_source_counter_0_active) or not PySpin.IsReadable(
-            entry_line_source_counter_0_active
-        ):
-            print("\nUnable to set Line Source (entry retrieval). Aborting...\n")
-            return False
-
-        line_source_counter_0_active = entry_line_source_counter_0_active.GetValue()
-        node_line_source.SetIntValue(line_source_counter_0_active)
+        exposure_active = entry_exposure_active.GetValue()
+        node_line_source.SetIntValue(exposure_active)
         return True
 
     def get(self, timeout=None):
