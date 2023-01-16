@@ -45,7 +45,7 @@ class GCM(BaseZeroService):
         self.c.framerate = params["frame_rate"]
 
         # acquire test image
-        self.disable_gpio_strobe()  # to prevent the test image producing strobes
+        self.c.disable_gpio_strobe()  # to prevent the test image producing strobes
         self.c.start()
         self.test_image, image_ts, system_ts = self.c.get()
         self.c.stop()
@@ -110,8 +110,6 @@ class GCM(BaseZeroService):
             callback.start()
         self._time_started = time.time()
 
-        self.enable_gpio_strobe()
-
         # background jobs should be run and controlled via a thread
         self._worker_thread.start()
         self.log.debug("started")
@@ -125,6 +123,7 @@ class GCM(BaseZeroService):
         self.frameNumber = 0
         self.prev_framenumber = 0
         self.log.info("started worker")
+        self.enable_gpio_strobe()
         self.c.start()
 
         while RUN:

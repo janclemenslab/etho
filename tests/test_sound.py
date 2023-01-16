@@ -1,10 +1,10 @@
 import pandas as pd
 from etho.utils.sound import parse_table, load_sounds
 import matplotlib.pyplot as plt
-plt.ion()
 
 
 def test_playlist():
+    plt.ion()
     for playlistfile in ['tests/test_sound_playlist_mono.txt', 'tests/test_sound_playlist_mirrorled.txt', 'tests/test_sound_playlist_stereo.txt']:
         print(playlistfile)
         df = parse_table(playlistfile, [str, float, float, float, float, float, str])
