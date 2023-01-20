@@ -242,7 +242,7 @@
 <span class="sd">    Contains functions for synchronized read/write access and a staleness indicator.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">WHOAMI</span> <span class="o">=</span> <span class="s1">&#39;array&#39;</span>
+    <span class="n">WHOAMI</span> <span class="o">=</span> <span class="s2">&quot;array&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">ctype</span><span class="o">=</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_double</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;[summary]</span>
@@ -256,7 +256,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="c1"># indicator whether the current array values are &quot;fresh&quot;</span>
         <span class="c1"># stale is set to False upon `put` and to True on `get`</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">RawValue</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">RawValue</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="c1"># add one more RawValue for system_time?</span>
 
         <span class="c1"># common lock to sync read/write access</span>
@@ -268,8 +268,7 @@
         <span class="c1"># add one more RawValue for system_time?</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
             <span class="c1"># create array in shared memory segment</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_shared_array_base</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">RawArray</span><span class="p">(</span>
-                <span class="n">ctype</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shared_array_base</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">RawArray</span><span class="p">(</span><span class="n">ctype</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">stale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -310,14 +309,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">False</span></div>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">del</span> <span class="bp">self</span></div>
 
 
-<div class="viewcode-block" id="Faucet"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.Faucet">[docs]</a><span class="k">class</span> <span class="nc">Faucet</span><span class="p">():</span>
+<div class="viewcode-block" id="Faucet"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.Faucet">[docs]</a><span class="k">class</span> <span class="nc">Faucet</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Wrapper for Pipe connection objects that exposes</span>
 <span class="sd">    `get` function for common interface with Queues.&quot;&quot;&quot;</span>
 
-    <span class="n">WHOAMI</span> <span class="o">=</span> <span class="s1">&#39;pipe&#39;</span>
+    <span class="n">WHOAMI</span> <span class="o">=</span> <span class="s2">&quot;pipe&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Wraps Connection object returned when calling Pipe and</span>
@@ -334,7 +333,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">close</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">closed</span>
 
-<div class="viewcode-block" id="Faucet.get"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.Faucet.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">empty_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<div class="viewcode-block" id="Faucet.get"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.Faucet.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">empty_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Mimics the logic of the `Queue.get`.</span>
 
 <span class="sd">        Args:</span>
@@ -374,12 +373,12 @@
     <span class="k">return</span> <span class="n">sender</span><span class="p">,</span> <span class="n">receiver</span>
 
 
-<div class="viewcode-block" id="ConcurrentTask"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.ConcurrentTask">[docs]</a><span class="k">class</span> <span class="nc">ConcurrentTask</span><span class="p">():</span>
+<div class="viewcode-block" id="ConcurrentTask"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.ConcurrentTask">[docs]</a><span class="k">class</span> <span class="nc">ConcurrentTask</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Helper class for running tasks in independent</span>
 <span class="sd">    processes with communication tools attached.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">task_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">comms</span><span class="o">=</span><span class="s1">&#39;queue&#39;</span><span class="p">,</span> <span class="n">comms_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">taskstopsignal</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; [summary]</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">task_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">comms</span><span class="o">=</span><span class="s2">&quot;queue&quot;</span><span class="p">,</span> <span class="n">comms_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">taskstopsignal</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;[summary]</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            task ([type]): First arg to task must be the end of the comms and is provided via `args`.</span>
@@ -402,8 +401,7 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_receiver</span> <span class="o">=</span> <span class="n">NumpyArray</span><span class="p">(</span><span class="o">**</span><span class="n">comms_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">&#39;Unknown comms </span><span class="si">{</span><span class="n">comms</span><span class="si">}</span><span class="s1"> - allowed values are &quot;pipe&quot;, &quot;queue&quot;, &quot;array&quot;&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown comms </span><span class="si">{</span><span class="n">comms</span><span class="si">}</span><span class="s1"> - allowed values are &quot;pipe&quot;, &quot;queue&quot;, &quot;array&quot;&#39;</span><span class="p">)</span>
 
         <span class="c1"># delegate send calls from sender</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="o">.</span><span class="n">send</span>
@@ -411,8 +409,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_process</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">task</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_receiver</span><span class="p">,),</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">task_kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">start</span>
 
-    <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sleepduration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-               <span class="n">sleepcycletimeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">maxsleepcycles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100000000</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sleepduration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sleepcycletimeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">maxsleepcycles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100000000</span>
+    <span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">==</span> <span class="s2">&quot;queue&quot;</span><span class="p">:</span>
             <span class="n">sleepcounter</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">try</span><span class="p">:</span>
@@ -428,14 +427,15 @@
                 <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>  <span class="c1"># catch python bug on OSX</span>
                     <span class="k">break</span>
                 <span class="n">sleepcounter</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">queuehasnotchanged</span> <span class="o">=</span> <span class="p">(</span><span class="n">queuesize</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="o">.</span><span class="n">qsize</span><span class="p">())</span>
+                <span class="n">queuehasnotchanged</span> <span class="o">=</span> <span class="n">queuesize</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="o">.</span><span class="n">qsize</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">queuehasnotchanged</span><span class="p">:</span>
                     <span class="n">queuehasnotchangedcounter</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">queuehasnotchangedcounter</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">   waiting </span><span class="si">{}</span><span class="s1"> seconds for </span><span class="si">{}</span><span class="s1"> frames to self.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="n">sleepcounter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="o">.</span><span class="n">qsize</span><span class="p">()))</span>  <span class="c1"># frame interval in ms</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">   waiting </span><span class="si">{}</span><span class="s2"> seconds for </span><span class="si">{}</span><span class="s2"> frames to self.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sleepcounter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="o">.</span><span class="n">qsize</span><span class="p">())</span>
+                    <span class="p">)</span>  <span class="c1"># frame interval in ms</span>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sleep_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">taskstopsignal</span><span class="p">)</span>

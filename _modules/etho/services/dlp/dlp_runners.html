@@ -249,9 +249,10 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span>
 
 
-<span class="c1"># Populated by decorating classes with `register_runner`. </span>
+<span class="c1"># Populated by decorating classes with `register_runner`.</span>
 <span class="c1"># Enables selecting runners by string in `DLPZeroService`.</span>
 <span class="n">runners</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
 
 <div class="viewcode-block" id="register_runner"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.register_runner">[docs]</a><span class="k">def</span> <span class="nf">register_runner</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Adds func to model_dict Dict[str: Class]. For selecting runners by string.&quot;&quot;&quot;</span>
@@ -259,7 +260,7 @@
     <span class="k">return</span> <span class="bp">cls</span></div>
 
 
-<div class="viewcode-block" id="DLP_runner"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.DLP_runner">[docs]</a><span class="k">class</span> <span class="nc">DLP_runner</span><span class="p">():</span>
+<div class="viewcode-block" id="DLP_runner"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.DLP_runner">[docs]</a><span class="k">class</span> <span class="nc">DLP_runner</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Base class for all runners.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -287,7 +288,7 @@
 <span class="k">class</span> <span class="nc">LED_blinker</span><span class="p">(</span><span class="n">DLP_runner</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Blinking square read in by a photodiode for syncing DLP frames with DAQ samples.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="n">led_size</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">led_pos</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0.3</span><span class="p">],</span> <span class="n">led_frame</span> <span class="o">=</span> <span class="mi">180</span><span class="o">*</span><span class="mi">60</span><span class="p">,</span> <span class="n">led_duration</span> <span class="o">=</span> <span class="mi">180</span><span class="p">,</span> <span class="o">**</span><span class="n">kwignore</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="n">led_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">led_pos</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">],</span> <span class="n">led_frame</span><span class="o">=</span><span class="mi">180</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="n">led_duration</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="o">**</span><span class="n">kwignore</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set up LED blinker</span>
 
 <span class="sd">        Args:</span>
@@ -305,8 +306,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">led_duration</span> <span class="o">=</span> <span class="n">led_duration</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">win</span> <span class="o">=</span> <span class="n">win</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">rectangle</span> <span class="o">=</span> <span class="nb">object</span><span class="p">(</span><span class="n">win</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;norm&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">led_size</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">led_pos</span><span class="p">,</span>
-                                <span class="n">autoDraw</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">lineWidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rectangle</span> <span class="o">=</span> <span class="nb">object</span><span class="p">(</span>
+            <span class="n">win</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">win</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s2">&quot;norm&quot;</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">led_size</span><span class="p">,</span>
+            <span class="n">pos</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">led_pos</span><span class="p">,</span>
+            <span class="n">autoDraw</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">fillColor</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">lineWidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="LED_blinker.update"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.LED_blinker.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ball_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;Update LED blinker.</span>
@@ -329,14 +338,12 @@
 
 <div class="viewcode-block" id="LED_blinker.status"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.LED_blinker.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
-        <span class="n">log_msg</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;opacity&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle</span><span class="o">.</span><span class="n">opacity</span><span class="p">}</span>
+        <span class="n">log_msg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opacity&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle</span><span class="o">.</span><span class="n">opacity</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">log_msg</span></div>
 
 <div class="viewcode-block" id="LED_blinker.destroy"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.LED_blinker.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Free any resources (close files etc).&quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
-
-
 
 
 <span class="c1"># Example with stim control via param file</span>
@@ -359,8 +366,9 @@
 <span class="sd">            Dict[str: float/int]: values should be numbers - not lists or np.arrays!</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">object</span> <span class="o">=</span> <span class="nb">object</span><span class="p">(</span><span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;norm&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="mi">1</span><span class="o">/</span><span class="mi">270</span><span class="p">,</span>
-                    <span class="n">autoDraw</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">fillColor</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">lineWidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span> <span class="o">=</span> <span class="nb">object</span><span class="p">(</span>
+            <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;norm&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">270</span><span class="p">,</span> <span class="n">autoDraw</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">lineWidth</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>
         <span class="c1"># self.object = object(win=win, units = &#39;norm&#39;, size=self.led_size, pos=self.led_pos,</span>
         <span class="c1">#                       autoDraw = True, fillColor=[-1, -1, -1], lineWidth=0, opacity=1)</span>
 
@@ -370,7 +378,7 @@
         <span class="n">file</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>  <span class="c1"># force read all data from disk into memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arrays_length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
-        
+
 <div class="viewcode-block" id="ObjectMoverSizer.update"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.ObjectMoverSizer.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ball_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;Update LED blinker.</span>
 
@@ -381,15 +389,13 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Dict[str: float/int]: values should be numbers - not lists or np.arrays!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sizes&#39;</span><span class="p">][</span><span class="n">frame_number</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">arrays_length</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;positions&#39;</span><span class="p">][</span><span class="n">frame_number</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">arrays_length</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sizes&quot;</span><span class="p">][</span><span class="n">frame_number</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">arrays_length</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;positions&quot;</span><span class="p">][</span><span class="n">frame_number</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">arrays_length</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ObjectMoverSizer.status"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.ObjectMoverSizer.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
-        <span class="n">log_msg</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
-                   <span class="s1">&#39;position_0&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                   <span class="s1">&#39;position_1&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
+        <span class="n">log_msg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="s2">&quot;position_0&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;position_1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
         <span class="k">return</span> <span class="n">log_msg</span></div></div>
 
 
@@ -397,7 +403,16 @@
 <span class="k">class</span> <span class="nc">ObjectCirclesGrid</span><span class="p">(</span><span class="n">DLP_runner</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Move and resize object based on `size` and `position` fields in npz file.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="n">grid_direction_change_frames</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">30</span><span class="o">*</span><span class="mi">180</span><span class="p">,</span> <span class="n">grid_speed</span><span class="p">:</span><span class="nb">float</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mi">180</span><span class="p">,</span> <span class="n">grid_direction</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncircles</span><span class="p">:</span><span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwignore</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">win</span><span class="p">,</span>
+        <span class="nb">object</span><span class="p">,</span>
+        <span class="n">grid_direction_change_frames</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="mi">180</span><span class="p">,</span>
+        <span class="n">grid_speed</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">180</span><span class="p">,</span>
+        <span class="n">grid_direction</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">ncircles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwignore</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set up grid of circles, using a list of Circles.</span>
 
 <span class="sd">        Args:</span>
@@ -412,8 +427,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span> <span class="o">=</span> <span class="n">grid_direction</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_direction_change_frames</span> <span class="o">=</span> <span class="n">grid_direction_change_frames</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grid_speed</span> <span class="o">=</span> <span class="n">grid_speed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">object</span> <span class="o">=</span> <span class="p">[</span><span class="nb">object</span><span class="p">(</span><span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;norm&#39;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="mi">1</span><span class="o">/</span><span class="mi">270</span><span class="p">,</span><span class="n">autoDraw</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">fillColor</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">lineWidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">ncircles</span><span class="p">)]</span>
-        
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">object</span><span class="p">(</span>
+                <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>
+                <span class="n">units</span><span class="o">=</span><span class="s2">&quot;norm&quot;</span><span class="p">,</span>
+                <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                <span class="n">radius</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">270</span><span class="p">,</span>
+                <span class="n">autoDraw</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">fillColor</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">lineWidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ncircles</span><span class="p">)</span>
+        <span class="p">]</span>
+
 <div class="viewcode-block" id="ObjectCirclesGrid.update"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.ObjectCirclesGrid.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ball_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;Update LED blinker.</span>
 
@@ -427,13 +454,13 @@
         <span class="k">if</span> <span class="n">frame_number</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_direction_change_frames</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">for</span> <span class="n">mc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">:</span>
-            <span class="n">new_x</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_speed</span>
-            <span class="n">mc</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_x</span> <span class="k">if</span> <span class="n">new_x</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">new_x</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">new_x</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_speed</span>
+            <span class="n">mc</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_x</span> <span class="k">if</span> <span class="n">new_x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">new_x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ObjectCirclesGrid.status"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.ObjectCirclesGrid.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
-        <span class="n">log_msg</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;grid_direction&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span><span class="p">}</span>
+        <span class="n">log_msg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;grid_direction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">log_msg</span></div></div>
 </pre></div>
         </article>

@@ -237,16 +237,16 @@
 <span class="sd">    cycle(&#39;ABCD&#39;, shuffle=&#39;full&#39;)  --&gt; ACCBBDBDCABA ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">it</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s1">&#39;block&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">it</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;block&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            it: Iterable</span>
 <span class="sd">            shuffle: None, &#39;block&#39;, &#39;full&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">allowed_shuffles</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;block&#39;</span><span class="p">,</span> <span class="s1">&#39;full&#39;</span><span class="p">]</span>
+        <span class="n">allowed_shuffles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;block&quot;</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">shuffle</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_shuffles</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;shuffle should be one of </span><span class="si">{</span><span class="n">allowed_shuffles</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;shuffle should be one of </span><span class="si">{</span><span class="n">allowed_shuffles</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">shuffled_cycle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_it</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
@@ -254,13 +254,13 @@
 
     <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return next item in iterator.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pos</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">)</span>  <span class="c1"># wrap index</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span> <span class="o">==</span> <span class="s1">&#39;block&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">)</span>  <span class="c1"># wrap index</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span> <span class="o">==</span> <span class="s2">&quot;block&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">)</span>  <span class="c1"># in-place shuffle the iterator</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># since randint bounds are inclusive</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span> <span class="o">==</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># since randint bounds are inclusive</span>
         <span class="c1"># else:</span>
         <span class="c1">#     idx = self._pos</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>

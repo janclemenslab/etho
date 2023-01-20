@@ -6,7 +6,7 @@
 - notes:
    - on the rpi PC install `pandas=0.23` and `python=3.7` instead
    - if you want to use the old flycapture SDK (needed for some older FLIR/PointGrey cameras), install `python=3.6` instead
-   - saving videos using vidread: `pip install vidread[core]`
+   - saving videos using vidread: `pip install vidgear[core]`
    - display frames with pyqtgraph: mamba install pyqtgraph -c conda-forge`
 - install custom repos:
   - zerorpc fork: `pip install git+https://github.com/postpop/zerorpc-python --no-deps`

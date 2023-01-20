@@ -228,7 +228,7 @@
 
 
 <div class="viewcode-block" id="for_all_methods"><a class="viewcode-back" href="../../../../api/etho.services.utils.log_exceptions.html#etho.services.utils.log_exceptions.for_all_methods">[docs]</a><span class="k">def</span> <span class="nf">for_all_methods</span><span class="p">(</span><span class="n">decorator</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;&quot;Decorates all methods of a class with &#39;decorator&#39;.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; &quot;Decorates all methods of a class with &#39;decorator&#39;.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">decorate</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>  <span class="c1"># there&#39;s propably a better way to do this</span>
@@ -250,7 +250,6 @@
         <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
