@@ -5,15 +5,13 @@ from .base import BaseCam
 
 try:
     import PySpin
-
     pyspin_error = None
 except ImportError as e:
     pyspin_error = e
 
-
 class Spinnaker(BaseCam):
 
-    NAME = "SPN"
+    NAME = 'SPN'
 
     def __init__(self, serialnumber):
         if pyspin_error is not None:
@@ -41,38 +39,6 @@ class Spinnaker(BaseCam):
 
         # trigger overlap -> ReadOut - for faster frame rates
         self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
-
-    def enable_gpio_strobe(self):
-        self._set_gpio_strobe(enable=True)
-
-    def disable_gpio_strobe(self):
-        self._set_gpio_strobe(enable=False)
-
-    def set_node_and_entry(self, node_name: str, entry_name: str):
-        nodemap = self.c.GetNodeMap()
-
-        node = PySpin.CEnumerationPtr(nodemap.GetNode(node_name))
-        if not PySpin.IsAvailable(node) or not PySpin.IsWritable(node):
-            raise ValueError(f"Cannot retrieve node {node_name}.")
-
-        entry = node.GetEntryByName(entry_name)
-        if not PySpin.IsAvailable(entry) or not PySpin.IsReadable(entry):
-            raise ValueError(f"Cannot retrieve entry {entry_name} from node {node_name}.")
-
-        node.SetIntValue(entry.GetValue())
-
-    def _set_gpio_strobe(self, line: str = "Line2", enable: bool = True):
-        # from PySpin/Examples/Python3/CounterAndTimer.py
-        # from https://github.com/CapAI/misc/blob/a22cd50e90018c03cde3c1339aa622185502bb05/spinnaker/pyspin/Examples/Python3/CounterAndTimer.py#L193
-        if enable:
-            line_mode = "Output"
-        else:
-            line_mode = "Input"
-
-        # Select line to control
-        self.set_node_and_entry("LineSelector", line)
-        self.set_node_and_entry("LineMode", line_mode)
-        self.set_node_and_entry("LineSource", "ExposureActive")
 
     def get(self, timeout=None):
 
@@ -102,7 +68,7 @@ class Spinnaker(BaseCam):
         try:
             x0, y0, x, y = x0_y0_x_y
         except ValueError:
-            raise ValueError("Need 4-tuple with x0_y0_x_y")
+            raise ValueError('Need 4-tuple with x0_y0_x_y')
         else:
             self._min_max_inc(self.c.Width, int(x))
             self._min_max_inc(self.c.Height, int(y))
@@ -182,6 +148,38 @@ class Spinnaker(BaseCam):
             timestamp_offsets.append(timestamp_offset)
         # Return the median value
         return np.median(timestamp_offsets)
+
+    def enable_gpio_strobe(self):
+        self._set_gpio_strobe(enable=True)
+
+    def disable_gpio_strobe(self):
+        self._set_gpio_strobe(enable=False)
+
+    def set_node_and_entry(self, node_name: str, entry_name: str):
+        nodemap = self.c.GetNodeMap()
+
+        node = PySpin.CEnumerationPtr(nodemap.GetNode(node_name))
+        if not PySpin.IsAvailable(node) or not PySpin.IsWritable(node):
+            raise ValueError(f"Cannot retrieve node {node_name}.")
+
+        entry = node.GetEntryByName(entry_name)
+        if not PySpin.IsAvailable(entry) or not PySpin.IsReadable(entry):
+            raise ValueError(f"Cannot retrieve entry {entry_name} from node {node_name}.")
+
+        node.SetIntValue(entry.GetValue())
+
+    def _set_gpio_strobe(self, line: str = "Line2", enable: bool = True):
+        # from PySpin/Examples/Python3/CounterAndTimer.py
+        # from https://github.com/CapAI/misc/blob/a22cd50e90018c03cde3c1339aa622185502bb05/spinnaker/pyspin/Examples/Python3/CounterAndTimer.py#L193
+        if enable:
+            line_mode = "Output"
+        else:
+            line_mode = "Input"
+
+        # Select line to control
+        self.set_node_and_entry("LineSelector", line)
+        self.set_node_and_entry("LineMode", line_mode)
+        self.set_node_and_entry("LineSource", "ExposureActive")
 
     def reset(self, sleep: float = 10.0):
         device_reset = PySpin.CCommandPtr(self.c.GetNodeMap().GetNode("DeviceReset"))

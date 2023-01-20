@@ -103,6 +103,12 @@ class BaseCam:
     def framerate(self, value: float):
         self._framerate = value
 
+    def enable_gpio_strobe(self):
+        pass
+
+    def disable_gpio_strobe(self):
+        pass
+
     def start(self):
         pass
 
