@@ -96,7 +96,7 @@ class GCM(BaseZeroService):
         )
 
         hii = self.c.info_hardware()
-        self.log.info(params)
+        self.log.info(params.__str__())
         try:
             hii.update({k: v if v is not None else "defaults" for k, v, in params["callbacks"].items()})
         except AttributeError:
