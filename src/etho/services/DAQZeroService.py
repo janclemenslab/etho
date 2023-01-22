@@ -13,7 +13,7 @@ try:
     from .daq.IOTask import *
 
     daqmx_import_error = None
-except (ImportError, NameError) as daqmx_import_error:
+except (ImportError, NameError, NotImplementedError) as daqmx_import_error:
     pass
 
 
