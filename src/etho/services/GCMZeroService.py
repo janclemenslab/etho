@@ -123,7 +123,7 @@ class GCM(BaseZeroService):
         self.frameNumber = 0
         self.prev_framenumber = 0
         self.log.info("started worker")
-        self.enable_gpio_strobe()
+        self.c.enable_gpio_strobe()
         self.c.start()
 
         while RUN:
@@ -162,6 +162,7 @@ class GCM(BaseZeroService):
             self._thread_stopper.set()
         if hasattr(self, "_thread_timer"):
             self._thread_timer.cancel()
+        self.c.disable_gpio_strobe()
 
         # clean up code here
         self.c.close()  # not sure this works if BeginAcquistion has not been called
