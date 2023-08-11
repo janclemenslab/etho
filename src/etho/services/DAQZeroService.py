@@ -11,7 +11,6 @@ import numpy as np
 
 try:
     from .daq.IOTask import *
-
     daqmx_import_error = None
 except (ImportError, NameError, NotImplementedError) as daqmx_import_error:
     pass
@@ -129,13 +128,14 @@ class DAQ(BaseZeroService):
                 "attrs": attrs,
             }
 
-            for cb_name, cb_params in params["callbacks"].items():
-                if cb_params is not None:
-                    task_kwargs = {**common_task_kwargs, **cb_params}
-                else:
-                    task_kwargs = common_task_kwargs
+            if "callbacks" in params and params["callbacks"]:
+                for cb_name, cb_params in params["callbacks"].items():
+                    if cb_params is not None:
+                        task_kwargs = {**common_task_kwargs, **cb_params}
+                    else:
+                        task_kwargs = common_task_kwargs
 
-                self.taskAI.data_rec.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
+                    self.taskAI.data_rec.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
 
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
             self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={"stop_service": True})
