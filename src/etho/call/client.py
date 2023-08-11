@@ -109,7 +109,7 @@ def clientcaller(
     if "DAQ" in prot["NODE"]["use_services"]:
         this = defaults.copy()
         # update `this`` with service specific host params
-        if "host" in prot["GCM"]:
+        if "GCM" in prot and "host" in prot["GCM"]:
             this.update(prot["GCM"]["host"])
 
         fs = prot["DAQ"]["samplingrate"]
