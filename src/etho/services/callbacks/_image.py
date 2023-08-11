@@ -10,7 +10,6 @@ from typing import Optional, Dict, Any
 
 try:
     import cv2
-
     cv2_import_error = None
 except ImportError as cv2_import_error:
     pass
@@ -26,7 +25,6 @@ try:
     from pyqtgraph.Qt import QtGui
     import pyqtgraph as pg
     from pyqtgraph.widgets.RawImageWidget import RawImageWidget
-
     pyqtgraph_import_error = NotFoundErr
 except Exception as pyqtgraph_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
     pass
@@ -229,7 +227,7 @@ class ImageWriterCVR(ImageCallback):
         self.output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
         if ffmpeg_params is not None:
             self.output_params.update(ffmpeg_params)
-        self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **output_params)
+        self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
 
     def _loop(self, data):
         if hasattr(self.data_source, "WHOAMI") and self.data_source.WHOAMI == "array":
@@ -244,7 +242,7 @@ class ImageWriterCVR(ImageCallback):
             del self.vw
             self.frame_count = 0
             self.video_count += 1
-            self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **output_params)
+            self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
 
     def _cleanup(self):
         self.vw.close()
