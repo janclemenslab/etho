@@ -1,35 +1,38 @@
 # Installation
 
 ## Python packages
-- install miniconda
+- install [mambaforge](https://github.com/conda-forge/miniforge#mambaforge)
 - install conda packages: `mamba create python=3.9 numpy scipy h5py wxpython opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil -c conda-forge -n etho -y`
 - notes:
    - on the rpi PC install `pandas=0.23` and `python=3.7` instead
-   - if you want to use the old flycapture SDK (needed for some older FLIR/PointGrey cameras), install `python=3.6` instead
+   - if you want to use the old flycapture SDK (needed for some older FLIR/PointGrey cameras), install `python=3.6`
    - saving videos using vidread: `pip install vidgear[core]`
-   - display frames with pyqtgraph: mamba install pyqtgraph -c conda-forge`
+   - display frames with pyqtgraph: `mamba install pyqtgraph -c conda-forge`
+- activate the new environment: `conda activate etho`
 - install custom repos:
-  - zerorpc fork: `pip install git+https://github.com/postpop/zerorpc-python --no-deps`
+  - zerorpc fork (with support for numpy arrays): `pip install git+https://github.com/postpop/zerorpc-python --no-deps`
   - etho: `pip install git+https://github.com/janclemenslab/etho --no-deps`
-- control.bat: `C:/Users/ncb/.conda/envs/etho/python.exe -m etho.gui.wxCtrl_ephys` (wxCtrl_ephys will be different)
+- Test: `python -m etho.gui.wxCtrl`
 
 ## Hardware specific drivers and SDKs
-- ximea cameras: [https://www.ximea.com/support/wiki/apis/python]()
-- flycapture (old FLIR/PointGrey SDK) cameras: [https://www.flir.com/products/flycapture-sdk/]() (only works with python 3.6)
-- spinnaker (new FLIR/PointGrey SDK) cameras: [https://www.flir.eu/products/spinnaker-sdk/]() (only works up to python 3.8)
+- ximea cameras: download and install the package from [https://www.ximea.com/support/wiki/apis/python]()
+- flycapture (old FLIR/PointGrey SDK) cameras: download and install the package from [https://www.flir.com/products/flycapture-sdk/]() (only works with python 3.6)
+- spinnaker (new FLIR/PointGrey SDK) cameras: download and install the package from [https://www.flir.eu/products/spinnaker-sdk/]()
 - ni daqmx driver:
-   - driver [https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html]()
+   - driver: [https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html]()
    - python: `pip install pydaqmx`
-- lighcrafter stuff?
+- hamamatsu DCAM (e.g. Orca Flash CMOS):
+   - driver: [DCAM driver](https://dcam-api.com/downloads/)
+   - python: `conda install -c conda-forge pylablib`, [pylab](http://pylablib.readthedocs.io/)
+- lighcrafter stuff:
 
 ### Raspbery PI
 - gpiozero [https://gpiozero.readthedocs.io/en/stable/installing.html]()
-- picamera should come pre-install in raspbian [https://picamera.readthedocs.io/en/latest/install.html](): `sudo pip install "picamera[array]"`
+- picamera should come pre-installed in raspbian [https://picamera.readthedocs.io/en/latest/install.html](): `sudo pip install "picamera[array]"`
 - soundboard
 - Temperature and humidity sensor adafruit_dht: [https://docs.circuitpython.org/projects/dht/en/latest/](): `pip3 install adafruit-circuitpython-dht`, `sudo apt-get install libgpiod2`
 
 ## Set up passwordless SSH
-
 First, open a terminal and execute the following command to generate public/private RSA key pair:
 ```
 ssh-keygen

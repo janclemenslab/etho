@@ -3,14 +3,13 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.utils.shuffled_cycle" href="etho.utils.shuffled_cycle.html" /><link rel="prev" title="Developer API" href="../api_etho.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="DLP projector" href="projector.html" /><link rel="prev" title="Cameras" href="camera.html" />
 
-    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
-        <title>etho.utils.config - ethodrome documentation</title>
+    <!-- Generated with Sphinx 4.5.0 and Furo 2023.03.27 -->
+        <title>National Instruments DAQmx cards - ethodrome documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
@@ -155,7 +154,7 @@
   
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -173,22 +172,18 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../scanimage_client.html">Scanimage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../rpi.html">Raspberry PI</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../api_etho.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">etho.utils.config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.utils.sound.html">etho.utils.sound</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.utils.tui.html">etho.utils.tui</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.base.html">etho.services.camera.base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.dlp.dlp_make_warpfiles.html">etho.services.dlp.dlp_make_warpfiles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.dlp.dlp_runners.html">etho.services.dlp.dlp_runners</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="hardware.html">Hardware</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="camera.html">Cameras</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">National Instruments DAQmx cards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projector.html">DLP projector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rpi.html">Raspberry PI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scanimage.html">Scanimage</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.sound.html">etho.utils.sound</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.tui.html">etho.utils.tui</a></li>
 </ul>
 </li>
 </ul>
@@ -210,7 +205,8 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          
+<div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -224,14 +220,8 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-etho.utils.config">
-<span id="etho-utils-config"></span><h1>etho.utils.config<a class="headerlink" href="#module-etho.utils.config" title="Permalink to this headline">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="etho.utils.config.defaultify">
-<span class="sig-prename descclassname"><span class="pre">etho.utils.config.</span></span><span class="sig-name descname"><span class="pre">defaultify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d:</span> <span class="pre">typing.Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultfactory=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.defaultdict</span></span></span><a class="reference internal" href="../_modules/etho/utils/config.html#defaultify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.utils.config.defaultify" title="Permalink to this definition">#</a></dt>
-<dd><p>Convert nested dict to defaultdict.</p>
-</dd></dl>
-
+          <section id="national-instruments-daqmx-cards">
+<h1>National Instruments DAQmx cards<a class="headerlink" href="#national-instruments-daqmx-cards" title="Permalink to this headline">#</a></h1>
 </section>
 
         </article>
@@ -239,23 +229,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="etho.utils.shuffled_cycle.html">
+          <a class="next-page" href="projector.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">etho.utils.shuffled_cycle</div>
+                <div class="title">DLP projector</div>
               </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../api_etho.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
+          <a class="prev-page" href="camera.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Developer API</div>
+                <div class="title">Cameras</div>
                 
               </div>
             </a>
@@ -271,9 +261,7 @@
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -291,11 +279,6 @@
     <script src="../_static/doctools.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/tabs.js"></script>
-    <script>let toggleHintShow = 'Click to show';</script>
-    <script>let toggleHintHide = 'Click to hide';</script>
-    <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="../_static/togglebutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
     <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
     </body>

@@ -54,7 +54,9 @@ Developer API
    etho.services.camera.base
    etho.services.camera.dummy
    etho.services.camera.flycapture2
+   etho.services.camera.hamamatsu
    etho.services.camera.spinnaker
+   etho.services.camera.videocapture
    etho.services.camera.ximea
    etho.services.utils.concurrent_task
    etho.services.utils.delay_pwmled

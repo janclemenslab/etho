@@ -1,0 +1,16 @@
+
+.. _gui:
+
+Supported Hardware
+=================
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   :toctree: hardware
+   camera
+   nidaq
+   projector
+   rpi
+   scanimage

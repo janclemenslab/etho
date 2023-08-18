@@ -16,7 +16,6 @@ Etho documentation
    Configuration <configuration/configuration>
    Logging <logging>
    Callbacks <callbacks>
-   Scanimage <scanimage_client>
-   Raspberry PI <rpi>
+   Hardware <hardware/hardware>
    API <api_etho>
 
