@@ -60,7 +60,7 @@ class Runner:
         logging.debug(
             f"{self.host} with timeout={timeout}, asynchronous={asynchronous}, disown={disown}, run_local={run_local}, new_console={new_console}."
         )
-
+        result = None
         if self.host_is_remote and not run_local:
             shell = (
                 "cmd.exe" if self.host_is_win else None
@@ -71,10 +71,10 @@ class Runner:
         else:
             # only way to open a new console window is subprocess on windows:
             if new_console and self.host_is_win:
-                subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE, shell=True, stdout=subprocess.PIPE)
+                out = subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE)#, shell=True, stdout=subprocess.PIPE)
                 result = None
-            # elif new_console:
-            #     subprocess.Popen('open -a terminal -n  --args "' + cmd + '"', creationflags=subprocess.CREATE_NEW_CONSOLE, shell=True, stdout=subprocess.PIPE)
+            elif new_console:
+                subprocess.Popen('open -a terminal -n  --args "' + cmd + '"', creationflags=subprocess.CREATE_NEW_CONSOLE, shell=True, stdout=subprocess.PIPE)
             else:
                 result = invoke.run(cmd, hide=True, timeout=timeout, asynchronous=asynchronous, disown=disown)
 
