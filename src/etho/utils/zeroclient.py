@@ -70,10 +70,12 @@ class ZeroClient(zerorpc.Client):
         handler.setLevel(logging.INFO)
         self.log.addHandler(handler)
 
-    def start_server(self, server_name, folder_name=".", warmup=2, timeout=5, new_console: bool = False):
+    def start_server(self, server_name, folder_name=".", warmup=2, timeout=5, run_local: bool = True, new_console: bool = False):
         self.log.info(f"   {self.SERVICE_NAME} starting")
-        cmd = "cd {0} && {1}".format(folder_name, server_name)
-        self.sr.run(cmd, timeout=timeout, new_console=new_console, disown=True)
+        # cmd = "cd {0} && {1}".format(folder_name, server_name)
+        cmd = "{1}".format(folder_name, server_name)
+
+        self.sr.run(cmd, timeout=timeout, new_console=new_console, run_local=run_local, disown=True)
         self.pid = self.sr.pid(query=cmd)
         self.log.info(f"   {self.SERVICE_NAME} warmup")
         time.sleep(warmup)  # wait for server to warm up
