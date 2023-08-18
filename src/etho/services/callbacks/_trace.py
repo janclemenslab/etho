@@ -123,6 +123,7 @@ class SaveHDF(BaseCallback):
         self.f = tables.open_file(self.file_name + self.SUFFIX, mode="w")
         self.vanilla: bool = True
         self.arrays = dict()
+        self.attrs = attrs
 
     @classmethod
     def make_concurrent(cls, task_kwargs, comms="queue"):
@@ -139,7 +140,10 @@ class SaveHDF(BaseCallback):
             chunkshape=[*data.shape],
             filters=filters,
         )
-
+        if self.attrs is not None:
+            for key, val in self.attrs.items():
+                self.arrays["samples"].attrs[key] = val 
+                 
         self.arrays["systemtime"] = self.f.create_earray(
             self.f.root,
             "systemtime",
