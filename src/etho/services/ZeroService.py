@@ -72,13 +72,14 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         host_is_win: bool = True,
         port=None,
         new_console: bool = False,
+        run_local: bool = False,
     ):
         from ..utils.zeroclient import ZeroClient  # only works on the head node
 
         if port is None:
             port = cls.SERVICE_PORT
 
-        server_name = "{0} -m {1} {2}".format(python_exe, cls.__module__, SER)
+        server_name = "{0} -m {1} {2} {3}".format(python_exe, cls.__module__, SER, port)
         logging.debug(f"initializing {cls.SERVICE_NAME} at port {port}.")
         service = ZeroClient(
             "{0}@{1}".format(user, host),
@@ -89,9 +90,10 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             python_exe=python_exe,
         )
         logging.debug("   starting server:", end="")
-        ret = service.start_server(server_name, folder_name, warmup=1, new_console=new_console)
+        ret = service.start_server(server_name, folder_name, warmup=1, new_console=new_console, run_local=run_local)
         logging.debug(f'{"success" if ret else "FAILED"}.')
         logging.debug("   connecting to server:", end="")
+
         ret = service.connect("tcp://{0}:{1}".format(host, port))
         logging.debug(f'{"success" if ret else "FAILED"}.')
         return service
