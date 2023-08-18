@@ -1,4 +1,4 @@
-__version__ = "0.9.2"
+__version__ = "0.10.0"
 # load global config on import
 from .utils.config import readconfig
 
