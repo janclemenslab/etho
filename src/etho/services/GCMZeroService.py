@@ -8,10 +8,6 @@ from ..services import camera
 from .callbacks import callbacks
 
 
-# logger = logging.getLogger('GCM')
-# logging.basicConfig(level=logging.INFO)
-
-
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class GCM(BaseZeroService):
 
@@ -64,14 +60,16 @@ class GCM(BaseZeroService):
             "frame_height": self.frame_height,
             "frame_width": self.frame_width,
         }
-        for cb_name, cb_params in params["callbacks"].items():
-            if cb_params is not None:
-                task_kwargs = {**common_task_kwargs, **cb_params}
-            else:
-                task_kwargs = common_task_kwargs
 
-            self.callbacks.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
-            self.callback_names.append(cb_name)
+        if 'callbacks' in params and params["callbacks"]:
+            for cb_name, cb_params in params["callbacks"].items():
+                if cb_params is not None:
+                    task_kwargs = {**common_task_kwargs, **cb_params}
+                else:
+                    task_kwargs = common_task_kwargs
+
+                self.callbacks.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
+                self.callback_names.append(cb_name)
 
         # background jobs should be run and controlled via a thread
         # threads can be stopped by setting an event: `_thread_stopper.set()`
