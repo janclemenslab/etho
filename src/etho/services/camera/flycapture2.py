@@ -129,13 +129,13 @@ class FlyCapture2(BaseCam):
 
     @property
     def exposure(self):
-        # convert to ns
-        return self.c.getProperty(PyCapture2.PROPERTY_TYPE.SHUTTER).absValue * 1_000
+        # convert to ms
+        return self.c.getProperty(PyCapture2.PROPERTY_TYPE.SHUTTER).absValue * 1_000  # / 1_000
 
     @exposure.setter
     def exposure(self, value: float):
         self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.AUTO_EXPOSURE, absValue=float(0), autoManualMode=False, onOff=True)
-        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.SHUTTER, absValue=int(value / 1_000), autoManualMode=False)
+        self.c.setProperty(type=PyCapture2.PROPERTY_TYPE.SHUTTER, absValue=int(value // 1_000), autoManualMode=False)
 
     @property
     def gain(self):
