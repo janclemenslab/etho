@@ -63,7 +63,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     @classmethod
     def make(
         cls,
-        SER,
+        serializer,
         user,
         host,
         folder_name,
@@ -79,12 +79,12 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         if port is None:
             port = cls.SERVICE_PORT
 
-        server_name = "{0} -m {1} {2} {3}".format(python_exe, cls.__module__, SER, port)
+        server_name = f"{python_exe} -m {cls.__module__} {serializer} {port}"
         logging.debug(f"initializing {cls.SERVICE_NAME} at port {port}.")
         service = ZeroClient(
             "{0}@{1}".format(user, host),
             service_name=cls.__module__,
-            serializer=SER,
+            serializer=serializer,
             host_is_remote=host_is_remote,
             host_is_win=host_is_win,
             python_exe=python_exe,
