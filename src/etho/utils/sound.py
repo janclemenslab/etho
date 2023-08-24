@@ -240,10 +240,10 @@ def load_sounds(
                 x = x.reshape((x.shape[0], 1))
 
             # These DO NOT acknowledge - will start at the first sample (during pre stim silence) and end at the last sample (end of post stim silence:
-            # SCANIMAGE_START, SCANIMAGE_STOP, SCANIMAGE_NEXT, CLOCK_durMS_pauMS
-            if stimName == 'SCANIMAGE_START':
+            # SI_START, SI_STOP, SI_NEXT, CLOCK_durMS_pauMS
+            if stimName == 'SI_START':
                 x[:20] = 1
-            elif stimName == 'SCANIMAGE_STOP' or stimName == 'SCANIMAGE_NEXT':
+            elif stimName == 'SI_STOP' or stimName == 'SI_NEXT':
                 x[-20:-2] = 1
             elif stimName[:5] == 'CLOCK':
                 token = stimName[5:].split("_")
