@@ -13,29 +13,6 @@ class Spinnaker(BaseCam):
 
     NAME = 'SPN'
 
-    _rw_modes = {
-        PySpin.RO: "read only",
-        PySpin.RW: "read/write",
-        PySpin.WO: "write only",
-        PySpin.NA: "not available"
-    }
-
-    _attr_types = {
-        PySpin.intfIFloat: PySpin.CFloatPtr,
-        PySpin.intfIBoolean: PySpin.CBooleanPtr,
-        PySpin.intfIInteger: PySpin.CIntegerPtr,
-        PySpin.intfIEnumeration: PySpin.CEnumerationPtr,
-        PySpin.intfIString: PySpin.CStringPtr,
-    }
-
-    _attr_type_names = {
-        PySpin.intfIFloat: 'float',
-        PySpin.intfIBoolean: 'bool',
-        PySpin.intfIInteger: 'int',
-        PySpin.intfIEnumeration: 'enum',
-        PySpin.intfIString: 'string',
-        PySpin.intfICommand: 'command',
-    }
 
     def __init__(self, serialnumber):
         if pyspin_error is not None:
@@ -152,6 +129,31 @@ class Spinnaker(BaseCam):
             self.c.Gain.SetValue(float(value))
 
     def _generate_attrs(self):
+
+        self._rw_modes = {
+            PySpin.RO: "read only",
+            PySpin.RW: "read/write",
+            PySpin.WO: "write only",
+            PySpin.NA: "not available"
+        }
+
+        self._attr_types = {
+            PySpin.intfIFloat: PySpin.CFloatPtr,
+            PySpin.intfIBoolean: PySpin.CBooleanPtr,
+            PySpin.intfIInteger: PySpin.CIntegerPtr,
+            PySpin.intfIEnumeration: PySpin.CEnumerationPtr,
+            PySpin.intfIString: PySpin.CStringPtr,
+        }
+
+        self._attr_type_names = {
+            PySpin.intfIFloat: 'float',
+            PySpin.intfIBoolean: 'bool',
+            PySpin.intfIInteger: 'int',
+            PySpin.intfIEnumeration: 'enum',
+            PySpin.intfIString: 'string',
+            PySpin.intfICommand: 'command',
+        }
+
         self.camera_attributes = {}
         self.camera_methods = {}
         self.camera_node_types = {}
