@@ -1,0 +1,426 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+
+    <meta name="generator" content="sphinx-4.4.0, furo 2022.03.04"/>
+        <title>etho.gui.wxCtrl_rpi - ethodrome documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=935aa2abcc5c1da4283d1dc201fb1f0add16d23a" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=25ceb02ed1c46dc30f2321ff83e92799f69dfdb9" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">ethodrome  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../configuration/configuration.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/global.html">Global configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/protocol.html">Experimental protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/playlist.html">Stimulus playlists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/calibration_speaker.html">Speaker calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../configuration/calibration_led.html">LED calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../hardware/hardware.html">Hardware</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../hardware/camera.html">Cameras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../hardware/nidaq.html">National Instruments DAQmx cards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../hardware/projector.html">DLP projector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../hardware/rpi.html">Raspberry PI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../hardware/scanimage.html">Scanimage</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.config.html">etho.utils.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.runner.html">etho.utils.runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.sound.html">etho.utils.sound</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.tui.html">etho.utils.tui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.client.html">etho.call.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.client_old.html">etho.call.client_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.ephys.html">etho.call.ephys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.panoptikum.html">etho.call.panoptikum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.rpi.html">etho.call.rpi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.vr.html">etho.call.vr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.CamPreview.html">etho.gui.CamPreview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.ThuPreview.html">etho.gui.ThuPreview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxBusyDialog.html">etho.gui.wxBusyDialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCam.html">etho.gui.wxCam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl.html">etho.gui.wxCtrl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl_ephys.html">etho.gui.wxCtrl_ephys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl_rpi.html">etho.gui.wxCtrl_rpi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl_vr.html">etho.gui.wxCtrl_vr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxDangerDialog.html">etho.gui.wxDangerDialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.CamZeroService.html">etho.services.CamZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.DLPZeroService.html">etho.services.DLPZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.Opt2ZeroService.html">etho.services.Opt2ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.RelayZeroService.html">etho.services.RelayZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.SlpZeroService.html">etho.services.SlpZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.SndZeroService.html">etho.services.SndZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.ThuAZeroService.html">etho.services.ThuAZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.ThuZeroService.html">etho.services.ThuZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.videocapture.html">etho.services.camera.videocapture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.dlp.dlp_make_warpfiles.html">etho.services.dlp.dlp_make_warpfiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.dlp.dlp_runners.html">etho.services.dlp.dlp_runners</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container"><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <h1>Source code for etho.gui.wxCtrl_rpi</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+<span class="kn">from</span> <span class="nn">etho</span> <span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">..call</span> <span class="kn">import</span> <span class="n">rpi</span> <span class="k">as</span> <span class="n">clientcaller</span>
+<span class="kn">from</span> <span class="nn">.wxDangerDialog</span> <span class="kn">import</span> <span class="n">DangerDialog</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">wxCam</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ThuPreview</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
+
+
+<span class="k">def</span> <span class="nf">list_path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">"playlists"</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">f</span><span class="p">))]</span>
+
+
+<div class="viewcode-block" id="Frame"><a class="viewcode-back" href="../../../api/etho.gui.wxCtrl_rpi.html#etho.gui.wxCtrl_rpi.Frame">[docs]</a><span class="k">class</span> <span class="nc">Frame</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">Frame</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">ip</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ip</span> <span class="o">=</span> <span class="n">ip</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">DEFAULT_FRAME_STYLE</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">wx</span><span class="o">.</span><span class="n">RESIZE_BORDER</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">wx</span><span class="o">.</span><span class="n">MAXIMIZE_BOX</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Frame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">"</span><span class="si">{0}</span><span class="s2"> control"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">)</span>
+
+        <span class="c1"># create a panel in the frame</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlistfolder</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">"HEAD"</span><span class="p">][</span><span class="s2">"playlistfolder"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">playlistList</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">ListBox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">list_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlistfolder</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">LB_SINGLE</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">protocolfolder</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">"HEAD"</span><span class="p">][</span><span class="s2">"protocolfolder"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protocolList</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">ListBox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="n">list_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocolfolder</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">LB_SINGLE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protocolList</span><span class="o">.</span><span class="n">SetStringSelection</span><span class="p">(</span><span class="s2">"default.txt"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">bStart</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"start selected"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_BUTTON</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnClickStart</span><span class="p">,</span> <span class="n">bStart</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bStart</span> <span class="o">=</span> <span class="n">bStart</span>
+
+        <span class="n">bCamPreview</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"cam preview"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_BUTTON</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnClickCamPreview</span><span class="p">,</span> <span class="n">bCamPreview</span><span class="p">)</span>
+
+        <span class="n">bThuPreview</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"check temp&amp;hum"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_BUTTON</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnClickThuPreview</span><span class="p">,</span> <span class="n">bThuPreview</span><span class="p">)</span>
+
+        <span class="n">bDanger</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"DANGER"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_BUTTON</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnClickDanger</span><span class="p">,</span> <span class="n">bDanger</span><span class="p">)</span>
+
+        <span class="n">sizerH</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BoxSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">HORIZONTAL</span><span class="p">)</span>
+        <span class="n">sizerH</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlistList</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sizerH</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocolList</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sizerB</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BoxSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">VERTICAL</span><span class="p">)</span>
+        <span class="n">sizerB</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">bStart</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sizerB</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">bCamPreview</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sizerB</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">bThuPreview</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sizerB</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">bDanger</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sizerH</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">sizerB</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">sizer</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BoxSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">VERTICAL</span><span class="p">)</span>
+        <span class="n">sizer</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">sizerH</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetSizer</span><span class="p">(</span><span class="n">sizer</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">CreateStatusBar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SetStatusText</span><span class="p">(</span><span class="s2">"etho"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_CLOSE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnClose</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">OnClose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Destroy</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">OnClickStart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">playlistName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlistList</span><span class="o">.</span><span class="n">GetStringSelection</span><span class="p">()</span>
+        <span class="n">protocolName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocolList</span><span class="o">.</span><span class="n">GetStringSelection</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">playlistName</span> <span class="ow">and</span> <span class="n">protocolName</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SetStatusText</span><span class="p">(</span><span class="s2">"playlist: </span><span class="si">{0}</span><span class="s2">, prot: </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">playlistName</span><span class="p">,</span> <span class="n">protocolName</span><span class="p">))</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">"starting playlist </span><span class="si">{0}</span><span class="s2"> with prot </span><span class="si">{1}</span><span class="s2"> on </span><span class="si">{2}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">playlistName</span><span class="p">,</span> <span class="n">protocolName</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">)</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ip</span><span class="p">,</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlistfolder</span><span class="p">,</span> <span class="n">playlistName</span><span class="p">),</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocolfolder</span><span class="p">,</span> <span class="n">protocolName</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="c1"># check node status before starting??</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># start this as independent process</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">clientcaller</span><span class="o">.</span><span class="n">clientcaller</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+                <span class="k">while</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ret</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"no controlf file selected"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">OnClickCamPreview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"if running - start cam service and preview, otherwise connect to running service and preview"</span><span class="p">)</span>
+        <span class="n">protocol_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocolList</span><span class="o">.</span><span class="n">GetStringSelection</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">protocol_filename</span><span class="p">:</span>
+            <span class="n">protocol_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocolfolder</span><span class="p">,</span> <span class="n">protocol_filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">protocol_filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">wxCam</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip</span><span class="p">,</span> <span class="n">protocol_filename</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">OnClickThuPreview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">ThuPreview</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">OnClickDanger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">DangerDialog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">)</span> <span class="k">as</span> <span class="n">dlg</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dlg</span><span class="o">.</span><span class="n">ShowModal</span><span class="p">()</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_CLOSE</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"DANGER zone left."</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">ip</span><span class="p">):</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">App</span><span class="p">()</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">Frame</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span>
+    <span class="n">frame</span><span class="o">.</span><span class="n">Center</span><span class="p">()</span>
+    <span class="n">frame</span><span class="o">.</span><span class="n">Show</span><span class="p">()</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">MainLoop</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">ip</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">)</span>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Jan Clemens
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
+    <script src="../../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
+    </body>
+</html>

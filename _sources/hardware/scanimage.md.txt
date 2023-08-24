@@ -6,6 +6,6 @@
 - triggers and pixel/scan clocks are recorded via daq
 
 ## Stimulus control
-- `SCANIMAGE_START`, `SCANIMAGE_STOP`, `SCANIMAGE_NEXT`: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. `SCANIMAGE_START` will set the digital output to 1 for the first 2ms of the stimulus (starting at sample 0, _not_ at silencePre), `SCANIMAGE_STOP` and `SCANIMAGE_NEXT` will set the last 2ms (_not_ before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to "rising", the stop and next triggers to "falling". See [ScanImage docs](https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html) for details.
+- `SI_START`, `SI_STOP`, `SI_NEXT`: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. `SI_START` will set the digital output to 1 for the first 2ms of the stimulus (starting at sample 0, _not_ at silencePre), `SI_STOP` and `SI_NEXT` will set the last 2ms (_not_ before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to "rising", the stop and next triggers to "falling". See [ScanImage docs](https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html) for details.
 vsd
  fcb1

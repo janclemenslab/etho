@@ -5,17 +5,18 @@
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="LED calibration" href="calibration_led.html" /><link rel="prev" title="Stimulus playlists" href="playlist.html" />
 
-    <!-- Generated with Sphinx 4.5.0 and Furo 2023.03.27 -->
+    <meta name="generator" content="sphinx-4.4.0, furo 2022.03.04"/>
         <title>Speaker calibration - ethodrome documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=935aa2abcc5c1da4283d1dc201fb1f0add16d23a" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=25ceb02ed1c46dc30f2321ff83e92799f69dfdb9" />
     
     
 
@@ -42,12 +43,10 @@
   }
 </style></head>
   <body>
-    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
-
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
@@ -154,7 +153,7 @@
   
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -181,9 +180,51 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.config.html">etho.utils.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.runner.html">etho.utils.runner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.tui.html">etho.utils.tui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.call.client.html">etho.call.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.call.client_old.html">etho.call.client_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.call.ephys.html">etho.call.ephys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.call.panoptikum.html">etho.call.panoptikum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.call.rpi.html">etho.call.rpi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.call.vr.html">etho.call.vr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.gui.CamPreview.html">etho.gui.CamPreview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.gui.ThuPreview.html">etho.gui.ThuPreview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.gui.wxBusyDialog.html">etho.gui.wxBusyDialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.gui.wxCam.html">etho.gui.wxCam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.gui.wxCtrl.html">etho.gui.wxCtrl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.gui.wxCtrl_ephys.html">etho.gui.wxCtrl_ephys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.gui.wxCtrl_rpi.html">etho.gui.wxCtrl_rpi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.gui.wxCtrl_vr.html">etho.gui.wxCtrl_vr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.gui.wxDangerDialog.html">etho.gui.wxDangerDialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.CamZeroService.html">etho.services.CamZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.DLPZeroService.html">etho.services.DLPZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.Opt2ZeroService.html">etho.services.Opt2ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.RelayZeroService.html">etho.services.RelayZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.SlpZeroService.html">etho.services.SlpZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.SndZeroService.html">etho.services.SndZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ThuAZeroService.html">etho.services.ThuAZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ThuZeroService.html">etho.services.ThuZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.videocapture.html">etho.services.camera.videocapture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.dlp.dlp_make_warpfiles.html">etho.services.dlp.dlp_make_warpfiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.dlp.dlp_runners.html">etho.services.dlp.dlp_runners</a></li>
 </ul>
 </li>
 </ul>
@@ -204,9 +245,7 @@
           </svg>
           <span>Back to top</span>
         </a>
-        <div class="content-icon-container">
-          
-<div class="theme-toggle-container theme-toggle-content">
+        <div class="content-icon-container"><div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -220,7 +259,7 @@
           </label>
         </div>
         <article role="main">
-          <section id="speaker-calibration">
+          <section class="tex2jax_ignore mathjax_ignore" id="speaker-calibration">
 <h1>Speaker calibration<a class="headerlink" href="#speaker-calibration" title="Permalink to this headline">#</a></h1>
 <p>Goal is to set the attenuation data in <code class="docutils literal notranslate"><span class="pre">ethoconfig.yml</span></code> such that a value of 1 corresponds to the correct unit.</p>
 <p>…</p>
@@ -235,7 +274,7 @@ Power the amp with the lab power supply.</p>
 </section>
 <section id="set-up-and-run-the-software">
 <h2>Set up and run the software<a class="headerlink" href="#set-up-and-run-the-software" title="Permalink to this headline">#</a></h2>
-<ol class="arabic simple">
+<ol class="simple">
 <li><p>Go to Documents&gt;calibration in the recording PC.</p></li>
 <li><p>Double click on <code class="docutils literal notranslate"><span class="pre">playback_calibration.task</span></code> file to run it.
 Be sure that:</p></li>
@@ -245,7 +284,7 @@ Be sure that:</p></li>
 <li><p>Type is <code class="docutils literal notranslate"><span class="pre">Differential</span></code></p></li>
 <li><p>Under the Task tab, Desired Sample Rate is <code class="docutils literal notranslate"><span class="pre">10000</span></code></p></li>
 </ul>
-<ol class="arabic simple" start="3">
+<ol class="simple">
 <li><p>Start the playback software, select the rpi, select playlist <code class="docutils literal notranslate"><span class="pre">test_calibration.txt</span></code> and protocol <code class="docutils literal notranslate"><span class="pre">calibration</span></code>.</p></li>
 <li><p>Start playback, start recording on DAQexpress. Try not to miss the beginning of the stimulus.</p></li>
 <li><p>When the playlist is finished, stop the recording in DAQexpress and export the data as a csv file. The csv file name should <strong>include the box name</strong> (e.g. rpi7.csv). The file should be saved under ukme04&gt;#Data&gt;playback&gt;calibration&gt;<strong>[date-of-recording]</strong> folder</p></li>
@@ -254,7 +293,7 @@ Be sure that:</p></li>
 </section>
 <section id="analyze-the-results">
 <h2>Analyze the results<a class="headerlink" href="#analyze-the-results" title="Permalink to this headline">#</a></h2>
-<ol class="arabic simple">
+<ol class="simple">
 <li><p>Open <code class="docutils literal notranslate"><span class="pre">playback_calibration.ipynb</span></code> and give inputs for <code class="docutils literal notranslate"><span class="pre">recording_name</span></code>, <code class="docutils literal notranslate"><span class="pre">config_file_name</span></code>.</p></li>
 <li><p>The stimulus on/offsets are defined manually by cutting the silent part of the recording by <code class="docutils literal notranslate"><span class="pre">cut</span></code> value and specifying the time point <code class="docutils literal notranslate"><span class="pre">s0</span></code> that coincides with the first stimulus onset</p></li>
 <li><p>Run the whole file to calculate the new attenuation values printed at the end of the notebook.</p></li>
@@ -266,18 +305,18 @@ Be sure that:</p></li>
 <p><strong>Example file hierarchy/naming</strong></p>
 <p>Listing every file needed for analysis. All data from the calibration is inside 20200818 folder. After analysis, there will be a <code class="docutils literal notranslate"><span class="pre">figs</span></code> folder created under 20200818 folder.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>playback
-├──────<span class="w"> </span>calibration
-│<span class="w">        </span>├──<span class="w"> </span>mic_calibration
-│<span class="w">        </span>│<span class="w">     </span>├──mic_calibration_20190408.yml
-│<span class="w">        </span>│<span class="w">     </span>└──<span class="w"> </span>...
-│<span class="w">        </span>└──<span class="w"> </span><span class="m">20200818</span>
-│<span class="w">        </span>│<span class="w">     </span>├──rpi7_10cm_before.csv
-│<span class="w">        </span>│<span class="w">     </span>├──ethoconfig_rpi7_10cm_before.yml
-│<span class="w">        </span>│<span class="w">     </span>├──rpi7_10cm_after.csv
-│<span class="w">        </span>│<span class="w">     </span>└──ethoconfig_rpi7_10cm_after.yml
-│<span class="w">        </span>├──<span class="w"> </span>test_calibration.ipynb
-│<span class="w">        </span>├──<span class="w"> </span>playback_calibration.ipynb
-│<span class="w">        </span>└──<span class="w"> </span>calib.py
+├────── calibration
+│        ├── mic_calibration
+│        │     ├──mic_calibration_20190408.yml
+│        │     └── ...
+│        └── <span class="m">20200818</span>
+│        │     ├──rpi7_10cm_before.csv
+│        │     ├──ethoconfig_rpi7_10cm_before.yml
+│        │     ├──rpi7_10cm_after.csv
+│        │     └──ethoconfig_rpi7_10cm_after.yml
+│        ├── test_calibration.ipynb
+│        ├── playback_calibration.ipynb
+│        └── calib.py
 </pre></div>
 </div>
 </section>
@@ -295,10 +334,10 @@ Be sure that:</p></li>
                 </div>
                 <div class="title">LED calibration</div>
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <svg><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="playlist.html">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -320,7 +359,9 @@ Be sure that:</p></li>
             
           </div>
           <div class="right-details">
-            
+            <div class="icons">
+              
+            </div>
           </div>
         </div>
         
@@ -332,7 +373,7 @@ Be sure that:</p></li>
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            On this page
+            Contents
           </span>
         </div>
         <div class="toc-tree-container">
@@ -358,7 +399,9 @@ Be sure that:</p></li>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/togglebutton.js"></script>
     <script src="../_static/tabs.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
     <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
     </body>

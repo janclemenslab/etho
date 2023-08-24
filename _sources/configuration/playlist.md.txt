@@ -1,6 +1,6 @@
 # Stimulus playlists
 
-### General format
+## Playlist format
 Playlists are tables saved as tab-delimited text files:
 
 | stimFileName                     | silencePre   | silencePost  | delayPost | intensity  | freq       | MODE |
@@ -11,11 +11,11 @@ Playlists are tables saved as tab-delimited text files:
 | [PUL_5_10_10_0, SIN_200_0_2000]      | 1000         | 1000         | 0         | 1.0        | 100        |      |
 | [SIN_100_0_3000, SIN_200_0_2000] | 1000         | 1000         | 0         | 1.0        | 100        |      |
 | [SIN_100_0_3000, SIN_200_0_2000] | [1000, 1000] | [1000, 1000] | [0, 0]    | [1.0, 1.0] | [100, 100] |      |
-| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 2000] | [1000, 3000] | [0, 0]    | [1.0, 2.0] | [100, 200] |      |
+| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 2000] | [2000, 1000] | [0, 0]    | [1.0, 2.0] | [100, 200] |      |
 | [, SIN_200_0_2000] | 1000         | 1000         | 0         | 1.0        | 100        |      |
 
 The first row is a header that contain the following column names:
-* `stimFileName`: If not a magic name, full filename (w/ extension but w/o directory). File needs to be single-channel `*.wav`. Currently defined magic names are: `SIN*`, `PUL*`, `MIRROR_LED`, `CLOCK`, `SCANIMAGE_START`, `SCANIMAGE_STOP`, `SCANIMAGE_NEXT` (see below for details what these do - typically define on-the-fly generated stimuli).
+* `stimFileName`: If not a magic name, full filename (w/ extension but w/o directory). File needs to be single-channel `*.wav`. Currently defined magic names are: `SIN*`, `PUL*`, `MIRROR_LED`, `CLOCK`, `SI_START`, `SI_STOP`, `SCANIMAGE_NEXT` (see below for details what these do - typically define on-the-fly generated stimuli).
 * `silencePre` (ms): zeros _pre_-pended to the stimulus
 * `silencePost` (ms): zeros _post_-pended to the stimulus
 * `delayPost` (ms, _unused_):description
@@ -23,23 +23,28 @@ The first row is a header that contain the following column names:
 * `freq` (Hz for sound or nm for light): Used as a key into the attenuation dictionary defined in the global, rig-specific configuration file `ethoconfig.ini`. The frequency specific attenuation value scales the stimulus such that 1V in the stimulus maps to 1 intensity unit.
 * `MODE` (_unused_): Can be used to define callbacks.
 
-### Magic stimulus names
+## Magic stimulus names
 - `SIN_frequency_phase_duration`: Generate sinusoid with frequency (Hz), phase (rad), and duration (ms) specified in the stimulus name. Will start after silencePre and end before silencePost.
 - `PUL_pulseDur_pulsePau_pulseNumber_pulseDelay`: Generate pulse train (square pulses) with pulse duration, pause, number and intial delay specified in stimulus name (all time units in ms). Will start after silencePre and end before silencePost.
 - `MIRROR_LED`: Will mirror the stimulus in the first channel that does not as a pulse train (pdur & ppau 5ms). Will start after silencePre and end before silencePost.
 - `CLOCK_pulseDur_pulsePau`: Create a clock signal (for instance for continuously triggering frames). Generate continuous pulse train with pulse duration and pause specified in stimulus name (all time units in ms). Will start after sample 0 (_not_ silencePre) and end at the last sample (_not_ before silencePost).
-- `SCANIMAGE_START`, `SCANIMAGE_STOP`, `SCANIMAGE_NEXT`: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. All three stimuli should be specified in the playlist for each stimulus, not just the first or the last one. This will make sure that e.g. starts are triggered even with shuffled playback. `SCANIMAGE_START` will set the digital output to 1 for the first 2ms of the stimulus (starting at sample 0, _not_ at silencePre), `SCANIMAGE_STOP` and `SCANIMAGE_NEXT` will set the last 2ms (_not_ before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to "rising", the stop and next triggers to "falling". See [ScanImage docs](https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html) for details.
+- `SI_START`, `SI_STOP`, `SI_NEXT`: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. All three stimuli should be specified in the playlist for each stimulus, not just the first or the last one. This will make sure that e.g. starts are triggered even with shuffled playback. `SI_START` will set the digital output to 1 for the first 2ms of the stimulus (starting at sample 0, _not_ at silencePre), `SI_STOP` and `SI_NEXT` will set the last 2ms (_not_ before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to "rising", the stop and next triggers to "falling". See [ScanImage docs](https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html) for details.
 
 
-### Multi-channel stimulation
-- Comma-delimited lists of entries in the table `[stim1, stim2]`, one for each channel (`[...]` not required but should add for readability, whitespace surrounding stimulus names is stripped).
+There are several ways to specify multi-channel data:
+-
+- Remaining columns will be duplicated to have same number of elements as the output channels. Rows #5 will be converted implicitly to row #6 - note that this can be problematic if stimuli required different attenuations (e.g. if stimuli on different channels have different frequencies) since the `frequency` field will also be duplicated.
 - `[,stim2]` defines stimulation in which the first output channel is filled with zeros.
-- Remaining columns will be duplicated to at least have same number of elements as stimulus channels. Rows #5 will  be converted implicitly to row #6 - note that this can be problematic if stimuli required different attenuations (e.g. if stimuli on different channels have different frequencies) since the `frequency` field will also be duplicated.
-- Or: Same number of entries as output channels specified in the protocol. Analog and digital are concatenated, with the first channels being the analog outputs, followed by the digital outputs
 - Duration of a row in the playlist is given by the duration of the longest stimulus across channels. All stimuli will start at the same time (after silencePre). Shorter stimuli will be padded with zeros at the end to match duration of longest stimulus in the channel set.
 
 
-### Parsing
+## Multi-channel stimulation
+- `stimFileName`: One entry per channel, as a bracketed, comma-separated list, `[stim_on_chan1, stim_on_chan2, ...]`. Analog and digital are concatenated, with the first channels being the analog outputs, followed by the digital outputs. Whitespace surrounding stimulus names is stripped). `[,stim2]` defines stimulation in which the first output channel is filled with zeros.
+- The remaining columns can also be given as comma-separated lists of values to set different intensities or `silencePre` for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.
+- The total duration of the multi-channel stimulus is adjusted to the duration of the longest stimulus across all channels, by zero-padding at the end the shorter stimuli.
+
+
+## Parsing
 Load the playlist like so:
 ```python
 from ethomaster.utils.sound import parse_table, normalize_table
