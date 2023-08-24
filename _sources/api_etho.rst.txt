@@ -21,6 +21,7 @@ Developer API
    etho.utils.tui
    etho.utils.zeroclient
    etho.call.client
+   etho.call.client_old
    etho.call.ephys
    etho.call.panoptikum
    etho.call.rpi

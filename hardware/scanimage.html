@@ -140,7 +140,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -214,7 +214,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -224,14 +224,19 @@
 <h1>Scanimage<a class="headerlink" href="#scanimage" title="Permalink to this headline">#</a></h1>
 <ul class="simple">
 <li><p>set scanimage scan dur to inf and savefilename</p></li>
-<li><p>arm scanimage grab/loop trigger</p></li>
 <li><p>this calls user fun which triggers python script that will send the savefilename</p></li>
 <li><p>this will select playlist selected in python (or simple matlab gui for listing and selecting from a set of playlist files?)</p></li>
 <li><p>py controls start/nextfile/stop (but still only a single daq file or split on each nextfile trigger - e.g. different hdf5 dataset for each tif file)</p></li>
-<li><p>implement trigger - can we treat is as another ao channel? e.g. append trigger pattern to output data? or just record daq into a single file and record next-file trigger with it
-£ other things todo:</p></li>
-<li><p>record pixel and/or scan clocks</p></li>
+<li><p>triggers and pixel/scan clocks are recorded via daq</p></li>
 </ul>
+<section id="stimulus-control">
+<h2>Stimulus control<a class="headerlink" href="#stimulus-control" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SCANIMAGE_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SCANIMAGE_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SCANIMAGE_NEXT</span></code>: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. <code class="docutils literal notranslate"><span class="pre">SCANIMAGE_START</span></code> will set the digital output to 1 for the first 2ms of the stimulus (starting at sample 0, <em>not</em> at silencePre), <code class="docutils literal notranslate"><span class="pre">SCANIMAGE_STOP</span></code> and <code class="docutils literal notranslate"><span class="pre">SCANIMAGE_NEXT</span></code> will set the last 2ms (<em>not</em> before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to “rising”, the stop and next triggers to “falling”. See <a class="reference external" href="https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html">ScanImage docs</a> for details.
+vsd
+fcb1</p></li>
+</ul>
+</section>
 </section>
 
         </article>
@@ -277,8 +282,27 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Scanimage</a><ul>
+<li><a class="reference internal" href="#stimulus-control">Stimulus control</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

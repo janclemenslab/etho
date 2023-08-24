@@ -1,9 +1,11 @@
 # Scanimage
 - set scanimage scan dur to inf and savefilename
-- arm scanimage grab/loop trigger
 - this calls user fun which triggers python script that will send the savefilename
 - this will select playlist selected in python (or simple matlab gui for listing and selecting from a set of playlist files?)
 - py controls start/nextfile/stop (but still only a single daq file or split on each nextfile trigger - e.g. different hdf5 dataset for each tif file)
-- implement trigger - can we treat is as another ao channel? e.g. append trigger pattern to output data? or just record daq into a single file and record next-file trigger with it
-£ other things todo:
-- record pixel and/or scan clocks
+- triggers and pixel/scan clocks are recorded via daq
+
+## Stimulus control
+- `SCANIMAGE_START`, `SCANIMAGE_STOP`, `SCANIMAGE_NEXT`: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. `SCANIMAGE_START` will set the digital output to 1 for the first 2ms of the stimulus (starting at sample 0, _not_ at silencePre), `SCANIMAGE_STOP` and `SCANIMAGE_NEXT` will set the last 2ms (_not_ before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to "rising", the stop and next triggers to "falling". See [ScanImage docs](https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html) for details.
+vsd
+ fcb1
