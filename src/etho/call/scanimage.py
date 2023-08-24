@@ -13,6 +13,7 @@ from ..utils.config import readconfig, saveconfig
 
 from ..services.DAQZeroService import DAQ
 from ..services.NITriggerZeroService import NIT
+from ..services.GCMZeroService import GCM
 
 
 def trigger(trigger_name):
@@ -38,7 +39,7 @@ def trigger(trigger_name):
     sp.kill()
 
 
-def clientcc(
+def client(
     filename: str,
     filecounter: int,
     protocolfile: str,
@@ -87,18 +88,20 @@ def clientcc(
     #
     nb_digital_chans_out = len(prot["DAQ"]["digital_chans_out"])
     nb_analog_chans_out = len(prot["DAQ"]["analog_chans_out"])
+
+    # make START/NEXT/STOP triggers for scanimage
     triggers = list()
     for cnt, sound in enumerate(sounds):
         this_trigger = np.zeros((sound.shape[0], nb_digital_chans_out), dtype=np.uint8)
-        this_trigger[:5, 2] = 1  # add NEXT trigger at beginning of each sound,
-        if len(triggers) == 0:  # add START trigger to beginning of FIRST sound
-            this_trigger[:5, 0] = 1
-        if len(triggers) == len(sounds):  # add STOP trigger at end of last sound
-            this_trigger[-5:, 1] = 1
-        # split off trailing digital channels and cast to uint8?
+        # this_trigger[:20, 0] = 1  # add START trigger at BEGINNING of each sound (will be ignored if acquisition is already running)
+        # if not loop and cnt == len(sounds) - 1:  # if we do not loop: add STOP trigger at end of last sound
+        #     this_trigger[-20:-2, 1] = 1
+        # this_trigger[-20:-2, 2] = 1  # add NEXT trigger at END of each sound,
+        # # take the remaining digitial output channels [3:] from each sound as generated via the playlist
         for chn in range(3, nb_digital_chans_out):
             this_trigger[:, chn] = sound[:, nb_analog_chans_out + chn - 3]
-        triggers.append(this_trigger.astype(np.uint8))
+        triggers.append(this_trigger.astype(np.uint8))  # cast digitial data to uint8
+        # split off trailing digital channels from each sound
         sounds[cnt] = sound[:, :nb_analog_chans_out]
 
     if not loop:
@@ -114,16 +117,16 @@ def clientcc(
             playlist_items = cycle(playlist_items)  # iter(playlist_items)
 
     # SETUP CAM
-    if "PTG" in prot["NODE"]["use_services"]:
-        ptg_server_name = "python -m {0} {1}".format(PTG.__module__, SER)
-        print([PTG.SERVICE_PORT, PTG.SERVICE_NAME])
-        ptg = ZeroClient(ip_address, "ptgcam", serializer=SER)
-        ptg_sp = subprocess.Popen(ptg_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
-        ptg.connect("tcp://{0}:{1}".format(ip_address, PTG.SERVICE_PORT))
+    if "GCM" in prot["NODE"]["use_services"]:
+        gcm_server_name = "python -m {0} {1}".format(GCM.__module__, SER)
+        print([GCM.SERVICE_PORT, GCM.SERVICE_NAME])
+        gcm = ZeroClient(ip_address, "gcmcam", serializer=SER)
+        gcm_sp = subprocess.Popen(gcm_server_name, creationflags=subprocess.CREATE_NEW_CONSOLE)
+        gcm.connect("tcp://{0}:{1}".format(ip_address, GCM.SERVICE_PORT))
         print("done")
-        cam_params = dict(prot["PTG"])
-        ptg.setup(filename, -1, cam_params)
-        ptg.init_local_logger("{0}_ptg.log".format(filename))
+        cam_params = dict(prot["GCM"])
+        gcm.setup(filename, -1, cam_params)
+        gcm.init_local_logger("{0}_gcm.log".format(filename))
 
     # SETUP DAQ
     print([DAQ.SERVICE_PORT, DAQ.SERVICE_NAME])
@@ -159,8 +162,8 @@ def clientcc(
         saveconfig("{0}_prot.yml".format(filename), prot)
 
     # START PROCESSES
-    if "PTG" in prot["NODE"]["use_services"]:
-        ptg.start()
+    if "GCM" in prot["NODE"]["use_services"]:
+        gcm.start()
         time.sleep(3)  # give cam a headstart so we don't miss the beginning of the daq/ca recording
     daq.start()
 
@@ -178,10 +181,10 @@ def clientcc(
     print("    sent STOP to scientifica")
 
     # STOP PROCESSES
-    if "PTG" in prot["NODE"]["use_services"]:
-        print("    terminate PTG process")
-        ptg.finish(stop_service=True)
+    if "GCM" in prot["NODE"]["use_services"]:
+        print("    terminate GCM process")
+        gcm.finish(stop_service=True)
 
 
 if __name__ == "__main__":
-    defopt.run(clientcc)
+    defopt.run(client)
