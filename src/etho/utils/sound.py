@@ -195,6 +195,7 @@ def load_sounds(
         xx = [None] * len(listitem.stimFileName)
         for stimIdx, stimName in enumerate(listitem.stimFileName):
             x = np.zeros((0, 1))
+            # These all acknowledge the pre/post stim silence: SIN, PUL, MIRROR_LED, *.wav, *.h5
             if stimName[:3] == "SIN":  # SIN_FREQ_PHASE_DURATION
                 # print('sine')
                 token = stimName[4:].split("_")
@@ -221,8 +222,6 @@ def load_sounds(
                         x = f[stim_key][:].astype(np.float32)
                     except KeyError as e:
                         print(e)
-            # else:
-            #     x = None
 
             # if `attenuation` arg is provided:
             if attenuation:
@@ -239,6 +238,21 @@ def load_sounds(
                 x = np.insert(x, 0, np.zeros((sample_start,)))
                 x = np.insert(x, x.shape[0], np.zeros((sample_end,)))
                 x = x.reshape((x.shape[0], 1))
+
+            # These DO NOT acknowledge - will start at the first sample (during pre stim silence) and end at the last sample (end of post stim silence:
+            # SCANIMAGE_START, SCANIMAGE_STOP, SCANIMAGE_NEXT, CLOCK_durMS_pauMS
+            if stimName == 'SCANIMAGE_START':
+                x[:20] = 1
+            elif stimName == 'SCANIMAGE_STOP' or stimName == 'SCANIMAGE_NEXT':
+                x[-20:-2] = 1
+            elif stimName[:5] == 'CLOCK':
+                token = stimName[5:].split("_")
+                token = [float(item) for item in token]
+                pulsedur, pulsepause = token[:2]
+                pulseperiod = pulsedur + pulsepause
+                pulsenumber = (len(x)/fs * 1000) // pulseperiod
+                x = make_pulse(pulsedur, pulsepause, pulsenumber=pulsenumber, pulseDelay=0, samplingrate=fs)
+
             xx[stimIdx] = x
         non_mirror_led_chan = [x for x in list(range(len(xx))) if not x in mirror_led_channel][0]
         for chan in mirror_led_channel:
