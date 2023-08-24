@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Developer API" href="../api_etho.html" /><link rel="prev" title="Raspberry PI" href="rpi.html" />
 
     <meta name="generator" content="sphinx-4.4.0, furo 2022.03.04"/>
-        <title>Scanimage - ethodrome documentation</title>
+        <title>ScanImage - ethodrome documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=935aa2abcc5c1da4283d1dc201fb1f0add16d23a" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
@@ -176,7 +176,7 @@
 <li class="toctree-l2"><a class="reference internal" href="nidaq.html">National Instruments DAQmx cards</a></li>
 <li class="toctree-l2"><a class="reference internal" href="projector.html">DLP projector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rpi.html">Raspberry PI</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Scanimage</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">ScanImage</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -260,20 +260,25 @@
         </div>
         <article role="main">
           <section class="tex2jax_ignore mathjax_ignore" id="scanimage">
-<h1>Scanimage<a class="headerlink" href="#scanimage" title="Permalink to this headline">#</a></h1>
+<h1>ScanImage<a class="headerlink" href="#scanimage" title="Permalink to this headline">#</a></h1>
+<section id="scanimage-settings">
+<h2>ScanImage settings<a class="headerlink" href="#scanimage-settings" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
-<li><p>set scanimage scan dur to inf and savefilename</p></li>
-<li><p>this calls user fun which triggers python script that will send the savefilename</p></li>
-<li><p>this will select playlist selected in python (or simple matlab gui for listing and selecting from a set of playlist files?)</p></li>
-<li><p>py controls start/nextfile/stop (but still only a single daq file or split on each nextfile trigger - e.g. different hdf5 dataset for each tif file)</p></li>
-<li><p>triggers and pixel/scan clocks are recorded via daq</p></li>
+<li><p>enable exterrnal triggering, leave default digital channels, set NEXT and STOP triggers to ‘falling’</p></li>
+<li><p>Set scanimage scan dur to inf and nb acq/frames to a very large value</p></li>
+<li><p>Start pb_ui</p></li>
+<li><p>select protocol and playlist</p></li>
+<li><p>Focus and Start ACQ buttons will arm scanimage acquisition/focus, set the savefilename in scanimage from the datename and session number and start etho in a terminal</p></li>
+<li><p>Imaging will be started by a START trigger signal sent with the first sample of the first stimulus.</p></li>
+<li><p>Imaging data will be saved to a separate file for each stimulus, throught a NEXT trigger at the end of each Stimulus</p></li>
+<li><p>Imaging will stop by a STOP trigger at the end of the last stimulus or if loop or shuffle is enabled, with a delay at the end of the or via the Stop ACQ button.</p></li>
+<li><p>Stimuli, triggers, and pixel/scan clocks are recorded via daq</p></li>
 </ul>
+</section>
 <section id="stimulus-control">
 <h2>Stimulus control<a class="headerlink" href="#stimulus-control" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code>: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. <code class="docutils literal notranslate"><span class="pre">SI_START</span></code> will set the digital output to 1 for the first 2ms of the stimulus (starting at sample 0, <em>not</em> at silencePre), <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code> and <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code> will set the last 2ms (<em>not</em> before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to “rising”, the stop and next triggers to “falling”. See <a class="reference external" href="https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html">ScanImage docs</a> for details.
-vsd
-fcb1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code>: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. <code class="docutils literal notranslate"><span class="pre">SI_START</span></code> will set the digital output to 1 for the first 2ms of the stimulus (starting at sample 0, <em>not</em> at silencePre), <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code> and <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code> will set the last 2ms (<em>not</em> before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to “rising”, the stop and next triggers to “falling”. See <a class="reference external" href="https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html">ScanImage docs</a> for details.</p></li>
 </ul>
 </section>
 </section>
@@ -335,7 +340,8 @@ fcb1</p></li>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Scanimage</a><ul>
+<li><a class="reference internal" href="#">ScanImage</a><ul>
+<li><a class="reference internal" href="#scanimage-settings">ScanImage settings</a></li>
 <li><a class="reference internal" href="#stimulus-control">Stimulus control</a></li>
 </ul>
 </li>
