@@ -1,6 +1,6 @@
 import time
 import numpy as np
-from typing import Tuple
+from typing import Tuple, Union
 from .base import BaseCam
 
 try:
@@ -13,6 +13,30 @@ class Spinnaker(BaseCam):
 
     NAME = 'SPN'
 
+    _rw_modes = {
+        PySpin.RO: "read only",
+        PySpin.RW: "read/write",
+        PySpin.WO: "write only",
+        PySpin.NA: "not available"
+    }
+
+    _attr_types = {
+        PySpin.intfIFloat: PySpin.CFloatPtr,
+        PySpin.intfIBoolean: PySpin.CBooleanPtr,
+        PySpin.intfIInteger: PySpin.CIntegerPtr,
+        PySpin.intfIEnumeration: PySpin.CEnumerationPtr,
+        PySpin.intfIString: PySpin.CStringPtr,
+    }
+
+    _attr_type_names = {
+        PySpin.intfIFloat: 'float',
+        PySpin.intfIBoolean: 'bool',
+        PySpin.intfIInteger: 'int',
+        PySpin.intfIEnumeration: 'enum',
+        PySpin.intfIString: 'string',
+        PySpin.intfICommand: 'command',
+    }
+
     def __init__(self, serialnumber):
         if pyspin_error is not None:
             raise pyspin_error
@@ -24,6 +48,7 @@ class Spinnaker(BaseCam):
         self.c = self.cam_list.GetBySerial(self.serialnumber)
         self.c.Init()
         self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
+        self._generate_attrs()
 
         # enable embedding of frame TIME STAMP
         self.c.ChunkModeActive.SetValue(True)
@@ -106,19 +131,86 @@ class Spinnaker(BaseCam):
         return self.c.ExposureTime.GetValue()
 
     @exposure.setter
-    def exposure(self, value: float):
-        self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
-        self.c.ExposureMode.SetValue(PySpin.ExposureMode_Timed)
-        self.c.ExposureTime.SetValue(float(value))
+    def exposure(self, value: Union[float, str]):
+        if value == 'AUTO':
+            self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Continuous)
+        else:
+            self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
+            self.c.ExposureMode.SetValue(PySpin.ExposureMode_Timed)
+            self.c.ExposureTime.SetValue(float(value))
 
     @property
     def gain(self):
         self.c.Gain.GetValue()
 
     @gain.setter
-    def gain(self, value: float):
-        self.c.GainAuto.SetValue(PySpin.GainAuto_Off)
-        self.c.Gain.SetValue(float(value))
+    def gain(self, value: Union[float, str]):
+        if value == 'AUTO':
+            self.c.GainAuto.SetValue(PySpin.GainAuto_Continuous)
+        else:
+            self.c.GainAuto.SetValue(PySpin.GainAuto_Off)
+            self.c.Gain.SetValue(float(value))
+
+    def _generate_attrs(self):
+        self.camera_attributes = {}
+        self.camera_methods = {}
+        self.camera_node_types = {}
+
+        for node in self.c.GetNodeMap().GetNodes():
+            pit = node.GetPrincipalInterfaceType()
+            name = node.GetName()
+            self.camera_node_types[name] = self._attr_type_names.get(pit, pit)
+            if pit == PySpin.intfICommand:
+                self.camera_methods[name] = PySpin.CCommandPtr(node)
+            if pit in self._attr_types:
+                self.camera_attributes[name] = self._attr_types[pit](node)
+        self.initialized = True
+
+    def getattr(self, attr):
+        if attr in self.camera_attributes:
+
+            prop = self.camera_attributes[attr]
+            if not PySpin.IsReadable(prop):
+                raise AttributeError("Camera property '%s' is not readable" % attr)
+
+            if hasattr(prop, "GetValue"):
+                return prop.GetValue()
+            elif hasattr(prop, "ToString"):
+                return prop.ToString()
+            else:
+                raise AttributeError("Camera property '%s' is not readable" % attr)
+        elif attr in self.camera_methods:
+            return self.camera_methods[attr].Execute
+        else:
+            raise AttributeError(attr)
+
+    def setattr(self, attr, val):
+        if attr in self.camera_attributes:
+
+            prop = self.camera_attributes[attr]
+            if not PySpin.IsWritable(prop):
+                raise AttributeError("Property '%s' is not currently writable!" % attr)
+
+            if hasattr(prop, 'SetValue'):
+                prop.SetValue(val)
+            else:
+                prop.FromString(val)
+
+        elif attr in self.camera_methods:
+            raise AttributeError("Camera method '%s' is a function -- you can't assign it a value!" % attr)
+        else:
+            if attr not in self.__dict__ and self.lock and self.initialized:
+                raise AttributeError("Unknown property '%s'." % attr)
+            else:
+                raise AttributeError(attr)
+                # super().__setattr__(attr, val)
+
+    def optimize_auto_exposure(self):
+        self.setattr('AutoExposureControlLoopDamping', 0.1)
+        self.setattr('AutoExposureLightingMode_Val', 2)  # Frontlight
+        self.setattr('AutoExposureExposureTimeLowerLimit', 6)
+        self.setattr('AutoExposureExposureTimeUpperLimit', 30_000)
+        self.setattr('AutoExposureEVCompensation', 3)
 
     def _min_max_inc(self, prop, value=None, set_value=True):
         min_val, max_val, inc = prop.GetMin(), prop.GetMax(), prop.GetInc()
