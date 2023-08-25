@@ -188,9 +188,10 @@ def load_sounds(
     cast2int: bool = False,
     aslist: bool = False,
     stim_key: str = "stimulus",
+    ignore_stop: bool = False,
 ):
     sounddata = []
-    for row_name, listitem in playlist.iterrows():
+    for row_number, (row_name, listitem) in enumerate(playlist.iterrows()):
         mirror_led_channel = []
         xx = [None] * len(listitem.stimFileName)
         for stimIdx, stimName in enumerate(listitem.stimFileName):
@@ -239,20 +240,6 @@ def load_sounds(
                 x = np.insert(x, x.shape[0], np.zeros((sample_end,)))
                 x = x.reshape((x.shape[0], 1))
 
-            # These DO NOT acknowledge - will start at the first sample (during pre stim silence) and end at the last sample (end of post stim silence:
-            # SI_START, SI_STOP, SI_NEXT, CLOCK_durMS_pauMS
-            if stimName == 'SI_START':
-                x[:20] = 1
-            elif stimName == 'SI_STOP' or stimName == 'SI_NEXT':
-                x[-20:-2] = 1
-            elif stimName[:5] == 'CLOCK':
-                token = stimName[5:].split("_")
-                token = [float(item) for item in token]
-                pulsedur, pulsepause = token[:2]
-                pulseperiod = pulsedur + pulsepause
-                pulsenumber = (len(x)/fs * 1000) // pulseperiod
-                x = make_pulse(pulsedur, pulsepause, pulsenumber=pulsenumber, pulseDelay=0, samplingrate=fs)
-
             xx[stimIdx] = x
         non_mirror_led_chan = [x for x in list(range(len(xx))) if not x in mirror_led_channel][0]
         for chan in mirror_led_channel:
@@ -276,6 +263,28 @@ def load_sounds(
         max_len = max([len(ii) for ii in xx])
         xx = [np.insert(ii, ii.shape[0], np.zeros((max_len - len(ii),))) for ii in xx]
         xx = [x.reshape((x.shape[0], 1)) for x in xx]
+
+        for cnt, (x, stimName) in enumerate(zip(xx, listitem.stimFileName)):
+            # These DO NOT acknowledge silencePre/Post - will start at the first sample (during pre stim silence) and end at the last sample (end of post stim silence:
+            # SI_START, SI_STOP, SI_NEXT, CLOCK_durMS_pauMS
+            if stimName == 'SI_START':
+                x[:20] = 1
+            elif stimName == 'SI_NEXT':
+                x[-20:-2] = 1
+            elif stimName == 'SI_STOP':
+                # if playlist is not shuffled, add STOP trigger to last stimulus in the playlist
+                last_stim = row_number == len(playlist) - 1
+                if not ignore_stop and last_stim: 
+                    x[-20:-2] = 1
+            
+            elif stimName[:5] == 'CLOCK':
+                token = stimName[5:].split("_")
+                token = [float(item) for item in token]
+                pulsedur, pulsepause = token[:2]
+                pulseperiod = pulsedur + pulsepause
+                pulsenumber = (len(x)/fs * 1000) // pulseperiod
+                tmp_x = make_pulse(pulsedur, pulsepause, pulsenumber=pulsenumber, pulseDelay=0, samplingrate=fs)
+                x = tmp_x[:len(x)]
 
         x = np.concatenate(xx, axis=1)
         # TODO: move these backend-specific things out of this function
