@@ -274,15 +274,14 @@ def load_sounds(
             elif stimName == 'SI_STOP':
                 # if playlist is not shuffled, add STOP trigger to last stimulus in the playlist
                 last_stim = row_number == len(playlist) - 1
-                if not ignore_stop and last_stim: 
+                if not ignore_stop and last_stim:
                     x[-20:-2] = 1
-            
             elif stimName[:5] == 'CLOCK':
                 token = stimName[5:].split("_")
                 token = [float(item) for item in token]
                 pulsedur, pulsepause = token[:2]
                 pulseperiod = pulsedur + pulsepause
-                pulsenumber = (len(x)/fs * 1000) // pulseperiod
+                pulsenumber = (len(x)/fs * 1000) // pulseperiod + 1
                 tmp_x = make_pulse(pulsedur, pulsepause, pulsenumber=pulsenumber, pulseDelay=0, samplingrate=fs)
                 x = tmp_x[:len(x)]
 
