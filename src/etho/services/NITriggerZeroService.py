@@ -90,6 +90,29 @@ class NIT(BaseZeroService):
         return True
 
 
+def oneshot_trigger(this, trigger_names, do_port="/Dev1/port0/line1:3"):
+
+    trigger_types = {"START": [1, 0, 0], "STOP": [0, 1, 0], "NEXT": [0, 0, 1], "NULL": [0, 0, 0]}
+    try:
+        nit = NIT.make(
+            this["serializer"],
+            this["user"],
+            this["host"],
+            this["working_directory"],
+            this["python_exe"],
+            new_console=False,
+        )
+        nit.setup(-1, do_port)
+        for trigger_name in trigger_names:
+            logging.info(f"sending {trigger_name}")
+            nit.send_trigger(trigger_types[trigger_name])
+    except Exception as e:
+        logging.exception(e)
+    nit.finish()
+    nit.stop_server()
+    del nit
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         ser = sys.argv[1]
