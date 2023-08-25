@@ -22,7 +22,8 @@ except ImportError as vidgear_import_error:
     pass
 
 try:
-    from pyqtgraph.Qt import QtGui
+    # from pyqtgraph.Qt import QtGui
+    from qtpy import QtWidgets
     import pyqtgraph as pg
     from pyqtgraph.widgets.RawImageWidget import RawImageWidget
     pyqtgraph_import_error = NotFoundErr
@@ -94,8 +95,8 @@ class ImageDisplayPQG(ImageCallback):
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
-        if pyqtgraph_import_error is not None:
-            raise pyqtgraph_import_error
+        # if pyqtgraph_import_error is not None:
+        #     raise pyqtgraph_import_error
 
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
@@ -105,7 +106,7 @@ class ImageDisplayPQG(ImageCallback):
         pg.setConfigOption("leftButtonPan", False)
 
         # set up window and subplots
-        self.app = QtGui.QApplication([])
+        self.app = QtWidgets.QApplication([])
         self.win = RawImageWidget(scaled=True)
         self.win.resize(self.frame_width, self.frame_height)
         self.win.show()
@@ -562,16 +563,16 @@ if __name__ == "__main__":
     import ctypes
 
     ct = ImageDisplayPQG.make_concurrent(
-        task_kwargs={"frame_width": 100, "frame_height": 100, "rate": 2},
+        task_kwargs={"frame_width": 1000, "frame_height": 1000, "rate": .1},
         comms="array",
-        comms_kwargs={"shape": (100, 100), "ctype": ctypes.c_uint8},
+        comms_kwargs={"shape": (1000, 1000, 3), "ctype": ctypes.c_uint8},
     )
     ct.start()
     for _ in range(100000000):
         if ct._sender.WHOAMI == "array":
-            ct.send((np.zeros((100, 100)) + np.random.randint(0, 255)).astype(np.uint8))
+            ct.send((np.random.randint(0, 255, (1000, 1000, 3)).astype(np.uint8), 1))
         else:
-            ct.send(((np.zeros((100, 100)) + np.random.randint(0, 255)).astype(np.uint8), 1))
+            ct.send(((np.zeros((1000, 1000)) + np.random.randint(0, 255)).astype(np.uint8), 1))
         time.sleep(0.001)
     ct.finish()
     ct.close()
