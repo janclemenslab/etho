@@ -205,7 +205,6 @@ class Spinnaker(BaseCam):
                 raise AttributeError("Unknown property '%s'." % attr)
             else:
                 raise AttributeError(attr)
-                # super().__setattr__(attr, val)
 
     def optimize_auto_exposure(self):
         self.setattr('AutoExposureControlLoopDamping', 0.1)
