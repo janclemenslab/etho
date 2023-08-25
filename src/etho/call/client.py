@@ -285,7 +285,7 @@ def client(
             playlist,
             this["maxduration"],
             fs,
-            dev_name=prot["DAQ2"]["device"],
+            dev_name=prot[daq_key]["device"],
             clock_source=prot[daq_key]["clock_source"],
             nb_inputsamples_per_cycle=prot[daq_key]["nb_inputsamples_per_cycle"],
             analog_chans_out=prot[daq_key]["analog_chans_out"],
