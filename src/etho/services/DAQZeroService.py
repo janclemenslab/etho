@@ -9,6 +9,7 @@ from .callbacks import callbacks
 import logging
 import numpy as np
 
+daqmx_import_error = None
 try:
     from .daq.IOTask import *
     daqmx_import_error = None
@@ -274,6 +275,7 @@ class DAQ(BaseZeroService):
 
 
 if __name__ == "__main__":
+    daqmx_import_error = None
     if len(sys.argv) > 1:
         ser = sys.argv[1]
     else:
