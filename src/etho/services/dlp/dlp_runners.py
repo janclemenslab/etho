@@ -1,7 +1,7 @@
 """
 Define your own class here (see examples below for how to do that),
 decorate with `@register_runner`.
-Then select runners and set init params in prot file: 
+Then select runners and set init params in prot file:
 `
 DLP:
   runners:
