@@ -43,6 +43,7 @@ Developer API
    etho.services.DAQZeroService
    etho.services.DLPZeroService
    etho.services.GCMZeroService
+   etho.services.NICZeroService
    etho.services.NITriggerZeroService
    etho.services.Opt2ZeroService
    etho.services.RelayZeroService

@@ -2,12 +2,12 @@
 
 ## Python packages
 - install [mambaforge](https://github.com/conda-forge/miniforge#mambaforge)
-- install conda packages: `mamba create python=3.9 numpy scipy h5py wxpython opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil -c conda-forge -n etho -y`
+- install conda packages: `mamba create python=3.9 numpy scipy h5py wxpython opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil pydaqmx -c conda-forge -n etho -y`
 - notes:
    - on the rpi PC install `pandas=0.23` and `python=3.7` instead
    - if you want to use the old flycapture SDK (needed for some older FLIR/PointGrey cameras), install `python=3.6`
    - saving videos using vidread: `pip install vidgear[core]`
-   - display frames with pyqtgraph: `mamba install pyqtgraph -c conda-forge`
+   - display frames with pyqtgraph: `mamba install pyqtgraph qtpy -c conda-forge`
 - activate the new environment: `conda activate etho`
 - install custom repos:
   - zerorpc fork (with support for numpy arrays): `pip install git+https://github.com/postpop/zerorpc-python --no-deps`
@@ -19,8 +19,7 @@
 - flycapture (old FLIR/PointGrey SDK) cameras: download and install the package from [https://www.flir.com/products/flycapture-sdk/]() (only works with python 3.6)
 - spinnaker (new FLIR/PointGrey SDK) cameras: download and install the package from [https://www.flir.eu/products/spinnaker-sdk/]()
 - ni daqmx driver:
-   - driver: [https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html]()
-   - python: `pip install pydaqmx`
+   - python package is installed by default. still need to install the drivers: [https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html]()
 - hamamatsu DCAM (e.g. Orca Flash CMOS):
    - driver: [DCAM driver](https://dcam-api.com/downloads/)
    - python: `conda install -c conda-forge pylablib`, [pylab](http://pylablib.readthedocs.io/)

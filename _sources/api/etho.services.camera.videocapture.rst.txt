@@ -1,5 +1,0 @@
-﻿etho.services.camera.videocapture
-=================================
-
-.. automodule:: etho.services.camera.videocapture
-   :members:
