@@ -14,6 +14,7 @@ from ..utils.sound import parse_table, load_sounds, build_playlist
 from ..services.ThuAZeroService import THUA
 from ..services.DAQZeroService import DAQ
 from ..services.GCMZeroService import GCM
+from ..services.NICounterZeroService import NIC
 
 
 import threading
@@ -44,6 +45,7 @@ def client(
     show_test_image: bool = False,
     show_progress: bool = True,
     debug: bool = False,
+    preview: bool = False,
 ):
     """_summary_
 
@@ -72,7 +74,7 @@ def client(
     new_console = debug
 
     services = {}
-    if "THUA" in prot["NODE"]["use_services"]:
+    if "THUA" in prot["NODE"]["use_services"] and not preview:
         this = defaults.copy()
         # update `this`` with service specific host params
         if "host" in prot["THUA"]:
@@ -100,6 +102,10 @@ def client(
             new_console=new_console,
         )
         cam_params = undefaultify(prot["GCM"])
+
+        if preview:
+            cam_params['callbacks'] = {'disp_fast': None}
+
         gcm.setup(f"{this['save_directory']}/{save_prefix}/{save_prefix}", this["maxduration"] + 20, cam_params)
         gcm.init_local_logger("{0}/{1}/{1}_gcm.log".format(this["save_directory"], save_prefix))
         if show_test_image:
@@ -222,6 +228,7 @@ def client(
     #     services["daq"] = daq
 
     daq_keys = [key for key in prot["NODE"]["use_services"] if "DAQ" in key]
+    daq_keys = [] if preview else daq_keys
     for daq_cnt, daq_key in enumerate(daq_keys):
         # if "DAQ2" in prot["NODE"]["use_services"]:
         this = defaults.copy()
@@ -366,7 +373,31 @@ def client(
         if "GCM" in service_name:
             logging.info(f"starting {service_name}.")
             service.start()
+    time.sleep(1)
     time_last_cam_started = time.time()
+
+    if 'NIC' in prot['NODE']['use_services']:
+        this = defaults.copy()
+        # update `this`` with service specific host params
+        if "host" in prot["NIC"]:
+            this.update(prot["NIC"]["host"])
+
+        nic = NIC.make(
+            this["serializer"],
+            this["user"],
+            this["host"],
+            this["working_directory"],
+            this["python_exe"],
+            new_console=new_console,
+            port=prot[daq_key]["port"],
+        )
+
+        nic_params = undefaultify(prot['NIC'])
+        nic.setup(nic_params['output_channel'], this['maxduration'] + 10, nic_params['frequency'], nic_params['duty_cycle'], nic_params)
+        nic.init_local_logger(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log")
+        nic.start()
+        time_last_cam_started = time.time()
+
 
     # if "gcm" in services:
     #     while services["gcm"].progress()["elapsed"] < 5:
