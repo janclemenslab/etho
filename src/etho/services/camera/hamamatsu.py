@@ -30,6 +30,8 @@ class Hamamatsu(BaseCam):
     def get(self, timeout=None):
         self.c.wait_for_frame()  # wait for the next available frame
         image = self.c.read_oldest_image()  # get the oldest image which hasn't been read yet
+        if image is None:
+            return None
         image = image[..., np.newaxis]
         system_timestamp = time.time()
         image_timestamp = system_timestamp
@@ -103,7 +105,7 @@ class Hamamatsu(BaseCam):
         self.c.close()
 
     def reset(self, sleep=None):
-        self.DCAM.DCAM.restart_lib()
+        DCAM.DCAM.restart_lib()
 
 
     def info_hardware(self):
