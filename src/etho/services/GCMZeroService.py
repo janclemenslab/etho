@@ -40,11 +40,18 @@ class GCM(BaseZeroService):
         self.c.gain = params["gain"]
         self.c.framerate = params["frame_rate"]
 
+        if 'optimize_auto_exposure' in params and params['optimize_auto_exposure']:
+            self.c.optimize_auto_exposure()
+
         # acquire test image
         self.c.disable_gpio_strobe()  # to prevent the test image producing strobes
+        self.c.external_trigger = False  # disable here so test image acq works w/o ext trigger
         self.c.start()
         self.test_image, image_ts, system_ts = self.c.get()
         self.c.stop()
+
+        if 'external_trigger' in params:
+            self.c.external_trigger = params['external_trigger']
 
         self.frame_width, self.frame_height, self.frame_channels = self.test_image.shape
         self.framerate = self.c.framerate

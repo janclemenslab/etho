@@ -128,6 +128,26 @@ class Spinnaker(BaseCam):
             self.c.GainAuto.SetValue(PySpin.GainAuto_Off)
             self.c.Gain.SetValue(float(value))
 
+    def optimize_auto_exposure(self):
+        self.setattr('AutoExposureControlLoopDamping', 0.1)
+        self.setattr('AutoExposureLightingMode_Val', 2)  # Frontlight
+        self.setattr('AutoExposureExposureTimeLowerLimit', 6)
+        self.setattr('AutoExposureExposureTimeUpperLimit', 30000)
+        self.setattr('AutoExposureEVCompensation', 3)
+
+    @property
+    def external_trigger(self):
+        return self.c.TriggerMode.GetValue()
+
+    @external_trigger.setter
+    def external_trigger(self, value: bool = False):
+        self.c.TriggerMode.SetValue(PySpin.TriggerMode_Off)
+
+        if value:
+            self.c.TriggerSource.SetValue(PySpin.TriggerSource_Line3)
+            self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
+            self.c.TriggerMode.SetValue(PySpin.TriggerMode_On)
+
     def _generate_attrs(self):
 
         self._rw_modes = {
@@ -205,13 +225,6 @@ class Spinnaker(BaseCam):
                 raise AttributeError("Unknown property '%s'." % attr)
             else:
                 raise AttributeError(attr)
-
-    def optimize_auto_exposure(self):
-        self.setattr('AutoExposureControlLoopDamping', 0.1)
-        self.setattr('AutoExposureLightingMode_Val', 2)  # Frontlight
-        self.setattr('AutoExposureExposureTimeLowerLimit', 6)
-        self.setattr('AutoExposureExposureTimeUpperLimit', 30_000)
-        self.setattr('AutoExposureEVCompensation', 3)
 
     def _min_max_inc(self, prop, value=None, set_value=True):
         min_val, max_val, inc = prop.GetMin(), prop.GetMax(), prop.GetInc()
