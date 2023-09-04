@@ -14,6 +14,7 @@ Developer API
 .. autosummary::
    :toctree: api
 
+   etho.cli
    etho.utils.config
    etho.utils.runner
    etho.utils.shuffled_cycle
@@ -29,6 +30,7 @@ Developer API
    etho.call.vr
    etho.gui.CamPreview
    etho.gui.ThuPreview
+   etho.gui.app
    etho.gui.wxBusyDialog
    etho.gui.wxCam
    etho.gui.wxCtrl
@@ -44,6 +46,7 @@ Developer API
    etho.services.DLPZeroService
    etho.services.GCMZeroService
    etho.services.NICZeroService
+   etho.services.NICounterZeroService
    etho.services.NITriggerZeroService
    etho.services.Opt2ZeroService
    etho.services.RelayZeroService

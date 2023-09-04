@@ -1,0 +1,194 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Command-line interface"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 7,
+      "metadata": {},
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "usage: etho [-h] [--version] {call,version,gui} ...\n",
+            "\n",
+            "positional arguments:\n",
+            "  {call,version,gui}\n",
+            "    call              _summary_\n",
+            "    version\n",
+            "    gui               _summary_\n",
+            "\n",
+            "optional arguments:\n",
+            "  -h, --help          show this help message and exit\n",
+            "  --version           show program's version number and exit\n",
+            "\u001b[0m"
+          ]
+        }
+      ],
+      "source": [
+        "!etho --help"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Open the graphical user interface"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 8,
+      "metadata": {},
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "usage: etho gui [-h] [protocol_folder] [playlist_folder]\n",
+            "\n",
+            "_summary_\n",
+            "\n",
+            "positional arguments:\n",
+            "  protocol_folder  Folder with protocol files.\n",
+            "                   Defaults to value ['HEAD']['protocolfolder'] from \u001b[4m~/ethoconfig.yml\u001b[0m.\n",
+            "  playlist_folder  Folder with playlist files.\n",
+            "                   Defaults to value ['HEAD']['playlistfolder'] from \u001b[4m~/ethoconfig.yml\u001b[0m.\n",
+            "\n",
+            "optional arguments:\n",
+            "  -h, --help       show this help message and exit\n",
+            "\u001b[0m"
+          ]
+        }
+      ],
+      "source": [
+        "!etho gui --help"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Start an experiment"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 9,
+      "metadata": {},
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "usage: etho call [-h] [--host HOST] [--save-prefix SAVE_PREFIX]\n",
+            "                 [--show-test-image | --no-show-test-image]\n",
+            "                 [--show-progress | --no-show-progress]\n",
+            "                 [-d | --debug | --no-debug] [-p | --preview | --no-preview]\n",
+            "                 protocolfile [playlistfile]\n",
+            "\n",
+            "_summary_\n",
+            "\n",
+            "positional arguments:\n",
+            "  protocolfile          _description_\n",
+            "  playlistfile          _description_.\n",
+            "\n",
+            "optional arguments:\n",
+            "  -h, --help            show this help message and exit\n",
+            "  --host HOST           _description_\n",
+            "  --save-prefix SAVE_PREFIX\n",
+            "                        _description_.\n",
+            "  --show-test-image, --no-show-test-image\n",
+            "                        _description_.\n",
+            "  --show-progress, --no-show-progress\n",
+            "                        _description_.\n",
+            "  -d, --debug, --no-debug\n",
+            "                        _description_.\n",
+            "  -p, --preview, --no-preview\n",
+            "                        _description_.\n",
+            "\u001b[0m"
+          ]
+        }
+      ],
+      "source": [
+        "!etho call --help"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Display version and hardware info"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 10,
+      "metadata": {},
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "INFO:etho.cli:macOS-13.2-arm64-arm-64bit\n",
+            "INFO:etho.cli:etho v0.11.0\n",
+            "INFO:etho.cli:  GUI SUPPORT\n",
+            "INFO:etho.cli:     GUI is available.\n",
+            "INFO:etho.cli:     pyqtgraph v0.13.3\n",
+            "INFO:etho.cli:     PySide2 v5.15.8\n",
+            "INFO:etho.cli:     Qt v5.15.8\n",
+            "INFO:etho.cli:     qtpy v2.3.1\n",
+            "INFO:etho.cli:  LIBRARY VERSIONS\n",
+            "INFO:etho.cli:    python v3.9.16 | packaged by conda-forge | (main, Feb  1 2023, 21:38:11) \n",
+            "[Clang 14.0.6 ]\n",
+            "INFO:etho.cli:    pandas v2.0.3\n",
+            "INFO:etho.cli:    numpy v1.25.2\n",
+            "INFO:etho.cli:    h5py v3.9.0\n",
+            "INFO:etho.cli:    scipy v1.11.2\n",
+            "INFO:etho.cli:\n",
+            "INFO:etho.cli:  HARDWARE SUPPORT\n",
+            "INFO:etho.cli:     Spinnaker SDK is NOT available.\n",
+            "INFO:etho.cli:     NI daqmx is NOT available.\n",
+            "\u001b[0m"
+          ]
+        }
+      ],
+      "source": [
+        "!etho version"
+      ]
+    }
+  ],
+  "metadata": {
+    "kernel_info": {
+      "name": "python3"
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.9.16"
+    },
+    "nteract": {
+      "version": "0.15.0"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 4
+}

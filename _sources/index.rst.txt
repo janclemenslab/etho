@@ -17,5 +17,6 @@ Etho documentation
    Logging <logging>
    Callbacks <callbacks>
    Hardware <hardware/hardware>
+   CLI <cli>
    API <api_etho>
 

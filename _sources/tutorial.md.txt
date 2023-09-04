@@ -1,0 +1,90 @@
+# Tutorial
+Walk through the steps required to setup hardware and run an experiment in which we:
+
+- record and save sound via a daq card from National Instruments (any NI card with 2 analog outputs will work for this example)
+- record and save video via a FLIR camera (Pointgrey and Ximea will also work with small changes)
+- play back sound via the NI daq card
+- control an opto LED a NI daq card and analog-controlled LED (we use Thorlabs LEDD1B, but any LED driver with an analog input will work)
+
+## Installation
+1. Follow the general instructions [here]
+2. Importantly, install the drivers and python libraries for the hardware: pydaqmx, spinnaker SDKs
+
+## System configuration
+Something about `ethoconfig.yml` (Is there essential information in there? Can we make this file optional?)
+
+## Hardware configuration
+
+- connect DAQ ports to amp and LED driver, include loopbacks of outputs
+- ideally, calibrate sound and LED intensities
+- connect camera
+- make wiring diagram
+
+
+## Experiment configuration
+
+### Protocol
+
+Two different blocks, for host and services
+
+#### Host
+
+- `host` (optional): Defaults to `localhost`
+- `python_exe`: Path to the python executable for the etho environment you are using, typically `$CONDADIR/envs/etho/python.exe`, where `$CONDADIR` is your conda directory, for us `C:\mambaforge\`
+- `save_directory`: Path to the parent folder for storing all files (audio, video, logs) created during an experiment. Each experiment will create a subfolder with name `HOST_YYYYMMDD-HHMMSS` (e.g. `localhost_20230401-110423`) with all associated files.
+- `use_services`: Entries lower in the protocol to use during an experiment. Useful for quickly disabling the camera or daq while debugging.
+
+#### Services
+
+Parameters for the individual services (more [here](hardware))and callbacks (more [here](callbacks)).
+
+For cam, can add external triggering with the DAQ using the NIC service.
+
+- `DAQ`:
+    - `analog_out`
+    - `callbacks`:
+        `save_h5`
+- `GCM`: (Generic CaMera)
+    - `cam_type`: `Spinnaker`, SDK to use, replace with `Ximea` or `FlyCapture` (for older PointGrey cameras).
+    - `shutter`: 4 #ms
+    - `callbacks`:
+        - `save_avi`
+        - `save_timestamps`
+
+Full file:
+```yaml
+
+HOST:
+    python_exe: test.exe
+
+DAQ:
+    analog_out: ['ao0', 'ao1']
+    analog_out_info: ['audio playback', 'led']
+    analog_in: ['ai0', 'ai1', 'ai2']
+    analog_in_info: ['audio playback', 'led', 'audio recording']
+    callbacks:
+        save_h5:  # DO NOT FORGET THE TRAILING `:`
+
+GCM:
+
+```
+
+### Playlist
+More [here](configuration/playlist).
+
+We have specified two analog output channels - first for audio, second for led.
+
+
+## Running an experiment
+
+### CLI
+`python -m etho.call.client protfile playlist` will start the experiment.
+
+### GUI
+`python -m etho.gui.wxCtrl` will open a minimal GUI for selecting playlists and protocol, and starting the experiment.
+
+
+## Produced files
+List of files produced
+
+Open with [DAS](https://janclemenslab.org/DAS)

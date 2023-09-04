@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="etho.utils.shuffled_cycle" href="api/etho.utils.shuffled_cycle.html" /><link rel="prev" title="ScanImage" href="hardware/scanimage.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="etho.utils.config" href="api/etho.utils.config.html" /><link rel="prev" title="Command-line interface" href="cli.html" />
 
     <!-- Generated with Sphinx 4.5.0 and Furo 2023.03.27 -->
         <title>Developer API - ethodrome documentation</title>
@@ -180,10 +180,23 @@
 <li class="toctree-l2"><a class="reference internal" href="hardware/scanimage.html">ScanImage</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">CLI</a></li>
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.utils.tui.html">etho.utils.tui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.base.html">etho.services.camera.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.videocapture.html">etho.services.camera.videocapture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.dlp.dlp_make_warpfiles.html">etho.services.dlp.dlp_make_warpfiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.dlp.dlp_runners.html">etho.services.dlp.dlp_runners</a></li>
 </ul>
 </li>
 </ul>
@@ -231,14 +244,50 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/etho.utils.shuffled_cycle.html#module-etho.utils.shuffled_cycle" title="etho.utils.shuffled_cycle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.utils.shuffled_cycle</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/etho.utils.config.html#module-etho.utils.config" title="etho.utils.config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.utils.config</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/etho.utils.sound.html#module-etho.utils.sound" title="etho.utils.sound"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.utils.sound</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/etho.utils.shuffled_cycle.html#module-etho.utils.shuffled_cycle" title="etho.utils.shuffled_cycle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.utils.shuffled_cycle</span></code></a></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/etho.utils.tui.html#module-etho.utils.tui" title="etho.utils.tui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.utils.tui</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/etho.utils.sound.html#module-etho.utils.sound" title="etho.utils.sound"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.utils.sound</span></code></a></p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/etho.utils.tui.html#module-etho.utils.tui" title="etho.utils.tui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.utils.tui</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/etho.services.camera.base.html#module-etho.services.camera.base" title="etho.services.camera.base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.camera.base</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/etho.services.camera.dummy.html#module-etho.services.camera.dummy" title="etho.services.camera.dummy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.camera.dummy</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/etho.services.camera.flycapture2.html#module-etho.services.camera.flycapture2" title="etho.services.camera.flycapture2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.camera.flycapture2</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/etho.services.camera.hamamatsu.html#module-etho.services.camera.hamamatsu" title="etho.services.camera.hamamatsu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.camera.hamamatsu</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/etho.services.camera.spinnaker.html#module-etho.services.camera.spinnaker" title="etho.services.camera.spinnaker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.camera.spinnaker</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/etho.services.camera.videocapture.html#module-etho.services.camera.videocapture" title="etho.services.camera.videocapture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.camera.videocapture</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/etho.services.camera.ximea.html#module-etho.services.camera.ximea" title="etho.services.camera.ximea"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.camera.ximea</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/etho.services.utils.concurrent_task.html#module-etho.services.utils.concurrent_task" title="etho.services.utils.concurrent_task"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.utils.concurrent_task</span></code></a></p></td>
+<td><p>Communication primitives with a common interface and a helper class for running tasks in independent processes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/etho.services.utils.log_exceptions.html#module-etho.services.utils.log_exceptions" title="etho.services.utils.log_exceptions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.utils.log_exceptions</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/etho.services.dlp.dlp_make_warpfiles.html#module-etho.services.dlp.dlp_make_warpfiles" title="etho.services.dlp.dlp_make_warpfiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.dlp.dlp_make_warpfiles</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/etho.services.dlp.dlp_runners.html#module-etho.services.dlp.dlp_runners" title="etho.services.dlp.dlp_runners"><code class="xref py py-obj docutils literal notranslate"><span class="pre">etho.services.dlp.dlp_runners</span></code></a></p></td>
+<td><p>Define your own class here (see examples below for how to do that), decorate with <code class="xref py py-obj docutils literal notranslate"><span class="pre">&#64;register_runner</span></code>. Then select runners and set init params in prot file: ` DLP:   runners:     LED_blinker:  # this needs to be the name of the class       object: 'Rect'  # should be the classname: psychopy.visuals.NAME       led_frame: 360       led_duration: 180     LED_blinker_file:       object: 'Rect'  # should be the classname: psychopy.visuals.NAME       filename: <code class="xref py py-obj docutils literal notranslate"><span class="pre">absolute_path_to_file/filename.npz</span></code>  # needs to have fields as expected by the class <a href="#id1"><span class="problematic" id="id2">`</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -250,23 +299,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="api/etho.utils.shuffled_cycle.html">
+          <a class="next-page" href="api/etho.utils.config.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">etho.utils.shuffled_cycle</div>
+                <div class="title">etho.utils.config</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="hardware/scanimage.html">
+          <a class="prev-page" href="cli.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">ScanImage</div>
+                <div class="title">Command-line interface</div>
                 
               </div>
             </a>
