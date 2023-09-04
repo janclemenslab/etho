@@ -246,9 +246,9 @@
 
 positional arguments:
   {call,version,gui}
-    call              _summary_
-    version
-    gui               _summary_
+    call              Starts an experiment.
+    version           Displays system, version, and hardware info.
+    gui               Opens the graphical user interface.
 
 optional arguments:
   -h, --help          show this help message and exit
@@ -269,7 +269,7 @@ optional arguments:
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: etho gui [-h] [protocol_folder] [playlist_folder]
 
-_summary_
+Opens the graphical user interface.
 
 positional arguments:
   protocol_folder  Folder with protocol files.
@@ -300,7 +300,7 @@ optional arguments:
                  [-d | --debug | --no-debug] [-p | --preview | --no-preview]
                  protocolfile [playlistfile]
 
-_summary_
+Starts an experiment.
 
 positional arguments:
   protocolfile          _description_
@@ -325,8 +325,28 @@ optional arguments:
 </div>
 </div>
 </section>
-<section id="display-version-and-hardware-info">
-<h2>Display version and hardware info<a class="headerlink" href="#display-version-and-hardware-info" title="Permalink to this headline">#</a></h2>
+<section id="display-system-version-and-hardware-info">
+<h2>Display system, version, and hardware info<a class="headerlink" href="#display-system-version-and-hardware-info" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>etho<span class="w"> </span>version<span class="w"> </span>--help
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: etho version [-h] [-d | --debug | --no-debug]
+
+Displays system, version, and hardware info.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d, --debug, --no-debug
+                        Display exception info for failed imports. Defaults to False.
+
+</pre></div>
+</div>
+</div>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>etho<span class="w"> </span>version
@@ -351,8 +371,9 @@ INFO:etho.cli:    h5py v3.9.0
 INFO:etho.cli:    scipy v1.11.2
 INFO:etho.cli:
 INFO:etho.cli:  HARDWARE SUPPORT
-INFO:etho.cli:     Spinnaker SDK is NOT available.
-INFO:etho.cli:     NI daqmx is NOT available.
+WARNING:etho.cli:     Spinnaker SDK is NOT available.
+WARNING:etho.cli:     NI daqmx is NOT available.
+WARNING:etho.cli:     FlyCapture SDK is NOT available.
 
 </pre></div>
 </div>
@@ -419,7 +440,7 @@ INFO:etho.cli:     NI daqmx is NOT available.
 <li><a class="reference internal" href="#">Command-line interface</a><ul>
 <li><a class="reference internal" href="#open-the-graphical-user-interface">Open the graphical user interface</a></li>
 <li><a class="reference internal" href="#start-an-experiment">Start an experiment</a></li>
-<li><a class="reference internal" href="#display-version-and-hardware-info">Display version and hardware info</a></li>
+<li><a class="reference internal" href="#display-system-version-and-hardware-info">Display system, version, and hardware info</a></li>
 </ul>
 </li>
 </ul>

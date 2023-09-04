@@ -9,7 +9,7 @@
     },
     {
       "cell_type": "code",
-      "execution_count": 7,
+      "execution_count": 3,
       "metadata": {},
       "outputs": [
         {
@@ -20,9 +20,9 @@
             "\n",
             "positional arguments:\n",
             "  {call,version,gui}\n",
-            "    call              _summary_\n",
-            "    version\n",
-            "    gui               _summary_\n",
+            "    call              Starts an experiment.\n",
+            "    version           Displays system, version, and hardware info.\n",
+            "    gui               Opens the graphical user interface.\n",
             "\n",
             "optional arguments:\n",
             "  -h, --help          show this help message and exit\n",
@@ -44,7 +44,7 @@
     },
     {
       "cell_type": "code",
-      "execution_count": 8,
+      "execution_count": 4,
       "metadata": {},
       "outputs": [
         {
@@ -53,7 +53,7 @@
           "text": [
             "usage: etho gui [-h] [protocol_folder] [playlist_folder]\n",
             "\n",
-            "_summary_\n",
+            "Opens the graphical user interface.\n",
             "\n",
             "positional arguments:\n",
             "  protocol_folder  Folder with protocol files.\n",
@@ -80,7 +80,7 @@
     },
     {
       "cell_type": "code",
-      "execution_count": 9,
+      "execution_count": 5,
       "metadata": {},
       "outputs": [
         {
@@ -93,7 +93,7 @@
             "                 [-d | --debug | --no-debug] [-p | --preview | --no-preview]\n",
             "                 protocolfile [playlistfile]\n",
             "\n",
-            "_summary_\n",
+            "Starts an experiment.\n",
             "\n",
             "positional arguments:\n",
             "  protocolfile          _description_\n",
@@ -124,12 +124,37 @@
       "cell_type": "markdown",
       "metadata": {},
       "source": [
-        "## Display version and hardware info"
+        "## Display system, version, and hardware info"
       ]
     },
     {
       "cell_type": "code",
-      "execution_count": 10,
+      "execution_count": 6,
+      "metadata": {},
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "usage: etho version [-h] [-d | --debug | --no-debug]\n",
+            "\n",
+            "Displays system, version, and hardware info.\n",
+            "\n",
+            "optional arguments:\n",
+            "  -h, --help            show this help message and exit\n",
+            "  -d, --debug, --no-debug\n",
+            "                        Display exception info for failed imports. Defaults to False.\n",
+            "\u001b[0m"
+          ]
+        }
+      ],
+      "source": [
+        "!etho version --help"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 7,
       "metadata": {},
       "outputs": [
         {
@@ -153,8 +178,9 @@
             "INFO:etho.cli:    scipy v1.11.2\n",
             "INFO:etho.cli:\n",
             "INFO:etho.cli:  HARDWARE SUPPORT\n",
-            "INFO:etho.cli:     Spinnaker SDK is NOT available.\n",
-            "INFO:etho.cli:     NI daqmx is NOT available.\n",
+            "WARNING:etho.cli:     Spinnaker SDK is NOT available.\n",
+            "WARNING:etho.cli:     NI daqmx is NOT available.\n",
+            "WARNING:etho.cli:     FlyCapture SDK is NOT available.\n",
             "\u001b[0m"
           ]
         }
