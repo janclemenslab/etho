@@ -70,11 +70,11 @@ class Runner:
             )
         else:
             # only way to open a new console window is subprocess on windows:
+            result = None
             if new_console and self.host_is_win:
                 out = subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE)#, shell=True, stdout=subprocess.PIPE)
-                result = None
             elif new_console:
-                subprocess.Popen('open -a terminal -n  --args "' + cmd + '"', creationflags=subprocess.CREATE_NEW_CONSOLE, shell=True, stdout=subprocess.PIPE)
+                subprocess.Popen('open -a terminal -n  --args "' + cmd + '"')
             else:
                 result = invoke.run(cmd, hide=True, timeout=timeout, asynchronous=asynchronous, disown=disown)
 
