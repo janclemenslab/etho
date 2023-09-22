@@ -1,0 +1,28 @@
+[build-system]
+requires = ["flit_core >=3.2"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "etho"
+authors = [
+       {name = "Jan Clemens", email = "clemensjan@googlemail.com"},
+]
+classifiers = ["License :: OSI Approved :: MIT License"]
+dynamic = ["version", "description"]
+requires-python = ">3.6"
+dependencies = ['numpy', 'scipy', 'pyyaml', 'zerorpc', 'pandas', 'pyzmq', 'pygame']
+readme = "README.md"
+
+[project.scripts]
+etho = "etho.cli:main"
+
+[project.urls]
+source = "https://github.com/janclemenslab/etho"
+documentation = "https://janclemenslab.org/etho/"
+
+[tool.flit.module]
+name = "etho"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = ["tests",]

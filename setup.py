@@ -1,14 +1,13 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 import codecs
 import re
 import os
-
 
 here = os.path.abspath(os.path.dirname(__file__))
 
 
 def read(*parts):
-    with codecs.open(os.path.join(here, *parts), 'r') as fp:
+    with codecs.open(os.path.join(here, *parts), "r") as fp:
         return fp.read()
 
 
@@ -20,25 +19,7 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-setup(name='etho',
-      version=find_version("src/etho/__init__.py"),
-      description='etho',
-      url='http://github.com/janclemenslab/etho',
-      author='Jan Clemens',
-      author_email='clemensjan@googlemail.com',
-      license='MIT',
-      packages=find_packages('src'),
-      package_dir={'': 'src'},
-      install_requires=[
-          'zerorpc', 'pandas', 'pyzmq', 'pygame', 'numpy', 'pandas',
-      ],
-      tests_require=['pytest'],
-      extras_require={
-        'rpi camera': ["picamera[array]"],
-        'NI daqmx': ["pydaqmx"],
-        'ptrgrey flycapture': ["flycapture2"],
-        'opencv': ["opencv"],
-      },
-      include_package_data=True,
-      zip_safe=False
-      )
+setup(
+    name="etho",
+    version=find_version("src/etho/__init__.py"),
+)
