@@ -5,8 +5,11 @@ import pandas as pd
 from pathlib import Path
 from typing import Union, Optional
 import os
+import logging
+import time
+import psutil, signal
 
-import qtpy.QtWidgets as QtWidgets
+from qtpy import QtWidgets, QtCore
 from qtpy.QtWidgets import (
     QApplication,
     QTableView,
@@ -17,6 +20,10 @@ from qtpy.QtWidgets import (
     QVBoxLayout,
     QCheckBox,
     QMessageBox,
+    QDialog,
+    QDialogButtonBox,
+    QLabel,
+    QSplitter,
 )
 from qtpy.QtCore import QAbstractTableModel, Qt
 
@@ -25,6 +32,9 @@ from pyqtgraph.parametertree import Parameter, ParameterTree
 from ..utils.sound import parse_table
 from ..call import client
 from ..utils.config import readconfig
+
+
+logger = logging.getLogger(__name__)
 
 
 class PandasModel(QAbstractTableModel):
@@ -74,11 +84,12 @@ class TableView(QTableView):
 
         self.setModel(model)
         self.selectionModel().selectionChanged.connect(self.update_child)
+        self.doubleClicked.connect(self.edit_file)
 
         header = self.horizontalHeader()
         header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         header.setStretchLastSection(True)
-
+        self.resizeRowsToContents()
         self.data = None
         self.selected_string = None
 
@@ -89,6 +100,12 @@ class TableView(QTableView):
             self.data = self._child.data_from_filename(self.selected_string)
             self._child.replaceData(self.data)
 
+    def edit_file(self):
+
+        # print(self.selected_string)
+        import os
+        os.system(f'code {self.folder}/{self.selected_string}')
+        # os.system('dir')
 
 # format to parametertree
 def from_yaml(d):
@@ -137,6 +154,62 @@ def save(d, filename: str):
     pass
 
 
+def kill_child_processes():
+    try:
+        parent = psutil.Process()
+    except psutil.NoSuchProcess:
+        return
+    children = parent.children(recursive=True)
+    for p in children:
+        os.kill(p.pid, signal.SIGKILL)
+
+
+class RunDialog(QDialog):
+    def __init__(self, services):
+        super().__init__()
+
+        self.services = services
+
+        self.setWindowTitle("HELLO!")
+
+        QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+
+        self.buttonBox = QDialogButtonBox(QBtn)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
+
+        self.layout = QVBoxLayout()
+        self.message = QLabel("Something happened, is that OK?")
+        self.layout.addWidget(self.message)
+        self.layout.addWidget(self.buttonBox)
+        self.setLayout(self.layout)
+
+    # def reject(self):
+    #     for service_name, service in self.services.items():
+    #         logging.info(f'   {service_name}')
+    #         service.finish()
+    #         # time.sleep(1)
+    #         try:
+    #             logging.info(f'     Success.')
+    #         except:
+    #             logging.warning(f'     Failed.')
+
+    #     kill_child_processes()
+    #     super().reject()
+
+    # @classmethod
+    # def do_run(self, method, args=[], kwargs=[], message="Busy doing stuff."):
+    #     # self.message.setText(message)
+    #     # wx.Yield()  # yield to allow wx to display the dialog
+    #     from multiprocessing import Process
+    #     self.p = Process(target=method, args=args, kwargs=kwargs)  # use process and
+    #     self.p.start()  # start execution
+    #     self.p.join()  # join blocks the GUI while the process is running
+    #     # self.Destroy()  # properly destroy the dialog
+
+
+
+
 class MainWindow(QMainWindow):
     def __init__(
         self,
@@ -151,10 +224,21 @@ class MainWindow(QMainWindow):
             protocol_folder = config['HEAD']['protocolfolder']
         self.protocol_folder = Path(protocol_folder)
 
+        if not self.protocol_folder.exists():
+            raise FileExistsError(f"{self.protocol_folder} does not exist!")
+
+        logging.info(f'Loading protocols from {self.protocol_folder}.')
+
         if playlist_folder is None:
             config = readconfig()
             playlist_folder = config['HEAD']['playlistfolder']
         self.playlist_folder = Path(playlist_folder)
+
+
+        if not self.playlist_folder.exists():
+            raise FileExistsError(f"{self.playlist_folder} does not exist!")
+
+        logging.info(f'Loading playlists from {self.playlist_folder}.')
 
         self.setWindowTitle("etho control")
 
@@ -169,41 +253,69 @@ class MainWindow(QMainWindow):
         self.button["Camera_preview"].clicked.connect(self.camera_preview)
         self.button["Debug"] = QCheckBox("Debug")
         self.button["Progress"] = QCheckBox("Show Progress")
+        self.button["Progress"].setChecked(True)
         self.button["Testimage"] = QCheckBox("Show test image")
 
         [buttons.addWidget(b) for b in self.button.values()]
+
+        self.help = QtWidgets.QLabel(
+            "<br>"
+            "<br>"
+            "<B>Instructions</B><br>"
+            "<br>"
+            "Single Click on<br>"
+            " playlist or protocol.<br>"
+            "previews the file.<br>"
+            "<br>"
+            "Double Click opens<br>"
+            "playlist or protocol<br>"
+            "in VS code.<br>"
+        )
+        buttons.addWidget(self.help)
 
         # Layout
         self.layout = QGridLayout()
         self.layout.addLayout(buttons, 0, 0)
         self.refresh_lists(init=True)
 
+
+
         self.layout.setColumnMinimumWidth(1, 200)
         self.layout.setColumnMinimumWidth(2, 600)
         self.layout.setColumnStretch(2, 1)
         self.layout.setColumnStretch(1, 2)
+
         widget = QWidget()
         widget.setLayout(self.layout)
         self.setCentralWidget(widget)
 
     def refresh_lists(self, init: bool = False):
-        playlist_files = sorted(self.playlist_folder.glob("*"))
+        playlist_files = sorted(self.playlist_folder.glob("*.txt"))
+        if len(playlist_files) == 0:
+            raise FileNotFoundError(f'No files found in {self.playlist_folder}.')
+
         df_playlists = pd.DataFrame({"playlist": sorted([Path(plf).name for plf in playlist_files])})
-        # Content of selected playlist
         playlist_file = Path(playlist_files[0]).name
         playlist_from_filename = lambda filename: parse_table((self.playlist_folder / filename).as_posix())
         playlist_model = PandasModel(playlist_from_filename(playlist_file))
         playlist_model.data_from_filename = playlist_from_filename
         playlist_view = TableView(playlist_model)
+        playlist_view.setAlternatingRowColors(True)
+
         # List of playlist files
         playlists_model = PandasModel(df_playlists, editable=False)
         playlists_view = TableView(playlists_model, playlist_model)
+        playlists_view.setAlternatingRowColors(True)
+        playlists_view.folder = self.playlist_folder
 
         # Protocols
-        protocol_files = sorted(self.protocol_folder.glob("*"))
+        protocol_files = sorted(self.protocol_folder.glob("*.yml"))
+        if len(protocol_files) == 0:
+            raise FileNotFoundError(f'No files found in {self.protocol_folder}.')
+
         df_protocols = pd.DataFrame({"protocol": sorted([Path(plf).name for plf in protocol_files])})
         # Content of selected protocol file
-        protocol_file = Path(protocol_files[1]).name
+        protocol_file = Path(protocol_files[0]).name
         protocol_from_filename = lambda filename: from_yaml(load(self.protocol_folder / filename))
         protocol_model = protocol_from_filename(protocol_file)
 
@@ -215,12 +327,30 @@ class MainWindow(QMainWindow):
         # List of protocol files
         protocols_model = PandasModel(df_protocols, editable=False)
         protocols_view = TableView(protocols_model, protocol_view)
+        protocols_view.setAlternatingRowColors(True)
+        protocols_view.folder = self.protocol_folder
 
         if init:
             self.playlist_view = playlist_view
             self.playlists_view = playlists_view
             self.protocol_view = protocol_view
             self.protocols_view = protocols_view
+            # splitter = QSplitter(QtCore.Qt.Vertical)
+            # splitter.addWidget(self.playlists_view)
+            # splitter.addWidget(self.protocols_view)
+
+            # # self.layout.addWidget(splitter)
+
+            # splitter2 = QSplitter(QtCore.Qt.Vertical)
+            # splitter2.addWidget(self.playlist_view)
+            # splitter2.addWidget(self.protocol_view)
+
+            # splitterH = QSplitter(QtCore.Qt.Horizontal)
+            # splitterH.addWidget(splitter)
+            # splitterH.addWidget(splitter2)
+            # self.layout.addWidget(splitterH, 0, 1, 1, 1)
+
+
             self.layout.addWidget(self.playlists_view, 0, 1, 1, 1)
             self.layout.addWidget(self.playlist_view, 0, 2, 1, 5)
             self.layout.addWidget(self.protocols_view, 1, 1, 1, 1)
@@ -259,21 +389,45 @@ class MainWindow(QMainWindow):
             "host": "localhost",
             "save_prefix": None,
             "preview": preview,
+            "gui": True,
         }
 
         rich.print("Starting experiment with these args:")
         rich.print(kwargs)
 
-        client.client(**kwargs)
+        # hide this in a class or function
+        this_client = client.client(**kwargs)
+        services = next(this_client)
+
+        dlg = RunDialog(services)
+        if not dlg.exec_():
+            logging.info('Cancelling jobs:')
+            for service_name, service in services.items():
+                try:
+                    logging.info(f'   {service_name}')
+                    service.finish()
+                except:
+                    logging.warning(f'     Failed.')
+            logging.info('   Killing all child processes')
+            kill_child_processes()
+            logging.info('Done')
 
     def camera_preview(self):
         self.start(preview=True)
 
 
-if __name__ == "__main__":
+def main(protocol_folder: Optional[str] = None, playlist_folder: Optional[str] = None):
+    """Opens the graphical user interface.
+
+    Args:
+        protocol_folder (Optional[str]): Folder with protocol files.
+                                         Defaults to value ['HEAD']['protocolfolder'] from `~/ethoconfig.yml`.
+        playlist_folder (Optional[str]): Folder with playlist files.
+                                         Defaults to value ['HEAD']['playlistfolder'] from `~/ethoconfig.yml`.
+    """
     app = QApplication(sys.argv)
 
-    m = MainWindow()
+    m = MainWindow(protocol_folder, playlist_folder)
     m.show()
 
     sys.exit(app.exec_())
