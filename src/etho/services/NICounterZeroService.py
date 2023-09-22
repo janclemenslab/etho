@@ -10,7 +10,7 @@ try:
     import PyDAQmx as daq
 
     pydaqmx_import_error = None
-except ImportError as pydaqmx_import_error:
+except (ImportError, NotImplementedError) as pydaqmx_import_error:
     pass
 
 
