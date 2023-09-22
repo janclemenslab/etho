@@ -1,196 +1,124 @@
-"""Callbacks for processing images."""
+"""Callbacks for processing time series."""
 import logging
-from xml.dom import NotFoundErr
 import numpy as np
-from . import register_callback
-from ._base import BaseCallback
+from numpy.core.numeric import False_
+import scipy.signal as ss
+
 from ..utils.concurrent_task import ConcurrentTask
 from ..utils.log_exceptions import for_all_methods, log_exceptions
-from typing import Optional, Dict, Any
-import tables
-
+from . import register_callback
+from typing import List
+from ._base import BaseCallback
 
 try:
-    import cv2
-    cv2_import_error = None
-except ImportError as cv2_import_error:
+    import tables
+except ImportError:
     pass
 
 try:
-    from vidgear.gears import WriteGear
-
-    vidgear_import_error = None
-except ImportError as vidgear_import_error:
-    pass
-
-try:
-    from qtpy import QtWidgets
-    import pyqtgraph as pg
-    from pyqtgraph.widgets.RawImageWidget import RawImageWidget
-    pyqtgraph_import_error = None
-except Exception as pyqtgraph_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
+    import peakutils
+except ImportError:
     pass
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
-class ImageCallback(BaseCallback):
-    def __init__(
-        self,
-        data_source,
-        poll_timeout: float = None,
-        rate: float = 0,
-        file_name: str = None,
-        frame_rate: float = None,
-        frame_width: float = None,
-        frame_height: float = None,
-        **kwargs,
-    ):
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, rate=rate, **kwargs)
-
-        self.frame_rate = frame_rate
-        self.frame_width = frame_width
-        self.frame_height = frame_height
-        self.file_name = file_name
+logger = logging.getLogger(__name__)
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
-class ImageDisplayCV2(ImageCallback):
+class PlotMPL(BaseCallback):
 
-    FRIENDLY_NAME = "disp"
-    TIMESTAMPS_ONLY = False
+    FRIENDLY_NAME = "plot"
 
-    def __init__(self, data_source, poll_timeout=0.01, **kwargs):
-        if cv2_import_error is not None:
-            raise cv2_import_error
-
+    def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: List, nb_samples: int = 10_000, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+        self.channels_to_plot = channels_to_plot
+        self.nb_channels = len(self.channels_to_plot)
+        self.nb_samples = nb_samples
 
-        logging.info("setting up disp")
-        cv2.namedWindow("display")
-        cv2.resizeWindow("display", self.frame_width, self.frame_height)
+        import matplotlib
 
-    @classmethod
-    def make_concurrent(cls, comms="pipe", **kwargs):
-        return ConcurrentTask(task=cls.make_run, comms=comms, **kwargs)
+        matplotlib.use("tkagg")
+        import matplotlib.pyplot as plt
+
+        plt.ion()
+        self.fig = plt.figure()
+        self.fig.canvas.set_window_title("traces: daq")
+        self.ax = [self.fig.add_subplot(self.nb_channels, 1, channel + 1) for channel in range(self.nb_channels)]
+        plt.show(block=False)
+        plt.draw()
+        self.fig.canvas.start_event_loop(0.01)  # otherwise plot freezes after 3-4 iterations
+        self.bgrd = [self.fig.canvas.copy_from_bbox(this_ax.bbox) for this_ax in self.ax]
+        self.points = [
+            ax.plot(np.arange(self.nb_samples), np.zeros((self.nb_samples, 1)), linewidth=0.4)[0] for ax in self.ax
+        ]  # init plot content
+        [ax.set_ylim(-5, 5) for ax in self.ax]  # init plot content
+        [ax.set_xlim(0, self.nb_samples) for ax in self.ax]  # init plot content
+        for cnt, ax in enumerate(self.fig.get_axes()[::-1]):
+            ax.label_outer()
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
+        plt.show(block=False)
+        plt.draw()
 
     def _loop(self, data):
-        if self.data_source.WHOAMI == "array":
-            image = data
-        else:
-            image, timestamp = data
+        data_to_plot, timestamp = data
+        self.nb_samples = data_to_plot.shape[0]
+        x = np.arange(self.nb_samples)
+        for ax, bgrd, points, chn in zip(self.ax, self.bgrd, self.points, self.channels_to_plot):
+            self.fig.canvas.restore_region(bgrd)  # restore background
+            points.set_data(x, data_to_plot[: self.nb_samples, chn])
+            ax.draw_artist(points)  # redraw just the points
+            self.fig.canvas.blit(ax.bbox)  # fill in the axes rectangle
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
 
-        cv2.imshow("display", image)
-        cv2.waitKey(1)
 
-    def _cleanup(self):
-        logging.info("closing display")
-        cv2.destroyWindow("display")
-
-
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
-class ImageDisplayPQG(ImageCallback):
+class PlotPQG(BaseCallback):
 
-    FRIENDLY_NAME = "disp_fast"
-    TIMESTAMPS_ONLY = False
+    FRIENDLY_NAME = "plot_fast"
 
-    def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
-        # if pyqtgraph_import_error is not None:
-        #     raise pyqtgraph_import_error
-
+    def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: List, nb_samples: int = 10_000, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+        self.channels_to_plot = channels_to_plot
+        self.nb_channels = len(self.channels_to_plot)
+        self.nb_samples = nb_samples
 
-        logging.info("setting up ImageDisplayPQG")
+        from pyqtgraph.Qt import QtGui
+        import pyqtgraph as pg
 
         pg.setConfigOption("background", "w")
         pg.setConfigOption("leftButtonPan", False)
-
         # set up window and subplots
-        self.app = QtWidgets.QApplication([])
-        self.win = RawImageWidget(scaled=True)
-        self.win.resize(self.frame_width, self.frame_height)
-        self.win.show()
+        self.app = QtGui.QApplication([])
+        self.win = pg.GraphicsWindow(title="DAQ")
+        self.win.resize(1000, min(100 * self.nb_channels, 1000))
+        self.p = []
+        for _ in range(self.nb_channels):
+            w = self.win.addPlot(y=np.zeros((self.nb_samples,)))
+            w.setXRange(0, self.nb_samples, padding=0)
+            w.setYRange(-5, 5)
+            w.setMouseEnabled(x=False, y=False)
+            w.enableAutoRange("xy", False_)
+            self.p.append(w.plot(pen="k"))
+            self.win.nextRow()
         self.app.processEvents()
 
-    @classmethod
-    def make_concurrent(cls, comms="pipe", **kwargs):
-        return ConcurrentTask(task=cls.make_run, comms=comms, **kwargs)
-
     def _loop(self, data):
-        if self.data_source.WHOAMI == "array":
-            image = data
-        else:
-            image, timestamp = data
-
-        self.win.setImage(image)
+        data_to_plot, timestamp = data
+        for plot, chan in zip(self.p, self.channels_to_plot):
+            plot.setData(data_to_plot[:, chan])
         self.app.processEvents()
 
-    def _cleanup(self):
-        logging.info("closing display")
-        # close app and windows here?
 
-
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
-class ImageWriterCV2(ImageCallback):
-    """Save images to video using opencv's VideoWriter.
+class SaveHDF(BaseCallback):
 
-    Fast but little control over video compression quality.
-
-    Requirements:
-        - ffmpeg (?): `mamba install ffmpeg -c conda-forge
-        - openh264 (?) form the cisco github page
-        - opencv: `mamba install opencv -c conda-forge`
-
-    Raises:
-        cv2_import_error: If cv2 (opencv) could not be imported.
-
-    Args:
-        ImageCallback (_type_): _description_
-    """
-
-    SUFFIX: str = ".avi"
-    FRIENDLY_NAME = "save_avi"
-    TIMESTAMPS_ONLY = False
-
-    def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
-
-        if cv2_import_error is not None:
-            raise cv2_import_error
-
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
-
-        self.vw = cv2.VideoWriter()
-        self.vw.open(
-            self.file_name + self.SUFFIX,
-            cv2.VideoWriter_fourcc(*"x264"),
-            self.frame_rate,
-            (self.frame_height, self.frame_width),
-            True,
-        )
-
-    def _loop(self, data):
-        if hasattr(self.data_source, "WHOAMI") and self.data_source.WHOAMI == "array":
-            image = data
-        else:
-            image, timestamp = data
-
-        self.vw.write(image)
-
-    def _cleanup(self):
-        self.vw.release()
-        del self.vw
-        super()._cleanup()
-
-
-
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
-@register_callback
-class ImageWriterH5(BaseCallback):
-
-    FRIENDLY_NAME = "saveimg_h5"
-    SUFFIX = "_images.h5"
+    FRIENDLY_NAME = "save_h5"
+    SUFFIX = "_daq.h5"
 
     def __init__(self, data_source, *, file_name, attrs=None, poll_timeout=0.01, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
@@ -204,12 +132,12 @@ class ImageWriterH5(BaseCallback):
     def make_concurrent(cls, task_kwargs, comms="queue"):
         return ConcurrentTask(task=cls.make_run, task_kwargs=task_kwargs, comms=comms)
 
-    def _init_data(self, data, timestamp):
+    def _init_data(self, data, systemtime):
         filters = tables.Filters(complevel=4, complib="zlib", fletcher32=True)
 
-        self.arrays["images"] = self.f.create_earray(
+        self.arrays["samples"] = self.f.create_earray(
             self.f.root,
-            "images",
+            "samples",
             tables.Atom.from_dtype(data.dtype),
             shape=[0, *data.shape[1:]],
             chunkshape=[*data.shape],
@@ -217,29 +145,98 @@ class ImageWriterH5(BaseCallback):
         )
         if self.attrs is not None:
             for key, val in self.attrs.items():
-                self.arrays["images"].attrs[key] = val
+                self.arrays["samples"].attrs[key] = val
 
-        self.arrays["timestamp"] = self.f.create_earray(
+        self.arrays["systemtime"] = self.f.create_earray(
             self.f.root,
-            "timestamp",
-            tables.Atom.from_dtype(np.array(timestamp).dtype),
-            shape=[0, *timestamp.shape[1:]],
-            chunkshape=[*timestamp.shape],
+            "systemtime",
+            tables.Atom.from_dtype(np.array(systemtime).dtype),
+            shape=[0, 1],
+            chunkshape=[100, 1],
             filters=filters,
         )
 
-    def _append_data(self, data, timestamp):
-        self.arrays["images"].append(data)
-        self.arrays["timestamp"].append(timestamp)
+        samplenumber = self.f.root["samples"].shape[:1]
+        self.arrays["samplenumber"] = self.f.create_earray(
+            self.f.root,
+            "samplenumber",
+            tables.Atom.from_dtype(np.array([samplenumber])[:, np.newaxis].dtype),
+            shape=[0, 1],
+            chunkshape=[100, 1],
+            filters=filters,
+        )
+
+    def _append_data(self, data, systemtime):
+        self.arrays["samples"].append(data)
+
+        samplenumber = data.shape[:1]  # self.f.root['samples'].shape[:1]
+        self.arrays["samplenumber"].append(np.array([samplenumber]))
+
+        self.arrays["systemtime"].append(systemtime)
 
     def _loop(self, data):
-        data_to_save, timestamp = data  # unpack
-        data_to_save = data_to_save[np.newaxis,...]
-        timestamp = np.array([timestamp])[:, np.newaxis]
+        data_to_save, systemtime = data  # unpack
         if self.vanilla:
-            self._init_data(data_to_save, timestamp)
+            self._init_data(data_to_save, np.array([systemtime])[:, np.newaxis])
             self.vanilla = False
-        self._append_data(data_to_save, timestamp)
+        self._append_data(data_to_save, np.array([systemtime])[:, np.newaxis])
+
+    def _cleanup(self):
+        if self.f.isopen:
+            self.f.flush()
+            self.f.close()
+        else:
+            logger.debug(f"{self.file_name} already closed.")
+
+
+@for_all_methods(log_exceptions(logger))
+@register_callback
+class SaveDLP_HDF(BaseCallback):
+    """
+    Save dict of dicts of single values to h5.
+    First dict's keys map to groups, second dict's keys to variables.
+    """
+
+    FRIENDLY_NAME = "savedlp_h5"
+    SUFFIX = "_dlp.h5"
+
+    def __init__(self, data_source, *, file_name, attrs=None, poll_timeout=0.01, **kwargs):
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+        self.file_name = file_name
+        self.f = tables.open_file(self.file_name + self.SUFFIX, mode="w")
+        self.vanilla: bool = True  # True if the data structure has not been initialized (via `_init_data`)
+        self.arrays = dict()
+
+    @classmethod
+    def make_concurrent(cls, task_kwargs, comms="queue"):
+        return ConcurrentTask(task=cls.make_run, task_kwargs=task_kwargs, comms=comms)
+
+    def _init_data(self, data, systemtime):
+        filters = tables.Filters(complevel=4, complib="zlib", fletcher32=True)
+        for grp_name, grp_data in data.items():
+            group = self.f.create_group("/", name=grp_name)
+            self.arrays[grp_name] = dict()
+            for key, val in grp_data.items():
+                self.arrays[grp_name][key] = self.f.create_earray(
+                    group, key, tables.Atom.from_dtype(np.array(val).dtype), shape=(0,), chunkshape=(1000,), filters=filters
+                )
+
+        self.arrays["systemtime"] = self.f.create_earray(
+            self.f.root, "systemtime", tables.Atom.from_dtype(systemtime.dtype), shape=(0,), chunkshape=(1000,), filters=filters
+        )
+        self.vanilla = False
+
+    def _append_data(self, data, systemtime):
+        for grp_name, grp_data in data.items():
+            for key, val in grp_data.items():
+                self.arrays[grp_name][key].append(np.array([val]))
+        self.arrays["systemtime"].append(systemtime)
+
+    def _loop(self, data):
+        data_to_save, systemtime = data  # unpack
+        if self.vanilla:
+            self._init_data(data_to_save, np.array([systemtime]))
+        self._append_data(data_to_save, np.array([systemtime]))
 
     def _cleanup(self):
         if self.f.isopen:
@@ -249,408 +246,113 @@ class ImageWriterH5(BaseCallback):
             logging.debug(f"{self.file_name} already closed.")
 
 
-
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
-class ImageWriterCVR(ImageCallback):
-    """Round robin videowriter - see ImageWriterVidGear for details.
-
-    Will switch after a specified to a new file.
-    Naming patter `f"{file_name}_{video_count:06d}.avi"`, for instance "testvideo_000012.avi"
-
-    Special protocol parameters:
-    ```yaml
-    callbacks:
-        save_vidgear:
-            ffmpeg_params:  # dict with parameters to pass to ffmpeg
-                -crf: 16
-            max_frames_per_video: 100_000  # number of frames after which to switch to new video file
-    ```
-
-    """
-
-    SUFFIX: str = ".avi"
-    FRIENDLY_NAME = "save_vidgear_round"
-    TIMESTAMPS_ONLY = False
-
-    def __init__(
-        self,
-        data_source,
-        *,
-        poll_timeout=0.01,
-        max_frames_per_video=100_000,
-        ffmpeg_params: Optional[Dict[str, Any]] = None,
-        **kwargs,
-    ):
-
-        if vidgear_import_error is not None:
-            raise vidgear_import_error
-
+class RealtimeDSS(BaseCallback):
+    def __init__(self, data_source, *, poll_timeout=0.01, model_save_name: str = None, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+        """Coroutine for rt processing of data."""
+        from utils.zeroclient import ZeroClient
+        from services.ANAZeroService import ANA
+        import subprocess
+        import tensorflow as tf
+        import das
+        import das.utils
+        import das.event_utils
 
-        self.video_count = 0
-        self.frame_count = 0
-        self.max_frames_per_video = max_frames_per_video
+        print("   started RT processing")
+        ip_address = "localhost"
+        # init DAQ for output
+        self.nit = ZeroClient(ip_address, "nidaq")
+        self.sp = subprocess.Popen("python -m ethoservice.ANAZeroService")
+        self.nit.connect("tcp://{0}:{1}".format(ip_address, ANA.SERVICE_PORT))
+        self.nit.setup(-1, 0)
+        # nit.init_local_logger('{0}/{1}/{1}_nit.log'.format(daq_save_folder, filename))
 
-        self.output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
-        if ffmpeg_params is not None:
-            self.output_params.update(ffmpeg_params)
-        self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
+        self.samplerate = 10_000  # make sure audio data and the annotations are all on the same sampling rate
+        # bandpass to get rid of slow baseline fluctuations and high-freuqency ripples
+        self.sos_bp = ss.butter(5, [50, 1000], "bandpass", output="sos", fs=self.samplerate)
 
-    def _loop(self, data):
-        if hasattr(self.data_source, "WHOAMI") and self.data_source.WHOAMI == "array":
-            image = data
-        else:
-            image, timestamp = data
+        print("preparing network")
+        # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations1024/20191109_074320'
+        # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations4096/20191108_235948'
+        # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations8192/20191109_080559'
+        self.model_save_name = model_save_name
+        self.model, self.params = das.utils.load_model_and_params(self.model_save_name)
+        self.input_shape = self.model.inputs[0].shape[1:]
+        self.model.predict(np.zeros((1, *self.input_shape)))  # use model.input_shape
 
-        self.vw.write(image)
-        self.frame_count += 1
-        if self.frame_count > self.max_frames_per_video:
-            self.vw.close()
-            del self.vw
-            self.frame_count = 0
-            self.video_count += 1
-            self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
-
-    def _cleanup(self):
-        self.vw.close()
-        del self.vw
-        super()._cleanup()
-
-
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
-@register_callback
-class ImageWriterVidGear(ImageCallback):
-    """Write video files using vidgear [](https://abhitronix.github.io/vidgear/latest/).
-    Directly calls ffmpeg for video encoding, works with 100+ fps.
-    Gives more control over compression quality, via args to ffmpeg.
-
-    Requirements:
-        - ffmpeg: `mamba install ffmpeg -c conda-forge
-        - vidgear: `python -m pip install vidgear[core]`
-
-    Special protocol parameters:
-        - ffmpeg_params: dict with parameters to pass to ffmpeg
-
-    ```yaml
-    callbacks:
-        save_vidgear:
-            ffmpeg_params:  # dict with parameters to pass to ffmpeg
-                -crf: 16
-    ```
-
-    Raises:
-        vidgear_import_error: If VidGear could not be imported.
-    """
-
-    SUFFIX: str = ".avi"
-    FRIENDLY_NAME = "save_vidgear"
-    TIMESTAMPS_ONLY = False
-
-    def __init__(self, data_source, *, poll_timeout=0.01, ffmpeg_params: Optional[Dict[str, Any]] = None, **kwargs):
-        if vidgear_import_error is not None:
-            raise vidgear_import_error
-
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
-
-        self.output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
-        if ffmpeg_params is not None:
-            self.output_params.update(ffmpeg_params)
-
-        self.vw = WriteGear(output_filename=self.file_name + self.SUFFIX, **self.output_params)
-
-    def _loop(self, data):
-        if hasattr(self.data_source, "WHOAMI") and self.data_source.WHOAMI == "array":
-            image = data
-        else:
-            image, timestamp = data
-
-        self.vw.write(image)
-
-    def _cleanup(self):
-        self.vw.close()
-        del self.vw
-        super()._cleanup()
-
-
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
-@register_callback
-class ImageWriterVPF(ImageCallback):
-    """CUDA-accelerated video encoding using Nvidia's VideoProcessingFramework.
-    Very fast (1000fps) and high quality but produce large videos.
-
-    Requirements:
-        - VideoProcessingFramework: https://github.com/NVIDIA/VideoProcessingFramework
-    """
-
-    SUFFIX: str = ".avi"
-    FRIENDLY_NAME = "save_avi_fast"
-    TIMESTAMPS_ONLY = False
-
-    def __init__(self, data_source, *, poll_timeout=0.01, VPF_bin_path=None, **kwargs):
-
-        import sys
-
-        sys.path.append(VPF_bin_path)
-        import PyNvCodec as nvc
-
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
-        gpuID = 0
-        self.encFile = open(self.file_name + self.SUFFIX, "wb")
-        # self.nvEnc = nvc.PyNvEncoder({'rc':'vbr_hq','profile': 'high', 'cq': '10', 'codec': 'h264', 'bf':'3',
-        #                               'fps': str(self.frame_rate), 'temporalaq': '', 'lookahead':'20',
-        #                               's': f'{self.frame_width}x{self.frame_height}'}, gpuID)
-        self.nvEnc = nvc.PyNvEncoder(
-            {
-                "rc": "vbr_hq",
-                "profile": "high",
-                "cq": "10",
-                "codec": "h264",
-                "bf": "3",
-                "fps": str(self.frame_rate),
-                "temporalaq": "",
-                "lookahead": "20",
-                "s": f"{self.frame_height}x{self.frame_width}",
-            },
-            gpuID,
-        )
-        self.nvUpl = nvc.PyFrameUploader(self.nvEnc.Width(), self.nvEnc.Height(), nvc.PixelFormat.YUV420, gpuID)
-        self.nvCvt = nvc.PySurfaceConverter(
-            self.nvEnc.Width(), self.nvEnc.Height(), nvc.PixelFormat.YUV420, nvc.PixelFormat.NV12, gpuID
-        )
-
-    def _loop(self, data):
-        image, timestamp = data
-        rawFrameYUV420 = cv2.cvtColor(image, cv2.COLOR_RGB2YUV_I420)  # convert to YUV420 - nvenc can't handle RGB inputs
-        rawSurfaceYUV420 = self.nvUpl.UploadSingleFrame(rawFrameYUV420)  # upload YUV420 frame to GPU
-        if rawSurfaceYUV420.Empty():
-            return  # break
-        rawSurfaceNV12 = self.nvCvt.Execute(rawSurfaceYUV420)  # convert YUV420 to NV12
-        if rawSurfaceNV12.Empty():
-            return  # break
-        encFrame = self.nvEnc.EncodeSingleSurface(rawSurfaceNV12)  # compres NV12 and download
-        self._write_frame(encFrame)
-
-    def _write_frame(self, encFrame):
-        # save compressd byte stream to file
-        if encFrame.size:
-            encByteArray = bytearray(encFrame)  # save compressd byte stream to file
-            self.encFile.write(encByteArray)
-
-    def _cleanup(self):
-        # Encoder is asyncronous, so we need to flush it
-        encFrames = self.nvEnc.Flush()
-        for encFrame in encFrames:
-            self._write_frame(encFrame)
-        self.encFile.close()
-
-
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
-@register_callback
-class TimestampWriterHDF(ImageCallback):
-    """[summary]
-
-    required params to set in prot:
-        increment: int = 1000, data_dim=2,
-
-    Args:
-        BaseCallback ([type]): [description]
-    """
-
-    SUFFIX: str = "_timestamps.h5"
-    FRIENDLY_NAME: str = "save_timestamps"
-    TIMESTAMPS_ONLY = True
-
-    def __init__(self, data_source, *, poll_timeout=0.01, increment: int = 1000, data_dim=2, **kwargs):
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
-
-        import h5py
-
-        self.increment = increment
-        self.f = h5py.File(self.file_name + self.SUFFIX, "w")
-        self.ts = self.f.create_dataset(
-            name="timeStamps", shape=[self.increment, data_dim], maxshape=[None, data_dim], dtype=np.float64, compression="gzip"
-        )
-        self.frame_count = 0
-
-    def _loop(self, data):
-        image, timestamp = data
-
-        if self.frame_count % self.increment == self.increment - 1:
-            self.f.flush()
-            self.ts.resize(self.ts.shape[0] + self.increment, axis=0)
-
-        self.ts[self.frame_count] = timestamp
-        self.frame_count += 1
-
-    def _cleanup(self):
-        self.ts.resize(self.frame_count, axis=0)  # self.ts[:self.frame_count]
-        self.f.flush()
-        self.f.close()
-        super()._cleanup()
-
-
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
-@register_callback
-class ImageDisplayCenterBackCV2(ImageCallback):
-
-    FRIENDLY_NAME = "disp_back"
-    TIMESTAMPS_ONLY = False
-
-    def __init__(self, data_source, poll_timeout=0.01, center_x=0, center_y=0, **kwargs):
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
-
-        logging.info("setting up disp")
-        cv2.namedWindow("display")
-        cv2.resizeWindow("display", self.frame_width, self.frame_height)
-
-        if center_x != 0:
-            self.center_x = center_x
-        else:
-            self.center_x = self.frame_height // 2
-        if center_y != 0:
-            self.center_y = center_y
-        else:
-            self.center_y = self.frame_width // 2
-        self.color = [0, 0, 250]
-        self.thickness = 1
+        self.data_buffer = np.zeros(self.input_shape)
+        self.started = False
 
     @classmethod
-    def make_concurrent(cls, comms="pipe", **kwargs):
-        return ConcurrentTask(task=cls.make_run, comms=comms, **kwargs)
+    def make_concurrent(cls, task_kwargs, comms="array"):
+        return ConcurrentTask(task=cls.make_run, task_kwargs=task_kwargs, comms=comms)
+
+    def _append_to_buffer(self, buffer, x):
+        buffer = np.roll(buffer, shift=-x.shape[0], axis=0)
+        buffer[-len(x) :, ...] = x
+        return buffer
 
     def _loop(self, data):
-        if self.data_source.WHOAMI == "array":
-            image = data
-        else:
-            image, timestamp = data
+        # TODO: save raw data, filtered data and prediction to file...
+        data = data[:, : self.input_shape[-1]]
+        data = ss.sosfiltfilt(self.sos_bp, data, axis=0).astype(np.float16)
+        self.data_buffer = self._append_to_buffer(self.data_buffer, data)
+        batch = self.data_buffer.reshape(
+            (1, *self.data_buffer.shape)
+        )  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
+        # batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
+        prediction = self.model.predict(batch)
 
-        image = cv2.rectangle(
-            image,
-            (self.frame_height - 95, self.frame_width),
-            (95, self.frame_width - 45),
-            color=self.color,
-            thickness=self.thickness,
-        )  # ball region
-        image = cv2.line(
-            image, (60, self.center_y), (self.frame_height - 60, self.center_y), self.color, self.thickness
-        )  # y-axis cross
-        image = cv2.line(
-            image, (self.center_x, 60), (self.center_x, self.frame_width - 60), self.color, self.thickness
-        )  # x-axis cross
-        # image = cv2.rectangle(image, (self.center_x-40,self.center_y-35), (self.center_x+20,self.center_y+35), color=self.color, thickness=self.thickness) # fly
-        cv2.imshow("display", image)
-        cv2.waitKey(1)
+        # detect vibration pulses:
+        # pulsetimes_pred, pulsetimes_pred_confidence = dss.event_utils.detect_events((prediction[0, ..., 1]>0.2).astype(np.float), thres=0.5, min_dist=500)
+        pulsetimes_pred = peakutils.indexes(prediction[0, ..., 1], thres=0.25, min_dist=500, thres_abs=True)
 
-    def _cleanup(self):
-        logging.info("closing display")
-        cv2.destroyWindow("display")
+        # filter vibrations by preceding IPI
+        min_ipi = 1000  # 100ms
+        max_ipi = 2000  # 200ms
+        good_pulses = np.logical_and(np.diff(pulsetimes_pred, append=0) > min_ipi, np.diff(pulsetimes_pred, append=0) < max_ipi)
+        print(pulsetimes_pred, pulsetimes_pred[good_pulses])
+        pulsetimes_pred = pulsetimes_pred[good_pulses]
+        vibrations_present = len(pulsetimes_pred) > 1
 
-
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
-@register_callback
-class ImageDisplayCenterTopCV2(ImageCallback):
-
-    FRIENDLY_NAME = "disp_top"
-    TIMESTAMPS_ONLY = False
-
-    def __init__(self, data_source, poll_timeout=0.01, circ_center_x=0, circ_center_y=0, circ_r=0, **kwargs):
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
-
-        logging.info("setting up disp")
-        cv2.namedWindow("display")
-        cv2.resizeWindow("display", self.frame_width, self.frame_height)
-
-        # properties of drawn circle
-        if circ_center_x != 0:
-            self.circ_center_x = circ_center_x
-        else:
-            self.circ_center_x = self.frame_height // 2
-        if circ_center_y != 0:
-            self.circ_center_y = circ_center_y
-        else:
-            self.circ_center_y = self.frame_width // 2
-        if circ_r != 0:
-            self.circ_r = circ_r
-        else:
-            self.circ_r = 10
-        self.circ_color = [0, 0, 250]
-        self.needle_color = [250, 0, 0]
-        self.circ_thickness = 2
-
-        self.flyhead_topleft, self.flyhead_bottomright = (self.circ_center_x - 45, self.circ_center_y - 50), (
-            self.circ_center_x + 5,
-            self.circ_center_y + 50,
-        )
-        self.flybody_topleft, self.flybody_bottomright = (self.circ_center_x, self.circ_center_y - 45), (
-            self.circ_center_x + 200,
-            self.circ_center_y + 45,
-        )
-        self.needle_topleft, self.needle_bottomright = (self.circ_center_x + 195, self.circ_center_y - 40), (
-            self.frame_width,
-            self.circ_center_y + 40,
-        )
-
-    @classmethod
-    def make_concurrent(cls, comms="pipe", **kwargs):
-        return ConcurrentTask(task=cls.make_run, comms=comms, **kwargs)
-
-    def _loop(self, data):
-        if self.data_source.WHOAMI == "array":
-            image = data
-        else:
-            image, timestamp = data
-
-        image = cv2.circle(image, (self.circ_center_x, self.circ_center_y), self.circ_r, self.circ_color, self.circ_thickness)
-        image = cv2.line(
-            image, (self.circ_center_x, 0), (self.circ_center_x, self.frame_width), self.circ_color, self.circ_thickness
-        )
-        image = cv2.line(
-            image, (0, self.circ_center_y), (self.frame_height, self.circ_center_y), self.circ_color, self.circ_thickness
-        )
-        image = cv2.rectangle(
-            image, self.flyhead_topleft, self.flyhead_bottomright, color=self.circ_color, thickness=self.circ_thickness
-        )
-        image = cv2.rectangle(
-            image, self.flybody_topleft, self.flybody_bottomright, color=self.circ_color, thickness=self.circ_thickness
-        )
-        image = cv2.rectangle(
-            image, self.needle_topleft, self.needle_bottomright, color=self.needle_color, thickness=self.circ_thickness
-        )
-        cv2.imshow("display", image)
-        cv2.waitKey(1)
+        if not self.started and vibrations_present:
+            print("   sending START")
+            self.nit.send_trigger(1.5, duration=3)
+            self.started = True
+        elif self.started and not vibrations_present:
+            self.nit.send_trigger(0, duration=None)
+            self.started = False
 
     def _cleanup(self):
-        logging.info("closing display")
-        cv2.destroyWindow("display")
+        print("   stopped RT processing")
+        self.nit.send_trigger(0, duration=None)
+        self.nit.finish()
+        self.nit.stop_server()
+        del self.nit
+        self.sp.terminate()
+        self.sp.kill()
 
 
 if __name__ == "__main__":
     import time
-    import ctypes
 
-    # ct = ImageDisplayPQG.make_concurrent(
-    #     task_kwargs={"frame_width": 1000, "frame_height": 1000, "rate": .1},
-    #     comms="array",
-    #     comms_kwargs={"shape": (1000, 1000, 3), "ctype": ctypes.c_uint8},
-    # )
+    # ct = PlotPQG.make_concurrent(task_kwargs={'channels_to_plot': [0, 2], 'rate': .2}, comms='pipe')
     # ct.start()
-    # for _ in range(100000000):
-    #     if ct._sender.WHOAMI == "array":
-    #         ct.send((np.random.randint(0, 255, (1000, 1000, 3)).astype(np.uint8), 1))
-    #     else:
-    #         ct.send(((np.zeros((1000, 1000)) + np.random.randint(0, 255)).astype(np.uint8), 1))
-    #     time.sleep(0.001)
+    # for _ in range(1000):
+    #     timestamp = time.time()
+    #     ct.send((np.random.randn(10_000, 4), timestamp))
     # ct.finish()
     # ct.close()
 
-    ct = ImageWriterH5.make_concurrent({"file_name": "test"})
+    ct = SaveHDF.make_concurrent({"file_name": "test"})
     ct.start()
     for _ in range(10):
         timestamp = time.time()
         print(timestamp)
         # ct.send((np.random.randn(10_000, 4), timestamp))
-        ct.send((np.zeros((1000, 1000, 3)), timestamp))
-        time.sleep(.1)
+        ct.send((np.zeros((10_000, 4)), timestamp))
+        time.sleep(1)
     ct.finish()
     ct.close()
