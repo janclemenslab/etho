@@ -9,6 +9,8 @@ import os
 import subprocess
 from typing import Optional
 import sys
+import signal
+import psutil
 
 
 class BaseZeroService(abc.ABC, zerorpc.Server):
@@ -240,19 +242,41 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.service_kill()
 
     def service_kill(self):
-        self.log.warning("   kill process {0}".format(self._getpid()))
+        self.log.warning("   kill process {0}".format(self.getpid()))
         iswin = sys.platform == "win32"
         if iswin:
             # run this in subprocess so the function returns - running this via os.system(...) will kill the process but not return
-            subprocess.Popen("taskkill /F /PID {0}".format(self._getpid()))
+            subprocess.Popen(f"taskkill /F /PID {self.getpid()}")
         else:
-            os.system("kill {0}".format(self._getpid()))
+            os.system(f"pkill -TERM -P {self.getpid()}")
+
+    def kill(self):
+        os.kill(self.pid, signal.SIGKILL)
+
+    def kill_children(self):
+        try:
+            parent = psutil.Process(self.pid)
+        except psutil.NoSuchProcess:
+            return
+        children = parent.children(recursive=True)
+        for p in children:
+            os.kill(p.pid, signal.SIGKILL)
+
 
     def _getpid(self):
-        return os.getpid()
+        return os.getpid()[0]
 
     def getpid(self):
+        return os.getpid()[0]
+
+    @property
+    def pid(self):
         return os.getpid()
+
+    @property
+    def pgrp(self):
+        return os.getpgrp()
+
 
     def __del__(self):
         self.cleanup()
