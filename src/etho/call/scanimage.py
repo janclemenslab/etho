@@ -5,6 +5,7 @@ import defopt
 import logging
 from itertools import cycle
 import os
+import cv2
 # from rich.progress import Progress
 import rich
 from typing import Optional
@@ -42,6 +43,52 @@ def client(
     services = {}
     rich.print(defaults)
 
+    gcm_keys = [key for key in prot["NODE"]["use_services"] if "GCM" in key]
+    for gcm_cnt, gcm_key in enumerate(gcm_keys):
+        # if gcm_key in prot["NODE"]["use_services"] and gcm_key in prot:
+        this = defaults.copy()
+        # update `this` with service specific host params
+        host_is_remote = False
+        if "host" in prot[gcm_key]:
+            this.update(prot[gcm_key]["host"])
+            host_is_remote = True
+
+        if "port" not in prot[gcm_key]:
+            prot[gcm_key]["port"] = GCM.SERVICE_PORT + gcm_cnt
+
+        gcm = GCM.make(
+            this["serializer"],
+            this["user"],
+            this["host"],
+            this["working_directory"],
+            this["python_exe"],
+            host_is_remote=host_is_remote,
+            new_console=new_console,
+            port=prot[gcm_key]["port"],
+        )
+
+        cam_params = undefaultify(prot[gcm_key])
+        if not preview:
+            maxduration = this["maxduration"] + 20
+        else:
+            maxduration = 1_000_000
+
+        if preview:
+            cam_params["callbacks"] = {"disp_fast": None}
+
+        save_suffix = f"_{gcm_cnt+1}" if gcm_cnt > 0 else ""
+        gcm.setup(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}", maxduration, cam_params)
+
+        if not preview:
+            gcm.init_local_logger(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log")
+        if show_test_image:
+            img = gcm.attr("test_image")
+            print("Press any key to continue.")
+            cv2.imshow("Test image. Are you okay with this?", img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+            cv2.waitKey(1)  # second call required for window to be closed on mac
+        services[gcm_key] = gcm
 
     daq_keys = [key for key in prot["NODE"]["use_services"] if "DAQ" in key]
     for daq_cnt, daq_key in enumerate(daq_keys):
@@ -67,7 +114,7 @@ def client(
         rich.print(playlist)
 
         sounds = load_sounds(
-            playlist, fs, attenuation=attenuation, LEDamp=prot[daq_key]["ledamp"], stimfolder=config["HEAD"]["stimfolder"], 
+            playlist, fs, attenuation=attenuation, LEDamp=prot[daq_key]["ledamp"], stimfolder=config["HEAD"]["stimfolder"],
             ignore_stop=shuffle or loop,
         )
         sounds = [sound.astype(np.float64) for sound in sounds]
@@ -77,9 +124,9 @@ def client(
         if not loop:
             logging.info(f"Setting maxduration from playlist to {totallen}.")
             this["maxduration"] = totallen
-            # even though we do not want to loop need to use `cycle`` here 
+            # even though we do not want to loop need to use `cycle`` here
             # so daq continues until the end and scanimage receives the last NEXT and STOP triggers
-            playlist_items = cycle(playlist_items)  
+            playlist_items = cycle(playlist_items)
         else:
             this["maxduration"] = -1
             if shuffle:
@@ -115,7 +162,7 @@ def client(
             for key in keys:
                 if 'save' in key.lower():
                     del prot[daq_key]['callbacks'][key]
-        
+
         daq.setup(
             daq_save_filename,
             playlist_items,
@@ -149,7 +196,7 @@ def client(
         time.sleep(1.0)
         t1 = time.clock()
         # print(f"   Busy {t1-t0:1.2f} seconds.\r", end="", flush=True)
-    
+
     logging.info(f"   Finished after {t1-t0:1.2f} seconds.")
     daq.close()
     # send STOP trigger
@@ -159,6 +206,6 @@ def client(
     time.sleep(4)  # wait for daq process to free resources
     os.system('taskkill /IM python.exe /F')
 
-    
+
 if __name__ == "__main__":
     defopt.run(client)

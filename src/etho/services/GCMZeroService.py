@@ -8,7 +8,10 @@ from ..services import camera
 from .callbacks import callbacks
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+logger = logging.getLogger(__name__)
+
+
+@for_all_methods(log_exceptions(logger))
 class GCM(BaseZeroService):
 
     LOGGING_PORT = 1448  # set this to range 1420-1460
@@ -178,13 +181,15 @@ class GCM(BaseZeroService):
         for callback in self.callbacks:
             try:
                 callback.close()
-            except:
+            except Exception as e:
                 pass
 
         self.log.warning("   stopped ")
         if stop_service:
             time.sleep(0.5)
             self.service_stop()
+            # self.kill_children()
+            # self.kill()
 
     def progress(self):
         try:
@@ -226,6 +231,7 @@ if __name__ == "__main__":
         port = sys.argv[2]
     else:
         port = GCM.SERVICE_PORT
+    logger.info(f'Starting service GCM at {port} with serializer "{ser}".')
     s = GCM(serializer=ser)
     s.bind("tcp://0.0.0.0:{0}".format(port))  # broadcast on all IPs
     s.run()

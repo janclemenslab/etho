@@ -6,8 +6,8 @@ from .base import BaseCam
 try:
     from pylablib.devices import DCAM
     hamamatsu_error = None
-except ImportError as e:
-    hamamatsu_error = e
+except ImportError as hamamatsu_error:
+    pass
 
 
 class Hamamatsu(BaseCam):

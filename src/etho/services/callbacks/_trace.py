@@ -12,12 +12,20 @@ from ._base import BaseCallback
 
 try:
     import tables
-except ImportError:
+    tables_import_error = None
+except ImportError as tables_import_error:
     pass
 
 try:
     import peakutils
 except ImportError:
+    pass
+
+try:
+    from qtpy import QtWidgets
+    import pyqtgraph as pg
+    pyqtgraph_import_error = None
+except Exception as pyqtgraph_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
     pass
 
 
@@ -37,7 +45,6 @@ class PlotMPL(BaseCallback):
         self.nb_samples = nb_samples
 
         import matplotlib
-
         matplotlib.use("tkagg")
         import matplotlib.pyplot as plt
 
@@ -82,28 +89,32 @@ class PlotPQG(BaseCallback):
 
     def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: List, nb_samples: int = 10_000, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        if pyqtgraph_import_error is not None:
+            logger.exception('Could not import pyqtgraph. Aborting!', exc_info=pyqtgraph_import_error)
+            raise pyqtgraph_import_error
+
         self.channels_to_plot = channels_to_plot
         self.nb_channels = len(self.channels_to_plot)
         self.nb_samples = nb_samples
 
-        from pyqtgraph.Qt import QtGui
-        import pyqtgraph as pg
-
         pg.setConfigOption("background", "w")
         pg.setConfigOption("leftButtonPan", False)
+
         # set up window and subplots
-        self.app = QtGui.QApplication([])
-        self.win = pg.GraphicsWindow(title="DAQ")
+        self.app = QtWidgets.QApplication([])
+        self.win = pg.GraphicsLayoutWidget(title="DAQ")
         self.win.resize(1000, min(100 * self.nb_channels, 1000))
         self.p = []
-        for _ in range(self.nb_channels):
-            w = self.win.addPlot(y=np.zeros((self.nb_samples,)))
+        for row in range(self.nb_channels):
+            w = self.win.addPlot(row=row, col=0, y=np.zeros((self.nb_samples,)))
             w.setXRange(0, self.nb_samples, padding=0)
             w.setYRange(-5, 5)
             w.setMouseEnabled(x=False, y=False)
             w.enableAutoRange("xy", False_)
             self.p.append(w.plot(pen="k"))
-            self.win.nextRow()
+        print(self.p)
+        self.win.show()
         self.app.processEvents()
 
     def _loop(self, data):
@@ -122,6 +133,11 @@ class SaveHDF(BaseCallback):
 
     def __init__(self, data_source, *, file_name, attrs=None, poll_timeout=0.01, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        if tables_import_error is not None:
+            logger.exception('Could not import tables. Aborting!', exc_info=tables_import_error)
+            raise tables_import_error
+
         self.file_name = file_name
         self.f = tables.open_file(self.file_name + self.SUFFIX, mode="w")
         self.vanilla: bool = True
@@ -202,6 +218,11 @@ class SaveDLP_HDF(BaseCallback):
 
     def __init__(self, data_source, *, file_name, attrs=None, poll_timeout=0.01, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        if tables_import_error is not None:
+            logger.exception('Could not import tables. Aborting!', exc_info=tables_import_error)
+            raise tables_import_error
+
         self.file_name = file_name
         self.f = tables.open_file(self.file_name + self.SUFFIX, mode="w")
         self.vanilla: bool = True  # True if the data structure has not been initialized (via `_init_data`)
@@ -338,21 +359,21 @@ class RealtimeDSS(BaseCallback):
 if __name__ == "__main__":
     import time
 
-    # ct = PlotPQG.make_concurrent(task_kwargs={'channels_to_plot': [0, 2], 'rate': .2}, comms='pipe')
-    # ct.start()
-    # for _ in range(1000):
-    #     timestamp = time.time()
-    #     ct.send((np.random.randn(10_000, 4), timestamp))
-    # ct.finish()
-    # ct.close()
-
-    ct = SaveHDF.make_concurrent({"file_name": "test"})
+    ct = PlotPQG.make_concurrent(task_kwargs={'channels_to_plot': [0, 2], 'rate': .1}, comms='pipe')
     ct.start()
-    for _ in range(10):
+    for _ in range(100000):
         timestamp = time.time()
-        print(timestamp)
-        # ct.send((np.random.randn(10_000, 4), timestamp))
-        ct.send((np.zeros((10_000, 4)), timestamp))
-        time.sleep(1)
+        ct.send((np.random.randn(10_000, 4), timestamp))
     ct.finish()
     ct.close()
+
+    # ct = SaveHDF.make_concurrent({"file_name": "test"})
+    # ct.start()
+    # for _ in range(10):
+    #     timestamp = time.time()
+    #     print(timestamp)
+    #     # ct.send((np.random.randn(10_000, 4), timestamp))
+    #     ct.send((np.zeros((10_000, 4)), timestamp))
+    #     time.sleep(1)
+    # ct.finish()
+    # ct.close()

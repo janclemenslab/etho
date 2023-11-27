@@ -139,8 +139,7 @@ def client(
         gcm.setup(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}", maxduration, cam_params)
 
         if not preview:
-            gcm.init_local_logger(f"{this['save_directory']}/{save_prefix}{save_suffix}/{save_prefix}{save_suffix}_gcm.log")
-
+            gcm.init_local_logger(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log")
         if show_test_image:
             img = gcm.attr("test_image")
             print("Press any key to continue.")
@@ -287,7 +286,7 @@ def client(
 
     # yield services  # for GUI interaction but breaks CLI
 
-    logging.info(f"All services started.")
+    logging.info("All services started.")
 
     if show_progress:
         with Progress() as progress:
@@ -309,8 +308,8 @@ def client(
                         progress.stop_task(task_id)
                 time.sleep(1)
 
-        time.sleep(4)
         logging.info('Cancelling jobs:')
+        time.sleep(4)
         # for service_name, service in services.items():
             # try:
             #     logging.info(f'   {service_name}')

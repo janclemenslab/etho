@@ -1,4 +1,3 @@
-import time
 import subprocess
 import fabric
 from typing import Optional, Union, List
@@ -12,10 +11,27 @@ class Runner:
     """Manages remote processes."""
 
     def __init__(self, host: str, host_is_win: bool = False, host_is_remote: bool = False, python_exe: str = "python"):
+        """_summary_
+
+        Args:
+            host (str): Host name or IP address of the machine to run the commands on.
+            host_is_win (bool, optional): Defaults to False.
+            host_is_remote (bool, optional): If False, run commands locallu.
+                                             If True, run commands via ssh (fabric).
+                                             Defaults to False.
+            python_exe (str, optional): _description_. Defaults to "python".
+        """
         self.host = host
         self.host_is_win = host_is_win
         self.host_is_remote = host_is_remote
         self.python_exe = python_exe
+
+        host_uname = self.run('uname').stdout.lower()
+        os_dct = {'nt': 'win', 'darwin': 'mac', 'linux': 'linux'}
+        self.host_os = None
+        for uname, os in os_dct.items():
+            self.host_os = os if uname in host_uname else self.host_os
+
         # get host_name for ping
         token = host.split("@")
         if len(token) == 1:  # host_name
@@ -64,18 +80,21 @@ class Runner:
         if self.host_is_remote and not run_local:
             shell = (
                 "cmd.exe" if self.host_is_win else None
-            )  # control shell since powershell and cmd require different separators for commands - cmd.exe wants ; and fails with &&
+            )  # control shell since powershell and cmd require different separators for commands - cmd.exe wants ";" and fails with "&&"
             result = fabric.Connection(self.host).run(
                 cmd, hide=True, timeout=timeout, asynchronous=asynchronous, disown=disown, shell=shell
             )
-        else:
-            # only way to open a new console window is subprocess on windows:
-            result = None
-            if new_console and self.host_is_win:
-                out = subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE)#, shell=True, stdout=subprocess.PIPE)
-            elif new_console:
-                subprocess.Popen('open -a terminal -n  --args "' + cmd + '"')
-            else:
+        else:  # run local process
+            if new_console:  # in a new concole window
+                result = None
+                if self.host_os == 'win':
+                    out = subprocess.Popen(cmd, creationflags=subprocess.CREATE_NEW_CONSOLE)#, shell=True, stdout=subprocess.PIPE)
+                elif self.host_os == 'mac':
+                    import appscript
+                    appscript.app('Terminal').do_script(cmd)
+                else:
+                    pass
+            else:  # hidden
                 result = invoke.run(cmd, hide=True, timeout=timeout, asynchronous=asynchronous, disown=disown)
 
         return result
@@ -106,7 +125,14 @@ class Runner:
             self.kill(pids)
 
     def pid(self, query: str) -> List[int]:
-        """Get pids of all processes partially matching `query`."""
+        """Get pids of all processes partially matching `query`.
+
+        Args:
+            query (str): Process cmdline by which process can be recognized.
+
+        Returns:
+            List[int]: PIDs matching query
+        """
 
         # get list of running processes on host
         py_code = "import psutil; import pprint; pprint.pprint([{'pid': p.info['pid'], 'cmdline': p.info['cmdline']} for p in psutil.process_iter(attrs=['cmdline', 'pid'])])"
@@ -139,6 +165,7 @@ class Runner:
         return False
 
     def is_online(self) -> bool:
+        """Pings host to see if it is online."""
         params = "-n 1" if self.is_win else "-c 1"  # run only once
         try:
             online = self.run(f"ping {params} {self.host_name}", run_local=True)
@@ -146,22 +173,6 @@ class Runner:
             logger.debug(e, exc_info=e)
             online = False
         return online
-
-    def reboot(self, wait: bool = False, timeout: float = 10.0):
-        """_summary_
-
-        Args:
-            wait (bool, optional): Wait for host to come back online. Defaults to False.
-            timeout (float, optional): Wait for that many seconds. Defaults to 10.0.
-        """
-        # uer invoke's
-        sr.run("$echo 'droso123' | sudo -S reboot now", disown=True)
-        if wait:
-            wait_time = 0
-            while not self.is_online() and wait_time <= timeout:
-                time.sleep(1)
-                wait_time += 1
-        return self.is_online()
 
 
 if __name__ == "__main__":

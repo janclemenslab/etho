@@ -8,7 +8,6 @@ import threading
 
 try:
     import PyDAQmx as daq
-
     pydaqmx_import_error = None
 except (ImportError, NotImplementedError) as pydaqmx_import_error:
     pass
@@ -23,7 +22,7 @@ class NIC(BaseZeroService):
     SERVICE_NAME = "NIC"  # short, uppercase, 3-letter ID of the service (equals class name)
 
     def setup(self, output_channel, duration, frequency, duty_cycle, params):
-        """Setup the trigger service (intiates the digital output channels).
+        """Setup the counter service (intiates the digital output channels).
 
         Args:
             duration (float): Unused - kept to keep the interface same across services [description]

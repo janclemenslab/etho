@@ -7,7 +7,6 @@ import logging
 
 try:
     import PyDAQmx as daq
-
     pydaqmx_import_error = None
 except ImportError as pydaqmx_import_error:
     pass

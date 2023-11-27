@@ -7,7 +7,7 @@ import socket
 import time
 import os
 import subprocess
-from typing import Optional
+from typing import Optional, Dict, Any
 import sys
 import signal
 import psutil
@@ -60,26 +60,26 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self._time_started = None
         self.duration = None
         self.prev_elapsed = 0
-        self.info = dict()
+        self.info: Dict[str, Any] = dict()
 
     @classmethod
     def make(
         cls,
-        serializer,
-        user,
-        host,
-        folder_name,
-        python_exe="python",
+        serializer: str,
+        user: str,
+        host: str,
+        folder_name: str,
+        python_exe: str = "python",
         host_is_remote: bool = False,
         host_is_win: bool = True,
-        port=None,
+        port: Optional[int] = None,
         new_console: bool = False,
         run_local: bool = False,
     ):
         from ..utils.zeroclient import ZeroClient  # only works on the head node
 
         if port is None:
-            port = cls.SERVICE_PORT
+            port = cls.SERVICE_PORT  # fall back to default port
 
         server_name = f"{python_exe} -m {cls.__module__} {serializer} {port}"
         logging.debug(f"initializing {cls.SERVICE_NAME} at port {port}.")
@@ -108,12 +108,12 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             head_ip: IP address to publish to (defaults to '192.168.1.1')
             lob_level: (defaults to logging.INFO)
         """
-
-        # setup connection - publish to head_ip via LOGGIN_PORT
+        # setup connection - publish to head_ip via LOGGING_PORT
         ctx = zmq.Context()
         ctx.LINGER = 0
         pub = ctx.socket(zmq.PUB)
         pub.connect("tcp://{0}:{1}".format(head_ip, self.LOGGING_PORT))
+
         self.log = logging.getLogger((__name__))
         self.log.setLevel(log_level)
 
@@ -131,7 +131,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             logging.CRITICAL: logging.Formatter(prefix + body + "\n", datefmt=df),
         }
 
-        # setup log handler which publishe all log messages to the network
+        # setup log handler which publishes all log messages to the network
         handler = PUBHandler(pub)
         handler.setLevel(log_level)  # catch only important messages
         handler.formatters = formatters
@@ -236,21 +236,26 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         try:
             self.stop()
         except Exception as e:
-            self.log.debug("stopnot", exc_info=e)
+            self.log.debug("Could not stop.", exc_info=e)
         self.log.warning("   done")
         self._flush_loggers()
         self.service_kill()
 
     def service_kill(self):
-        self.log.warning("   kill process {0}".format(self.getpid()))
+        self.log.warning("   kill process {0}".format(self.pid))
         iswin = sys.platform == "win32"
         if iswin:
             # run this in subprocess so the function returns - running this via os.system(...) will kill the process but not return
-            subprocess.Popen(f"taskkill /F /PID {self.getpid()}")
+            subprocess.Popen(f"taskkill /F /PID {self.pid}")
         else:
-            os.system(f"pkill -TERM -P {self.getpid()}")
+            os.system(f"pkill -TERM -P {self.pid}")
+        self.kill_children()
+        self.kill()
 
-    def kill(self):
+    def kill(self, include_children: bool = False):
+        if include_children:
+            self.kill_children()
+        self.log.warning("   kill process {0}".format(self.pid))
         os.kill(self.pid, signal.SIGKILL)
 
     def kill_children(self):
@@ -261,7 +266,6 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         children = parent.children(recursive=True)
         for p in children:
             os.kill(p.pid, signal.SIGKILL)
-
 
     def _getpid(self):
         return os.getpid()[0]

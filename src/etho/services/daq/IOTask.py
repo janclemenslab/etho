@@ -8,7 +8,6 @@ try:
     from PyDAQmx.DAQmxCallBack import *
     from PyDAQmx.DAQmxConstants import *
     from PyDAQmx.DAQmxFunctions import *
-
     pydaqmx_import_error = None
 except (ImportError, NotImplementedError) as pydaqmx_import_error:
     pass

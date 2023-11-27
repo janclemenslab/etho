@@ -5,10 +5,9 @@ from .base import BaseCam, gray2rgb
 
 try:
     from ximea import xiapi
-
     ximea_error = None
-except ImportError as e:
-    ximea_error = e
+except ImportError as ximea_error:
+    pass
 
 
 class Ximea(BaseCam):

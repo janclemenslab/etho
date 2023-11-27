@@ -9,9 +9,10 @@ try:
 except ImportError as pyspin_error:
     pass
 
-class Spinnaker(BaseCam):
 
-    NAME = 'SPN'
+class Spinnaker_OLD(BaseCam):
+
+    NAME = 'SPO'
 
 
     def __init__(self, serialnumber):
@@ -83,7 +84,9 @@ class Spinnaker(BaseCam):
 
     @framerate.setter
     def framerate(self, value: float):
+        # self.c.AcquisitionFrameRateEnabled.SetValue(True)  # OR THIS?
         self.c.AcquisitionFrameRateEnable.SetValue(True)
+        self.c.AcquisitionFrameRateAuto.SetValue(False)
         self.c.AcquisitionFrameRate.SetValue(float(value))
 
     @property

@@ -1,6 +1,6 @@
 import zerorpc
 import time
-from ..utils.runner import Runner
+from .runner import Runner
 import zmq
 import logging
 from zmq.log.handlers import PUBHandler
@@ -40,16 +40,16 @@ class ZeroClient(zerorpc.Client):
         self.sr = Runner(ssh_address, host_is_win=host_is_win, host_is_remote=host_is_remote, python_exe=python_exe)
         self.pid = None  # pid of server process on remote machine
 
-    def _init_network_logger(self):
+    def _init_network_logger(self, log_level: int = logging.INFO):
         # TODO: set log levels of logger and handler
         ctx = zmq.Context()
         ctx.LINGER = 0
         pub = ctx.socket(zmq.PUB)
-        head_ip = config["HEAD"]["name"]
+        head_ip = config["HEAD"]["name"]  # log to head
         pub.connect("tcp://{0}:{1}".format(head_ip, self.LOGGING_PORT))
 
         self.log = logging.getLogger()
-        self.log.setLevel(logging.INFO)
+        self.log.setLevel(log_level)
 
         # get host name or IP to append to message
         self.hostname = socket.gethostname()
@@ -67,7 +67,7 @@ class ZeroClient(zerorpc.Client):
 
         handler = PUBHandler(pub)
         handler.formatters = formatters
-        handler.setLevel(logging.INFO)
+        handler.setLevel(log_level)
         self.log.addHandler(handler)
 
     def start_server(self, server_name, folder_name=".", warmup=2, timeout=5, run_local: bool = True, new_console: bool = False):

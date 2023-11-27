@@ -165,10 +165,8 @@ def kill_child_processes():
 
 
 class RunDialog(QDialog):
-    def __init__(self, services):
+    def __init__(self, kwargs):
         super().__init__()
-
-        self.services = services
 
         self.setWindowTitle("HELLO!")
 
@@ -184,27 +182,34 @@ class RunDialog(QDialog):
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
 
-    # def reject(self):
-    #     for service_name, service in self.services.items():
-    #         logging.info(f'   {service_name}')
-    #         service.finish()
-    #         # time.sleep(1)
-    #         try:
-    #             logging.info(f'     Success.')
-    #         except:
-    #             logging.warning(f'     Failed.')
+        # hide this in a class or function
+        # self.p = Process(target=client.client, kwargs=kwargs)  # use process and
+        # self.p.start()  # start execution
+        # self.p.join()  # join blocks the GUI while the process is running
 
-    #     kill_child_processes()
-    #     super().reject()
+        self.client = client.client(**kwargs)
+        self.services = next(self.client)
+
+
+    def reject(self):
+        logging.info('Cancelling jobs:')
+        for service_name, service in self.services.items():
+            try:
+                logging.info(f'   {service_name}')
+                service.finish()
+            except:
+                logging.warning(f'     Failed.')
+        logging.info('   Killing all child processes')
+        kill_child_processes()
+        logging.info('Done')
+
+        super().reject()
 
     # @classmethod
     # def do_run(self, method, args=[], kwargs=[], message="Busy doing stuff."):
     #     # self.message.setText(message)
     #     # wx.Yield()  # yield to allow wx to display the dialog
     #     from multiprocessing import Process
-    #     self.p = Process(target=method, args=args, kwargs=kwargs)  # use process and
-    #     self.p.start()  # start execution
-    #     self.p.join()  # join blocks the GUI while the process is running
     #     # self.Destroy()  # properly destroy the dialog
 
 
@@ -394,23 +399,13 @@ class MainWindow(QMainWindow):
 
         rich.print("Starting experiment with these args:")
         rich.print(kwargs)
+        # breakpoint()
+        # cclient = client.client(**kwargs)
+        # services = next(cclient)
 
-        # hide this in a class or function
-        this_client = client.client(**kwargs)
-        services = next(this_client)
+        # dlg = RunDialog(kwargs)
+        # dlg.exec_()
 
-        dlg = RunDialog(services)
-        if not dlg.exec_():
-            logging.info('Cancelling jobs:')
-            for service_name, service in services.items():
-                try:
-                    logging.info(f'   {service_name}')
-                    service.finish()
-                except:
-                    logging.warning(f'     Failed.')
-            logging.info('   Killing all child processes')
-            kill_child_processes()
-            logging.info('Done')
 
     def camera_preview(self):
         self.start(preview=True)

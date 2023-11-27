@@ -17,9 +17,11 @@ class BaseCallback:
         obj = cls(*class_args, **class_kwargs)
         obj.RUN = True
         obj._run()
+        return obj
 
     @classmethod
     def make_concurrent(cls, comms="queue", **kwargs):
+        # will run `cls.make_run(data_source="eval(comms)", **kwargs)
         return ConcurrentTask(task=cls.make_run, comms=comms, **kwargs)
 
     def start(self):
@@ -53,11 +55,21 @@ class BaseCallback:
         self._cleanup()
 
     def _loop(self, data):
+        """Override this and do sth with `data`
+
+        Args:
+            data (_type_): _description_
+        """
         pass
 
     def _cleanup(self):
-        # close everything created during __init__
-        # Maybe flush data_source (e.g. process all items from the queue). Or keep it simple?
+        """Clean up before killing callback.
+
+        Override this and:
+        - flush all data_sources (e.g. process all items from the queue)
+        - close all files or hardware
+        - call `super()._cleanup()` at the end
+        """
         self.CLEAN = True
 
     def __del__(self):
@@ -68,6 +80,5 @@ class BaseCallback:
 
 @register_callback
 class BroadcastCallback:
-    """broadcast data w/o acting on it."""
-
+    """Broadcast data w/o acting on it."""
     pass

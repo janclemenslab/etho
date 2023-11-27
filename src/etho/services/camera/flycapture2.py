@@ -6,10 +6,9 @@ from .base import BaseCam, gray2rgb
 
 try:
     import PyCapture2
-
     pycapture_error = None
-except ImportError as e:
-    pycapture_error = e
+except ImportError as pycapture_error:
+    pass
 
 
 class FlyCapture2(BaseCam):

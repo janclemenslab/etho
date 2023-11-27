@@ -16,22 +16,23 @@ except ImportError as cv2_import_error:
 
 try:
     from vidgear.gears import WriteGear
-
     vidgear_import_error = None
 except ImportError as vidgear_import_error:
     pass
 
 try:
-    # from pyqtgraph.Qt import QtGui
     from qtpy import QtWidgets
     import pyqtgraph as pg
     from pyqtgraph.widgets.RawImageWidget import RawImageWidget
-    pyqtgraph_import_error = NotFoundErr
+    pyqtgraph_import_error = None
 except Exception as pyqtgraph_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
     pass
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+logger = logging.getLogger(__name__)
+
+
+@for_all_methods(log_exceptions(logger))
 class ImageCallback(BaseCallback):
     def __init__(
         self,
@@ -52,7 +53,7 @@ class ImageCallback(BaseCallback):
         self.file_name = file_name
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageDisplayCV2(ImageCallback):
 
@@ -60,12 +61,13 @@ class ImageDisplayCV2(ImageCallback):
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, poll_timeout=0.01, **kwargs):
-        if cv2_import_error is not None:
-            raise cv2_import_error
-
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        logging.info("setting up disp")
+        if cv2_import_error is not None:
+            logger.exception('Could not import cv2. Aborting!', exc_info=cv2_import_error)
+            raise cv2_import_error
+
+        logger.info("setting up disp")
         cv2.namedWindow("display")
         cv2.resizeWindow("display", self.frame_width, self.frame_height)
 
@@ -83,11 +85,12 @@ class ImageDisplayCV2(ImageCallback):
         cv2.waitKey(1)
 
     def _cleanup(self):
-        logging.info("closing display")
+        logger.info("closing display")
         cv2.destroyWindow("display")
+        super()._cleanup()
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageDisplayPQG(ImageCallback):
 
@@ -95,12 +98,13 @@ class ImageDisplayPQG(ImageCallback):
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
-        # if pyqtgraph_import_error is not None:
-        #     raise pyqtgraph_import_error
-
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        logging.info("setting up ImageDisplayPQG")
+        if pyqtgraph_import_error is not None:
+            logger.exception('Could not import pyqtgraph. Aborting!', exc_info=pyqtgraph_import_error)
+            raise pyqtgraph_import_error
+
+        logger.info("setting up ImageDisplayPQG")
 
         pg.setConfigOption("background", "w")
         pg.setConfigOption("leftButtonPan", False)
@@ -126,11 +130,14 @@ class ImageDisplayPQG(ImageCallback):
         self.app.processEvents()
 
     def _cleanup(self):
-        logging.info("closing display")
-        # close app and windows here?
+        logger.info("closing display")
+        # close app and windows here
+        self.app.closeAllWindows()
+        self.app.close()
+        super()._cleanup()
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageWriterCV2(ImageCallback):
     """Save images to video using opencv's VideoWriter.
@@ -154,11 +161,11 @@ class ImageWriterCV2(ImageCallback):
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if cv2_import_error is not None:
+            logger.exception('Could not import cv2. Aborting!', exc_info=cv2_import_error)
             raise cv2_import_error
-
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         self.vw = cv2.VideoWriter()
         self.vw.open(
@@ -183,7 +190,7 @@ class ImageWriterCV2(ImageCallback):
         super()._cleanup()
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageWriterCVR(ImageCallback):
     """Round robin videowriter - see ImageWriterVidGear for details.
@@ -215,11 +222,12 @@ class ImageWriterCVR(ImageCallback):
         ffmpeg_params: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if vidgear_import_error is not None:
+            logger.exception('No!', exc_info=vidgear_import_error)
+            self._cleanup()
             raise vidgear_import_error
-
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         self.video_count = 0
         self.frame_count = 0
@@ -228,7 +236,11 @@ class ImageWriterCVR(ImageCallback):
         self.output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
         if ffmpeg_params is not None:
             self.output_params.update(ffmpeg_params)
-        self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
+        try:
+            self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
+        except:
+            self.vw = WriteGear(output=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
+
 
     def _loop(self, data):
         if hasattr(self.data_source, "WHOAMI") and self.data_source.WHOAMI == "array":
@@ -243,15 +255,21 @@ class ImageWriterCVR(ImageCallback):
             del self.vw
             self.frame_count = 0
             self.video_count += 1
-            self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
+            try:
+                self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
+            except:
+                self.vw = WriteGear(output=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
 
     def _cleanup(self):
-        self.vw.close()
-        del self.vw
+        try:
+            self.vw.close()
+            del self.vw
+        except:
+            pass
         super()._cleanup()
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageWriterVidGear(ImageCallback):
     """Write video files using vidgear [](https://abhitronix.github.io/vidgear/latest/).
@@ -281,16 +299,20 @@ class ImageWriterVidGear(ImageCallback):
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, *, poll_timeout=0.01, ffmpeg_params: Optional[Dict[str, Any]] = None, **kwargs):
-        if vidgear_import_error is not None:
-            raise vidgear_import_error
-
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        if vidgear_import_error is not None:
+            logger.exception('Failed to import VidGear. Closing!', exc_info=vidgear_import_error)
+            self._cleanup()
+            # raise vidgear_import_error
 
         self.output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
         if ffmpeg_params is not None:
             self.output_params.update(ffmpeg_params)
-
-        self.vw = WriteGear(output_filename=self.file_name + self.SUFFIX, **self.output_params)
+        try:
+            self.vw = WriteGear(output_filename=self.file_name + self.SUFFIX, **self.output_params)
+        except:
+            self.vw = WriteGear(output=self.file_name + self.SUFFIX, **self.output_params)
 
     def _loop(self, data):
         if hasattr(self.data_source, "WHOAMI") and self.data_source.WHOAMI == "array":
@@ -301,12 +323,16 @@ class ImageWriterVidGear(ImageCallback):
         self.vw.write(image)
 
     def _cleanup(self):
-        self.vw.close()
-        del self.vw
+        try:
+            self.vw.close()
+            del self.vw
+        except:
+            pass
         super()._cleanup()
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+
+@for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageWriterVPF(ImageCallback):
     """CUDA-accelerated video encoding using Nvidia's VideoProcessingFramework.
@@ -321,13 +347,16 @@ class ImageWriterVPF(ImageCallback):
     TIMESTAMPS_ONLY = False
 
     def __init__(self, data_source, *, poll_timeout=0.01, VPF_bin_path=None, **kwargs):
-
-        import sys
-
-        sys.path.append(VPF_bin_path)
-        import PyNvCodec as nvc
-
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        try:
+            import sys
+            sys.path.append(VPF_bin_path)
+            import PyNvCodec as nvc
+        except Exception as e:
+            logging.exception('Could not import PyNvCodec. Quitting.', exc_info=e)
+            self._cleanup()
+
         gpuID = 0
         self.encFile = open(self.file_name + self.SUFFIX, "wb")
         # self.nvEnc = nvc.PyNvEncoder({'rc':'vbr_hq','profile': 'high', 'cq': '10', 'codec': 'h264', 'bf':'3',
@@ -376,9 +405,10 @@ class ImageWriterVPF(ImageCallback):
         for encFrame in encFrames:
             self._write_frame(encFrame)
         self.encFile.close()
+        super()._cleanup()
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
 class TimestampWriterHDF(ImageCallback):
     """[summary]
@@ -423,7 +453,7 @@ class TimestampWriterHDF(ImageCallback):
         super()._cleanup()
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageDisplayCenterBackCV2(ImageCallback):
 
@@ -433,7 +463,7 @@ class ImageDisplayCenterBackCV2(ImageCallback):
     def __init__(self, data_source, poll_timeout=0.01, center_x=0, center_y=0, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        logging.info("setting up disp")
+        logger.info("setting up disp")
         cv2.namedWindow("display")
         cv2.resizeWindow("display", self.frame_width, self.frame_height)
 
@@ -476,11 +506,12 @@ class ImageDisplayCenterBackCV2(ImageCallback):
         cv2.waitKey(1)
 
     def _cleanup(self):
-        logging.info("closing display")
+        logger.info("closing display")
         cv2.destroyWindow("display")
+        super()._cleanup()
 
 
-@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageDisplayCenterTopCV2(ImageCallback):
 
@@ -490,7 +521,7 @@ class ImageDisplayCenterTopCV2(ImageCallback):
     def __init__(self, data_source, poll_timeout=0.01, circ_center_x=0, circ_center_y=0, circ_r=0, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        logging.info("setting up disp")
+        logger.info("setting up disp")
         cv2.namedWindow("display")
         cv2.resizeWindow("display", self.frame_width, self.frame_height)
 
@@ -554,8 +585,9 @@ class ImageDisplayCenterTopCV2(ImageCallback):
         cv2.waitKey(1)
 
     def _cleanup(self):
-        logging.info("closing display")
+        logger.info("closing display")
         cv2.destroyWindow("display")
+        super()._cleanup()
 
 
 if __name__ == "__main__":

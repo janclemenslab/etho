@@ -6,7 +6,7 @@ import time
 import sys
 import numpy as np
 import ctypes
-from typing import Optional, Any
+from typing import Optional, Any, Dict, Callable, Literal
 import multiprocessing.connection
 
 
@@ -126,14 +126,14 @@ class Faucet:
             return empty_value
 
 
-def Pipe(duplex=False):
+def Pipe(duplex: bool = False):
     receiver, sender = mp.Pipe(duplex)
     receiver = Faucet(receiver)
     sender = Faucet(sender)
     return sender, receiver
 
 
-def Queue(maxsize=0):
+def Queue(maxsize: int = 0):
     sender = mp.Queue(maxsize)
     sender.send = sender.put
     receiver = sender
@@ -151,18 +151,27 @@ class ConcurrentTask:
     """Helper class for running tasks in independent
     processes with communication tools attached."""
 
-    def __init__(self, task, task_kwargs={}, comms="queue", comms_kwargs={}, taskstopsignal=None):
+    def __init__(
+        self,
+        task: Callable,
+        task_kwargs: Dict[str, Any] = {},
+        comms: Literal["array", "pipe", "queue"] = "queue",
+        comms_kwargs: Dict[str, Any] = {},
+        taskstopsignal: Any = None,
+    ):
         """[summary]
 
         Args:
-            task ([type]): First arg to task must be the end of the comms and is provided via `args`.
-            task_kwargs={}
-            comms (str, optional): Use a pipe if you want speed and don't mind loosing data (displaying data)
+            task (Callable): First arg to task must be the end of the comms and is provided via `args`.
+            task_kwargs (Dict[str, Any], optional): Defaults to {}.
+            comms (Literal["array", "pipe", "queue"], optional): For passing data to the task. Either "queue", "pipe", or "array".
+                                   "array" if you want speed and don't mind loosing data (displaying data)
                                    or if you want to ensure you are always assessing fresh data (realtime feedback).
-                                   Queue are great when data loss is unacceptable (saving data).
-                                   Defaults to 'queue'.
-            comms_kwargs={}
-            taskstopsignal ([type], optional): [description]. Defaults to None.
+                                   "queue" is slower but great when data loss is unacceptable (saving data).
+                                   "pipe" probably never??
+                                   Defaults to "queue".
+            comms_kwargs (Dict[str, Any], optional): kwargs for constructing comms. Defaults to {}.
+            taskstopsignal (Any, optional): Data to send over comms that tells the task to stop. Defaults to None.
         Raises:
             ValueError: for unknown comms
         """
