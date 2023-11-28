@@ -2,6 +2,7 @@ import time
 import numpy as np
 from typing import Tuple, Union
 from .base import BaseCam
+import cv2
 
 try:
     import PySpin
@@ -11,7 +12,7 @@ except ImportError as pyspin_error:
 
 
 class Spinnaker_OLD(BaseCam):
-
+    """Supports older FLIR cameras (Flea3, Grasshopper) with only partial support for the Spinnaker SDK."""
     NAME = 'SPO'
 
 
@@ -27,12 +28,12 @@ class Spinnaker_OLD(BaseCam):
         self.c.Init()
         self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
         self._generate_attrs()
-
+        # breakpoint()
         # enable embedding of frame TIME STAMP
         self.c.ChunkModeActive.SetValue(True)
         self.c.ChunkSelector.SetValue(PySpin.ChunkSelector_Timestamp)
         self.c.ChunkEnable.SetValue(True)
-        self.timestamp_offset = self._estimate_timestamp_offset()
+        self.timestamp_offset = 0  # self._estimate_timestamp_offset()
 
         # set pixel format
         self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
@@ -41,7 +42,7 @@ class Spinnaker_OLD(BaseCam):
         self.c.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous)
 
         # trigger overlap -> ReadOut - for faster frame rates
-        self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
+        # self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
 
     def get(self, timeout=None):
 
@@ -54,10 +55,7 @@ class Spinnaker_OLD(BaseCam):
             raise ValueError(f"Image incomplete with image status {im.GetImageStatus()}")
         else:
             # convert
-            im_converted = im.Convert(PySpin.PixelFormat_BGR8, PySpin.HQ_LINEAR)
-            BGR = im_converted.GetNDArray()
-
-            # get time stamps
+            BGR = cv2.cvtColor(im.GetNDArray(), cv2.COLOR_GRAY2BGR)
             image_timestamp = im.GetTimeStamp()
             image_timestamp = image_timestamp / 1e9 + self.timestamp_offset
             return BGR, image_timestamp, system_stimestamp
@@ -80,22 +78,25 @@ class Spinnaker_OLD(BaseCam):
 
     @property
     def framerate(self):
-        return self.c.AcquisitionResultingFrameRate.GetValue()
+        return self.c.AcquisitionFrameRate.GetValue()
 
     @framerate.setter
     def framerate(self, value: float):
-        # self.c.AcquisitionFrameRateEnabled.SetValue(True)  # OR THIS?
-        self.c.AcquisitionFrameRateEnable.SetValue(True)
-        self.c.AcquisitionFrameRateAuto.SetValue(False)
+        nodemap = self.c.GetNodeMap()
+        self.c.TriggerMode.SetValue(PySpin.TriggerMode_Off)
+        node = PySpin.CEnumerationPtr(nodemap.GetNode('AcquisitionFrameRateAuto'))
+        val = PySpin.CEnumEntryPtr(node.GetEntryByName("Off")).GetValue()  # Once, Continuous
+        node.SetIntValue(val)
         self.c.AcquisitionFrameRate.SetValue(float(value))
 
     @property
     def gamma(self):
-        return self.c.GammaEnable.GetValue()
+        return self.c.Gamma.GetValue()
 
     @gamma.setter
-    def gamma(self, value: bool):
-        self.c.GammaEnable.SetValue(bool(value))
+    def gamma(self, value: float):
+        # self.c.GammaEnabled.SetValue(bool(True))
+        self.c.Gamma.SetValue(value)
 
     @property
     def brightness(self) -> float:
@@ -103,7 +104,7 @@ class Spinnaker_OLD(BaseCam):
 
     @brightness.setter
     def brightness(self, value: float):
-        self.c.BlackLevelSelector.SetValue(PySpin.BlackLevelSelector_All)
+        # self.c.BlackLevelSelector.SetValue(PySpin.BlackLevelSelector_All)
         self.c.BlackLevel.SetValue(float(value))
 
     @property
@@ -117,7 +118,7 @@ class Spinnaker_OLD(BaseCam):
         else:
             self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
             self.c.ExposureMode.SetValue(PySpin.ExposureMode_Timed)
-            self.c.ExposureTime.SetValue(float(value))
+        self.c.ExposureTime.SetValue(float(value))
 
     @property
     def gain(self):
@@ -146,10 +147,10 @@ class Spinnaker_OLD(BaseCam):
     def external_trigger(self, value: bool = False):
         self.c.TriggerMode.SetValue(PySpin.TriggerMode_Off)
 
-        if value:
-            self.c.TriggerSource.SetValue(PySpin.TriggerSource_Line3)
-            self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
-            self.c.TriggerMode.SetValue(PySpin.TriggerMode_On)
+        # if value:
+        #     self.c.TriggerSource.SetValue(PySpin.TriggerSource_Line3)
+        #     self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
+        #     self.c.TriggerMode.SetValue(PySpin.TriggerMode_On)
 
     def _generate_attrs(self):
 
@@ -259,10 +260,10 @@ class Spinnaker_OLD(BaseCam):
         return np.median(timestamp_offsets)
 
     def enable_gpio_strobe(self):
-        self._set_gpio_strobe(enable=True)
+        pass  # self._set_gpio_strobe(enable=True)
 
     def disable_gpio_strobe(self):
-        self._set_gpio_strobe(enable=False)
+        pass  # self._set_gpio_strobe(enable=False)
 
     def set_node_and_entry(self, node_name: str, entry_name: str):
         nodemap = self.c.GetNodeMap()
@@ -277,18 +278,18 @@ class Spinnaker_OLD(BaseCam):
 
         node.SetIntValue(entry.GetValue())
 
-    def _set_gpio_strobe(self, line: str = "Line2", enable: bool = True):
-        # from PySpin/Examples/Python3/CounterAndTimer.py
-        # from https://github.com/CapAI/misc/blob/a22cd50e90018c03cde3c1339aa622185502bb05/spinnaker/pyspin/Examples/Python3/CounterAndTimer.py#L193
-        if enable:
-            line_mode = "Output"
-        else:
-            line_mode = "Input"
+    # def _set_gpio_strobe(self, line: str = "Line2", enable: bool = True):
+    #     # from PySpin/Examples/Python3/CounterAndTimer.py
+    #     # from https://github.com/CapAI/misc/blob/a22cd50e90018c03cde3c1339aa622185502bb05/spinnaker/pyspin/Examples/Python3/CounterAndTimer.py#L193
+    #     if enable:
+    #         line_mode = "Output"
+    #     else:
+    #         line_mode = "Input"
 
-        # Select line to control
-        self.set_node_and_entry("LineSelector", line)
-        self.set_node_and_entry("LineMode", line_mode)
-        self.set_node_and_entry("LineSource", "ExposureActive")
+    #     # Select line to control
+    #     self.set_node_and_entry("LineSelector", line)
+    #     self.set_node_and_entry("LineMode", line_mode)
+    #     self.set_node_and_entry("LineSource", "ExposureActive")
 
     def reset(self, sleep: float = 10.0):
         device_reset = PySpin.CCommandPtr(self.c.GetNodeMap().GetNode("DeviceReset"))

@@ -63,9 +63,10 @@ class Frame(wx.Frame):
         if playlistName and protocolName:
             self.SetStatusText("playlist: {0}, prot: {1}".format(playlistName, protocolName))
             message = "starting playlist {0} with prot {1} on {2}".format(playlistName, protocolName, self.host)
-            args = (self.host, os.path.join(self.protocolfolder, protocolName), os.path.join(self.playlistfolder, playlistName))
+            args = (os.path.join(self.protocolfolder, protocolName), os.path.join(self.playlistfolder, playlistName))
+            kwargs = {'host': self.host}
             print(message)
-            BusyDialog(self, size=(300, 150)).run(client.clientcaller, args, message=message)
+            BusyDialog(self, size=(300, 150)).run(client.client, args, kwargs, message=message)
         else:
             print("no controlf file selected")
         # check node status before starting??

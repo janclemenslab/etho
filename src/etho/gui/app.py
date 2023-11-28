@@ -192,7 +192,7 @@ class RunDialog(QDialog):
 
 
     def reject(self):
-        logging.info('Cancelling jobs:')
+        logging.info('Canceling jobs:')
         for service_name, service in self.services.items():
             try:
                 logging.info(f'   {service_name}')
@@ -399,12 +399,11 @@ class MainWindow(QMainWindow):
 
         rich.print("Starting experiment with these args:")
         rich.print(kwargs)
-        # breakpoint()
-        # cclient = client.client(**kwargs)
-        # services = next(cclient)
+        cclient = client.client(**kwargs)
+        services = next(cclient)
 
-        # dlg = RunDialog(kwargs)
-        # dlg.exec_()
+        dlg = RunDialog(kwargs)
+        dlg.exec_()
 
 
     def camera_preview(self):

@@ -279,7 +279,10 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
     @property
     def pgrp(self):
-        return os.getpgrp()
+        try:
+            return os.getpgrp()  # not supported in windows
+        except:
+            return None
 
 
     def __del__(self):

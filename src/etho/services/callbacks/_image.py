@@ -15,6 +15,12 @@ except ImportError as cv2_import_error:
     pass
 
 try:
+    import ffmpegcv
+    ffmpegcv_import_error = None
+except ImportError as ffmpegcv_import_error:
+    pass
+
+try:
     from vidgear.gears import WriteGear
     vidgear_import_error = None
 except ImportError as vidgear_import_error:
@@ -27,6 +33,7 @@ try:
     pyqtgraph_import_error = None
 except Exception as pyqtgraph_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
     pass
+
 
 
 logger = logging.getLogger(__name__)
@@ -174,6 +181,57 @@ class ImageWriterCV2(ImageCallback):
             self.frame_rate,
             (self.frame_height, self.frame_width),
             True,
+        )
+
+    def _loop(self, data):
+        if hasattr(self.data_source, "WHOAMI") and self.data_source.WHOAMI == "array":
+            image = data
+        else:
+            image, timestamp = data
+
+        self.vw.write(image)
+
+    def _cleanup(self):
+        self.vw.release()
+        del self.vw
+        super()._cleanup()
+
+
+
+@for_all_methods(log_exceptions(logger))
+@register_callback
+class ImageWriterFCV(ImageCallback):
+    """Save images to video using ffmpegcv.
+
+    Supports hardware accelerated encoding
+    Requirements:
+        - ffmpeg>=6 (?): `mamba install ffmpeg>=6 -c conda-forge
+        - ffmpegcv: `pip install ffmpegcv`
+
+    Raises:
+        ffmpegcv_import_error: If ffmpegcv could not be imported.
+
+    Args:
+        ImageCallback (_type_): _description_
+    """
+
+    SUFFIX: str = ".mp4"
+    FRIENDLY_NAME = "save_ffmpegcv"
+    TIMESTAMPS_ONLY = False
+
+    def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        if ffmpegcv_import_error is not None:
+            logger.exception('Could not import ffmpegcv. Aborting!', exc_info=ffmpegcv_import_error)
+            raise ffmpegcv_import_error
+
+        # self.vw = ffmpegcv.VideoWriter()
+        self.vw = ffmpegcv.VideoWriter(
+            self.file_name + self.SUFFIX,
+            # 'hevc',            
+            # self.frame_rate,
+            # (self.frame_height, self.frame_width),
         )
 
     def _loop(self, data):
