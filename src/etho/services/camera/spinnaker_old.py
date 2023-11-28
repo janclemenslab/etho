@@ -29,7 +29,7 @@ class Spinnaker_OLD(BaseCam):
         self.c.Init()
         self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
         self._generate_attrs()
-        # breakpoint()
+
         # enable embedding of frame TIME STAMP
         self.c.ChunkModeActive.SetValue(True)
         self.c.ChunkSelector.SetValue(PySpin.ChunkSelector_Timestamp)
@@ -150,10 +150,9 @@ class Spinnaker_OLD(BaseCam):
     def external_trigger(self, value: bool = False):
         self.c.TriggerMode.SetValue(PySpin.TriggerMode_Off)
 
-        # if value:
-        #     self.c.TriggerSource.SetValue(PySpin.TriggerSource_Line3)
-        #     self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
-        #     self.c.TriggerMode.SetValue(PySpin.TriggerMode_On)
+        if value:
+            self.c.TriggerSource.SetValue(PySpin.TriggerSource_Line3)
+            self.c.TriggerMode.SetValue(PySpin.TriggerMode_On)
 
     def _generate_attrs(self):
 
