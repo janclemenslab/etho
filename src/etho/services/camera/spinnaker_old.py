@@ -51,7 +51,7 @@ class Spinnaker_OLD(BaseCam):
         if im.IsIncomplete():
             raise ValueError(f"Image incomplete with image status {im.GetImageStatus()}")
         else:
-            BGR = np.tile(im.GetNDArray()[..., np.newaxis], reps=3, axis=-1)
+            BGR = np.repeat(im.GetNDArray()[..., np.newaxis], repeats=3, axis=-1)
             image_timestamp = im.GetTimeStamp()
             image_timestamp = image_timestamp / 1e9 + self.timestamp_offset
             return BGR, image_timestamp, system_stimestamp
