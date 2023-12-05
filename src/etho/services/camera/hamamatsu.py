@@ -39,7 +39,8 @@ class Hamamatsu(BaseCam):
 
     @property
     def roi(self):
-        roi = self.c.get_roi()
+        """ROI x0, y0, width, height."""
+        roi = self.c.get_roi()  # returns
         return roi[0], roi[2], roi[1] - roi[0], roi[3] - roi[2]
 
     @roi.setter
@@ -52,44 +53,44 @@ class Hamamatsu(BaseCam):
 
     @property
     def exposure(self):
-        return self.c.get_exposure()
+        return float(self.c.get_exposure()) * 1_000.0
 
     @exposure.setter
     def exposure(self, value: float):
         """Set exposure/shutter time in ms."""
-        self.c.set_exposure(float(value / 1_000))
+        self.c.set_exposure(float(value) / 1_000.0)
 
     @property
     def framerate(self):
-        return 1/self.c.get_exposure()
+        return 1.0 / self.c.get_frame_period()
 
     @framerate.setter
     def framerate(self, value: float):
-        self.c.set_exposure(1/float(value))
+        self.c.set_exposure(1.0 / float(value))
 
     @property
     def gamma(self):
-        return 1
+        return 1  # not supported
 
     @gamma.setter
     def gamma(self, value: float):
-        pass
+        pass  # not supported
 
     @property
     def gain(self):
-        return 1 #self.c.get_gain()
+        return 1  # not supported
 
     @gain.setter
     def gain(self, value: float):
-        pass # self.c.set_gain(float(value))
+        pass  # not supported
 
     @property
     def brightness(self):
-        return None
+        return 1  # not supported
 
     @brightness.setter
     def brightness(self, value: float):
-        pass
+        pass  # not supported
 
     def start(self):
         self.c.start_acquisition()
