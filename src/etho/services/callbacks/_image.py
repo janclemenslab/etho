@@ -7,6 +7,8 @@ from ._base import BaseCallback
 from ..utils.concurrent_task import ConcurrentTask
 from ..utils.log_exceptions import for_all_methods, log_exceptions
 from typing import Optional, Dict, Any
+import tables
+
 
 try:
     import cv2
@@ -33,7 +35,6 @@ try:
     pyqtgraph_import_error = None
 except Exception as pyqtgraph_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
     pass
-
 
 
 logger = logging.getLogger(__name__)
@@ -229,7 +230,7 @@ class ImageWriterFCV(ImageCallback):
         # self.vw = ffmpegcv.VideoWriter()
         self.vw = ffmpegcv.VideoWriter(
             self.file_name + self.SUFFIX,
-            # 'hevc',            
+            # 'hevc',
             # self.frame_rate,
             # (self.frame_height, self.frame_width),
         )
@@ -464,6 +465,70 @@ class ImageWriterVPF(ImageCallback):
             self._write_frame(encFrame)
         self.encFile.close()
         super()._cleanup()
+
+
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@register_callback
+class ImageWriterH5(BaseCallback):
+
+    FRIENDLY_NAME = "saveimg_h5"
+    SUFFIX = "_images.h5"
+
+    def __init__(self, data_source, *, file_name, attrs=None, poll_timeout=0.01, **kwargs):
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+        self.file_name = file_name
+        self.f = tables.open_file(self.file_name + self.SUFFIX, mode="w")
+        self.vanilla: bool = True
+        self.arrays = dict()
+        self.attrs = attrs
+
+    @classmethod
+    def make_concurrent(cls, task_kwargs, comms="queue"):
+        return ConcurrentTask(task=cls.make_run, task_kwargs=task_kwargs, comms=comms)
+
+    def _init_data(self, data, timestamp):
+        filters = tables.Filters(complevel=4, complib="zlib", fletcher32=True)
+
+        self.arrays["images"] = self.f.create_earray(
+            self.f.root,
+            "images",
+            tables.Atom.from_dtype(data.dtype),
+            shape=[0, *data.shape[1:]],
+            chunkshape=[10, *data.shape[1:]],
+            filters=filters,
+        )
+        if self.attrs is not None:
+            for key, val in self.attrs.items():
+                self.arrays["images"].attrs[key] = val
+
+        self.arrays["timestamp"] = self.f.create_earray(
+            self.f.root,
+            "timestamp",
+            tables.Atom.from_dtype(np.array(timestamp).dtype),
+            shape=[0, *timestamp.shape[1:]],
+            chunkshape=[*timestamp.shape],
+            filters=filters,
+        )
+
+    def _append_data(self, data, timestamp):
+        self.arrays["images"].append(data)
+        self.arrays["timestamp"].append(timestamp)
+
+    def _loop(self, data):
+        data_to_save, timestamp = data  # unpack
+        data_to_save = data_to_save[np.newaxis,...]
+        timestamp = np.array([timestamp])[:, np.newaxis]
+        if self.vanilla:
+            self._init_data(data_to_save, timestamp)
+            self.vanilla = False
+        self._append_data(data_to_save, timestamp)
+
+    def _cleanup(self):
+        if self.f.isopen:
+            self.f.flush()
+            self.f.close()
+        else:
+            logging.debug(f"{self.file_name} already closed.")
 
 
 @for_all_methods(log_exceptions(logger))
