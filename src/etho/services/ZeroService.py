@@ -91,10 +91,10 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             host_is_win=host_is_win,
             python_exe=python_exe,
         )
-        logging.debug("   starting server:", end="")
+        logging.debug("   starting server:")
         ret = service.start_server(server_name, folder_name, warmup=1, new_console=new_console, run_local=run_local)
         logging.debug(f'{"success" if ret else "FAILED"}.')
-        logging.debug("   connecting to server:", end="")
+        logging.debug("   connecting to server:")
 
         ret = service.connect("tcp://{0}:{1}".format(host, port))
         logging.debug(f'{"success" if ret else "FAILED"}.')
@@ -166,9 +166,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         self.filelogger.setLevel(logging.INFO)  # catch all messages
 
         # create a logging format
-        formatter = logging.Formatter(
-            "%(asctime)s.%(msecs)03d {0}@{1}: %(message)s".format(self.SERVICE_NAME, self.hostname), datefmt="%Y-%m-%d,%H:%M:%S"
-        )
+        formatter = logging.Formatter("%(asctime)s.%(msecs)03d {0}@{1}: %(message)s".format(self.SERVICE_NAME, self.hostname), datefmt="%Y-%m-%d,%H:%M:%S")
         self.filelogger.setFormatter(formatter)
         # add the handlers to the logger
         self.log.addHandler(self.filelogger)
@@ -283,7 +281,6 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             return os.getpgrp()  # not supported in windows
         except:
             return None
-
 
     def __del__(self):
         self.cleanup()

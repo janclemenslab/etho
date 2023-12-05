@@ -68,26 +68,26 @@ def client(
         )
 
         cam_params = undefaultify(prot[gcm_key])
-        if not preview:
-            maxduration = this["maxduration"] + 20
-        else:
-            maxduration = 1_000_000
+        # if not preview:
+        maxduration = this["maxduration"] + 20
+        # else:
+        #     maxduration = 1_000_000
 
-        if preview:
-            cam_params["callbacks"] = {"disp_fast": None}
+        # if preview:
+        #     cam_params["callbacks"] = {"disp_fast": None}
 
         save_suffix = f"_{gcm_cnt+1}" if gcm_cnt > 0 else ""
         gcm.setup(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}", maxduration, cam_params)
 
-        if not preview:
-            gcm.init_local_logger(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log")
-        if show_test_image:
-            img = gcm.attr("test_image")
-            print("Press any key to continue.")
-            cv2.imshow("Test image. Are you okay with this?", img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-            cv2.waitKey(1)  # second call required for window to be closed on mac
+        # if not preview:
+        gcm.init_local_logger(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log")
+        # if show_test_image:
+        #     img = gcm.attr("test_image")
+        #     print("Press any key to continue.")
+        #     cv2.imshow("Test image. Are you okay with this?", img)
+        #     cv2.waitKey(0)
+        #     cv2.destroyAllWindows()
+        #     cv2.waitKey(1)  # second call required for window to be closed on mac
         services[gcm_key] = gcm
 
     daq_keys = [key for key in prot["NODE"]["use_services"] if "DAQ" in key]

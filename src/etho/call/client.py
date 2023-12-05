@@ -36,6 +36,7 @@ def timed(fn, s, *args, **kwargs):
         timer.cancel()
     return result
 
+
 def kill_child_processes():
     try:
         parent = psutil.Process()
