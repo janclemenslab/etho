@@ -53,8 +53,7 @@ class Spinnaker(BaseCam):
             raise ValueError(f"Image incomplete with image status {im.GetImageStatus()}")
         else:
             # convert
-            im_converted = im.Convert(PySpin.PixelFormat_BGR8, PySpin.HQ_LINEAR)
-            BGR = im_converted.GetNDArray()
+            BGR = np.tile(im.GetNDArray()[..., np.newaxis], reps=3, axis=-1)
 
             # get time stamps
             image_timestamp = im.GetTimeStamp()
