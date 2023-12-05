@@ -6,8 +6,8 @@ from .base import BaseCam
 try:
     from pylablib.devices import DCAM
     hamamatsu_error = None
-except ImportError as hamamatsu_error:
-    pass
+except ImportError as e:
+    hamamatsu_error = e
 
 
 class Hamamatsu(BaseCam):
@@ -38,9 +38,18 @@ class Hamamatsu(BaseCam):
         return image, image_timestamp, system_timestamp
 
     @property
+    def binning(self) -> int:
+        return self.c.get_attribute_value("BINNING")
+
+    @binning.setter
+    def binning(self, binsize):
+        # if binsize not in [1, 2, 4]:
+        #     raise ValueError(f'Incorrect binsize arg value {binsize}. Must be 1, 2, or 4.')
+        self.c.set_attribute_value("BINNING", binsize)
+
+    @property
     def roi(self):
-        """ROI x0, y0, width, height."""
-        roi = self.c.get_roi()  # returns
+        roi = self.c.get_roi()
         return roi[0], roi[2], roi[1] - roi[0], roi[3] - roi[2]
 
     @roi.setter
@@ -70,11 +79,11 @@ class Hamamatsu(BaseCam):
 
     @property
     def gamma(self):
-        return 1  # not supported
+        return 1
 
     @gamma.setter
     def gamma(self, value: float):
-        pass  # not supported
+        pass
 
     @property
     def gain(self):
@@ -86,11 +95,11 @@ class Hamamatsu(BaseCam):
 
     @property
     def brightness(self):
-        return 1  # not supported
+        return None
 
     @brightness.setter
     def brightness(self, value: float):
-        pass  # not supported
+        pass
 
     def start(self):
         self.c.start_acquisition()
@@ -107,7 +116,6 @@ class Hamamatsu(BaseCam):
 
     def reset(self, sleep=None):
         DCAM.DCAM.restart_lib()
-
 
     def info_hardware(self):
         cam_info = self.c.get_device_info()
