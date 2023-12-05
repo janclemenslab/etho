@@ -1,8 +1,8 @@
 import time
 import numpy as np
 from typing import Tuple, Union
-from .base import BaseCam
-import cv2
+from .base import BaseCam, gray2rgb
+
 
 try:
     import PySpin
@@ -40,22 +40,18 @@ class Spinnaker_OLD(BaseCam):
 
         # set continuous acquisition
         self.c.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous)
-
-        # trigger overlap -> ReadOut - for faster frame rates
-        # self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
+        self.timeout = PySpin.EVENT_TIMEOUT_INFINITE
 
     def get(self, timeout=None):
 
-        timeout = PySpin.EVENT_TIMEOUT_INFINITE
         # get image
-        im = self.c.GetNextImage(timeout)
+        im = self.c.GetNextImage(self.timeout)
         system_stimestamp = time.time()
 
         if im.IsIncomplete():
             raise ValueError(f"Image incomplete with image status {im.GetImageStatus()}")
         else:
-            # convert
-            BGR = cv2.cvtColor(im.GetNDArray(), cv2.COLOR_GRAY2BGR)
+            BGR = np.tile(im.GetNDArray()[..., np.newaxis], reps=3, axis=-1)
             image_timestamp = im.GetTimeStamp()
             image_timestamp = image_timestamp / 1e9 + self.timestamp_offset
             return BGR, image_timestamp, system_stimestamp
