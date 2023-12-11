@@ -22,11 +22,11 @@ class Basler(BaseCam):
         # self.im = PyCapture2.Image()
 
     def init(self):
-        self.bus = py.TlFactory.GetInstance()
-        devices = self.bus.EnumerateDevices()
+        # self.bus =
+        devices = py.TlFactory.GetInstance().EnumerateDevices()
         dev_dict = {d.GetSerialNumber(): d for d in devices}
 
-        self.c = py.InstantCamera(self.bus.CreateDevice(dev_dict[self.serialnumber]))
+        self.c = py.InstantCamera(py.TlFactory.GetInstance().CreateDevice(dev_dict[self.serialnumber]))
         self.c.Open()
         self.timestamp_offset = self._estimate_timestamp_offset()
         self.c.Chunk.Enable.Value = True
