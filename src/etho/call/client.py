@@ -261,6 +261,7 @@ def client(
 
     logging.info("Starting services")
     # First, start video services - this will start acquisition or, if external triggering is enabled, arm the cameras to wait for the triggers
+    time_last_cam_started = time.time() + 5  # in case no cam was initialized
     for service_name, service in services.items():
         if "GCM" in service_name:
             logging.info(f"   {service_name}.")
