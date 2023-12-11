@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.services.camera.base" href="etho.services.camera.base.html" /><link rel="prev" title="etho.utils.sound" href="etho.utils.sound.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.services.camera.dummy" href="etho.services.camera.dummy.html" /><link rel="prev" title="etho.services.camera.base" href="etho.services.camera.base.html" />
 
     <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
-        <title>etho.utils.tui - ethodrome documentation</title>
+        <title>etho.services.camera.basler - ethodrome documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
@@ -186,9 +186,9 @@
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.sound.html">etho.utils.sound</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">etho.utils.tui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.base.html">etho.services.camera.base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.basler.html">etho.services.camera.basler</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
@@ -235,28 +235,8 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-etho.utils.tui">
-<span id="etho-utils-tui"></span><h1>etho.utils.tui<a class="headerlink" href="#module-etho.utils.tui" title="Permalink to this headline">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="etho.utils.tui.df_to_table">
-<span class="sig-prename descclassname"><span class="pre">etho.utils.tui.</span></span><span class="sig-name descname"><span class="pre">df_to_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_dataframe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rich.table.Table</span></span></span><a class="reference internal" href="../_modules/etho/utils/tui.html#df_to_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.utils.tui.df_to_table" title="Permalink to this definition">#</a></dt>
-<dd><p>Convert a pandas.DataFrame obj into a rich.Table obj.
-:param pandas_dataframe: A Pandas DataFrame to be converted to a rich Table.
-:type pandas_dataframe: DataFrame
-:param show_index: Add a column with a row count to the table. Defaults to True.
-:type show_index: bool
-:param index_name: The column name to give to the index column. Defaults to None, showing no value.
-:type index_name: str, optional</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The rich Table instance passed, populated with the DataFrame values.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Table</p>
-</dd>
-</dl>
-</dd></dl>
-
+          <section id="module-etho.services.camera.basler">
+<span id="etho-services-camera-basler"></span><h1>etho.services.camera.basler<a class="headerlink" href="#module-etho.services.camera.basler" title="Permalink to this headline">#</a></h1>
 </section>
 
         </article>
@@ -264,23 +244,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="etho.services.camera.base.html">
+          <a class="next-page" href="etho.services.camera.dummy.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">etho.services.camera.base</div>
+                <div class="title">etho.services.camera.dummy</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="etho.utils.sound.html">
+          <a class="prev-page" href="etho.services.camera.base.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">etho.utils.sound</div>
+                <div class="title">etho.services.camera.base</div>
                 
               </div>
             </a>

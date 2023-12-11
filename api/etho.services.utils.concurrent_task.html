@@ -5,11 +5,12 @@
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.services.utils.log_exceptions" href="etho.services.utils.log_exceptions.html" /><link rel="prev" title="etho.services.camera.ximea" href="etho.services.camera.ximea.html" />
 
-    <!-- Generated with Sphinx 4.5.0 and Furo 2023.03.27 -->
+    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
         <title>etho.services.utils.concurrent_task - ethodrome documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
@@ -154,7 +155,7 @@
   
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -187,10 +188,12 @@
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.base.html">etho.services.camera.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.videocapture.html">etho.services.camera.videocapture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">etho.services.utils.concurrent_task</a></li>
@@ -218,8 +221,7 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          
-<div class="theme-toggle-container theme-toggle-content">
+          <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -239,21 +241,23 @@
 and a helper class for running tasks in independent processes.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="etho.services.utils.concurrent_task.ConcurrentTask">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">etho.services.utils.concurrent_task.</span></span><span class="sig-name descname"><span class="pre">ConcurrentTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'queue'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comms_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taskstopsignal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/services/utils/concurrent_task.html#ConcurrentTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.services.utils.concurrent_task.ConcurrentTask" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">etho.services.utils.concurrent_task.</span></span><span class="sig-name descname"><span class="pre">ConcurrentTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'array'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pipe'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'queue'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'queue'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comms_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taskstopsignal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/services/utils/concurrent_task.html#ConcurrentTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.services.utils.concurrent_task.ConcurrentTask" title="Permalink to this definition">#</a></dt>
 <dd><p>Helper class for running tasks in independent
 processes with communication tools attached.</p>
 <p>[summary]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>task</strong> (<em>[</em><em>type</em><em>]</em>) – First arg to task must be the end of the comms and is provided via <code class="xref py py-obj docutils literal notranslate"><span class="pre">args</span></code>.</p></li>
-<li><p><strong>task_kwargs={}</strong> – </p></li>
-<li><p><strong>comms</strong> (<em>str</em><em>, </em><em>optional</em>) – Use a pipe if you want speed and don’t mind loosing data (displaying data)
+<li><p><strong>task</strong> (<em>Callable</em>) – First arg to task must be the end of the comms and is provided via <code class="xref py py-obj docutils literal notranslate"><span class="pre">args</span></code>.</p></li>
+<li><p><strong>task_kwargs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – Defaults to {}.</p></li>
+<li><p><strong>comms</strong> (<em>Literal</em><em>[</em><em>&quot;array&quot;</em><em>, </em><em>&quot;pipe&quot;</em><em>, </em><em>&quot;queue&quot;</em><em>]</em><em>, </em><em>optional</em>) – For passing data to the task. Either “queue”, “pipe”, or “array”.
+“array” if you want speed and don’t mind loosing data (displaying data)
 or if you want to ensure you are always assessing fresh data (realtime feedback).
-Queue are great when data loss is unacceptable (saving data).
-Defaults to ‘queue’.</p></li>
-<li><p><strong>comms_kwargs={}</strong> – </p></li>
-<li><p><strong>taskstopsignal</strong> (<em>[</em><em>type</em><em>]</em><em>, </em><em>optional</em>) – [description]. Defaults to None.</p></li>
+“queue” is slower but great when data loss is unacceptable (saving data).
+“pipe” probably never??
+Defaults to “queue”.</p></li>
+<li><p><strong>comms_kwargs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – kwargs for constructing comms. Defaults to {}.</p></li>
+<li><p><strong>taskstopsignal</strong> (<em>Any</em><em>, </em><em>optional</em>) – Data to send over comms that tells the task to stop. Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -351,10 +355,10 @@ delegates function calls to have a common interface with the Queue.</p>
                 </div>
                 <div class="title">etho.services.utils.log_exceptions</div>
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <svg><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="etho.services.camera.ximea.html">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -376,7 +380,9 @@ delegates function calls to have a common interface with the Queue.</p>
             
           </div>
           <div class="right-details">
-            
+            <div class="icons">
+              
+            </div>
           </div>
         </div>
         
@@ -394,6 +400,11 @@ delegates function calls to have a common interface with the Queue.</p>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
     <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
     </body>

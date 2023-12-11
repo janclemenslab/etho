@@ -45,22 +45,22 @@ Developer API
    etho.services.DAQZeroService
    etho.services.DLPZeroService
    etho.services.GCMZeroService
-   etho.services.NICZeroService
    etho.services.NICounterZeroService
    etho.services.NITriggerZeroService
    etho.services.Opt2ZeroService
    etho.services.RelayZeroService
-   etho.services.SlpZeroService
    etho.services.SndZeroService
    etho.services.TemplateZeroService
    etho.services.ThuAZeroService
    etho.services.ThuZeroService
    etho.services.ZeroService
    etho.services.camera.base
+   etho.services.camera.basler
    etho.services.camera.dummy
    etho.services.camera.flycapture2
    etho.services.camera.hamamatsu
    etho.services.camera.spinnaker
+   etho.services.camera.spinnaker_old
    etho.services.camera.videocapture
    etho.services.camera.ximea
    etho.services.utils.concurrent_task

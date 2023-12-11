@@ -18,6 +18,7 @@
 - ximea cameras: download and install the package from [https://www.ximea.com/support/wiki/apis/python]()
 - flycapture (old FLIR/PointGrey SDK) cameras: download and install the package from [https://www.flir.com/products/flycapture-sdk/]() (only works with python 3.6)
 - spinnaker (new FLIR/PointGrey SDK) cameras: download and install the package from [https://www.flir.eu/products/spinnaker-sdk/]()
+- Basler pylon
 - ni daqmx driver:
    - python package is installed by default. still need to install the drivers: [https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html]()
 - hamamatsu DCAM (e.g. Orca Flash CMOS):

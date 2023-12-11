@@ -4,11 +4,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" />
 
-    <!-- Generated with Sphinx 4.5.0 and Furo 2023.03.27 -->
+    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
         <title>etho.services.dlp.dlp_runners - ethodrome documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
@@ -153,7 +154,7 @@
   
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
-  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -186,10 +187,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.videocapture.html">etho.services.camera.videocapture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
@@ -263,16 +266,16 @@
 
 
 <div class="viewcode-block" id="register_runner"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.register_runner">[docs]</a><span class="k">def</span> <span class="nf">register_runner</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds func to model_dict Dict[str: Class]. For selecting runners by string.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Adds func to model_dict Dict[str: Class]. For selecting runners by string.&quot;&quot;&quot;</span>
     <span class="n">runners</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
     <span class="k">return</span> <span class="bp">cls</span></div>
 
 
 <div class="viewcode-block" id="DLP_runner"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.DLP_runner">[docs]</a><span class="k">class</span> <span class="nc">DLP_runner</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all runners.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for all runners.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;All variants need to accept `win` as the first param</span>
+        <span class="sd">&quot;&quot;&quot;All variants need to accept `win` as the first param</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            win (psychopy.visual.Window): PsychoPy win instance</span>
@@ -280,24 +283,24 @@
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="DLP_runner.update"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.DLP_runner.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Will be called by DLPZeroService on every frame.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Will be called by DLPZeroService on every frame.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="DLP_runner.status"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.DLP_runner.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>  <span class="c1"># Dict[key:str, value:int/float]</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{}</span></div>
 
 <div class="viewcode-block" id="DLP_runner.destroy"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.DLP_runner.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Free any resources (close files etc).&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Free any resources (close files etc).&quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 
 
 <div class="viewcode-block" id="LED_blinker"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.LED_blinker">[docs]</a><span class="nd">@register_runner</span>
 <span class="k">class</span> <span class="nc">LED_blinker</span><span class="p">(</span><span class="n">DLP_runner</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Blinking square read in by a photodiode for syncing DLP frames with DAQ samples.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Blinking square read in by a photodiode for syncing DLP frames with DAQ samples.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="n">led_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">led_pos</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">],</span> <span class="n">led_frame</span><span class="o">=</span><span class="mi">180</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="n">led_duration</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="o">**</span><span class="n">kwignore</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up LED blinker</span>
+        <span class="sd">&quot;&quot;&quot;Set up LED blinker</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            win (psychopy.visual.Window): PsychoPy win instance</span>
@@ -326,7 +329,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="LED_blinker.update"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.LED_blinker.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ball_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update LED blinker.</span>
+        <span class="sd">&quot;&quot;&quot;Update LED blinker.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            frame_number (int): [description]</span>
@@ -345,22 +348,22 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="LED_blinker.status"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.LED_blinker.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
         <span class="n">log_msg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opacity&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rectangle</span><span class="o">.</span><span class="n">opacity</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">log_msg</span></div>
 
 <div class="viewcode-block" id="LED_blinker.destroy"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.LED_blinker.destroy">[docs]</a>    <span class="k">def</span> <span class="nf">destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Free any resources (close files etc).&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Free any resources (close files etc).&quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 
 
 <span class="c1"># Example with stim control via param file</span>
 <div class="viewcode-block" id="ObjectMoverSizer"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.ObjectMoverSizer">[docs]</a><span class="nd">@register_runner</span>
 <span class="k">class</span> <span class="nc">ObjectMoverSizer</span><span class="p">(</span><span class="n">DLP_runner</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move and resize object based on `size` and `position` fields in npz file.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Move and resize object based on `size` and `position` fields in npz file.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="nb">object</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwignore</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up LED blinker.</span>
+        <span class="sd">&quot;&quot;&quot;Set up LED blinker.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            win (psychopy.visual.Window): PsychoPy win instance</span>
@@ -388,7 +391,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">arrays_length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
 
 <div class="viewcode-block" id="ObjectMoverSizer.update"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.ObjectMoverSizer.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ball_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update LED blinker.</span>
+        <span class="sd">&quot;&quot;&quot;Update LED blinker.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            frame_number (int): [description]</span>
@@ -402,14 +405,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ObjectMoverSizer.status"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.ObjectMoverSizer.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
         <span class="n">log_msg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="s2">&quot;position_0&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;position_1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
         <span class="k">return</span> <span class="n">log_msg</span></div></div>
 
 
 <div class="viewcode-block" id="ObjectCirclesGrid"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.ObjectCirclesGrid">[docs]</a><span class="nd">@register_runner</span>
 <span class="k">class</span> <span class="nc">ObjectCirclesGrid</span><span class="p">(</span><span class="n">DLP_runner</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Move and resize object based on `size` and `position` fields in npz file.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Move and resize object based on `size` and `position` fields in npz file.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -421,7 +424,7 @@
         <span class="n">ncircles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwignore</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up grid of circles, using a list of Circles.</span>
+        <span class="sd">&quot;&quot;&quot;Set up grid of circles, using a list of Circles.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            win (psychopy.visual.Window): PsychoPy win instance</span>
@@ -450,7 +453,7 @@
         <span class="p">]</span>
 
 <div class="viewcode-block" id="ObjectCirclesGrid.update"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.ObjectCirclesGrid.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ball_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update LED blinker.</span>
+        <span class="sd">&quot;&quot;&quot;Update LED blinker.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            frame_number (int): [description]</span>
@@ -467,7 +470,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ObjectCirclesGrid.status"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_runners.html#etho.services.dlp.dlp_runners.ObjectCirclesGrid.status">[docs]</a>    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Generate status message.&quot;&quot;&quot;</span>
         <span class="n">log_msg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;grid_direction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_direction</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">log_msg</span></div></div>
 </pre></div>
@@ -490,7 +493,9 @@
             
           </div>
           <div class="right-details">
-            
+            <div class="icons">
+              
+            </div>
           </div>
         </div>
         
@@ -508,6 +513,11 @@
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/scripts/furo.js"></script>
     <script src="../../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
     <script src="../../../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
     </body>
