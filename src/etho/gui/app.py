@@ -131,7 +131,9 @@ def from_yaml(d):
                         "value": str(val_val),
                     }
                     item["children"].append(child_item)
-
+            elif val is None:  # Fall back for None values
+                item["type"] = 'str'
+                item["value"] = str(val)
             else:
                 item["type"] = type(val).__name__
                 item["value"] = val
@@ -400,7 +402,7 @@ class MainWindow(QMainWindow):
         rich.print("Starting experiment with these args:")
         rich.print(kwargs)
         cclient = client.client(**kwargs)
-        services = next(cclient)
+        # services = next(cclient)
 
         dlg = RunDialog(kwargs)
         dlg.exec_()
