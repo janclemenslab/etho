@@ -1,7 +1,8 @@
 import time
 import numpy as np
 from typing import Tuple, Union
-from .base import BaseCam, gray2rgb
+from .base import BaseCam
+import cv2
 
 
 try:
@@ -40,7 +41,10 @@ class Spinnaker_OLD(BaseCam):
 
         # set continuous acquisition
         self.c.AcquisitionMode.SetValue(PySpin.AcquisitionMode_Continuous)
+
         self.timeout = PySpin.EVENT_TIMEOUT_INFINITE
+        self.processor = PySpin.ImageProcessor()
+        self.processor.SetColorProcessing(PySpin.SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR)
 
     def get(self, timeout=None):
 
@@ -51,8 +55,11 @@ class Spinnaker_OLD(BaseCam):
         if im.IsIncomplete():
             raise ValueError(f"Image incomplete with image status {im.GetImageStatus()}")
         else:
-            BGR = np.repeat(im.GetNDArray()[..., np.newaxis], repeats=3, axis=-1)
+            im_converted = self.processor.Convert(im, PySpin.PixelFormat_BGR8)
             image_timestamp = im.GetTimeStamp()
+            im.Release()
+
+            BGR = im_converted.GetNDArray()
             image_timestamp = image_timestamp / 1e9 + self.timestamp_offset
             return BGR, image_timestamp, system_stimestamp
 

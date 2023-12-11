@@ -2,6 +2,8 @@ import time
 import numpy as np
 from typing import Tuple, Union
 from .base import BaseCam
+import cv2
+
 
 try:
     import PySpin
@@ -42,22 +44,25 @@ class Spinnaker(BaseCam):
         # trigger overlap -> ReadOut - for faster frame rates
         self.c.TriggerOverlap.SetValue(PySpin.TriggerOverlap_ReadOut)
 
-    def get(self, timeout=None):
+        self.timeout = PySpin.EVENT_TIMEOUT_INFINITE
 
-        timeout = PySpin.EVENT_TIMEOUT_INFINITE
-        # get image
-        im = self.c.GetNextImage(timeout)
+        # initialize image processor for converting mono8 to bgr8 images - faster than cv2 or np
+        self.processor = PySpin.ImageProcessor()
+        self.processor.SetColorProcessing(PySpin.SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR)
+
+    def get(self, timeout=None):
+        im = self.c.GetNextImage(self.timeout)  # get image
         system_stimestamp = time.time()
 
         if im.IsIncomplete():
             raise ValueError(f"Image incomplete with image status {im.GetImageStatus()}")
         else:
-            # convert
-            BGR = np.repeat(im.GetNDArray()[..., np.newaxis], repeats=3, axis=-1)
-
-            # get time stamps
+            im_converted = self.processor.Convert(im, PySpin.PixelFormat_BGR8)  # convert mono to rgb
             image_timestamp = im.GetTimeStamp()
-            image_timestamp = image_timestamp / 1e9 + self.timestamp_offset
+            im.Release()  # release memory (and camera buffer?)
+
+            BGR = im_converted.GetNDArray()  # get the converted image array
+            image_timestamp = image_timestamp / 1e9 + self.timestamp_offset  # convert ts to seconds
             return BGR, image_timestamp, system_stimestamp
 
     @property
