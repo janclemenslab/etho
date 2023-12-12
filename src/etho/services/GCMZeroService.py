@@ -32,9 +32,11 @@ class GCM(BaseZeroService):
         try:
             self.c.init()
         except Exception as e:
-            self.log.exception("Failed to init {self.cam_type} (sn {self.cam_serialnumber}). Reset and re-try.", exc_info=e)
+            self.log.exception(f"Failed to init {self.cam_type} (sn {self.cam_serialnumber}). Reset and re-try.", exc_info=e)
             self.c.reset()
             self.c.init()
+
+        defaults = {'binning': 1, 'gamma': 1, 'gain': 0, 'brightness': 0}
 
         self.c.roi = [params["frame_offx"], params["frame_offy"], params["frame_width"], params["frame_height"]]
         self.c.exposure = params["shutter_speed"]
@@ -160,7 +162,7 @@ class GCM(BaseZeroService):
                 self.c.stop()
                 self.log.debug(e, exc_info=True)
             except Exception as e:
-                self.log.exception(e, exc_info=True)
+                self.log.exception('Error', exc_info=e)
 
     def finish(self, stop_service=False):
         self.log.warning("stopping")
