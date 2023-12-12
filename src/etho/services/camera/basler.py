@@ -3,6 +3,7 @@ import logging
 import numpy as np
 from typing import Tuple, Optional
 from .base import BaseCam, gray2rgb
+import cv2
 
 try:
     import pypylon.pylon as py
@@ -19,7 +20,6 @@ class Basler(BaseCam):
             raise pylon_error
         self.serialnumber = str(serialnumber)
         self.timestamp_offset = 0
-        # self.im = PyCapture2.Image()
 
     def init(self):
         # self.bus =
@@ -29,8 +29,13 @@ class Basler(BaseCam):
         self.c = py.InstantCamera(py.TlFactory.GetInstance().CreateDevice(dev_dict[self.serialnumber]))
         self.c.Open()
         self.timestamp_offset = self._estimate_timestamp_offset()
-        self.c.Chunk.Enable.Value = True
+        self.c.ChunkEnable.Value = True
         self.c.PixelFormat.Value = "Mono8"
+        self.c.OutputQueueSize.Value = 10
+
+        self.converter = py.ImageFormatConverter()
+        self.converter.OutputBitAlignment = py.OutputBitAlignment_MsbAligned
+        self.converter.OutputPixelFormat = py.PixelType_BGR8packed
 
     def get(self, timeout: Optional[float] = None) -> Tuple[np.ndarray, float, float]:
         """
@@ -47,25 +52,30 @@ class Basler(BaseCam):
                 system_timestamp (in seconds UTC)
 
         Raises:
-            ValueError is sth goes wrong
+            ValueError if sth goes wrong
         """
         res = self.c.RetrieveResult(1000)  # 1s timeout
-        if res.GrabSucceeded():
-            self.im = res
-            system_ts = time.time()
+        system_ts = time.time()
+        if not res.GrabSucceeded():
+            code, desc = res.ErrorCode, res.ErrorDescription
+            res.Release()
+            raise ValueError(f"Error Code {code}, {desc}.")
         else:
-            raise ValueError("Image is None.")
-
-        # convert timestamp
-        image_ts = self.im.TimeStamp
-
-        # convert image
-        image = self.im.Array
-        image = gray2rgb(image)
-        return image, image_ts, system_ts
+            image_ts = res.TimeStamp
+            image = self.converter.Convert(res).Array
+            res.Release()
+            return image, image_ts, system_ts
 
     def _estimate_timestamp_offset(self) -> float:
         return 0
+    
+    @property
+    def binning(self) -> Tuple[int, int]:
+        return self.c.BinningHorizontal.Value, self.c.BinningVertical.Value
+
+    def binning(self, value):
+        self.c.BinningHorizontal.Value = value
+        self.c.BinningVertical.Value = value
 
     @property
     def roi(self) -> Tuple[int, int, int, int]:
@@ -122,12 +132,12 @@ class Basler(BaseCam):
 
     @property
     def exposure(self):
-        return self.c.ExposureTime.Value / 1_00  # convert usec to ms
+        return self.c.ExposureTime.Value  # usec
 
     @exposure.setter
     def exposure(self, value: float):
         self.c.ExposureAuto.Value = "Off"
-        self.c.ExposureTime.Value = value * 1_000  # convert ms to usec
+        self.c.ExposureTime.Value = value  # usec
 
     @property
     def gain(self):
@@ -156,7 +166,8 @@ class Basler(BaseCam):
         self.c.AcquisitionFrameRate.Value = value
 
     def start(self):
-        self.c.StartGrabbing()
+        self.c.StartGrabbing(py.GrabStrategy_LatestImages)
+        # self.c.StartGrabbing()
 
     def stop(self):
         try:
@@ -174,12 +185,12 @@ class Basler(BaseCam):
         pass  # self.bus.rescanBus()  # does not reset but "invalidates all current camera connections"
 
     def info_hardware(self):
-        cam_info = self.c.DeviceInfo()
+        cam_info = self.c.DeviceInfo
 
         info = {
             "Serial number": cam_info.GetSerialNumber(),
-            "Camera model": cam_info.di.GetModelName().decode("utf-8"),
-            "Camera vendor": cam_info.GetVendorName().decode("utf-8"),
+            "Camera model": cam_info.GetModelName(),
+            "Camera vendor": cam_info.GetVendorName(),
             # "Sensor": cam_info.sensorInfo.decode("utf-8"),
             # "Resolution": cam_info.sensorResolution.decode("utf-8"),
             # "Firmware version": cam_info.firmwareVersion.decode("utf-8"),
