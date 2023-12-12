@@ -55,10 +55,11 @@ class Spinnaker(BaseCam):
         system_stimestamp = time.time()
 
         if im.IsIncomplete():
+            im.Release()
             raise ValueError(f"Image incomplete with image status {im.GetImageStatus()}")
         else:
-            im_converted = self.processor.Convert(im, PySpin.PixelFormat_BGR8)  # convert mono to rgb
             image_timestamp = im.GetTimeStamp()
+            im_converted = self.processor.Convert(im, PySpin.PixelFormat_BGR8)  # convert mono to rgb
             im.Release()  # release memory (and camera buffer?)
 
             BGR = im_converted.GetNDArray()  # get the converted image array

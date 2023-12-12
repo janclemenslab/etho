@@ -53,6 +53,7 @@ class Spinnaker_OLD(BaseCam):
         system_stimestamp = time.time()
 
         if im.IsIncomplete():
+            im.Release()
             raise ValueError(f"Image incomplete with image status {im.GetImageStatus()}")
         else:
             im_converted = self.processor.Convert(im, PySpin.PixelFormat_BGR8)
