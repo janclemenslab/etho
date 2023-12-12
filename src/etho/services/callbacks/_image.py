@@ -141,7 +141,6 @@ class ImageDisplayPQG(ImageCallback):
         logger.info("closing display")
         # close app and windows here
         self.app.closeAllWindows()
-        self.app.close()
         super()._cleanup()
 
 
