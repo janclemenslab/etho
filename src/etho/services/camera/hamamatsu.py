@@ -38,8 +38,10 @@ class Hamamatsu(BaseCam):
         return image, image_timestamp, system_timestamp
 
     @property
-    def binning(self) -> int:
-        return self.c.get_attribute_value("BINNING")
+    def binning(self) -> Tuple[int, int]:
+        # (horizontal, vertical)
+        binning = self.c.get_attribute_value("BINNING")
+        return (binning, binning) 
 
     @binning.setter
     def binning(self, binsize):
