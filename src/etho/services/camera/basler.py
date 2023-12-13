@@ -73,6 +73,7 @@ class Basler(BaseCam):
     def binning(self) -> Tuple[int, int]:
         return self.c.BinningHorizontal.Value, self.c.BinningVertical.Value
 
+    @binning.setter
     def binning(self, value):
         self.c.BinningHorizontal.Value = value
         self.c.BinningVertical.Value = value
