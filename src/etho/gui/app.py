@@ -162,9 +162,12 @@ def kill_child_processes():
     except psutil.NoSuchProcess:
         return
     children = parent.children(recursive=True)
-    for p in children:
-        os.kill(p.pid, signal.SIGKILL)
-
+    for child in children:
+        child.terminate()  # friendly termination
+    _, still_alive = psutil.wait_procs(children, timeout=3)
+    for child in still_alive:
+        child.kill()  # unfriendly termination
+        # os.kill(child.pid, signal.SIGKILL)
 
 class RunDialog(QDialog):
     def __init__(self, kwargs):
@@ -401,11 +404,14 @@ class MainWindow(QMainWindow):
 
         rich.print("Starting experiment with these args:")
         rich.print(kwargs)
-        cclient = client.client(**kwargs)
+        services = client.client(**kwargs)
+        # print(services)
         # services = next(cclient)
+        if services is not None:
+            print(services)
 
-        dlg = RunDialog(kwargs)
-        dlg.exec_()
+        # dlg = RunDialog(kwargs)
+        # dlg.exec_()
 
 
     def camera_preview(self):

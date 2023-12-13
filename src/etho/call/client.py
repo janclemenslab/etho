@@ -43,9 +43,13 @@ def kill_child_processes():
     except psutil.NoSuchProcess:
         return
     children = parent.children(recursive=True)
-    for p in children:
-        os.kill(p.pid, signal.SIGKILL)
-
+    for child in children:
+        child.terminate()  # friendly termination
+    _, still_alive = psutil.wait_procs(children, timeout=3)
+    for child in still_alive:
+        child.kill()  # unfriendly termination
+        # os.kill(child.pid, signal.SIGKILL)
+        
 
 def client(
     protocolfile: str,
@@ -75,8 +79,6 @@ def client(
     """
 
     # load config/protocols
-    print("pp")
-
     prot = readconfig(protocolfile)
     logging.debug(prot)
 
@@ -144,7 +146,7 @@ def client(
         if show_test_image:
             img = gcm.attr("test_image")
             print("Press any key to continue.")
-            cv2.imshow("Test image. Are you okay with this?", img)
+            cv2.imshow("Test image. Are you okay with this? Press any key to continue", img)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
             cv2.waitKey(1)  # second call required for window to be closed on mac
@@ -286,40 +288,43 @@ def client(
             logging.info(f"   {service_name}.")
             service.start()
 
-    # yield services  # for GUI interaction but breaks CLI
-
     logging.info("All services started.")
-
     if show_progress:
-        with Progress() as progress:
-            tasks = {}
-            for service_name, service in services.items():
-                tasks[service_name] = progress.add_task(f"[red]{service_name}", total=service.progress()["total"])
+        cli_progress(services, save_prefix)
+    else:
+        return services
+    
 
-            while not progress.finished:
-                for task_name, task_id in tasks.items():
-                    if progress._tasks[task_id].finished:
-                        continue
-                    try:
-                        p = timed(services[task_name].progress, 5)
-                        description = None
-                        if "framenumber" in p:
-                            description = f"{task_name} {p['framenumber_delta'] / p['elapsed_delta']: 7.2f} fps"
-                        progress.update(task_id, completed=p["elapsed"], description=description)
-                    except:  # if call times out, stop progress display - this will stop the display whenever a task times out - not necessarily when a task is done
-                        progress.stop_task(task_id)
-                time.sleep(1)
+def cli_progress(services, save_prefix):
+    with Progress() as progress:
+        tasks = {}
+        for service_name, service in services.items():
+            tasks[service_name] = progress.add_task(f"[red]{service_name}", total=service.progress()["total"])
 
-        logging.info('Cancelling jobs:')
-        time.sleep(4)
-        # for service_name, service in services.items():
-            # try:
-            #     logging.info(f'   {service_name}')
-            #     service.finish()
-            # except:
-            #     logging.warning(f'     Failed.')
-        logging.info('   Killing all child processes')
-        kill_child_processes()
-        logging.info('Done')
+        while not progress.finished:
+            for task_name, task_id in tasks.items():
+                if progress._tasks[task_id].finished:
+                    continue
+                try:
+                    p = timed(services[task_name].progress, 5)
+                    description = None
+                    if "framenumber" in p:
+                        description = f"{task_name} {p['framenumber_delta'] / p['elapsed_delta']: 7.2f} fps"
+                    progress.update(task_id, completed=p["elapsed"], description=description)
+                except:  # if call times out, stop progress display - this will stop the display whenever a task times out - not necessarily when a task is done
+                    progress.stop_task(task_id)
+            time.sleep(1)
 
-        logging.info(f"Done with experiment {save_prefix}.")
+    # logging.info('Cancelling jobs:')
+    # time.sleep(4)
+    # for service_name, service in services.items():
+    #     try:
+    #         logging.info(f'   {service_name}')
+    #         service.finish()
+    #     except:
+    #         logging.warning(f'     Failed.')
+    logging.info('Terminating jobs.')
+    kill_child_processes()
+    logging.info('Done')
+
+    logging.info(f"Done with experiment {save_prefix}.")
