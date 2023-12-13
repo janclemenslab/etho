@@ -55,6 +55,9 @@ class BaseCam:
         """
         pass
 
+    def optimize_auto_exposure(self):
+        pass
+
     @property
     def roi(self) -> Tuple[int, int, int, int]:
         pass
@@ -102,6 +105,14 @@ class BaseCam:
     @framerate.setter
     def framerate(self, value: float):
         self._framerate = value
+
+    @property
+    def external_trigger(self):
+        pass
+
+    @external_trigger.setter
+    def external_trigger(self, value: bool = False):
+        pass
 
     def enable_gpio_strobe(self):
         pass
