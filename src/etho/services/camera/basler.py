@@ -178,6 +178,8 @@ class Basler(BaseCam):
     def close(self):
         self.stop()
         self.c.Close()
+        tlf = py.TlFactory.GetInstance()
+        tlf.DestroyDevice(self.c.DetachDevice())
 
     def reset(self):
         """Reset the camera system to free all resources."""
