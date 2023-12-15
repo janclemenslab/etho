@@ -1,17 +1,14 @@
 import time
 import numpy as np
-import cv2
 import logging
 from itertools import cycle
 from rich.progress import Progress
 import rich
 import threading
 import _thread as thread
-from typing import Optional, Union
+import queue
+from typing import Optional, Union, Dict, Any
 import psutil
-import signal
-import os
-
 from ..utils.tui import rich_information
 
 from .. import config
@@ -48,8 +45,7 @@ def kill_child_processes():
     _, still_alive = psutil.wait_procs(children, timeout=3)
     for child in still_alive:
         child.kill()  # unfriendly termination
-        # os.kill(child.pid, signal.SIGKILL)
-        
+
 
 def client(
     protocolfile: str,
@@ -57,11 +53,12 @@ def client(
     *,
     host: str = "localhost",
     save_prefix: Optional[str] = None,
-    show_test_image: bool = False,
     show_progress: bool = True,
     debug: bool = False,
     preview: bool = False,
-    gui: bool = False,
+    _stop_event: Optional[threading.Event] = None,
+    _done_event: Optional[threading.Event] = None,
+    _queue: Optional[queue.Queue] = None,
 ):
     """Starts an experiment.
 
@@ -70,12 +67,12 @@ def client(
         protocolfile (str): _description_
         playlistfile (Optional[str]): _description_.
         save_prefix (Optional[str]): _description_.
-        show_test_image (bool): _description_.
         show_progress (bool): _description_.
         debug (bool): _description_.
         preview (bool): _description_.
-        gui (bool): _description_.
-
+        _stop_event (threading.Event, optional): Used to stop the task from an outside thread. Defaults to None.
+        _done_event (threading.Event, optional): Set to signal that the task is done/stopped to an outside thread. Defaults to None.
+        _queue (queue.Queue, optional): Signal the expected duration of the task to outside funs. Defaults to None.
     """
 
     # load config/protocols
@@ -99,9 +96,19 @@ def client(
         # update `this`` with service specific host params
         if "host" in prot["THUA"]:
             this.update(prot["THUA"]["host"])
-        thua = THUA.make(this["serializer"], this["user"], this["host"], this["working_directory"], this["python_exe"])
-        thua.setup(prot["THUA"]["port"], prot["THUA"]["interval"], this["maxduration"] + 10)
-        thua.init_local_logger("{0}/{1}/{1}_thu.log".format(this["save_directory"], save_prefix))
+        thua = THUA.make(
+            this["serializer"],
+            this["user"],
+            this["host"],
+            this["working_directory"],
+            this["python_exe"],
+        )
+        thua.setup(
+            prot["THUA"]["port"], prot["THUA"]["interval"], this["maxduration"] + 10
+        )
+        thua.init_local_logger(
+            "{0}/{1}/{1}_thu.log".format(this["save_directory"], save_prefix)
+        )
         thua.start()
         services["THUA"] = thua
 
@@ -139,17 +146,16 @@ def client(
             cam_params["callbacks"] = {"disp_fast": None}
 
         save_suffix = f"_{gcm_cnt+1}" if gcm_cnt > 0 else ""
-        gcm.setup(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}", maxduration, cam_params)
+        gcm.setup(
+            f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}",
+            maxduration,
+            cam_params,
+        )
 
         if not preview:
-            gcm.init_local_logger(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log")
-        if show_test_image:
-            img = gcm.attr("test_image")
-            print("Press any key to continue.")
-            cv2.imshow("Test image. Are you okay with this? Press any key to continue", img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-            cv2.waitKey(1)  # second call required for window to be closed on mac
+            gcm.init_local_logger(
+                f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log"
+            )
         services[gcm_key] = gcm
 
     daq_keys = [key for key in prot["NODE"]["use_services"] if "DAQ" in key]
@@ -177,12 +183,18 @@ def client(
         fs = prot[daq_key]["samplingrate"]
         playlist = parse_table(playlistfile)
         sounds = load_sounds(
-            playlist, fs, attenuation=attenuation, LEDamp=prot[daq_key]["ledamp"], stimfolder=config["HEAD"]["stimfolder"]
+            playlist,
+            fs,
+            attenuation=attenuation,
+            LEDamp=prot[daq_key]["ledamp"],
+            stimfolder=config["HEAD"]["stimfolder"],
         )
         sounds = [sound.astype(np.float64) for sound in sounds]
 
         # Generate stimulus sequence (shuffle, loop playlist)
-        playlist_items, totallen = build_playlist(sounds, this["maxduration"], fs, shuffle=prot[daq_key]["shuffle"])
+        playlist_items, totallen = build_playlist(
+            sounds, this["maxduration"], fs, shuffle=prot[daq_key]["shuffle"]
+        )
         if this["maxduration"] == -1:
             logging.info(f"Setting maxduration from playlist to {totallen}.")
             this["maxduration"] = totallen
@@ -194,8 +206,12 @@ def client(
         # TODO: catch errors if channel numbers are inconsistent - sounds[ii].shape[-1] should be nb_analog+nb_digital
         if prot[daq_key]["digital_chans_out"] is not None:
             nb_digital_chans_out = len(prot[daq_key]["digital_chans_out"])
-            digital_data = [snd[:, -nb_digital_chans_out:].astype(np.uint8) for snd in sounds]
-            analog_data = [snd[:, :-nb_digital_chans_out] for snd in sounds]  # remove digital traces from stimset
+            digital_data = [
+                snd[:, -nb_digital_chans_out:].astype(np.uint8) for snd in sounds
+            ]
+            analog_data = [
+                snd[:, :-nb_digital_chans_out] for snd in sounds
+            ]  # remove digital traces from stimset
         else:
             digital_data = None
             analog_data = sounds
@@ -228,7 +244,9 @@ def client(
             metadata={"analog_chans_in_info": prot[daq_key]["analog_chans_in_info"]},
             params=undefaultify(prot[daq_key]),
         )
-        daq.init_local_logger(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log")
+        daq.init_local_logger(
+            f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log"
+        )
         services[daq_key] = daq
 
     if "NIC" in prot["NODE"]["use_services"]:
@@ -255,7 +273,9 @@ def client(
             nic_params["duty_cycle"],
             nic_params,
         )
-        nic.init_local_logger(f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log")
+        nic.init_local_logger(
+            f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log"
+        )
 
     # display config info
     for key, s in services.items():
@@ -289,20 +309,42 @@ def client(
             service.start()
 
     logging.info("All services started.")
+
     if show_progress:
-        cli_progress(services, save_prefix)
+        total = 0
+        for service_name, service in services.items():
+            total = max(total, service.progress()["total"])
+        _queue.put(total)
+        cli_progress(services, save_prefix, _stop_event, _done_event)
     else:
         return services
-    
 
-def cli_progress(services, save_prefix):
+
+def cli_progress(
+    services: Dict[str, Any],
+    save_prefix: str,
+    stop_event: Optional[threading.Event] = None,
+    done_event: Optional[threading.Event] = None,
+):
+    """_summary_
+
+    Args:
+        services (_type_): Dictionary of intialized services.
+        save_prefix (_type_): Name of the expt.
+        stop_event (_type_, optional): Used to stop the task from an outside thread. Defaults to None.
+        done_event (_type_, optional): Set to signal that the task is done/stopped to an outside thread. Defaults to None.
+    """
     with Progress() as progress:
         tasks = {}
         for service_name, service in services.items():
-            tasks[service_name] = progress.add_task(f"[red]{service_name}", total=service.progress()["total"])
-
-        while not progress.finished:
+            tasks[service_name] = progress.add_task(
+                f"[red]{service_name}", total=service.progress()["total"]
+            )
+        RUN = True
+        while RUN and not progress.finished:
             for task_name, task_id in tasks.items():
+                if stop_event is not None and stop_event.is_set():
+                    break
                 if progress._tasks[task_id].finished:
                     continue
                 try:
@@ -310,21 +352,26 @@ def cli_progress(services, save_prefix):
                     description = None
                     if "framenumber" in p:
                         description = f"{task_name} {p['framenumber_delta'] / p['elapsed_delta']: 7.2f} fps"
-                    progress.update(task_id, completed=p["elapsed"], description=description)
+                    progress.update(
+                        task_id, completed=p["elapsed"], description=description
+                    )
                 except:  # if call times out, stop progress display - this will stop the display whenever a task times out - not necessarily when a task is done
                     progress.stop_task(task_id)
             time.sleep(1)
 
-    # logging.info('Cancelling jobs:')
-    # time.sleep(4)
-    # for service_name, service in services.items():
-    #     try:
-    #         logging.info(f'   {service_name}')
-    #         service.finish()
-    #     except:
-    #         logging.warning(f'     Failed.')
-    logging.info('Terminating jobs.')
+            if stop_event is not None and stop_event.is_set():
+                logging.info("Received STOP signal. Cancelling jobs:")
+                for task_name, task_id in tasks.items():
+                    progress.stop_task(task_id)
+                RUN = False
+                for service_name, service in services.items():
+                    try:
+                        logging.info(f"   {service_name}")
+                        service.finish()
+                    except:
+                        logging.warning("     Failed.")
+    if stop_event is not None and not stop_event.is_set() and done_event is not None:
+        done_event.set()
+    logging.info("Cleaning up jobs.")
     kill_child_processes()
-    logging.info('Done')
-
     logging.info(f"Done with experiment {save_prefix}.")

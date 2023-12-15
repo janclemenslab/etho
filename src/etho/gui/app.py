@@ -8,6 +8,8 @@ import os
 import logging
 import time
 import psutil, signal
+import threading
+import queue
 
 from qtpy import QtWidgets, QtCore
 from qtpy.QtWidgets import (
@@ -24,7 +26,9 @@ from qtpy.QtWidgets import (
     QDialogButtonBox,
     QLabel,
     QSplitter,
+    QProgressBar,
 )
+
 from qtpy.QtCore import QAbstractTableModel, Qt
 
 from pyqtgraph.parametertree import Parameter, ParameterTree
@@ -38,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 
 class PandasModel(QAbstractTableModel):
-    def __init__(self, data, editable: bool = True):
+    def __init__(self, data, editable: bool = False):
         QAbstractTableModel.__init__(self)
         self._data = data
         self._editable = editable
@@ -78,9 +82,10 @@ class PandasModel(QAbstractTableModel):
 
 
 class TableView(QTableView):
-    def __init__(self, model, child=None):
+    def __init__(self, model, child=None, folder=None):
         QTableView.__init__(self)
         self._child = child
+        self._folder = folder
 
         self.setModel(model)
         self.selectionModel().selectionChanged.connect(self.update_child)
@@ -101,14 +106,13 @@ class TableView(QTableView):
             self._child.replaceData(self.data)
 
     def edit_file(self):
+        if self._folder is not None:
+            print(f"code {self.folder}/{self.selected_string}")
+            os.system(f"code {self.folder}/{self.selected_string}")
 
-        # print(self.selected_string)
-        import os
-        os.system(f'code {self.folder}/{self.selected_string}')
-        # os.system('dir')
 
 # format to parametertree
-def from_yaml(d):
+def from_yaml(d, readonly=True):
     pt = []
     for k, v in d.items():
         pt.append({"name": k, "type": "group", "children": []})
@@ -118,7 +122,9 @@ def from_yaml(d):
             if isinstance(val, list):
                 item["type"] = "group"
                 item["original_type"] = list
-                item["children"] = [{"name": str(it), "type": "bool", "value": True} for it in val]
+                item["children"] = [
+                    {"name": str(it), "type": "bool", "value": True} for it in val
+                ]
             if isinstance(val, dict):
                 # for callbacks, value is a dict - add key val of that as list
                 item["type"] = "group"
@@ -132,18 +138,30 @@ def from_yaml(d):
                     }
                     item["children"].append(child_item)
             elif val is None:  # Fall back for None values
-                item["type"] = 'str'
+                item["type"] = "str"
                 item["value"] = str(val)
             else:
                 item["type"] = type(val).__name__
                 item["value"] = val
             pt[-1]["children"].append(item)
     p = Parameter.create(name="params", type="group", children=pt)
+    if readonly:
+        children_read_only(p.children())
+    to_yaml(p)
     return p
 
 
+def children_read_only(children):
+    for child in children:
+        if child.children():
+            children_read_only(child.children())
+        else:
+            child.setReadonly()
+
+
 def to_yaml(p):
-    rich.print(p.saveState())
+    # TODO: unwrap this recursively into a hierarcchy of dictionaries
+    rich.print(p.saveState()["children"])
 
 
 def load(filename: str):
@@ -169,55 +187,63 @@ def kill_child_processes():
         child.kill()  # unfriendly termination
         # os.kill(child.pid, signal.SIGKILL)
 
+
 class RunDialog(QDialog):
-    def __init__(self, kwargs):
+    def __init__(self, stop_event, done_event, queue_total):
         super().__init__()
 
-        self.setWindowTitle("HELLO!")
+        self.stop_event = stop_event
+        self.done_event = done_event
+        self.queue_total = queue_total
 
-        QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
+        self.setWindowTitle("Progress")
+
+        QBtn = QDialogButtonBox.Cancel
+
+        self.message = QLabel("Running")
+        self.message.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        self.pbar = QProgressBar(self)
+        self.pbar.setValue(0)
 
         self.buttonBox = QDialogButtonBox(QBtn)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
 
         self.layout = QVBoxLayout()
-        self.message = QLabel("Something happened, is that OK?")
         self.layout.addWidget(self.message)
+        self.layout.addWidget(self.pbar)
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
+        self.total = queue_total.get()
 
-        # hide this in a class or function
-        # self.p = Process(target=client.client, kwargs=kwargs)  # use process and
-        # self.p.start()  # start execution
-        # self.p.join()  # join blocks the GUI while the process is running
-
-        self.client = client.client(**kwargs)
-        self.services = next(self.client)
-
+        self.monitor_thread = threading.Thread(
+            target=monitor,
+            args=[self.done_event, self.stop_event, self.accept, self.pbar, self.total],
+        )
+        self.monitor_thread.start()
 
     def reject(self):
-        logging.info('Canceling jobs:')
-        for service_name, service in self.services.items():
-            try:
-                logging.info(f'   {service_name}')
-                service.finish()
-            except:
-                logging.warning(f'     Failed.')
-        logging.info('   Killing all child processes')
-        kill_child_processes()
-        logging.info('Done')
-
+        self.stop_event.set()
         super().reject()
 
-    # @classmethod
-    # def do_run(self, method, args=[], kwargs=[], message="Busy doing stuff."):
-    #     # self.message.setText(message)
-    #     # wx.Yield()  # yield to allow wx to display the dialog
-    #     from multiprocessing import Process
-    #     # self.Destroy()  # properly destroy the dialog
+    def accept(self):
+        self.stop_event.set()
+        super().accept()
 
 
+def monitor(event1, event2, callback, progress=None, progress_total=100):
+    cnt = 0
+    RUN = True
+    while RUN:
+        if event1.is_set():
+            callback()
+            RUN = False
+        if event2.is_set():
+            RUN = False
+        cnt += 1
+        if progress is not None:
+            progress.setValue(int(100 * cnt / progress_total))
+        time.sleep(1)
 
 
 class MainWindow(QMainWindow):
@@ -231,24 +257,23 @@ class MainWindow(QMainWindow):
         # rich.print(config)
         if protocol_folder is None:
             config = readconfig()
-            protocol_folder = config['HEAD']['protocolfolder']
+            protocol_folder = config["HEAD"]["protocolfolder"]
         self.protocol_folder = Path(protocol_folder)
 
         if not self.protocol_folder.exists():
             raise FileExistsError(f"{self.protocol_folder} does not exist!")
 
-        logging.info(f'Loading protocols from {self.protocol_folder}.')
+        logging.info(f"Loading protocols from {self.protocol_folder}.")
 
         if playlist_folder is None:
             config = readconfig()
-            playlist_folder = config['HEAD']['playlistfolder']
+            playlist_folder = config["HEAD"]["playlistfolder"]
         self.playlist_folder = Path(playlist_folder)
-
 
         if not self.playlist_folder.exists():
             raise FileExistsError(f"{self.playlist_folder} does not exist!")
 
-        logging.info(f'Loading playlists from {self.playlist_folder}.')
+        logging.info(f"Loading playlists from {self.playlist_folder}.")
 
         self.setWindowTitle("etho control")
 
@@ -264,7 +289,6 @@ class MainWindow(QMainWindow):
         self.button["Debug"] = QCheckBox("Debug")
         self.button["Progress"] = QCheckBox("Show Progress")
         self.button["Progress"].setChecked(True)
-        self.button["Testimage"] = QCheckBox("Show test image")
 
         [buttons.addWidget(b) for b in self.button.values()]
 
@@ -288,8 +312,6 @@ class MainWindow(QMainWindow):
         self.layout.addLayout(buttons, 0, 0)
         self.refresh_lists(init=True)
 
-
-
         self.layout.setColumnMinimumWidth(1, 200)
         self.layout.setColumnMinimumWidth(2, 600)
         self.layout.setColumnStretch(2, 1)
@@ -302,31 +324,42 @@ class MainWindow(QMainWindow):
     def refresh_lists(self, init: bool = False):
         playlist_files = sorted(self.playlist_folder.glob("*.txt"))
         if len(playlist_files) == 0:
-            raise FileNotFoundError(f'No files found in {self.playlist_folder}.')
+            raise FileNotFoundError(f"No files found in {self.playlist_folder}.")
 
-        df_playlists = pd.DataFrame({"playlist": sorted([Path(plf).name for plf in playlist_files])})
+        df_playlists = pd.DataFrame(
+            {"playlist": sorted([Path(plf).name for plf in playlist_files])}
+        )
         playlist_file = Path(playlist_files[0]).name
-        playlist_from_filename = lambda filename: parse_table((self.playlist_folder / filename).as_posix())
+        playlist_from_filename = lambda filename: parse_table(
+            (self.playlist_folder / filename).as_posix()
+        )
         playlist_model = PandasModel(playlist_from_filename(playlist_file))
+        print(playlist_from_filename(playlist_file))
         playlist_model.data_from_filename = playlist_from_filename
         playlist_view = TableView(playlist_model)
         playlist_view.setAlternatingRowColors(True)
 
         # List of playlist files
         playlists_model = PandasModel(df_playlists, editable=False)
-        playlists_view = TableView(playlists_model, playlist_model)
+        playlists_view = TableView(
+            playlists_model, playlist_model, self.playlist_folder
+        )
         playlists_view.setAlternatingRowColors(True)
         playlists_view.folder = self.playlist_folder
 
         # Protocols
         protocol_files = sorted(self.protocol_folder.glob("*.yml"))
         if len(protocol_files) == 0:
-            raise FileNotFoundError(f'No files found in {self.protocol_folder}.')
+            raise FileNotFoundError(f"No files found in {self.protocol_folder}.")
 
-        df_protocols = pd.DataFrame({"protocol": sorted([Path(plf).name for plf in protocol_files])})
+        df_protocols = pd.DataFrame(
+            {"protocol": sorted([Path(plf).name for plf in protocol_files])}
+        )
         # Content of selected protocol file
         protocol_file = Path(protocol_files[0]).name
-        protocol_from_filename = lambda filename: from_yaml(load(self.protocol_folder / filename))
+        protocol_from_filename = lambda filename: from_yaml(
+            load(self.protocol_folder / filename)
+        )
         protocol_model = protocol_from_filename(protocol_file)
 
         protocol_view = ParameterTree()
@@ -336,7 +369,7 @@ class MainWindow(QMainWindow):
 
         # List of protocol files
         protocols_model = PandasModel(df_protocols, editable=False)
-        protocols_view = TableView(protocols_model, protocol_view)
+        protocols_view = TableView(protocols_model, protocol_view, self.protocol_folder)
         protocols_view.setAlternatingRowColors(True)
         protocols_view.folder = self.protocol_folder
 
@@ -359,7 +392,6 @@ class MainWindow(QMainWindow):
             # splitterH.addWidget(splitter)
             # splitterH.addWidget(splitter2)
             # self.layout.addWidget(splitterH, 0, 1, 1, 1)
-
 
             self.layout.addWidget(self.playlists_view, 0, 1, 1, 1)
             self.layout.addWidget(self.playlist_view, 0, 2, 1, 5)
@@ -390,29 +422,35 @@ class MainWindow(QMainWindow):
             dlg.exec_()
             return
 
+        stop_event = threading.Event()
+        done_event = threading.Event()
+        queue_total = queue.Queue()
+
         kwargs = {
-            "playlistfile": (self.playlist_folder / self.playlists_view.selected_string).as_posix(),
-            "protocolfile": (self.protocol_folder / self.protocols_view.selected_string).as_posix(),
+            "playlistfile": (
+                self.playlist_folder / self.playlists_view.selected_string
+            ).as_posix(),
+            "protocolfile": (
+                self.protocol_folder / self.protocols_view.selected_string
+            ).as_posix(),
             "debug": self.button["Debug"].isChecked(),
             "show_progress": self.button["Progress"].isChecked(),
-            "show_test_image": self.button["Testimage"].isChecked(),
             "host": "localhost",
             "save_prefix": None,
             "preview": preview,
-            "gui": True,
+            "_stop_event": stop_event,
+            "_done_event": done_event,
+            "_queue": queue_total,
         }
 
         rich.print("Starting experiment with these args:")
         rich.print(kwargs)
-        services = client.client(**kwargs)
-        # print(services)
-        # services = next(cclient)
-        if services is not None:
-            print(services)
 
-        # dlg = RunDialog(kwargs)
-        # dlg.exec_()
+        t = threading.Thread(target=client.client, kwargs=kwargs)
+        t.start()
 
+        dlg = RunDialog(stop_event, done_event, queue_total)
+        dlg.exec_()
 
     def camera_preview(self):
         self.start(preview=True)
