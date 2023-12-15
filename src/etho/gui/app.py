@@ -147,7 +147,6 @@ def from_yaml(d, readonly=True):
     p = Parameter.create(name="params", type="group", children=pt)
     if readonly:
         children_read_only(p.children())
-    to_yaml(p)
     return p
 
 
