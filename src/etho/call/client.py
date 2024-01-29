@@ -9,6 +9,7 @@ import threading
 import _thread as thread
 from typing import Optional, Union
 import psutil
+import threading
 import signal
 import os
 
@@ -49,7 +50,7 @@ def kill_child_processes():
     for child in still_alive:
         child.kill()  # unfriendly termination
         # os.kill(child.pid, signal.SIGKILL)
-        
+
 
 def client(
     protocolfile: str,
@@ -62,6 +63,7 @@ def client(
     debug: bool = False,
     preview: bool = False,
     gui: bool = False,
+    _stop_event: Optional[threading.Event] = None,
 ):
     """Starts an experiment.
 
@@ -75,6 +77,7 @@ def client(
         debug (bool): _description_.
         preview (bool): _description_.
         gui (bool): _description_.
+        _stop_event (threading.Event): _description_.
 
     """
 
@@ -85,6 +88,12 @@ def client(
     defaults = config["GENERAL"]
     defaults.update(prot["NODE"])
     defaults["host"] = host
+
+    if defaults['python_exe'] is None:
+        defaults['python_exe'] = 'python'
+    if defaults['serializer'] is None:
+        defaults['serializer'] = 'pickle'
+
     rich.print(defaults)
     # unique file name for video and node-local logs
     if save_prefix is None:
@@ -290,18 +299,18 @@ def client(
 
     logging.info("All services started.")
     if show_progress:
-        cli_progress(services, save_prefix)
+        cli_progress(services, save_prefix, _stop_event)
     else:
         return services
-    
 
-def cli_progress(services, save_prefix):
+
+def cli_progress(services, save_prefix, stop_event=None):
     with Progress() as progress:
         tasks = {}
         for service_name, service in services.items():
             tasks[service_name] = progress.add_task(f"[red]{service_name}", total=service.progress()["total"])
-
-        while not progress.finished:
+        RUN = True
+        while RUN and not progress.finished:
             for task_name, task_id in tasks.items():
                 if progress._tasks[task_id].finished:
                     continue
@@ -315,16 +324,22 @@ def cli_progress(services, save_prefix):
                     progress.stop_task(task_id)
             time.sleep(1)
 
-    # logging.info('Cancelling jobs:')
-    # time.sleep(4)
-    # for service_name, service in services.items():
-    #     try:
-    #         logging.info(f'   {service_name}')
-    #         service.finish()
-    #     except:
-    #         logging.warning(f'     Failed.')
-    logging.info('Terminating jobs.')
+            if stop_event is not None and stop_event.is_set():
+                print("STOP!")
+                logging.info("Cancelling jobs:")
+                for task_name, task_id in tasks.items():
+                    progress.stop_task(task_id)
+                RUN = False
+                time.sleep(1)
+                for service_name, service in services.items():
+                    try:
+                        logging.info(f"   {service_name}")
+                        service.finish()
+                    except:
+                        logging.warning("     Failed.")
+
+    logging.info("Terminating jobs.")
     kill_child_processes()
-    logging.info('Done')
+    logging.info("Done")
 
     logging.info(f"Done with experiment {save_prefix}.")

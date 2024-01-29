@@ -8,6 +8,7 @@ import os
 import logging
 import time
 import psutil, signal
+import threading
 
 from qtpy import QtWidgets, QtCore
 from qtpy.QtWidgets import (
@@ -101,11 +102,12 @@ class TableView(QTableView):
             self._child.replaceData(self.data)
 
     def edit_file(self):
-
         # print(self.selected_string)
         import os
-        os.system(f'code {self.folder}/{self.selected_string}')
+
+        os.system(f"code {self.folder}/{self.selected_string}")
         # os.system('dir')
+
 
 # format to parametertree
 def from_yaml(d):
@@ -132,7 +134,7 @@ def from_yaml(d):
                     }
                     item["children"].append(child_item)
             elif val is None:  # Fall back for None values
-                item["type"] = 'str'
+                item["type"] = "str"
                 item["value"] = str(val)
             else:
                 item["type"] = type(val).__name__
@@ -169,6 +171,7 @@ def kill_child_processes():
         child.kill()  # unfriendly termination
         # os.kill(child.pid, signal.SIGKILL)
 
+
 class RunDialog(QDialog):
     def __init__(self, kwargs):
         super().__init__()
@@ -192,21 +195,20 @@ class RunDialog(QDialog):
         # self.p.start()  # start execution
         # self.p.join()  # join blocks the GUI while the process is running
 
-        self.client = client.client(**kwargs)
-        self.services = next(self.client)
-
+        # self.client = client.client(**kwargs)
+        # self.services = next(self.client)
 
     def reject(self):
-        logging.info('Canceling jobs:')
+        logging.info("Canceling jobs:")
         for service_name, service in self.services.items():
             try:
-                logging.info(f'   {service_name}')
+                logging.info(f"   {service_name}")
                 service.finish()
             except:
-                logging.warning(f'     Failed.')
-        logging.info('   Killing all child processes')
+                logging.warning(f"     Failed.")
+        logging.info("   Killing all child processes")
         kill_child_processes()
-        logging.info('Done')
+        logging.info("Done")
 
         super().reject()
 
@@ -216,8 +218,6 @@ class RunDialog(QDialog):
     #     # wx.Yield()  # yield to allow wx to display the dialog
     #     from multiprocessing import Process
     #     # self.Destroy()  # properly destroy the dialog
-
-
 
 
 class MainWindow(QMainWindow):
@@ -231,24 +231,23 @@ class MainWindow(QMainWindow):
         # rich.print(config)
         if protocol_folder is None:
             config = readconfig()
-            protocol_folder = config['HEAD']['protocolfolder']
+            protocol_folder = config["HEAD"]["protocolfolder"]
         self.protocol_folder = Path(protocol_folder)
 
         if not self.protocol_folder.exists():
             raise FileExistsError(f"{self.protocol_folder} does not exist!")
 
-        logging.info(f'Loading protocols from {self.protocol_folder}.')
+        logging.info(f"Loading protocols from {self.protocol_folder}.")
 
         if playlist_folder is None:
             config = readconfig()
-            playlist_folder = config['HEAD']['playlistfolder']
+            playlist_folder = config["HEAD"]["playlistfolder"]
         self.playlist_folder = Path(playlist_folder)
-
 
         if not self.playlist_folder.exists():
             raise FileExistsError(f"{self.playlist_folder} does not exist!")
 
-        logging.info(f'Loading playlists from {self.playlist_folder}.')
+        logging.info(f"Loading playlists from {self.playlist_folder}.")
 
         self.setWindowTitle("etho control")
 
@@ -288,8 +287,6 @@ class MainWindow(QMainWindow):
         self.layout.addLayout(buttons, 0, 0)
         self.refresh_lists(init=True)
 
-
-
         self.layout.setColumnMinimumWidth(1, 200)
         self.layout.setColumnMinimumWidth(2, 600)
         self.layout.setColumnStretch(2, 1)
@@ -302,7 +299,7 @@ class MainWindow(QMainWindow):
     def refresh_lists(self, init: bool = False):
         playlist_files = sorted(self.playlist_folder.glob("*.txt"))
         if len(playlist_files) == 0:
-            raise FileNotFoundError(f'No files found in {self.playlist_folder}.')
+            raise FileNotFoundError(f"No files found in {self.playlist_folder}.")
 
         df_playlists = pd.DataFrame({"playlist": sorted([Path(plf).name for plf in playlist_files])})
         playlist_file = Path(playlist_files[0]).name
@@ -321,7 +318,7 @@ class MainWindow(QMainWindow):
         # Protocols
         protocol_files = sorted(self.protocol_folder.glob("*.yml"))
         if len(protocol_files) == 0:
-            raise FileNotFoundError(f'No files found in {self.protocol_folder}.')
+            raise FileNotFoundError(f"No files found in {self.protocol_folder}.")
 
         df_protocols = pd.DataFrame({"protocol": sorted([Path(plf).name for plf in protocol_files])})
         # Content of selected protocol file
@@ -359,7 +356,6 @@ class MainWindow(QMainWindow):
             # splitterH.addWidget(splitter)
             # splitterH.addWidget(splitter2)
             # self.layout.addWidget(splitterH, 0, 1, 1, 1)
-
 
             self.layout.addWidget(self.playlists_view, 0, 1, 1, 1)
             self.layout.addWidget(self.playlist_view, 0, 2, 1, 5)
@@ -400,6 +396,7 @@ class MainWindow(QMainWindow):
             "save_prefix": None,
             "preview": preview,
             "gui": True,
+            "_stop_event": threading.Event(),
         }
 
         rich.print("Starting experiment with these args:")
@@ -412,7 +409,6 @@ class MainWindow(QMainWindow):
 
         # dlg = RunDialog(kwargs)
         # dlg.exec_()
-
 
     def camera_preview(self):
         self.start(preview=True)

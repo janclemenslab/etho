@@ -1,6 +1,9 @@
 """etho"""
 __version__ = "0.16.0"
 # load global config on import
-from .utils.config import readconfig
+try:
+    from .utils.config import readconfig
+    config = readconfig()
+except FileNotFoundError as e:
+    print('No configuration fiel found. Run `etho init`')
 
-config = readconfig()

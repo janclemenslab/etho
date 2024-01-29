@@ -12,7 +12,6 @@ from typing import Optional
 # decorate all methods in the class so that exceptions are properly logged
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 class TMP(BaseZeroService):
-
     LOGGING_PORT = 1443  # set this to range 1420-1460
     SERVICE_PORT = 4243  # last two digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "TMP"  # short, uppercase, 3-letter ID of the service (must equal class name)
@@ -45,8 +44,10 @@ class TMP(BaseZeroService):
 
     def _worker(self, stop_event):
         RUN = True
-        while RUN and not stop_event.wait(0.1):
-            pass  # APPLICATION SPECIFIC RUN CODE HERE
+        while RUN:
+            if stop_event.is_set():
+                RUN = False
+            # APPLICATION SPECIFIC RUN CODE HERE
 
     def finish(self, stop_service=False):
         self.log.warning("stopping")
