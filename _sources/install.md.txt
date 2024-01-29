@@ -2,7 +2,7 @@
 
 ## Python packages
 - install [miniforge](https://github.com/conda-forge/miniforge)
-- install conda packages: `mamba create python=3.10 numpy scipy h5py wxpython opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil pydaqmx pyqtgraph qtpy -c conda-forge -n etho -y`
+- install conda packages: `mamba create python=3.10 numpy scipy h5py opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil pydaqmx pyqtgraph qtpy -c conda-forge -n etho -y`
    - Notes on specific versions:
       - on the rpi PC install `pandas=0.23` and `python=3.7` instead
       - if you want to use the old flycapture SDK (needed for some older FLIR/PointGrey cameras), install `python=3.6`
