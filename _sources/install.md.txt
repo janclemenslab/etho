@@ -1,26 +1,31 @@
 # Installation
 
 ## Python packages
-- install [mambaforge](https://github.com/conda-forge/miniforge#mambaforge)
-- install conda packages: `mamba create python=3.9 numpy scipy h5py wxpython opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil pydaqmx -c conda-forge -n etho -y`
-- notes:
-   - on the rpi PC install `pandas=0.23` and `python=3.7` instead
-   - if you want to use the old flycapture SDK (needed for some older FLIR/PointGrey cameras), install `python=3.6`
-   - saving videos using vidread: `pip install vidgear[core]`
-   - display frames with pyqtgraph: `mamba install pyqtgraph qtpy -c conda-forge`
-- activate the new environment: `conda activate etho`
-- install custom repos:
+- install [miniforge](https://github.com/conda-forge/miniforge)
+- install conda packages: `mamba create python=3.10 numpy scipy h5py wxpython opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil pydaqmx pyqtgraph qtpy -c conda-forge -n etho -y`
+   - Notes on specific versions:
+      - on the rpi PC install `pandas=0.23` and `python=3.7` instead
+      - if you want to use the old flycapture SDK (needed for some older FLIR/PointGrey cameras), install `python=3.6`
+- Activate the new environment: `conda activate etho`
+- Optional: For saving videos using vidread: `pip install vidgear[core]`
+- Install pip repos:
   - zerorpc fork (with support for numpy arrays): `pip install git+https://github.com/postpop/zerorpc-python --no-deps`
   - etho: `pip install git+https://github.com/janclemenslab/etho --no-deps`
-- Test: `python -m etho.gui.wxCtrl`
+
+## Initialize the configuration and test
+- Initialize config files and folders: `etho init`
+- Start the GUI: `etho gui`
 
 ## Hardware specific drivers and SDKs
-- ximea cameras: download and install the package from [https://www.ximea.com/support/wiki/apis/python]()
-- flycapture (old FLIR/PointGrey SDK) cameras: download and install the package from [https://www.flir.com/products/flycapture-sdk/]() (only works with python 3.6)
-- spinnaker (new FLIR/PointGrey SDK) cameras: download and install the package from [https://www.flir.eu/products/spinnaker-sdk/]()
-- Basler pylon
+- ximea cameras: driver and python package from [https://www.ximea.com/support/wiki/apis/python]()
+- Spinnaker (FLIR cameras) cameras: driver and python package from [https://www.flir.eu/products/spinnaker-sdk/]()
+- flycapture (old FLIR/PointGrey cameras) cameras: driver and python package from [https://www.flir.com/products/flycapture-sdk/]() (only works with python 3.6)
+- Basler pylon:
+   - drivers: [pylon](https://www.baslerweb.com/en/software/pylon/)
+   - python: [pypylon](https://github.com/basler/pypylon#Installation) `pip install pypylon`
 - ni daqmx driver:
-   - python package is installed by default. still need to install the drivers: [https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html]()
+   - drivers: [NI daqmx](https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html)
+   - python package [pydaqmx](https://github.com/clade/PyDAQmx) is installed by default
 - hamamatsu DCAM (e.g. Orca Flash CMOS):
    - driver: [DCAM driver](https://dcam-api.com/downloads/)
    - python: `conda install -c conda-forge pylablib`, [pylab](http://pylablib.readthedocs.io/)

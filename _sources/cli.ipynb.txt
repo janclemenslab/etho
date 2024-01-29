@@ -39,6 +39,36 @@
       "cell_type": "markdown",
       "metadata": {},
       "source": [
+        "## Initialize config file and folders"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {},
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "usage: etho init [-h]\n",
+            "\n",
+            "Initializes config files and folders.\n",
+            "\n",
+            "optional arguments:\n",
+            "  -h, --help  show this help message and exit\n",
+            "\u001b[0m"
+          ]
+        }
+      ],
+      "source": [
+        "!etho init --help"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
         "## Open the graphical user interface"
       ]
     },
