@@ -35,7 +35,7 @@ def parse_table(
         table (dataframe)
     """
     if isinstance(table, str):
-        table = pd.read_table(table, dtype=None, delimiter="\t")
+        table = pd.read_table(table, dtype=None, delimiter="\t", decimal=".")
     tb = table.values
     for row, row_values in enumerate(tb):
         for col, cell in enumerate(row_values):
@@ -57,7 +57,9 @@ def normalize_table(table: pd.DataFrame) -> pd.DataFrame:
         nchans = len(row_values[0])  # 1. get n stim channels from len(stimFileName)
         for col, cell in enumerate(row_values[1:]):
             if len(cell) < nchans:
-                tb[row, col + 1] = [cell[0]] * nchans  # 2. fill remaining cols to match len(stimFileName)
+                tb[row, col + 1] = [
+                    cell[0]
+                ] * nchans  # 2. fill remaining cols to match len(stimFileName)
     df = pd.DataFrame(tb, columns=table.columns)
     return df
 
@@ -77,10 +79,14 @@ def select_channels_from_playlist(playlist: pd.DataFrame, channels_to_keep: List
         for row_name, row_data in col_data.iteritems():
             if isinstance(row_data, (list, tuple)):
                 # playlist_new.set_value(row_name, col_name, [row_data[channel] for channel in channels_to_keep])
-                playlist_new.at[row_name, col_name] = [row_data[channel] for channel in channels_to_keep]
+                playlist_new.at[row_name, col_name] = [
+                    row_data[channel] for channel in channels_to_keep
+                ]
             if isinstance(row_data, np.ndarray):
                 # playlist_new.set_value(row_name, col_name, np.array(row_data)[channels_to_keep])
-                playlist_new.at[row_name, col_name] = np.array(row_data)[channels_to_keep]
+                playlist_new.at[row_name, col_name] = np.array(row_data)[
+                    channels_to_keep
+                ]
     return playlist_new
 
 
@@ -102,18 +108,23 @@ def parse_pulse_parameters(playlist, sounds, fs):
     blink_nums = np.zeros_like(blink_durs)
     blink_dels = np.zeros_like(blink_durs)
     blink_amps = np.zeros_like(blink_durs)
-    pulse_params = pd.DataFrame(columns=["duration", "pause", "number", "delay", "amplitude", "trial_period"], dtype=object)
+    pulse_params = pd.DataFrame(
+        columns=["duration", "pause", "number", "delay", "amplitude", "trial_period"],
+        dtype=object,
+    )
     for index, row in playlist.iterrows():
-
         for stim_num, stim_amp in enumerate(row.intensity):
             blink_amps[stim_num] = stim_amp
         pulse_params.loc[index, "amplitude"] = row.intensity
 
         for stim_num, stim in enumerate(row.stimFileName):
             if stim.startswith("PUL"):
-                blink_durs[stim_num], blink_paus[stim_num], blink_nums[stim_num], blink_dels[stim_num] = [
-                    int(token) for token in stim.split("_")[1:]
-                ]
+                (
+                    blink_durs[stim_num],
+                    blink_paus[stim_num],
+                    blink_nums[stim_num],
+                    blink_dels[stim_num],
+                ) = [int(token) for token in stim.split("_")[1:]]
         pulse_params.loc[index, "duration"] = blink_durs / 1000
         pulse_params.loc[index, "pause"] = blink_paus / 1000
         pulse_params.loc[index, "number"] = blink_nums
@@ -122,7 +133,9 @@ def parse_pulse_parameters(playlist, sounds, fs):
     return pulse_params
 
 
-def make_sine(frequency: float, phase: float, duration: float, samplingrate: float) -> np.array:
+def make_sine(
+    frequency: float, phase: float, duration: float, samplingrate: float
+) -> np.array:
     """Make sinusoidal from parameters.
 
     Args:
@@ -135,7 +148,13 @@ def make_sine(frequency: float, phase: float, duration: float, samplingrate: flo
     return x
 
 
-def make_pulse(pulseDur: float, pulsePau: float, pulseNumber: float, pulseDelay: float, samplingrate: float) -> np.array:
+def make_pulse(
+    pulseDur: float,
+    pulsePau: float,
+    pulseNumber: float,
+    pulseDelay: float,
+    samplingrate: float,
+) -> np.array:
     """Make square pulse train.
 
     Args:
@@ -144,14 +163,23 @@ def make_pulse(pulseDur: float, pulsePau: float, pulseNumber: float, pulseDelay:
         np.array with stimulus waveform
     """
     x = np.concatenate(
-        (np.ones((np.intp(samplingrate * pulseDur / 1000),)), np.zeros((np.intp(samplingrate * pulsePau / 1000),)))
+        (
+            np.ones((np.intp(samplingrate * pulseDur / 1000),)),
+            np.zeros((np.intp(samplingrate * pulsePau / 1000),)),
+        )
     )
     x = np.tile(x, (np.intp(pulseNumber),))
     x = np.concatenate((np.ones((np.intp(samplingrate * pulseDelay / 1000),)), x))
     return x
 
 
-def build_playlist(soundlist: List[np.array], duration: float, fs: float, shuffle=True, sound_order=None):
+def build_playlist(
+    soundlist: List[np.array],
+    duration: float,
+    fs: float,
+    shuffle=True,
+    sound_order=None,
+):
     """Block-shuffle playlist and concatenate to duration."""
     if sound_order is None:
         sound_order = np.arange(len(soundlist))
@@ -209,7 +237,9 @@ def load_sounds(
                 token = [float(item) for item in token]
                 pulsedur, pulsepause, pulsenumber, pulsedelay = token[:4]
                 x = make_pulse(pulsedur, pulsepause, pulsenumber, pulsedelay, fs)
-            elif stimName == "MIRROR_LED":  # this channel contains a pulse train which mirrors the sound from another channel
+            elif (
+                stimName == "MIRROR_LED"
+            ):  # this channel contains a pulse train which mirrors the sound from another channel
                 mirror_led_channel.append(stimIdx)  # mirror led
             elif stimName.endswith(".wav"):  # WAV file
                 # return time x channels
@@ -241,9 +271,13 @@ def load_sounds(
                 x = x.reshape((x.shape[0], 1))
 
             xx[stimIdx] = x
-        non_mirror_led_chan = [x for x in list(range(len(xx))) if not x in mirror_led_channel][0]
+        non_mirror_led_chan = [
+            x for x in list(range(len(xx))) if not x in mirror_led_channel
+        ][0]
         for chan in mirror_led_channel:
-            xLED = np.zeros(xx[non_mirror_led_chan].shape)  # second channel is all zeros unless we mirrorsound
+            xLED = np.zeros(
+                xx[non_mirror_led_chan].shape
+            )  # second channel is all zeros unless we mirrorsound
             # copy channel for led
             # duration of the LED pattern at least 100ms if possible so it registers in video
             minLEDduration = 3 * fs  # at least 3s
@@ -255,8 +289,12 @@ def load_sounds(
             pdur = 5  # ms
             ppau = 5  # ms
             pdel = 0  # ms
-            LEDpattern = make_pulse(pdur, ppau, LEDduration / (pdur + ppau) / fs * 1000, pdel, fs)
-            xLED[sample_start : sample_start + LEDpattern.shape[0], 0] = (LEDpattern - 0.5) * float(LEDamp)
+            LEDpattern = make_pulse(
+                pdur, ppau, LEDduration / (pdur + ppau) / fs * 1000, pdel, fs
+            )
+            xLED[sample_start : sample_start + LEDpattern.shape[0], 0] = (
+                LEDpattern - 0.5
+            ) * float(LEDamp)
             xx[chan] = xLED
 
         # make sure each channel in xx has the same length
@@ -267,23 +305,29 @@ def load_sounds(
         for cnt, (x, stimName) in enumerate(zip(xx, listitem.stimFileName)):
             # These DO NOT acknowledge silencePre/Post - will start at the first sample (during pre stim silence) and end at the last sample (end of post stim silence:
             # SI_START, SI_STOP, SI_NEXT, CLOCK_durMS_pauMS
-            if stimName == 'SI_START':
+            if stimName == "SI_START":
                 x[:20] = 1
-            elif stimName == 'SI_NEXT':
+            elif stimName == "SI_NEXT":
                 x[-20:-2] = 1
-            elif stimName == 'SI_STOP':
+            elif stimName == "SI_STOP":
                 # if playlist is not shuffled, add STOP trigger to last stimulus in the playlist
                 last_stim = row_number == len(playlist) - 1
                 if not ignore_stop and last_stim:
                     x[-20:-2] = 1
-            elif stimName[:5] == 'CLOCK':
+            elif stimName[:5] == "CLOCK":
                 token = stimName[5:].split("_")
                 token = [float(item) for item in token]
                 pulsedur, pulsepause = token[:2]
                 pulseperiod = pulsedur + pulsepause
-                pulsenumber = (len(x)/fs * 1000) // pulseperiod + 1
-                tmp_x = make_pulse(pulsedur, pulsepause, pulsenumber=pulsenumber, pulseDelay=0, samplingrate=fs)
-                x = tmp_x[:len(x)]
+                pulsenumber = (len(x) / fs * 1000) // pulseperiod + 1
+                tmp_x = make_pulse(
+                    pulsedur,
+                    pulsepause,
+                    pulsenumber=pulsenumber,
+                    pulseDelay=0,
+                    samplingrate=fs,
+                )
+                x = tmp_x[: len(x)]
 
         x = np.concatenate(xx, axis=1)
         # TODO: move these backend-specific things out of this function
