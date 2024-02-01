@@ -16,10 +16,10 @@ Modify versions if:
 
 ## Initialize the configuration and test
 - Initialize config files and folders: `etho init`. This will:
-   - `~/ethoconfig.yml`
+   - `~/ethoconfig.yml` with the default [configuration](configuration/global.md)
    - create a `~/ethoconfig` folder with:
-      - `playlists` folder
-      - `protocol` folder
+      - `playlists` folder with [playlists](configuration/playlists.md)
+      - `protocol` [protocols](configuration/protocols.md)
       - `stim` folder
    - `~/data`
 

@@ -24,6 +24,7 @@ The first row is a header that contain the following column names:
 * `MODE` (_unused_): Can be used to define callbacks.
 
 ## Magic stimulus names
+The stimulus name can point to a wav file in the `ethoconfig/stim`. Or:
 - `SIN_frequency_phase_duration`: Generate sinusoid with frequency (Hz), phase (rad), and duration (ms) specified in the stimulus name. Will start after silencePre and end before silencePost.
 - `PUL_pulseDur_pulsePau_pulseNumber_pulseDelay`: Generate pulse train (square pulses) with pulse duration, pause, number and intial delay specified in stimulus name (all time units in ms). Will start after silencePre and end before silencePost.
 - `MIRROR_LED`: Will mirror the stimulus in the first channel that does not as a pulse train (pdur & ppau 5ms). Will start after silencePre and end before silencePost.
