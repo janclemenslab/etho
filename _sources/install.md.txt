@@ -15,7 +15,14 @@ Modify versions if:
    - you want to use the old flycapture SDK (required for some older FLIR/PointGrey cameras), install `python=3.6`
 
 ## Initialize the configuration and test
-- Initialize config files and folders: `etho init`
+- Initialize config files and folders: `etho init`. This will:
+   - `~/ethoconfig.yml`
+   - create a `~/ethoconfig` folder with:
+      - `playlists` folder
+      - `protocol` folder
+      - `stim` folder
+   - `~/data`
+
 - Start the GUI: `etho gui`
 
 ## Optional packages (hardware, software)
