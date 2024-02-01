@@ -111,7 +111,6 @@ class TableView(QTableView):
             os.system(f"code {self.folder}/{self.selected_string}")
 
 
-
 # format to parametertree
 def from_yaml(d, readonly=True):
     pt = []
@@ -123,9 +122,7 @@ def from_yaml(d, readonly=True):
             if isinstance(val, list):
                 item["type"] = "group"
                 item["original_type"] = list
-                item["children"] = [
-                    {"name": str(it), "type": "bool", "value": True} for it in val
-                ]
+                item["children"] = [{"name": str(it), "type": "bool", "value": True} for it in val]
             if isinstance(val, dict):
                 # for callbacks, value is a dict - add key val of that as list
                 item["type"] = "group"
@@ -326,13 +323,9 @@ class MainWindow(QMainWindow):
         if len(playlist_files) == 0:
             raise FileNotFoundError(f"No files found in {self.playlist_folder}.")
 
-        df_playlists = pd.DataFrame(
-            {"playlist": sorted([Path(plf).name for plf in playlist_files])}
-        )
+        df_playlists = pd.DataFrame({"playlist": sorted([Path(plf).name for plf in playlist_files])})
         playlist_file = Path(playlist_files[0]).name
-        playlist_from_filename = lambda filename: parse_table(
-            (self.playlist_folder / filename).as_posix()
-        )
+        playlist_from_filename = lambda filename: parse_table((self.playlist_folder / filename).as_posix())
         playlist_model = PandasModel(playlist_from_filename(playlist_file))
         print(playlist_from_filename(playlist_file))
         playlist_model.data_from_filename = playlist_from_filename
@@ -341,25 +334,20 @@ class MainWindow(QMainWindow):
 
         # List of playlist files
         playlists_model = PandasModel(df_playlists, editable=False)
-        playlists_view = TableView(
-            playlists_model, playlist_model, self.playlist_folder
-        )
+        playlists_view = TableView(playlists_model, playlist_model, self.playlist_folder)
         playlists_view.setAlternatingRowColors(True)
         playlists_view.folder = self.playlist_folder
+        playlists_view.selectRow(0)
 
         # Protocols
         protocol_files = sorted(self.protocol_folder.glob("*.yml"))
         if len(protocol_files) == 0:
             raise FileNotFoundError(f"No files found in {self.protocol_folder}.")
 
-        df_protocols = pd.DataFrame(
-            {"protocol": sorted([Path(plf).name for plf in protocol_files])}
-        )
+        df_protocols = pd.DataFrame({"protocol": sorted([Path(plf).name for plf in protocol_files])})
         # Content of selected protocol file
         protocol_file = Path(protocol_files[0]).name
-        protocol_from_filename = lambda filename: from_yaml(
-            load(self.protocol_folder / filename)
-        )
+        protocol_from_filename = lambda filename: from_yaml(load(self.protocol_folder / filename))
         protocol_model = protocol_from_filename(protocol_file)
 
         protocol_view = ParameterTree()
@@ -372,6 +360,7 @@ class MainWindow(QMainWindow):
         protocols_view = TableView(protocols_model, protocol_view, self.protocol_folder)
         protocols_view.setAlternatingRowColors(True)
         protocols_view.folder = self.protocol_folder
+        protocols_view.selectRow(0)
 
         if init:
             self.playlist_view = playlist_view
@@ -427,12 +416,8 @@ class MainWindow(QMainWindow):
         queue_total = queue.Queue()
 
         kwargs = {
-            "playlistfile": (
-                self.playlist_folder / self.playlists_view.selected_string
-            ).as_posix(),
-            "protocolfile": (
-                self.protocol_folder / self.protocols_view.selected_string
-            ).as_posix(),
+            "playlistfile": (self.playlist_folder / self.playlists_view.selected_string).as_posix(),
+            "protocolfile": (self.protocol_folder / self.protocols_view.selected_string).as_posix(),
             "debug": self.button["Debug"].isChecked(),
             "show_progress": self.button["Progress"].isChecked(),
             "host": "localhost",
