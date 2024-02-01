@@ -18,9 +18,9 @@ Modify versions if:
 - Initialize config files and folders: `etho init`. This will:
    - `~/ethoconfig.yml` with the default [configuration](configuration/global.md)
    - create a `~/ethoconfig` folder with:
-      - `playlists` folder with [playlists](configuration/playlists.md)
-      - `protocol` [protocols](configuration/protocol.md)
-      - `stim` folder
+      - `playlists` folder with [stimulation playlists](configuration/playlist.md)
+      - `protocol` folder with [experimental protocols](configuration/protocol.md)
+      - `stim` folder for wav files
    - `~/data`
 
 - Start the GUI: `etho gui`
