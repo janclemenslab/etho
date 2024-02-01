@@ -27,9 +27,9 @@ Modify versions if:
 
 ## Optional packages (hardware, software)
 - For saving videos using vidread: `pip install vidgear[core]`
-- ximea cameras: driver and python package from [https://www.ximea.com/support/wiki/apis/python]()
-- Spinnaker (FLIR cameras) cameras: driver and python package from [https://www.flir.eu/products/spinnaker-sdk/]()
-- flycapture (old FLIR/PointGrey cameras) cameras: driver and python package from [https://www.flir.com/products/flycapture-sdk/]() (only works with python 3.6)
+- ximea cameras: driver and python package from [ximea](https://www.ximea.com/support/wiki/apis/python)
+- Spinnaker (FLIR cameras) cameras: driver and python package from [FLIR](https://www.flir.eu/products/spinnaker-sdk/)
+- flycapture (old FLIR/PointGrey cameras) cameras: driver and python package from [FLIR](https://www.flir.com/products/flycapture-sdk/) (only works with python 3.6)
 - Basler pylon:
    - drivers: [pylon](https://www.baslerweb.com/en/software/pylon/)
    - python: [pypylon](https://github.com/basler/pypylon#Installation) `pip install pypylon`
