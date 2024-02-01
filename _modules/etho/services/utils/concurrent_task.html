@@ -4,18 +4,18 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" />
 
-    <meta name="generator" content="sphinx-4.5.0, furo 2022.06.21"/>
+    <meta name="generator" content="sphinx-4.4.0, furo 2022.03.04"/>
         <title>etho.services.utils.concurrent_task - ethodrome documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=935aa2abcc5c1da4283d1dc201fb1f0add16d23a" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=25ceb02ed1c46dc30f2321ff83e92799f69dfdb9" />
     
     
 
@@ -42,12 +42,10 @@
   }
 </style></head>
   <body>
-    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
-
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
@@ -182,10 +180,42 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">CLI</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.cli.html">etho.cli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.config.html">etho.utils.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.runner.html">etho.utils.runner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.tui.html">etho.utils.tui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.call.client.html">etho.call.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.call.client_old.html">etho.call.client_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.call.ephys.html">etho.call.ephys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.call.panoptikum.html">etho.call.panoptikum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.call.rpi.html">etho.call.rpi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.call.vr.html">etho.call.vr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.gui.CamPreview.html">etho.gui.CamPreview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.gui.ThuPreview.html">etho.gui.ThuPreview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.gui.app.html">etho.gui.app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.gui.wxBusyDialog.html">etho.gui.wxBusyDialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.gui.wxCam.html">etho.gui.wxCam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.gui.wxCtrl.html">etho.gui.wxCtrl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.gui.wxCtrl_ephys.html">etho.gui.wxCtrl_ephys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.gui.wxCtrl_rpi.html">etho.gui.wxCtrl_rpi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.gui.wxCtrl_vr.html">etho.gui.wxCtrl_vr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.gui.wxDangerDialog.html">etho.gui.wxDangerDialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.CamZeroService.html">etho.services.CamZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.DLPZeroService.html">etho.services.DLPZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.Opt2ZeroService.html">etho.services.Opt2ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.RelayZeroService.html">etho.services.RelayZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.SndZeroService.html">etho.services.SndZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.ThuAZeroService.html">etho.services.ThuAZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.ThuZeroService.html">etho.services.ThuZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
@@ -219,8 +249,7 @@
           </svg>
           <span>Back to top</span>
         </a>
-        <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+        <div class="content-icon-container"><div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -235,8 +264,8 @@
         </div>
         <article role="main">
           <h1>Source code for etho.services.utils.concurrent_task</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Communication primitives with a common interface</span>
-<span class="sd">and a helper class for running tasks in independent processes.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Communication primitives with a common interface</span>
+<span class="sd">and a helper class for running tasks in independent processes."""</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Process</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -248,26 +277,26 @@
 
 
 <div class="viewcode-block" id="SharedNumpyArray"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.SharedNumpyArray">[docs]</a><span class="k">class</span> <span class="nc">SharedNumpyArray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class for sharing a numpy array between processes.</span>
+    <span class="sd">"""Class for sharing a numpy array between processes.</span>
 
 <span class="sd">    Contains functions for synchronized read/write access and a staleness indicator.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">WHOAMI</span> <span class="o">=</span> <span class="s2">&quot;array&quot;</span>
+    <span class="n">WHOAMI</span> <span class="o">=</span> <span class="s2">"array"</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">ctype</span><span class="o">=</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_double</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;[summary]</span>
+        <span class="sd">"""[summary]</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            shape (tuple/list-like): [description]</span>
 <span class="sd">            ctype ([type], optional): Data type of the numpy array. Defaults to ctypes.c_double (is np.float64).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>  <span class="c1"># need to know shape before hand since the array has to be initialized at init</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qsize</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># for interface compatibility with Queues and Pipes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="c1"># indicator whether the current array values are &quot;fresh&quot;</span>
+        <span class="c1"># indicator whether the current array values are "fresh"</span>
         <span class="c1"># stale is set to False upon `put` and to True on `get`</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">RawValue</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">RawValue</span><span class="p">(</span><span class="s2">"b"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="c1"># add one more RawValue for system_time?</span>
 
         <span class="c1"># common lock to sync read/write access</span>
@@ -283,7 +312,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">stale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Thread safe access to whether or not the current array values have been get-ed already.&quot;&quot;&quot;</span>
+        <span class="sd">"""Thread safe access to whether or not the current array values have been get-ed already."""</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span><span class="o">.</span><span class="n">value</span>
 
@@ -300,17 +329,17 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared_array</span>
 
 <div class="viewcode-block" id="SharedNumpyArray.poll"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.SharedNumpyArray.poll">[docs]</a>    <span class="k">def</span> <span class="nf">poll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns true if the array has been update since the last put.&quot;&quot;&quot;</span>
+        <span class="sd">"""Returns true if the array has been update since the last put."""</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stale</span></div>
 
 <div class="viewcode-block" id="SharedNumpyArray.get"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.SharedNumpyArray.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns array values. Block is unsed and their for interface consistency with Queue.&quot;&quot;&quot;</span>
+        <span class="sd">"""Returns array values. Block is unsed and their for interface consistency with Queue."""</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_stale</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asnp</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SharedNumpyArray.put"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.SharedNumpyArray.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update the values in the shared array.&quot;&quot;&quot;</span>
+        <span class="sd">"""Update the values in the shared array."""</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
 
@@ -324,18 +353,18 @@
 
 
 <div class="viewcode-block" id="Faucet"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.Faucet">[docs]</a><span class="k">class</span> <span class="nc">Faucet</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper for Pipe connection objects that exposes</span>
-<span class="sd">    `get` function for common interface with Queues.&quot;&quot;&quot;</span>
+    <span class="sd">"""Wrapper for Pipe connection objects that exposes</span>
+<span class="sd">    `get` function for common interface with Queues."""</span>
 
-    <span class="n">WHOAMI</span> <span class="o">=</span> <span class="s2">&quot;pipe&quot;</span>
+    <span class="n">WHOAMI</span> <span class="o">=</span> <span class="s2">"pipe"</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">Connection</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wraps Connection object returned when calling Pipe and</span>
+        <span class="sd">"""Wraps Connection object returned when calling Pipe and</span>
 <span class="sd">        delegates function calls to have a common interface with the Queue.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            connection (multiprocessing.connection.Connection): [description]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qsize</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -345,7 +374,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">closed</span>
 
 <div class="viewcode-block" id="Faucet.get"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.Faucet.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span><span class="p">,</span> <span class="n">empty_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Mimics the logic of the `Queue.get`.</span>
+        <span class="sd">"""Mimics the logic of the `Queue.get`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            block (bool, optional): [description]. Defaults to True.</span>
@@ -354,7 +383,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            [type]: [description]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">block</span><span class="p">:</span>
             <span class="n">timeout</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">poll</span><span class="p">(</span><span class="n">timeout</span><span class="p">):</span>
@@ -385,43 +414,43 @@
 
 
 <div class="viewcode-block" id="ConcurrentTask"><a class="viewcode-back" href="../../../../api/etho.services.utils.concurrent_task.html#etho.services.utils.concurrent_task.ConcurrentTask">[docs]</a><span class="k">class</span> <span class="nc">ConcurrentTask</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Helper class for running tasks in independent</span>
-<span class="sd">    processes with communication tools attached.&quot;&quot;&quot;</span>
+    <span class="sd">"""Helper class for running tasks in independent</span>
+<span class="sd">    processes with communication tools attached."""</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">task</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">task_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
-        <span class="n">comms</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;array&quot;</span><span class="p">,</span> <span class="s2">&quot;pipe&quot;</span><span class="p">,</span> <span class="s2">&quot;queue&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;queue&quot;</span><span class="p">,</span>
+        <span class="n">comms</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"array"</span><span class="p">,</span> <span class="s2">"pipe"</span><span class="p">,</span> <span class="s2">"queue"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"queue"</span><span class="p">,</span>
         <span class="n">comms_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
         <span class="n">taskstopsignal</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;[summary]</span>
+        <span class="sd">"""[summary]</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            task (Callable): First arg to task must be the end of the comms and is provided via `args`.</span>
 <span class="sd">            task_kwargs (Dict[str, Any], optional): Defaults to {}.</span>
-<span class="sd">            comms (Literal[&quot;array&quot;, &quot;pipe&quot;, &quot;queue&quot;], optional): For passing data to the task. Either &quot;queue&quot;, &quot;pipe&quot;, or &quot;array&quot;.</span>
-<span class="sd">                                   &quot;array&quot; if you want speed and don&#39;t mind loosing data (displaying data)</span>
+<span class="sd">            comms (Literal["array", "pipe", "queue"], optional): For passing data to the task. Either "queue", "pipe", or "array".</span>
+<span class="sd">                                   "array" if you want speed and don't mind loosing data (displaying data)</span>
 <span class="sd">                                   or if you want to ensure you are always assessing fresh data (realtime feedback).</span>
-<span class="sd">                                   &quot;queue&quot; is slower but great when data loss is unacceptable (saving data).</span>
-<span class="sd">                                   &quot;pipe&quot; probably never??</span>
-<span class="sd">                                   Defaults to &quot;queue&quot;.</span>
+<span class="sd">                                   "queue" is slower but great when data loss is unacceptable (saving data).</span>
+<span class="sd">                                   "pipe" probably never??</span>
+<span class="sd">                                   Defaults to "queue".</span>
 <span class="sd">            comms_kwargs (Dict[str, Any], optional): kwargs for constructing comms. Defaults to {}.</span>
 <span class="sd">            taskstopsignal (Any, optional): Data to send over comms that tells the task to stop. Defaults to None.</span>
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: for unknown comms</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">=</span> <span class="n">comms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">taskstopsignal</span> <span class="o">=</span> <span class="n">taskstopsignal</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">==</span> <span class="s2">&quot;pipe&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">==</span> <span class="s2">"pipe"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_receiver</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="o">**</span><span class="n">comms_kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">==</span> <span class="s2">&quot;queue&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">==</span> <span class="s2">"queue"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_receiver</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">(</span><span class="o">**</span><span class="n">comms_kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">==</span> <span class="s2">"array"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_receiver</span> <span class="o">=</span> <span class="n">NumpyArray</span><span class="p">(</span><span class="o">**</span><span class="n">comms_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown comms </span><span class="si">{</span><span class="n">comms</span><span class="si">}</span><span class="s1"> - allowed values are &quot;pipe&quot;, &quot;queue&quot;, &quot;array&quot;&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Unknown comms </span><span class="si">{</span><span class="n">comms</span><span class="si">}</span><span class="s1"> - allowed values are "pipe", "queue", "array"'</span><span class="p">)</span>
 
         <span class="c1"># delegate send calls from sender</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="o">.</span><span class="n">send</span>
@@ -432,7 +461,7 @@
     <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sleepduration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sleepcycletimeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">maxsleepcycles</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100000000</span>
     <span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">==</span> <span class="s2">&quot;queue&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comms</span> <span class="o">==</span> <span class="s2">"queue"</span><span class="p">:</span>
             <span class="n">sleepcounter</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">queuesize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="o">.</span><span class="n">qsize</span><span class="p">()</span>
@@ -454,7 +483,7 @@
                     <span class="n">queuehasnotchangedcounter</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                        <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">   waiting </span><span class="si">{}</span><span class="s2"> seconds for </span><span class="si">{}</span><span class="s2"> frames to self.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sleepcounter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="o">.</span><span class="n">qsize</span><span class="p">())</span>
+                        <span class="s2">"</span><span class="se">\r</span><span class="s2">   waiting </span><span class="si">{}</span><span class="s2"> seconds for </span><span class="si">{}</span><span class="s2"> frames to self."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sleepcounter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sender</span><span class="o">.</span><span class="n">qsize</span><span class="p">())</span>
                     <span class="p">)</span>  <span class="c1"># frame interval in ms</span>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sleep_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
@@ -510,11 +539,8 @@
     <script src="../../../../_static/underscore.js"></script>
     <script src="../../../../_static/doctools.js"></script>
     <script src="../../../../_static/scripts/furo.js"></script>
-    <script src="../../../../_static/tabs.js"></script>
-    <script>let toggleHintShow = 'Click to show';</script>
-    <script>let toggleHintHide = 'Click to hide';</script>
-    <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../../../_static/togglebutton.js"></script>
+    <script src="../../../../_static/tabs.js"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
     <script src="../../../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>

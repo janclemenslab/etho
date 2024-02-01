@@ -1,22 +1,25 @@
 # Installation
+- Install conda if you do not have it. We recommend [miniforge](https://github.com/conda-forge/miniforge).
 
 ## Python packages
-- Install [miniforge](https://github.com/conda-forge/miniforge)
-- Install conda packages: `mamba create python=3.10 numpy scipy h5py opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil pydaqmx pyqtgraph qtpy -c conda-forge -n etho -y`
-   - Notes on specific versions:
-      - on the rpi PC install `pandas=0.23` and `python=3.7` instead
-      - if you want to use the old flycapture SDK (needed for some older FLIR/PointGrey cameras), install `python=3.6`
-- Activate the new environment: `conda activate etho`
-- Optional: For saving videos using vidread: `pip install vidgear[core]`
-- Install pip repos:
-  - zerorpc fork (with support for numpy arrays): `pip install git+https://github.com/postpop/zerorpc-python --no-deps`
-  - etho: `pip install git+https://github.com/janclemenslab/etho --no-deps`
+Create conda environment, activate the environment and install the remaining pip packages:
+```shell
+mamba create python=3.10 numpy scipy h5py opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil pydaqmx pyqtgraph qtpy pyside6 -c conda-forge -n etho -y
+conda activate etho
+pip install git+https://github.com/postpop/zerorpc-python git+https://github.com/janclemenslab/etho --no-deps
+```
+
+Notes on specific versions:
+
+   - on the rpi PC: install `pandas=0.23` and `python=3.7`
+   - if you want to use the old flycapture SDK (required for some older FLIR/PointGrey cameras), install `python=3.6`
 
 ## Initialize the configuration and test
 - Initialize config files and folders: `etho init`
 - Start the GUI: `etho gui`
 
-## Hardware specific drivers and SDKs
+## Optional packages (hardware, software)
+- For saving videos using vidread: `pip install vidgear[core]`
 - ximea cameras: driver and python package from [https://www.ximea.com/support/wiki/apis/python]()
 - Spinnaker (FLIR cameras) cameras: driver and python package from [https://www.flir.eu/products/spinnaker-sdk/]()
 - flycapture (old FLIR/PointGrey cameras) cameras: driver and python package from [https://www.flir.com/products/flycapture-sdk/]() (only works with python 3.6)
@@ -30,13 +33,13 @@
    - driver: [DCAM driver](https://dcam-api.com/downloads/)
    - python: `conda install -c conda-forge pylablib`, [pylab](http://pylablib.readthedocs.io/)
 - lighcrafter stuff:
-
-### Raspbery PI
-- gpiozero [https://gpiozero.readthedocs.io/en/stable/installing.html]()
-- picamera should come pre-installed in raspbian [https://picamera.readthedocs.io/en/latest/install.html](): `sudo pip install "picamera[array]"`
-- soundboard
-- Temperature and humidity sensor adafruit_dht: [https://docs.circuitpython.org/projects/dht/en/latest/](): `pip3 install adafruit-circuitpython-dht`, `sudo apt-get install libgpiod2`
-
+   - TODO
+- Raspbery PI
+   - gpiozero [https://gpiozero.readthedocs.io/en/stable/installing.html]()
+   - picamera should come pre-installed in raspbian [https://picamera.readthedocs.io/en/latest/install.html](): `sudo pip install "picamera[array]"`
+   - soundboard
+   - Temperature and humidity sensor adafruit_dht: [https://docs.circuitpython.org/projects/dht/en/latest/](): `pip3 install adafruit-circuitpython-dht`, `sudo apt-get install libgpiod2`
+<!--
 ## Set up passwordless SSH
 First, open a terminal and execute the following command to generate public/private RSA key pair:
 ```
@@ -53,4 +56,4 @@ Open the “authorized_keys” file with an editor:
 code ~/.ssh/authorized_keys
 ```
 
-Copy the contents of the “id_rsa.pub” (which was open in Notepad++) and append to the “authorized_keys” file in the server.
+Copy the contents of the “id_rsa.pub” (which was open in Notepad++) and append to the “authorized_keys” file in the server. -->

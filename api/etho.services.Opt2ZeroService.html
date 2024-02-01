@@ -3,19 +3,20 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.services.RelayZeroService" href="etho.services.RelayZeroService.html" /><link rel="prev" title="etho.services.NICounterZeroService" href="etho.services.NICounterZeroService.html" />
 
-    <!-- Generated with Sphinx 4.5.0 and Furo 2023.03.27 -->
+    <meta name="generator" content="sphinx-4.4.0, furo 2022.03.04"/>
         <title>etho.services.Opt2ZeroService - ethodrome documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=935aa2abcc5c1da4283d1dc201fb1f0add16d23a" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=25ceb02ed1c46dc30f2321ff83e92799f69dfdb9" />
     
     
 
@@ -42,12 +43,10 @@
   }
 </style></head>
   <body>
-    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
-
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
@@ -154,12 +153,12 @@
   
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../configuration/configuration.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -181,12 +180,43 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">CLI</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../api_etho.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="etho.cli.html">etho.cli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.config.html">etho.utils.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.utils.runner.html">etho.utils.runner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.tui.html">etho.utils.tui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.call.client.html">etho.call.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.call.client_old.html">etho.call.client_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.call.ephys.html">etho.call.ephys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.call.panoptikum.html">etho.call.panoptikum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.call.rpi.html">etho.call.rpi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.call.vr.html">etho.call.vr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.gui.CamPreview.html">etho.gui.CamPreview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.gui.ThuPreview.html">etho.gui.ThuPreview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.gui.app.html">etho.gui.app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxBusyDialog.html">etho.gui.wxBusyDialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxCam.html">etho.gui.wxCam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxCtrl.html">etho.gui.wxCtrl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxCtrl_ephys.html">etho.gui.wxCtrl_ephys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxCtrl_rpi.html">etho.gui.wxCtrl_rpi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxCtrl_vr.html">etho.gui.wxCtrl_vr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxDangerDialog.html">etho.gui.wxDangerDialog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.CamZeroService.html">etho.services.CamZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.DLPZeroService.html">etho.services.DLPZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">etho.services.Opt2ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.RelayZeroService.html">etho.services.RelayZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.SndZeroService.html">etho.services.SndZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.ThuAZeroService.html">etho.services.ThuAZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.ThuZeroService.html">etho.services.ThuZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.ZeroService.html">etho.services.ZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
@@ -220,9 +250,7 @@
           </svg>
           <span>Back to top</span>
         </a>
-        <div class="content-icon-container">
-          
-<div class="theme-toggle-container theme-toggle-content">
+        <div class="content-icon-container"><div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -236,8 +264,41 @@
           </label>
         </div>
         <article role="main">
-          <section id="etho-services-opt2zeroservice">
-<h1>etho.services.Opt2ZeroService<a class="headerlink" href="#etho-services-opt2zeroservice" title="Permalink to this headline">#</a></h1>
+          <section id="module-etho.services.Opt2ZeroService">
+<span id="etho-services-opt2zeroservice"></span><h1>etho.services.Opt2ZeroService<a class="headerlink" href="#module-etho.services.Opt2ZeroService" title="Permalink to this headline">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="etho.services.Opt2ZeroService.OPT2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">etho.services.Opt2ZeroService.</span></span><span class="sig-name descname"><span class="pre">OPT2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serializer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_ip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'192.168.1.1'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/services/Opt2ZeroService.html#OPT2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.services.Opt2ZeroService.OPT2" title="Permalink to this definition">#</a></dt>
+<dd><p>Service for controlling multiple LEDs on raspberry pi.
+Uses [gpiozero](<a class="reference external" href="https://gpiozero.readthedocs.io">https://gpiozero.readthedocs.io</a>) to control LEDs via (via GPIO pins).
+Individual LEDs can be controlled with independent temporal patterns and amplitudes.</p>
+<p>[summary]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>serializer</strong> (<em>str</em><em>, </em><em>optional</em>) – [description]. Defaults to ‘default’.</p></li>
+<li><p><strong>head_ip</strong> (<em>str</em><em>, </em><em>optional</em>) – [description]. Defaults to ‘192.168.1.1’.</p></li>
+<li><p><strong>logging_port</strong> (<em>int</em><em>, </em><em>optional</em>) – [description]. Defaults to None.</p></li>
+<li><p><strong>service_port</strong> (<em>int</em><em>, </em><em>optional</em>) – [description]. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="etho.services.Opt2ZeroService.OPT2.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#etho.services.Opt2ZeroService.OPT2.cleanup" title="Permalink to this definition">#</a></dt>
+<dd><p>free resources</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="etho.services.Opt2ZeroService.OPT2.is_busy">
+<span class="sig-name descname"><span class="pre">is_busy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#etho.services.Opt2ZeroService.OPT2.is_busy" title="Permalink to this definition">#</a></dt>
+<dd><p>return state of the instance - IDLE, BUSY, FAILED, etc</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="etho.services.Opt2ZeroService.OPT2.test">
+<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#etho.services.Opt2ZeroService.OPT2.test" title="Permalink to this definition">#</a></dt>
+<dd><p>test whether the instance will be functional</p>
+</dd></dl>
+</dd></dl>
 </section>
 
         </article>
@@ -245,8 +306,26 @@
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="etho.services.RelayZeroService.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">etho.services.RelayZeroService</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="etho.services.NICounterZeroService.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">etho.services.NICounterZeroService</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -259,7 +338,9 @@
             
           </div>
           <div class="right-details">
-            
+            <div class="icons">
+              
+            </div>
           </div>
         </div>
         
@@ -276,7 +357,9 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/togglebutton.js"></script>
     <script src="../_static/tabs.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
     <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
     </body>
