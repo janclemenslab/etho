@@ -9,10 +9,10 @@ conda activate etho
 pip install git+https://github.com/postpop/zerorpc-python git+https://github.com/janclemenslab/etho --no-deps
 ```
 
-Notes on specific versions:
+Modify versions if:
 
    - on the rpi PC: install `pandas=0.23` and `python=3.7`
-   - if you want to use the old flycapture SDK (required for some older FLIR/PointGrey cameras), install `python=3.6`
+   - you want to use the old flycapture SDK (required for some older FLIR/PointGrey cameras), install `python=3.6`
 
 ## Initialize the configuration and test
 - Initialize config files and folders: `etho init`
