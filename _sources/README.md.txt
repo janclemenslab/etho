@@ -4,7 +4,7 @@ The docs are published at [https://janclemenslab.org/ethodrome]().
 
 Requires:
 
-- `mamba install sphinx furo sphinx-inline-tabs ghp-import myst-nb sphinx-panels -c conda-forge`  # need the latest version for proper light/dark mode
+- `mamba install sphinx furo sphinx-inline-tabs sphinx-copybutton ghp-import myst-nb sphinx-panels -c conda-forge`  # need the latest version for proper light/dark mode
 - `pip install sphinxcontrib-images`
 
 ### Build
