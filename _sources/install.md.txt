@@ -19,7 +19,7 @@ Modify versions if:
    - `~/ethoconfig.yml` with the default [configuration](configuration/global.md)
    - create a `~/ethoconfig` folder with:
       - `playlists` folder with [playlists](configuration/playlists.md)
-      - `protocol` [protocols](configuration/protocols.md)
+      - `protocol` [protocols](configuration/protocol.md)
       - `stim` folder
    - `~/data`
 
