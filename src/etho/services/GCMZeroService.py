@@ -39,7 +39,7 @@ class GCM(BaseZeroService):
         defaults = {'binning': 1, 'gamma': 1, 'gain': 0, 'brightness': 0,
                     'optimize_auto_exposure': False, 'external_trigger': False,
                     'frame_offx': 0, 'frame_offy': 0}
-        params.update(defaults)
+        params = defaults | params  # merge directory - keep existing values in params, only add non-existing from defaults
 
         self.c.roi = [params["frame_offx"], params["frame_offy"], params["frame_width"], params["frame_height"]]
         self.c.exposure = params["shutter_speed"]
