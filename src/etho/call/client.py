@@ -14,7 +14,7 @@ import os
 
 from ..utils.tui import rich_information
 
-from ..utils import config
+from .. import config
 from ..utils.config import readconfig, undefaultify
 from ..utils.sound import parse_table, load_sounds, build_playlist
 
