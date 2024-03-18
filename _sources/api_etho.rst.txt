@@ -15,6 +15,7 @@ Developer API
    :toctree: api
 
    etho.cli
+   etho.utils.calibration
    etho.utils.config
    etho.utils.runner
    etho.utils.shuffled_cycle

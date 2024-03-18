@@ -3,21 +3,20 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.utils.shuffled_cycle" href="etho.utils.shuffled_cycle.html" /><link rel="prev" title="etho.utils.config" href="etho.utils.config.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
-    <meta name="generator" content="sphinx-4.4.0, furo 2022.03.04"/>
+    <!-- Generated with Sphinx 4.5.0 and Furo 2023.03.27 -->
         <title>etho.utils.runner - etho documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=935aa2abcc5c1da4283d1dc201fb1f0add16d23a" />
-    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=25ceb02ed1c46dc30f2321ff83e92799f69dfdb9" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -44,10 +43,12 @@
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
@@ -154,12 +155,12 @@
   
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul class="current">
+  <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../configuration/configuration.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -181,43 +182,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">CLI</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../api_etho.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="etho.cli.html">etho.cli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.config.html">etho.utils.config</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">etho.utils.runner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.tui.html">etho.utils.tui</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.call.client.html">etho.call.client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.call.client_old.html">etho.call.client_old</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.call.ephys.html">etho.call.ephys</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.call.panoptikum.html">etho.call.panoptikum</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.call.rpi.html">etho.call.rpi</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.call.vr.html">etho.call.vr</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.gui.CamPreview.html">etho.gui.CamPreview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.gui.ThuPreview.html">etho.gui.ThuPreview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.gui.app.html">etho.gui.app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxBusyDialog.html">etho.gui.wxBusyDialog</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxCam.html">etho.gui.wxCam</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxCtrl.html">etho.gui.wxCtrl</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxCtrl_ephys.html">etho.gui.wxCtrl_ephys</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxCtrl_rpi.html">etho.gui.wxCtrl_rpi</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxCtrl_vr.html">etho.gui.wxCtrl_vr</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.gui.wxDangerDialog.html">etho.gui.wxDangerDialog</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.CamZeroService.html">etho.services.CamZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.DLPZeroService.html">etho.services.DLPZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.Opt2ZeroService.html">etho.services.Opt2ZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.RelayZeroService.html">etho.services.RelayZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.SndZeroService.html">etho.services.SndZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.ThuAZeroService.html">etho.services.ThuAZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.ThuZeroService.html">etho.services.ThuZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.services.ZeroService.html">etho.services.ZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
@@ -251,7 +221,9 @@
           </svg>
           <span>Back to top</span>
         </a>
-        <div class="content-icon-container"><div class="theme-toggle-container theme-toggle-content">
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -265,90 +237,8 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-etho.utils.runner">
-<span id="etho-utils-runner"></span><h1>etho.utils.runner<a class="headerlink" href="#module-etho.utils.runner" title="Permalink to this headline">#</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="etho.utils.runner.Runner">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">etho.utils.runner.</span></span><span class="sig-name descname"><span class="pre">Runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_is_win</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host_is_remote</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">python_exe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'python'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/utils/runner.html#Runner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.utils.runner.Runner" title="Permalink to this definition">#</a></dt>
-<dd><p>Manages remote processes.</p>
-<p>_summary_</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>host</strong> (<em>str</em>) – Host name or IP address of the machine to run the commands on.</p></li>
-<li><p><strong>host_is_win</strong> (<em>bool</em><em>, </em><em>optional</em>) – Defaults to False.</p></li>
-<li><p><strong>host_is_remote</strong> (<em>bool</em><em>, </em><em>optional</em>) – If False, run commands locallu.
-If True, run commands via ssh (fabric).
-Defaults to False.</p></li>
-<li><p><strong>python_exe</strong> (<em>str</em><em>, </em><em>optional</em>) – _description_. Defaults to “python”.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="etho.utils.runner.Runner.is_online">
-<span class="sig-name descname"><span class="pre">is_online</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/etho/utils/runner.html#Runner.is_online"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.utils.runner.Runner.is_online" title="Permalink to this definition">#</a></dt>
-<dd><p>Pings host to see if it is online.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="etho.utils.runner.Runner.is_running">
-<span class="sig-name descname"><span class="pre">is_running</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/etho/utils/runner.html#Runner.is_running"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.utils.runner.Runner.is_running" title="Permalink to this definition">#</a></dt>
-<dd><p>Return True if at least one of the pids is in list of running processes.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="etho.utils.runner.Runner.kill">
-<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/utils/runner.html#Runner.kill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.utils.runner.Runner.kill" title="Permalink to this definition">#</a></dt>
-<dd><p>Kill process pid.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="etho.utils.runner.Runner.kill_python">
-<span class="sig-name descname"><span class="pre">kill_python</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/utils/runner.html#Runner.kill_python"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.utils.runner.Runner.kill_python" title="Permalink to this definition">#</a></dt>
-<dd><p>Kill all python processes.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="etho.utils.runner.Runner.pid">
-<span class="sig-name descname"><span class="pre">pid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/etho/utils/runner.html#Runner.pid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.utils.runner.Runner.pid" title="Permalink to this definition">#</a></dt>
-<dd><p>Get pids of all processes partially matching <code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>query</strong> (<em>str</em>) – Process cmdline by which process can be recognized.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>PIDs matching query</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[int]</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="etho.utils.runner.Runner.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asynchronous</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disown</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_local</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_console</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">invoke.runners.Result</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">invoke.runners.Promise</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/etho/utils/runner.html#Runner.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.utils.runner.Runner.run" title="Permalink to this definition">#</a></dt>
-<dd><p>_summary_</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cmd</strong> (<em>str</em>) – _description_</p></li>
-<li><p><strong>timeout</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em><em>, </em><em>optional</em>) – _description_. Defaults to None.</p></li>
-<li><p><strong>asynchronous</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to False.</p></li>
-<li><p><strong>disown</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to False.</p></li>
-<li><p><strong>run_local</strong> (<em>bool</em><em>, </em><em>optional</em>) – Run cmd locally. Overrides host_is_remote attribute. Defaults to False.</p></li>
-<li><p><strong>new_console</strong> (<em>bool</em><em>, </em><em>optional</em>) – _description_. Defaults to False.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(asynchronous=False) invoke.runners.Result
-(asynchronous=True) invoke.runners.Promise
-(disown=True or new_console=True if host_is_win) None</p>
-</dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>UnexpectedExit</strong><strong>, </strong><strong>if the command exited nonzero and warn was False.</strong> – </p></li>
-<li><p><strong>Failure</strong><strong>, </strong><strong>if the command didnt even exit cleanly</strong><strong>, </strong><strong>e.g. if a StreamWatcher raised WatcherError.</strong> – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-</dd></dl>
+          <section id="etho-utils-runner">
+<h1>etho.utils.runner<a class="headerlink" href="#etho-utils-runner" title="Permalink to this headline">#</a></h1>
 </section>
 
         </article>
@@ -356,26 +246,8 @@ Defaults to False.</p></li>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="etho.utils.shuffled_cycle.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">etho.utils.shuffled_cycle</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="etho.utils.config.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">etho.utils.config</div>
-                
-              </div>
-            </a>
+          
+          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -388,9 +260,7 @@ Defaults to False.</p></li>
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -407,11 +277,9 @@ Defaults to False.</p></li>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/togglebutton.js"></script>
     <script src="../_static/tabs.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
     <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
     </body>

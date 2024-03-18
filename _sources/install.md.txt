@@ -15,15 +15,19 @@ Modify versions if:
    - you want to use the old flycapture SDK (required for some older FLIR/PointGrey cameras), install `python=3.6`
 
 ## Initialize the configuration and test
-- Initialize config files and folders: `etho init`. This will:
-   - `~/ethoconfig.yml` with the default [configuration](configuration/global.md)
-   - create a `~/ethoconfig` folder with:
-      - `playlists` folder with [stimulation playlists](configuration/playlist.md)
-      - `protocol` folder with [experimental protocols](configuration/protocol.md)
-      - `stim` folder for wav files
-   - `~/data`
+Activate the environment and initialize hte config files and folders:
+```shell
+conda activate etho
+etho init
+```
+This will create the `~/data` folder for storing all data and the `~/ethoconfig` folder with:
 
-- Start the GUI: `etho gui`
+   - `ethoconfig.yml` with the default [configuration](configuration/global.md)
+   - `playlists` folder with [stimulation playlists](configuration/playlist.md)
+   - `protocol` folder with [experimental protocols](configuration/protocol.md)
+   - `stim` folder for wav files
+
+Start the GUI in the activate `etho` environment with `etho gui`.
 
 ## Optional packages (hardware, software)
 - For saving videos using vidread: `pip install vidgear[core]`
