@@ -211,6 +211,7 @@ def load_sounds(
     playlist: pd.DataFrame,
     fs: float,
     attenuation: Dict[float, float] = None,
+    calibration: Dict = None,
     LEDamp: float = 1.0,
     stimfolder: str = "./",
     cast2int: bool = False,

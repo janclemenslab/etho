@@ -14,7 +14,7 @@ import os
 
 from ..utils.tui import rich_information
 
-from .. import config
+from ..utils import config
 from ..utils.config import readconfig, undefaultify
 from ..utils.sound import parse_table, load_sounds, build_playlist
 
@@ -118,7 +118,6 @@ def client(
         thua.init_local_logger(
             "{0}/{1}/{1}_thu.log".format(this["save_directory"], save_prefix)
         )
-        thua.start()
         services["THUA"] = thua
 
     gcm_keys = [key for key in prot["NODE"]["use_services"] if "GCM" in key]
@@ -147,7 +146,7 @@ def client(
 
         cam_params = undefaultify(prot[gcm_key])
         if not preview:
-            maxduration = this["maxduration"] + 20
+            maxduration = this["maxduration"] + 10
         else:
             maxduration = 1_000_000
 
@@ -234,7 +233,6 @@ def client(
             new_console=new_console,
             port=prot[daq_key]["port"],
         )
-
         save_suffix = f"_{daq_cnt+1}" if daq_cnt > 0 else ""
         daq.setup(
             f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}",
@@ -294,7 +292,7 @@ def client(
     # First, start video services - this will start acquisition or, if external triggering is enabled, arm the cameras to wait for the triggers
     time_last_cam_started = time.time() + 5  # in case no cam was initialized
     for service_name, service in services.items():
-        if "GCM" in service_name:
+        if "GCM" in service_name or "THUA" in service_name:
             logging.info(f"   {service_name}.")
             service.start()
             time_last_cam_started = time.time()
@@ -323,7 +321,8 @@ def client(
         total = 0
         for service_name, service in services.items():
             total = max(total, service.progress()["total"])
-        _queue.put(total)
+        if _queue is not None:
+            _queue.put(total)
         cli_progress(services, save_prefix, _stop_event, _done_event)
     else:
         return services
@@ -350,6 +349,7 @@ def cli_progress(
                 f"[red]{service_name}", total=service.progress()["total"]
             )
         RUN = True
+        STOPPED_PREMATURELY = False
         while RUN and not progress.finished:
             for task_name, task_id in tasks.items():
                 if stop_event is not None and stop_event.is_set():
@@ -373,14 +373,27 @@ def cli_progress(
                 for task_name, task_id in tasks.items():
                     progress.stop_task(task_id)
                 RUN = False
-                for service_name, service in services.items():
-                    try:
-                        logging.info(f"   {service_name}")
-                        service.finish()
-                    except:
-                        logging.warning("     Failed.")
+                STOPPED_PREMATURELY = True
+    time.sleep(1)
+    if STOPPED_PREMATURELY:
+        logging.info("Finishing jobs.")
+        for service_name, service in services.items():
+            logging.info(f"   {service_name}")
+            if service_name == 'THUA':
+                continue
+            # if service_name == 'GCM' and service.finished:
+            #     continue
+            try:
+                service.finish()
+            except Exception as e:
+                logging.warning("     Failed.")
+                print(e)
+            logging.info("       done.")
+
+    time.sleep(4)
     if stop_event is not None and not stop_event.is_set() and done_event is not None:
         done_event.set()
     logging.info("Cleaning up jobs.")
     kill_child_processes()
     logging.info(f"Done with experiment {save_prefix}.")
+

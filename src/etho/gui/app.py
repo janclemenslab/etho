@@ -116,7 +116,6 @@ def from_yaml(d, readonly=True):
     pt = []
     for k, v in d.items():
         pt.append({"name": k, "type": "group", "children": []})
-
         for key, val in v.items():
             item = {"name": key}
             if isinstance(val, list):
@@ -163,7 +162,7 @@ def to_yaml(p):
 
 def load(filename: str):
     with open(filename, "r") as f:
-        d = yaml.load(f, Loader=yaml.Loader)
+        d = yaml.load(f, Loader=yaml.SafeLoader)
     return d
 
 
@@ -327,7 +326,6 @@ class MainWindow(QMainWindow):
         playlist_file = Path(playlist_files[0]).name
         playlist_from_filename = lambda filename: parse_table((self.playlist_folder / filename).as_posix())
         playlist_model = PandasModel(playlist_from_filename(playlist_file))
-        print(playlist_from_filename(playlist_file))
         playlist_model.data_from_filename = playlist_from_filename
         playlist_view = TableView(playlist_model)
         playlist_view.setAlternatingRowColors(True)
@@ -434,8 +432,8 @@ class MainWindow(QMainWindow):
         t = threading.Thread(target=client.client, kwargs=kwargs)
         t.start()
 
-        dlg = RunDialog(stop_event, done_event, queue_total)
-        dlg.exec_()
+        # dlg = RunDialog(stop_event, done_event, queue_total)
+        # dlg.exec_()
 
     def camera_preview(self):
         self.start(preview=True)

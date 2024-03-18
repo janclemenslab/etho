@@ -44,6 +44,7 @@ class THUA(BaseZeroService):
         self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={"stop_service": True})
         self._thread_stopper = threading.Event()  # not sure this is required here - but probably does not hurt
         self._queue_thread = threading.Thread(target=self._read_temperature_and_humidity, args=(self._thread_stopper,))
+        self.finished = False
 
     def start(self):
         self._time_started = time.time()
@@ -71,6 +72,7 @@ class THUA(BaseZeroService):
 
         self.log.warning("   stopped ")
         self._flush_loggers()
+        self.finished = True
         if stop_service:
             time.sleep(2)
             self.service_stop()

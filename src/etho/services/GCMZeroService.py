@@ -48,8 +48,8 @@ class GCM(BaseZeroService):
         self.c.gain = params["gain"]
         self.c.framerate = params["frame_rate"]
 
-        # if 'optimize_auto_exposure' in params and params['optimize_auto_exposure']:
-        self.c.optimize_auto_exposure()
+        if 'optimize_auto_exposure' in params and params['optimize_auto_exposure']:
+            self.c.optimize_auto_exposure()
 
         # acquire test image
         self.c.disable_gpio_strobe()  # to prevent the test image producing strobes
@@ -117,6 +117,8 @@ class GCM(BaseZeroService):
         hii["duration"] = self.duration
         self.info = {"hardware": hii, "image": (iii, params)}
 
+        self.finished = False
+
     def start(self):
         for callback in self.callbacks:
             callback.start()
@@ -168,16 +170,23 @@ class GCM(BaseZeroService):
 
     def finish(self, stop_service=False):
         self.log.warning("stopping")
+        try:        
+            self.c.disable_gpio_strobe()
+        except Exception as e:
+            pass  # self.log.warning(e)
 
         # stop thread if necessary
         if hasattr(self, "_thread_stopper"):
             self._thread_stopper.set()
         if hasattr(self, "_thread_timer"):
             self._thread_timer.cancel()
-        self.c.disable_gpio_strobe()
 
         # clean up code here
-        self.c.close()  # not sure this works if BeginAcquistion has not been called
+        try:
+            self.c.close()  # not sure this works if BeginAcquistion has not been called
+        except:
+            pass
+
         for callback in self.callbacks:
             callback.finish()
 
@@ -188,6 +197,7 @@ class GCM(BaseZeroService):
             except Exception as e:
                 pass
 
+        self.finished = True
         self.log.warning("   stopped ")
         if stop_service:
             time.sleep(0.5)

@@ -241,12 +241,6 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
 
     def service_kill(self):
         self.log.warning("   kill process {0}".format(self.pid))
-        iswin = sys.platform == "win32"
-        if iswin:
-            # run this in subprocess so the function returns - running this via os.system(...) will kill the process but not return
-            subprocess.Popen(f"taskkill /F /PID {self.pid}")
-        else:
-            os.system(f"pkill -TERM -P {self.pid}")
         self.kill_children()
         self.kill()
 
@@ -254,7 +248,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         if include_children:
             self.kill_children()
         self.log.warning("   kill process {0}".format(self.pid))
-        os.kill(self.pid, signal.SIGKILL)
+        psutil.Process(self.pid).kill()
 
     def kill_children(self):
         try:
@@ -263,7 +257,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             return
         children = parent.children(recursive=True)
         for p in children:
-            os.kill(p.pid, signal.SIGKILL)
+            p.kill()
 
     def _getpid(self):
         return os.getpid()[0]

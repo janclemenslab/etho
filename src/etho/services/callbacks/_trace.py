@@ -137,7 +137,6 @@ class SaveHDF(BaseCallback):
         if tables_import_error is not None:
             logger.exception('Could not import tables. Aborting!', exc_info=tables_import_error)
             raise tables_import_error
-
         self.file_name = file_name
         self.f = tables.open_file(self.file_name + self.SUFFIX, mode="w")
         self.vanilla: bool = True
@@ -198,6 +197,7 @@ class SaveHDF(BaseCallback):
         self._append_data(data_to_save, np.array([systemtime])[:, np.newaxis])
 
     def _cleanup(self):
+        logger.warning('cleaning')
         if self.f.isopen:
             self.f.flush()
             self.f.close()
@@ -359,21 +359,21 @@ class RealtimeDSS(BaseCallback):
 if __name__ == "__main__":
     import time
 
-    ct = PlotPQG.make_concurrent(task_kwargs={'channels_to_plot': [0, 2], 'rate': .1}, comms='pipe')
-    ct.start()
-    for _ in range(100000):
-        timestamp = time.time()
-        ct.send((np.random.randn(10_000, 4), timestamp))
-    ct.finish()
-    ct.close()
-
-    # ct = SaveHDF.make_concurrent({"file_name": "test"})
+    # ct = PlotPQG.make_concurrent(task_kwargs={'channels_to_plot': [0, 2], 'rate': .1}, comms='pipe')
     # ct.start()
-    # for _ in range(10):
+    # for _ in range(100000):
     #     timestamp = time.time()
-    #     print(timestamp)
-    #     # ct.send((np.random.randn(10_000, 4), timestamp))
-    #     ct.send((np.zeros((10_000, 4)), timestamp))
-    #     time.sleep(1)
+    #     ct.send((np.random.randn(10_000, 4), timestamp))
     # ct.finish()
     # ct.close()
+
+    ct = SaveHDF.make_concurrent({"file_name": "test"})
+    ct.start()
+    for _ in range(10):
+        timestamp = time.time()
+        print(timestamp)
+        # ct.send((np.random.randn(10_000, 4), timestamp))
+        ct.send((np.zeros((10_000, 4)), timestamp))
+        time.sleep(1)
+    ct.finish()
+    ct.close()

@@ -128,10 +128,10 @@ def init():
 
     rich.print(cfg)
 
-    path_cfg = home / "ethoconfig.yml"
+    path_cfg = home / "ethoconfig" / "ethoconfig.yml"
     if path_cfg.exists():
         logging.info(
-            f"The configuration file {str(path_cfg)} exists. Will not overwrite. You may have to update the file manually"
+            f"The configuration file {str(path_cfg)} exists. Will not overwrite. Delete the file or update it manually."
         )
     else:
         logging.info(f"Writing configuration to {str(path_cfg)}.")
