@@ -23,12 +23,8 @@ class DAQ(BaseZeroService):
     """Bundles and synchronizes analog/digital input and output tasks."""
 
     LOGGING_PORT = 1449  # set this to range 1420-1460
-    SERVICE_PORT = (
-        4249  # last to digits match logging port - but start with "42" instead of "14"
-    )
-    SERVICE_NAME = (
-        "DAQ"  # short, uppercase, 3-letter ID of the service (equals class name)
-    )
+    SERVICE_PORT = 4249  # last to digits match logging port - but start with "42" instead of "14"
+    SERVICE_NAME = "DAQ"  # short, uppercase, 3-letter ID of the service (equals class name)
 
     def setup(
         self,
@@ -101,13 +97,9 @@ class DAQ(BaseZeroService):
                 logger=self.log,
             )
             if analog_data_out[0].shape[-1] is not len(self.analog_chans_out):
-                raise ValueError(
-                    f"Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]})."
-                )
+                raise ValueError(f"Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]}).")
             play_order_new = copy.deepcopy(play_order)
-            self.taskAO.data_gen = data_playlist(
-                analog_data_out, play_order_new, playlist_info, self.log, name="AO"
-            )
+            self.taskAO.data_gen = data_playlist(analog_data_out, play_order_new, playlist_info, self.log, name="AO")
             if clock_source is None:
                 self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             else:
@@ -122,9 +114,7 @@ class DAQ(BaseZeroService):
                 logger=self.log,
             )
             play_order_new = copy.deepcopy(play_order)
-            self.taskDO.data_gen = data_playlist(
-                digital_data_out, play_order_new, name="DO"
-            )
+            self.taskDO.data_gen = data_playlist(digital_data_out, play_order_new, name="DO")
             if clock_source is None:
                 self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             else:
@@ -166,16 +156,12 @@ class DAQ(BaseZeroService):
                         task_kwargs = {**common_task_kwargs, **cb_params}
                     else:
                         task_kwargs = common_task_kwargs
-                    callback = callbacks[cb_name].make_concurrent(
-                        task_kwargs=task_kwargs
-                    )
+                    callback = callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs)
                     self.callbacks.append(callback)
                     self.taskAI.data_rec.append(callback)
 
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
-            self._thread_timer = threading.Timer(
-                self.duration, self.finish, kwargs={"stop_service": True}
-            )
+            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={"stop_service": True})
         self.status = "initialized"
 
         self.info: Dict[str, Dict[str, Any]] = dict()
@@ -222,14 +208,13 @@ class DAQ(BaseZeroService):
         if hasattr(self, "_thread_timer"):
             self._thread_timer.cancel()
 
-        
         for callback in self.callbacks:
             try:
                 callback.finish()
             except Exception as e:
                 self.log.warning(e)
 
-        try: 
+        try:
             self.taskAI.StopTask()
             self.log.warning("   stoppedAI")
         except InvalidTaskError as e:

@@ -13,9 +13,8 @@ logger = logging.getLogger(__name__)
 
 @for_all_methods(log_exceptions(logger))
 class GCM(BaseZeroService):
-
-    LOGGING_PORT = 1448  # set this to range 1420-1460
-    SERVICE_PORT = 4248  # last to digits match logging port - but start with "42" instead of "14"
+    LOGGING_PORT = 1446  # set this to range 1420-1460
+    SERVICE_PORT = 4246  # last to digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "GCM"  # short, uppercase, 3-letter ID of the service (equals class name)
 
     def setup(self, savefilename, duration, params):
@@ -32,23 +31,38 @@ class GCM(BaseZeroService):
         try:
             self.c.init()
         except Exception as e:
-            self.log.exception(f"Failed to init {self.cam_type} (sn {self.cam_serialnumber}). Reset and re-try.", exc_info=e)
+            self.log.exception(
+                f"Failed to init {self.cam_type} (sn {self.cam_serialnumber}). Reset and re-try.",
+                exc_info=e,
+            )
             self.c.reset()
             self.c.init()
 
-        defaults = {'binning': 1, 'gamma': 1, 'gain': 0, 'brightness': 0,
-                    'optimize_auto_exposure': False, 'external_trigger': False,
-                    'frame_offx': 0, 'frame_offy': 0}
+        defaults = {
+            "binning": 1,
+            "gamma": 1,
+            "gain": 0,
+            "brightness": 0,
+            "optimize_auto_exposure": False,
+            "external_trigger": False,
+            "frame_offx": 0,
+            "frame_offy": 0,
+        }
         params = defaults | params  # merge directory - keep existing values in params, only add non-existing from defaults
 
-        self.c.roi = [params["frame_offx"], params["frame_offy"], params["frame_width"], params["frame_height"]]
+        self.c.roi = [
+            params["frame_offx"],
+            params["frame_offy"],
+            params["frame_width"],
+            params["frame_height"],
+        ]
         self.c.exposure = params["shutter_speed"]
         self.c.brightness = params["brightness"]
         self.c.gamma = params["gamma"]
         self.c.gain = params["gain"]
         self.c.framerate = params["frame_rate"]
 
-        if 'optimize_auto_exposure' in params and params['optimize_auto_exposure']:
+        if "optimize_auto_exposure" in params and params["optimize_auto_exposure"]:
             self.c.optimize_auto_exposure()
 
         # acquire test image
@@ -58,7 +72,7 @@ class GCM(BaseZeroService):
         self.test_image, image_ts, system_ts = self.c.get()
         self.c.stop()
 
-        self.c.external_trigger = params['external_trigger']
+        self.c.external_trigger = params["external_trigger"]
 
         self.frame_width, self.frame_height, self.frame_channels = self.test_image.shape
         self.framerate = self.c.framerate
@@ -75,7 +89,7 @@ class GCM(BaseZeroService):
             "frame_width": self.frame_width,
         }
 
-        if 'callbacks' in params and params["callbacks"]:
+        if "callbacks" in params and params["callbacks"]:
             for cb_name, cb_params in params["callbacks"].items():
                 if cb_params is not None:
                     task_kwargs = {**common_task_kwargs, **cb_params}
@@ -110,7 +124,7 @@ class GCM(BaseZeroService):
         hii = self.c.info_hardware()
         self.log.info(params.__str__())
         try:
-            hii.update({k: v if v is not None else "defaults" for k, v, in params["callbacks"].items()})
+            hii.update({k: v if v is not None else "defaults" for k, v in params["callbacks"].items()})
         except AttributeError:
             pass
         hii["savefilename"] = self.savefilename
@@ -142,7 +156,6 @@ class GCM(BaseZeroService):
 
         while RUN:
             try:
-
                 out = self.c.get()
                 if out is None:
                     raise ValueError("Image is None")
@@ -166,11 +179,11 @@ class GCM(BaseZeroService):
                 self.c.stop()
                 self.log.debug(e, exc_info=True)
             except Exception as e:
-                self.log.exception('Error', exc_info=e)
+                self.log.exception("Error", exc_info=e)
 
     def finish(self, stop_service=False):
         self.log.warning("stopping")
-        try:        
+        try:
             self.c.disable_gpio_strobe()
         except Exception as e:
             pass  # self.log.warning(e)
@@ -209,7 +222,13 @@ class GCM(BaseZeroService):
         try:
             p = super().progress()
             fn = self.frameNumber
-            p.update({"framenumber": fn, "framenumber_delta": fn - self.prev_framenumber, "framenumber_units": "frames"})
+            p.update(
+                {
+                    "framenumber": fn,
+                    "framenumber_delta": fn - self.prev_framenumber,
+                    "framenumber_units": "frames",
+                }
+            )
             self.prev_framenumber = fn
             return p
         except:

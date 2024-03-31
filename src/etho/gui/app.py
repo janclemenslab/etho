@@ -454,3 +454,7 @@ def main(protocol_folder: Optional[str] = None, playlist_folder: Optional[str] =
     m.show()
 
     sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    main()

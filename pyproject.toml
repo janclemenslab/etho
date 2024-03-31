@@ -26,3 +26,6 @@ name = "etho"
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["tests",]
+
+[tool.ruff]
+line-length = 196
