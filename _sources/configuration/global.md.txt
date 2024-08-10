@@ -1,12 +1,12 @@
 # Global configuration
-Global config via import `from ethomaster import config` via [pyyaml](https://pyyaml.org), which reads the `ethoconfig.yaml` file in the ethoconfig directory.
+Global config via import `from ethomaster import config` via [pyyaml](https://pyyaml.org), which reads the `ethoconfig.yaml` file in the `~/ethoconfig` directory.
 ```yaml
   user: USER # default user for starting remote services via ssh
   name: localhost # name/IP of head
-  working_directory: C:/Users/USER/
+  savefolder: C:/Users/USER/data
   playlistfolder: C:/Users/USER/ethoconfig/playlists
   protocolfolder: C:/Users/USER/ethoconfig/protocols
-  calibrationfolder: C:/Users/USER/ethoconfig/calibrations
   stimfolder: C:/Users/USER/ethoconfig/stim
+  calibrationfolder: C:/Users/USER/ethoconfig/calibrations
   python_exe: C:/Users/USER/miniconda3/python.exe # point to the python executable - used when starting the services. Can point to a python exe in an environment.
 ```

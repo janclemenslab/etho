@@ -14,7 +14,9 @@ Developer API
 .. autosummary::
    :toctree: api
 
+   etho.app
    etho.cli
+   etho.client
    etho.utils.calibration
    etho.utils.config
    etho.utils.runner
@@ -22,24 +24,6 @@ Developer API
    etho.utils.sound
    etho.utils.tui
    etho.utils.zeroclient
-   etho.call.client
-   etho.call.client_old
-   etho.call.ephys
-   etho.call.panoptikum
-   etho.call.rpi
-   etho.call.scanimage
-   etho.call.vr
-   etho.gui.CamPreview
-   etho.gui.ThuPreview
-   etho.gui.app
-   etho.gui.wxBusyDialog
-   etho.gui.wxCam
-   etho.gui.wxCtrl
-   etho.gui.wxCtrl_ephys
-   etho.gui.wxCtrl_rpi
-   etho.gui.wxCtrl_vr
-   etho.gui.wxDangerDialog
-   etho.gui.wxHi_rpi_log
    etho.services.ANAZeroService
    etho.services.BLTZeroService
    etho.services.CamZeroService
@@ -70,3 +54,4 @@ Developer API
    etho.services.dlp.dlp_make_warpfiles
    etho.services.dlp.dlp_runners
    etho.services.daq.IOTask
+   etho.services.daq.ai

@@ -4,19 +4,18 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <meta name="generator" content="sphinx-4.4.0, furo 2022.03.04"/>
+    <!-- Generated with Sphinx 4.5.0 and Furo 2023.05.20 -->
         <title>etho.services.GCMZeroService - etho documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=935aa2abcc5c1da4283d1dc201fb1f0add16d23a" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=25ceb02ed1c46dc30f2321ff83e92799f69dfdb9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -43,10 +42,12 @@
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
@@ -153,7 +154,7 @@
   
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -161,7 +162,7 @@
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../configuration/configuration.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../configuration/configuration.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../configuration/global.html">Global configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../configuration/protocol.html">Experimental protocols</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../configuration/playlist.html">Stimulus playlists</a></li>
@@ -171,7 +172,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../hardware/hardware.html">Hardware</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../hardware/hardware.html">Hardware</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Hardware</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/nidaq.html">National Instruments DAQmx cards</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/projector.html">DLP projector</a></li>
@@ -180,34 +181,20 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli.html">CLI</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.app.html">etho.app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.cli.html">etho.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.client.html">etho.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.calibration.html">etho.utils.calibration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.runner.html">etho.utils.runner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.client.html">etho.call.client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.client_old.html">etho.call.client_old</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.ephys.html">etho.call.ephys</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.panoptikum.html">etho.call.panoptikum</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.rpi.html">etho.call.rpi</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.vr.html">etho.call.vr</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.CamPreview.html">etho.gui.CamPreview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.ThuPreview.html">etho.gui.ThuPreview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.app.html">etho.gui.app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxBusyDialog.html">etho.gui.wxBusyDialog</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCam.html">etho.gui.wxCam</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl.html">etho.gui.wxCtrl</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl_ephys.html">etho.gui.wxCtrl_ephys</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl_rpi.html">etho.gui.wxCtrl_rpi</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl_vr.html">etho.gui.wxCtrl_vr</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxDangerDialog.html">etho.gui.wxDangerDialog</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.CamZeroService.html">etho.services.CamZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.DLPZeroService.html">etho.services.DLPZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.Opt2ZeroService.html">etho.services.Opt2ZeroService</a></li>
@@ -229,7 +216,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.dlp.dlp_make_warpfiles.html">etho.services.dlp.dlp_make_warpfiles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.dlp.dlp_runners.html">etho.services.dlp.dlp_runners</a></li>
 </ul>
 </li>
 </ul>
@@ -250,7 +236,8 @@
           </svg>
           <span>Back to top</span>
         </a>
-        <div class="content-icon-container"><div class="theme-toggle-container theme-toggle-content">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -280,10 +267,9 @@
 
 <div class="viewcode-block" id="GCM"><a class="viewcode-back" href="../../../api/etho.services.GCMZeroService.html#etho.services.GCMZeroService.GCM">[docs]</a><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_exceptions</span><span class="p">(</span><span class="n">logger</span><span class="p">))</span>
 <span class="k">class</span> <span class="nc">GCM</span><span class="p">(</span><span class="n">BaseZeroService</span><span class="p">):</span>
-
-    <span class="n">LOGGING_PORT</span> <span class="o">=</span> <span class="mi">1448</span>  <span class="c1"># set this to range 1420-1460</span>
-    <span class="n">SERVICE_PORT</span> <span class="o">=</span> <span class="mi">4248</span>  <span class="c1"># last to digits match logging port - but start with "42" instead of "14"</span>
-    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">"GCM"</span>  <span class="c1"># short, uppercase, 3-letter ID of the service (equals class name)</span>
+    <span class="n">LOGGING_PORT</span> <span class="o">=</span> <span class="mi">1446</span>  <span class="c1"># set this to range 1420-1460</span>
+    <span class="n">SERVICE_PORT</span> <span class="o">=</span> <span class="mi">4246</span>  <span class="c1"># last to digits match logging port - but start with &quot;42&quot; instead of &quot;14&quot;</span>
+    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">&quot;GCM&quot;</span>  <span class="c1"># short, uppercase, 3-letter ID of the service (equals class name)</span>
 
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">savefilename</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="kc">None</span>
@@ -292,31 +278,46 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># set up CAMERA</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cam_serialnumber</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">"cam_serialnumber"</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">"cam_type"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam_serialnumber</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;cam_serialnumber&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;cam_type&quot;</span><span class="p">]</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span> <span class="ow">in</span> <span class="n">camera</span><span class="o">.</span><span class="n">make</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">make</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_serialnumber</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to init </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span><span class="si">}</span><span class="s2"> (sn </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_serialnumber</span><span class="si">}</span><span class="s2">). Reset and re-try."</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to init </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_type</span><span class="si">}</span><span class="s2"> (sn </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cam_serialnumber</span><span class="si">}</span><span class="s2">). Reset and re-try.&quot;</span><span class="p">,</span>
+                <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 
-        <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'binning'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'gamma'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'gain'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'brightness'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="s1">'optimize_auto_exposure'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'external_trigger'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                    <span class="s1">'frame_offx'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'frame_offy'</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
-        <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;binning&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;gain&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;brightness&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;optimize_auto_exposure&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;external_trigger&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;frame_offx&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;frame_offy&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">defaults</span> <span class="o">|</span> <span class="n">params</span>  <span class="c1"># merge directory - keep existing values in params, only add non-existing from defaults</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">roi</span> <span class="o">=</span> <span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="s2">"frame_offx"</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">"frame_offy"</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">"frame_width"</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">"frame_height"</span><span class="p">]]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">exposure</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">"shutter_speed"</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">brightness</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">"brightness"</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">"gamma"</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">gain</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">"gain"</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">framerate</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">"frame_rate"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">roi</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frame_offx&quot;</span><span class="p">],</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frame_offy&quot;</span><span class="p">],</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frame_width&quot;</span><span class="p">],</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frame_height&quot;</span><span class="p">],</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">exposure</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;shutter_speed&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">brightness</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;brightness&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;gamma&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">gain</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;gain&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">framerate</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frame_rate&quot;</span><span class="p">]</span>
 
-        <span class="c1"># if 'optimize_auto_exposure' in params and params['optimize_auto_exposure']:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">optimize_auto_exposure</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;optimize_auto_exposure&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;optimize_auto_exposure&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">optimize_auto_exposure</span><span class="p">()</span>
 
         <span class="c1"># acquire test image</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">disable_gpio_strobe</span><span class="p">()</span>  <span class="c1"># to prevent the test image producing strobes</span>
@@ -325,7 +326,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">test_image</span><span class="p">,</span> <span class="n">image_ts</span><span class="p">,</span> <span class="n">system_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">external_trigger</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">'external_trigger'</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">external_trigger</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;external_trigger&quot;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_height</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_image</span><span class="o">.</span><span class="n">shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">framerate</span>
@@ -336,14 +337,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callback_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">common_task_kwargs</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">"file_name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">savefilename</span><span class="p">,</span>
-            <span class="s2">"frame_rate"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span><span class="p">,</span>
-            <span class="s2">"frame_height"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_height</span><span class="p">,</span>
-            <span class="s2">"frame_width"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_width</span><span class="p">,</span>
+            <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">savefilename</span><span class="p">,</span>
+            <span class="s2">&quot;frame_rate&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span><span class="p">,</span>
+            <span class="s2">&quot;frame_height&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_height</span><span class="p">,</span>
+            <span class="s2">&quot;frame_width&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_width</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="k">if</span> <span class="s1">'callbacks'</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="s2">"callbacks"</span><span class="p">]:</span>
-            <span class="k">for</span> <span class="n">cb_name</span><span class="p">,</span> <span class="n">cb_params</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s2">"callbacks"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">&quot;callbacks&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;callbacks&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">cb_name</span><span class="p">,</span> <span class="n">cb_params</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;callbacks&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">cb_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">task_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">common_task_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">cb_params</span><span class="p">}</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -358,31 +359,33 @@
         <span class="c1"># and/or via a timer</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"stop_service"</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;stop_service&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
 
         <span class="c1"># set up the worker thread</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="p">,))</span>
 
         <span class="n">iii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">info_imaging</span><span class="p">()</span>
-        <span class="n">iii</span><span class="p">[</span><span class="s2">"exposure"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">iii</span><span class="p">[</span><span class="s1">'exposure'</span><span class="p">]</span><span class="si">:</span><span class="s2">1.2f</span><span class="si">}</span><span class="s2">ms"</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">"exposure"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">'shutter_speed'</span><span class="p">]</span><span class="o">/</span><span class="mi">1_000</span><span class="si">:</span><span class="s2">1.2f</span><span class="si">}</span><span class="s2">ms"</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">"framerate"</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">"frame_rate"</span><span class="p">]</span>
-        <span class="n">params</span><span class="p">[</span><span class="s2">"offsetX"</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">"offsetY"</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">"width"</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">"height"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">params</span><span class="p">[</span><span class="s2">"frame_offx"</span><span class="p">],</span>
-            <span class="n">params</span><span class="p">[</span><span class="s2">"frame_offy"</span><span class="p">],</span>
-            <span class="n">params</span><span class="p">[</span><span class="s2">"frame_width"</span><span class="p">],</span>
-            <span class="n">params</span><span class="p">[</span><span class="s2">"frame_height"</span><span class="p">],</span>
+        <span class="n">iii</span><span class="p">[</span><span class="s2">&quot;exposure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">iii</span><span class="p">[</span><span class="s1">&#39;exposure&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">1.2f</span><span class="si">}</span><span class="s2">ms&quot;</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;exposure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;shutter_speed&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">1_000</span><span class="si">:</span><span class="s2">1.2f</span><span class="si">}</span><span class="s2">ms&quot;</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;framerate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frame_rate&quot;</span><span class="p">]</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;offsetX&quot;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;offsetY&quot;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frame_offx&quot;</span><span class="p">],</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frame_offy&quot;</span><span class="p">],</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frame_width&quot;</span><span class="p">],</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frame_height&quot;</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="n">hii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">info_hardware</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">hii</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">"defaults"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s2">"callbacks"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+            <span class="n">hii</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;defaults&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;callbacks&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">pass</span>
-        <span class="n">hii</span><span class="p">[</span><span class="s2">"savefilename"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">savefilename</span>
-        <span class="n">hii</span><span class="p">[</span><span class="s2">"duration"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"hardware"</span><span class="p">:</span> <span class="n">hii</span><span class="p">,</span> <span class="s2">"image"</span><span class="p">:</span> <span class="p">(</span><span class="n">iii</span><span class="p">,</span> <span class="n">params</span><span class="p">)}</span>
+        <span class="n">hii</span><span class="p">[</span><span class="s2">&quot;savefilename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">savefilename</span>
+        <span class="n">hii</span><span class="p">[</span><span class="s2">&quot;duration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hardware&quot;</span><span class="p">:</span> <span class="n">hii</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">iii</span><span class="p">,</span> <span class="n">params</span><span class="p">)}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">finished</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span>
@@ -391,31 +394,30 @@
 
         <span class="c1"># background jobs should be run and controlled via a thread</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"started"</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_thread_timer"</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"duration </span><span class="si">{0}</span><span class="s2"> seconds"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;started&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;duration </span><span class="si">{0}</span><span class="s2"> seconds&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"finish timer started"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;finish timer started&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_event</span><span class="p">):</span>
         <span class="n">RUN</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frameNumber</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prev_framenumber</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"started worker"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;started worker&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">enable_gpio_strobe</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
         <span class="k">while</span> <span class="n">RUN</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-
                 <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Image is None"</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Image is None&quot;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">image</span><span class="p">,</span> <span class="n">image_ts</span><span class="p">,</span> <span class="n">system_ts</span> <span class="o">=</span> <span class="n">out</span>
 
                 <span class="k">for</span> <span class="n">callback_name</span><span class="p">,</span> <span class="n">callback</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">callback_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="s2">"timestamps"</span> <span class="ow">in</span> <span class="n">callback_name</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;timestamps&quot;</span> <span class="ow">in</span> <span class="n">callback_name</span><span class="p">:</span>
                         <span class="n">package</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">system_ts</span><span class="p">,</span> <span class="n">image_ts</span><span class="p">))</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">package</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="n">system_ts</span><span class="p">,</span> <span class="n">image_ts</span><span class="p">))</span>
@@ -423,7 +425,7 @@
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">frameNumber</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frameNumber</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">nFrames</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Max number of frames reached - stopping."</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Max number of frames reached - stopping.&quot;</span><span class="p">)</span>
                     <span class="n">RUN</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -431,20 +433,27 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">'Error'</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Error&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"stopping"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;stopping&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">disable_gpio_strobe</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># self.log.warning(e)</span>
 
         <span class="c1"># stop thread if necessary</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_thread_stopper"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_stopper&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_thread_timer"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">disable_gpio_strobe</span><span class="p">()</span>
 
         <span class="c1"># clean up code here</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># not sure this works if BeginAcquistion has not been called</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># not sure this works if BeginAcquistion has not been called</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
         <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span>
             <span class="n">callback</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
 
@@ -455,7 +464,8 @@
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"   stopped "</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finished</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;   stopped &quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">stop_service</span><span class="p">:</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">service_stop</span><span class="p">()</span>
@@ -466,7 +476,13 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">p</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">progress</span><span class="p">()</span>
             <span class="n">fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frameNumber</span>
-            <span class="n">p</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"framenumber"</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span> <span class="s2">"framenumber_delta"</span><span class="p">:</span> <span class="n">fn</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_framenumber</span><span class="p">,</span> <span class="s2">"framenumber_units"</span><span class="p">:</span> <span class="s2">"frames"</span><span class="p">})</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;framenumber&quot;</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span>
+                    <span class="s2">&quot;framenumber_delta&quot;</span><span class="p">:</span> <span class="n">fn</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_framenumber</span><span class="p">,</span>
+                    <span class="s2">&quot;framenumber_units&quot;</span><span class="p">:</span> <span class="s2">&quot;frames&quot;</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">prev_framenumber</span> <span class="o">=</span> <span class="n">fn</span>
             <span class="k">return</span> <span class="n">p</span>
         <span class="k">except</span><span class="p">:</span>
@@ -493,18 +509,18 @@
             <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">ser</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ser</span> <span class="o">=</span> <span class="s2">"default"</span>
+        <span class="n">ser</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">port</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">port</span> <span class="o">=</span> <span class="n">GCM</span><span class="o">.</span><span class="n">SERVICE_PORT</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Starting service GCM at </span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s1"> with serializer "</span><span class="si">{</span><span class="n">ser</span><span class="si">}</span><span class="s1">".'</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Starting service GCM at </span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s1"> with serializer &quot;</span><span class="si">{</span><span class="n">ser</span><span class="si">}</span><span class="s1">&quot;.&#39;</span><span class="p">)</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">GCM</span><span class="p">(</span><span class="n">serializer</span><span class="o">=</span><span class="n">ser</span><span class="p">)</span>
-    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">"tcp://0.0.0.0:</span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>  <span class="c1"># broadcast on all IPs</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;tcp://0.0.0.0:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>  <span class="c1"># broadcast on all IPs</span>
     <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
         </article>
@@ -526,9 +542,7 @@
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -545,11 +559,9 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
-    <script src="../../../_static/togglebutton.js"></script>
     <script src="../../../_static/tabs.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
     <script src="../../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
     </body>

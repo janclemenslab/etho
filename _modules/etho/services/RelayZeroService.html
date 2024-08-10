@@ -4,19 +4,18 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <meta name="generator" content="sphinx-4.4.0, furo 2022.03.04"/>
+    <!-- Generated with Sphinx 4.5.0 and Furo 2023.05.20 -->
         <title>etho.services.RelayZeroService - etho documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=935aa2abcc5c1da4283d1dc201fb1f0add16d23a" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=25ceb02ed1c46dc30f2321ff83e92799f69dfdb9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -43,10 +42,12 @@
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
@@ -153,7 +154,7 @@
   
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -161,7 +162,7 @@
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../configuration/configuration.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../configuration/configuration.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../configuration/global.html">Global configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../configuration/protocol.html">Experimental protocols</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../configuration/playlist.html">Stimulus playlists</a></li>
@@ -171,7 +172,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../hardware/hardware.html">Hardware</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../hardware/hardware.html">Hardware</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Hardware</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/nidaq.html">National Instruments DAQmx cards</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/projector.html">DLP projector</a></li>
@@ -180,34 +181,20 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli.html">CLI</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.app.html">etho.app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.cli.html">etho.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.client.html">etho.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.calibration.html">etho.utils.calibration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.runner.html">etho.utils.runner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.client.html">etho.call.client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.client_old.html">etho.call.client_old</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.ephys.html">etho.call.ephys</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.panoptikum.html">etho.call.panoptikum</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.rpi.html">etho.call.rpi</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.call.vr.html">etho.call.vr</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.CamPreview.html">etho.gui.CamPreview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.ThuPreview.html">etho.gui.ThuPreview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.app.html">etho.gui.app</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxBusyDialog.html">etho.gui.wxBusyDialog</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCam.html">etho.gui.wxCam</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl.html">etho.gui.wxCtrl</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl_ephys.html">etho.gui.wxCtrl_ephys</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl_rpi.html">etho.gui.wxCtrl_rpi</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxCtrl_vr.html">etho.gui.wxCtrl_vr</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.gui.wxDangerDialog.html">etho.gui.wxDangerDialog</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.CamZeroService.html">etho.services.CamZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.DLPZeroService.html">etho.services.DLPZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.Opt2ZeroService.html">etho.services.Opt2ZeroService</a></li>
@@ -229,7 +216,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.dlp.dlp_make_warpfiles.html">etho.services.dlp.dlp_make_warpfiles</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.dlp.dlp_runners.html">etho.services.dlp.dlp_runners</a></li>
 </ul>
 </li>
 </ul>
@@ -250,7 +236,8 @@
           </svg>
           <span>Back to top</span>
         </a>
-        <div class="content-icon-container"><div class="theme-toggle-container theme-toggle-content">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -283,15 +270,15 @@
 
 <div class="viewcode-block" id="REL"><a class="viewcode-back" href="../../../api/etho.services.RelayZeroService.html#etho.services.RelayZeroService.REL">[docs]</a><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_exceptions</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)))</span>
 <span class="k">class</span> <span class="nc">REL</span><span class="p">(</span><span class="n">BaseZeroService</span><span class="p">):</span>
-    <span class="sd">"""</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    toggle relay using gpiozero library</span>
 <span class="sd">    very hacky since the relay cannot be toggled (requires 5V GPIO, not 3.3V as in rpi).</span>
 <span class="sd">    so we turn on the relay by initializing the pin, and turn it off by de-initializing it</span>
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">LOGGING_PORT</span> <span class="o">=</span> <span class="mi">1447</span>
     <span class="n">SERVICE_PORT</span> <span class="o">=</span> <span class="mi">4247</span>
-    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">"REL"</span>
+    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">&quot;REL&quot;</span>
 
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">import_error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -300,25 +287,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pin</span> <span class="o">=</span> <span class="n">pin</span>  <span class="c1"># data pin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span>  <span class="c1"># total duration of experiments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">relay</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"stop_service"</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;stop_service&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_turn_on</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"duration </span><span class="si">{0}</span><span class="s2"> seconds"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;duration </span><span class="si">{0}</span><span class="s2"> seconds&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
             <span class="c1"># will execute FINISH after N seconds</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"finish timer started"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;finish timer started&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"stopping"</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_thread_stopper"</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;stopping&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_stopper&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_thread_timer"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_turn_off</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"   stopped "</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;   stopped &quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">stop_service</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">service_stop</span><span class="p">()</span>
 
@@ -343,7 +330,7 @@
     <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_busy</span><span class="p">():</span>
             <span class="c1"># NOTE: save to access thread variables? need lock or something?</span>
-            <span class="k">return</span> <span class="s2">"state of relay is </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_busy</span><span class="p">())</span>
+            <span class="k">return</span> <span class="s2">&quot;state of relay is </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_busy</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -352,17 +339,17 @@
 
     <span class="k">def</span> <span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_queue_thread"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_queue_thread&quot;</span><span class="p">):</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue_thread</span></div>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">ser</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">ser</span> <span class="o">=</span> <span class="s2">"default"</span>
+        <span class="n">ser</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">REL</span><span class="p">(</span><span class="n">serializer</span><span class="o">=</span><span class="n">ser</span><span class="p">)</span>
-    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">"tcp://0.0.0.0:</span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">REL</span><span class="o">.</span><span class="n">SERVICE_PORT</span><span class="p">))</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;tcp://0.0.0.0:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">REL</span><span class="o">.</span><span class="n">SERVICE_PORT</span><span class="p">))</span>
     <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
         </article>
@@ -384,9 +371,7 @@
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -403,11 +388,9 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
-    <script src="../../../_static/togglebutton.js"></script>
     <script src="../../../_static/tabs.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
-    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
     <script src="../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
     <script src="../../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
     </body>

@@ -4,19 +4,17 @@ For experiment-specific settings.
 ### Make
 [yaml](pyyaml.org) format. The following fields are supported:
 ```yaml
-  user: USER # OPTIONAL default user
-  working_directory: C:/Users/USER/ # default working directory
-  save_directory: C:/Users/USER/data # this is where the recordings will be saved
-  maxduration: 90 # seconds
-  use_services: [GCM, DAQ]  # list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names
-  serializer: pickle  # save default
-  python_exe: C:/miniconda/envs/etho/python.exe  # OPTIONAL run this prot in specific env
+user: USER  # OPTIONAL - default user set in ethoconfig.yml
+savefolder: C:/Users/USER/data # OPTIONAL - default set in ethoconfig.yml - this is where the recordings will be saved
+maxduration: 90 # seconds
+use_services: [GCM, DAQ]  # list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names
+serializer: pickle  # save default
+python_exe: C:/miniconda/envs/etho/python.exe   # OPTIONAL - default set in ethoconfig.yml - run this prot in specific env
 ```
 
 ```yaml
 # SERVICE specific parameters
-GCM:  # generic camera interface with different backends (`cam_type`)
-  cam_type: Ximea  # or Spinnaker or FlyCapture2
+GCM:  # generic camera interface with different backends   cam_type: Ximea  # or Spinnaker or FlyCapture2
   frame_rate: 100.0  # frames per second
   frame_width: 640  # pixels
   frame_height: 200  # pixels
@@ -28,11 +26,14 @@ GCM:  # generic camera interface with different backends (`cam_type`)
   gamma: 1.0  # OPTIONAL
   gain: 0.0
   cam_serialnumber: 30959651  # MQ013CG-ON
+  binning: 1  # set horz and vert binning - typically, 1, 2, 4 is available
+  optimize_auto_exposure: True  # defaults to False
+  external_trigger: False #
   host:  # individual services can run on specific hosts
     name: 192.168.1.42
     user: ncb
     python_exe: C:/miniconda/envs/etho/python.exe
-    save_directory: C:/Users/ncb/data
+    savefolder: C:/Users/ncb/data
   callbacks:
     save_avi:  # save frames as avi using opencv VideoWriter (has no params)
     save_avi_vidread:  # save frames as avi using VidRead
@@ -51,7 +52,23 @@ DAQ:
   ledamp: 1.0
   analog_chans_in: [ai0]
   analog_chans_out: [ao0, ao1]
-  limits: 10.0
+  callbacks:
+    save_h5:   # save data as hdfs (has no params)
+    plot:  # plot traces using matplotlib OR
+    plot_fast:  # plot traces using pyqtgraph (much faster!) (use either `plot` or plot_fast`, never both)
+
+
+DAQ:
+  clock_source: OnboardClock
+  samplingrate: 10000 # Hz
+  shuffle: True # block-randomize order of stimuli for playback
+  device: Dev1
+  analog_chans_in: [ai0:8, ai9, ai10]
+  analog_chans_in_limits: [[0, 5], [0, 10], [-10, 10]] # or "10"
+  analog_chans_in_terminal: [RSE, NRSE, Diff]  # defaults to RSE
+  analog_chans_out: [ao0, ao1]
+  analog_chans_out_limits: [10, 10]
+  digital_chans_out: [...]
   callbacks:
     save_h5:   # save data as hdfs (has no params)
     plot:  # plot traces using matplotlib OR

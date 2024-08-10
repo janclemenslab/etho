@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.services.camera.spinnaker_old" href="etho.services.camera.spinnaker_old.html" /><link rel="prev" title="etho.services.camera.hamamatsu" href="etho.services.camera.hamamatsu.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.utils.calibration" href="etho.utils.calibration.html" /><link rel="prev" title="etho.cli" href="etho.cli.html" />
 
     <!-- Generated with Sphinx 4.5.0 and Furo 2023.05.20 -->
-        <title>etho.services.camera.spinnaker - etho documentation</title>
+        <title>etho.client - etho documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -185,7 +185,7 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api_etho.html">API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="etho.app.html">etho.app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.cli.html">etho.cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.client.html">etho.client</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">etho.client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.calibration.html">etho.utils.calibration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.runner.html">etho.utils.runner</a></li>
@@ -210,7 +210,7 @@
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.videocapture.html">etho.services.camera.videocapture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
@@ -253,8 +253,46 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-etho.services.camera.spinnaker">
-<span id="etho-services-camera-spinnaker"></span><h1>etho.services.camera.spinnaker<a class="headerlink" href="#module-etho.services.camera.spinnaker" title="Permalink to this headline">#</a></h1>
+          <section id="module-etho.client">
+<span id="etho-client"></span><h1>etho.client<a class="headerlink" href="#module-etho.client" title="Permalink to this headline">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="etho.client.cli_progress">
+<span class="sig-prename descclassname"><span class="pre">etho.client.</span></span><span class="sig-name descname"><span class="pre">cli_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">services</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">threading.Event</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">done_event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">threading.Event</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/client.html#cli_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.client.cli_progress" title="Permalink to this definition">#</a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>services</strong> (<em>_type_</em>) – Dictionary of intialized services.</p></li>
+<li><p><strong>save_prefix</strong> (<em>_type_</em>) – Name of the expt.</p></li>
+<li><p><strong>stop_event</strong> (<em>_type_</em><em>, </em><em>optional</em>) – Used to stop the task from an outside thread. Defaults to None.</p></li>
+<li><p><strong>done_event</strong> (<em>_type_</em><em>, </em><em>optional</em>) – Set to signal that the task is done/stopped to an outside thread. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="etho.client.client">
+<span class="sig-prename descclassname"><span class="pre">etho.client.</span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocolfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlistfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preview</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_stop_event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">threading.Event</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_done_event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">threading.Event</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_queue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">queue.Queue</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/client.html#client"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.client.client" title="Permalink to this definition">#</a></dt>
+<dd><p>Starts an experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<em>str</em>) – _description_</p></li>
+<li><p><strong>protocolfile</strong> (<em>str</em>) – _description_</p></li>
+<li><p><strong>playlistfile</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – _description_.</p></li>
+<li><p><strong>save_prefix</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – _description_.</p></li>
+<li><p><strong>show_progress</strong> (<em>bool</em>) – _description_.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em>) – _description_.</p></li>
+<li><p><strong>preview</strong> (<em>bool</em>) – _description_.</p></li>
+<li><p><strong>_stop_event</strong> (<em>threading.Event</em><em>, </em><em>optional</em>) – Used to stop the task from an outside thread. Defaults to None.</p></li>
+<li><p><strong>_done_event</strong> (<em>threading.Event</em><em>, </em><em>optional</em>) – Set to signal that the task is done/stopped to an outside thread. Defaults to None.</p></li>
+<li><p><strong>_queue</strong> (<em>queue.Queue</em><em>, </em><em>optional</em>) – Signal the expected duration of the task to outside funs. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -262,23 +300,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="etho.services.camera.spinnaker_old.html">
+          <a class="next-page" href="etho.utils.calibration.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">etho.services.camera.spinnaker_old</div>
+                <div class="title">etho.utils.calibration</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="etho.services.camera.hamamatsu.html">
+          <a class="prev-page" href="etho.cli.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">etho.services.camera.hamamatsu</div>
+                <div class="title">etho.cli</div>
                 
               </div>
             </a>

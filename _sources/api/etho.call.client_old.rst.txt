@@ -1,5 +1,0 @@
-﻿etho.call.client_old
-====================
-
-.. automodule:: etho.call.client_old
-   :members:

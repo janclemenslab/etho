@@ -4,7 +4,7 @@
 ## Python packages
 Create conda environment, activate the environment and install the remaining pip packages:
 ```shell
-mamba create python=3.10 numpy scipy h5py opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil pydaqmx pyqtgraph qtpy pyside6 -c conda-forge -n etho -y
+mamba create python=3.10 numpy scipy h5py opencv pandas pyzmq gevent future pillow msgpack-python pyyaml pyserial ipython pip git defopt flammkuchen msgpack-numpy rich fabric psutil pydaqmx pyqtgraph qtpy pyside6 zarr -c conda-forge -n etho -y
 conda activate etho
 pip install git+https://github.com/postpop/zerorpc-python git+https://github.com/janclemenslab/etho --no-deps
 ```

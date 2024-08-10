@@ -1,5 +1,0 @@
-﻿etho.gui.app
-============
-
-.. automodule:: etho.gui.app
-   :members:
