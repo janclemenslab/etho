@@ -246,10 +246,10 @@ class SaveZarr(BaseCallback):
             for key, val in self.attrs.items():
                 self.arrays["samples"].attrs[key] = val
 
-        self.arrays.create_dataset("systemtime", shape=(0, 1), chunks=100, dtype=systemtime.dtype, compressor=compressor)
+        self.arrays.create_dataset("systemtime", shape=(0, 1), chunks=True, dtype=systemtime.dtype, compressor=compressor)
 
         sn = np.array(data.shape[:1])[:, np.newaxis]
-        self.arrays.create_dataset("samplenumber", shape=(0, 1), chunks=100, dtype=sn.dtype, compressor=compressor)
+        self.arrays.create_dataset("samplenumber", shape=(0, 1), chunks=True, dtype=sn.dtype, compressor=compressor)
         # print([(k, v.shape) for k, v in self.arrays.items()])
 
     def _append_data(self, data, systemtime):
@@ -432,16 +432,16 @@ if __name__ == "__main__":
     # ct.finish()
     # ct.close()
 
-    ct = SaveHDF.make_concurrent({"file_name": "test"})
-    ct.start()
-    for _ in range(10):
-        timestamp = time.time()
-        print(timestamp)
-        # ct.send((np.random.randn(10_000, 4), timestamp))
-        ct.send((np.zeros((10_000, 4)), timestamp))
-        time.sleep(1)
-    ct.finish()
-    ct.close()
+    # ct = SaveHDF.make_concurrent({"file_name": "test"})
+    # ct.start()
+    # for _ in range(10):
+    #     timestamp = time.time()
+    #     print(timestamp)
+    #     # ct.send((np.random.randn(10_000, 4), timestamp))
+    #     ct.send((np.zeros((10_000, 4)), timestamp))
+    #     time.sleep(1)
+    # ct.finish()
+    # ct.close()
 
     ct = SaveZarr.make_concurrent({"file_name": "test"})
     ct.start()
