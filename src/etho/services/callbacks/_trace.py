@@ -1,4 +1,5 @@
 """Callbacks for processing time series."""
+
 import logging
 import numpy as np
 from numpy.core.numeric import False_
@@ -12,6 +13,7 @@ from ._base import BaseCallback
 
 try:
     import tables
+
     tables_import_error = None
 except ImportError as tables_import_error:
     pass
@@ -24,10 +26,18 @@ except ImportError:
 try:
     from qtpy import QtWidgets
     import pyqtgraph as pg
+
     pyqtgraph_import_error = None
 except Exception as pyqtgraph_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
     pass
 
+try:
+    import zarr
+    from numcodecs import Blosc
+
+    zarr_import_error = None
+except Exception as zarr_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +45,6 @@ logger = logging.getLogger(__name__)
 @for_all_methods(log_exceptions(logger))
 @register_callback
 class PlotMPL(BaseCallback):
-
     FRIENDLY_NAME = "plot"
 
     def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: List, nb_samples: int = 10_000, **kwargs):
@@ -45,6 +54,7 @@ class PlotMPL(BaseCallback):
         self.nb_samples = nb_samples
 
         import matplotlib
+
         matplotlib.use("tkagg")
         import matplotlib.pyplot as plt
 
@@ -56,9 +66,7 @@ class PlotMPL(BaseCallback):
         plt.draw()
         self.fig.canvas.start_event_loop(0.01)  # otherwise plot freezes after 3-4 iterations
         self.bgrd = [self.fig.canvas.copy_from_bbox(this_ax.bbox) for this_ax in self.ax]
-        self.points = [
-            ax.plot(np.arange(self.nb_samples), np.zeros((self.nb_samples, 1)), linewidth=0.4)[0] for ax in self.ax
-        ]  # init plot content
+        self.points = [ax.plot(np.arange(self.nb_samples), np.zeros((self.nb_samples, 1)), linewidth=0.4)[0] for ax in self.ax]  # init plot content
         [ax.set_ylim(-5, 5) for ax in self.ax]  # init plot content
         [ax.set_xlim(0, self.nb_samples) for ax in self.ax]  # init plot content
         for cnt, ax in enumerate(self.fig.get_axes()[::-1]):
@@ -84,14 +92,13 @@ class PlotMPL(BaseCallback):
 @for_all_methods(log_exceptions(logger))
 @register_callback
 class PlotPQG(BaseCallback):
-
     FRIENDLY_NAME = "plot_fast"
 
     def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: List, nb_samples: int = 10_000, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if pyqtgraph_import_error is not None:
-            logger.exception('Could not import pyqtgraph. Aborting!', exc_info=pyqtgraph_import_error)
+            logger.exception("Could not import pyqtgraph. Aborting!", exc_info=pyqtgraph_import_error)
             raise pyqtgraph_import_error
 
         self.channels_to_plot = channels_to_plot
@@ -127,7 +134,6 @@ class PlotPQG(BaseCallback):
 @for_all_methods(log_exceptions(logger))
 @register_callback
 class SaveHDF(BaseCallback):
-
     FRIENDLY_NAME = "save_h5"
     SUFFIX = "_daq.h5"
 
@@ -135,7 +141,7 @@ class SaveHDF(BaseCallback):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if tables_import_error is not None:
-            logger.exception('Could not import tables. Aborting!', exc_info=tables_import_error)
+            logger.exception("Could not import tables. Aborting!", exc_info=tables_import_error)
             raise tables_import_error
         self.file_name = file_name
         self.f = tables.open_file(self.file_name + self.SUFFIX, mode="w")
@@ -180,8 +186,10 @@ class SaveHDF(BaseCallback):
             chunkshape=[100, 1],
             filters=filters,
         )
+        # print([(k, v.shape) for k, v in self.arrays.items()])
 
     def _append_data(self, data, systemtime):
+        # print(data.shape, self.arrays["samples"].shape, self.arrays["samplenumber"].shape)
         self.arrays["samples"].append(data)
 
         samplenumber = data.shape[:1]  # self.f.root['samples'].shape[:1]
@@ -191,17 +199,80 @@ class SaveHDF(BaseCallback):
 
     def _loop(self, data):
         data_to_save, systemtime = data  # unpack
+
         if self.vanilla:
             self._init_data(data_to_save, np.array([systemtime])[:, np.newaxis])
             self.vanilla = False
         self._append_data(data_to_save, np.array([systemtime])[:, np.newaxis])
 
     def _cleanup(self):
-        logger.warning('cleaning')
+        logger.warning("cleaning")
         if self.f.isopen:
             self.f.flush()
             self.f.close()
         else:
+            logger.debug(f"{self.file_name} already closed.")
+
+
+@for_all_methods(log_exceptions(logger))
+@register_callback
+class SaveZarr(BaseCallback):
+    FRIENDLY_NAME = "save_zarr"
+    SUFFIX = "_daq.zarr"
+
+    def __init__(self, data_source, *, file_name, attrs=None, poll_timeout=0.01, **kwargs):
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        if zarr_import_error is not None:
+            logger.exception("Could not import zarr. Aborting!", exc_info=tables_import_error)
+            raise zarr_import_error
+        self.file_name = file_name
+        self.f = zarr.DirectoryStore(self.file_name + self.SUFFIX)
+        self.vanilla: bool = True
+        self.arrays = zarr.group(self.f, overwrite=True)
+
+        self.attrs = attrs
+
+    @classmethod
+    def make_concurrent(cls, task_kwargs, comms="queue"):
+        return ConcurrentTask(task=cls.make_run, task_kwargs=task_kwargs, comms=comms)
+
+    def _init_data(self, data, systemtime):
+        compressor = Blosc(cname="zstd", clevel=3, shuffle=Blosc.BITSHUFFLE)
+
+        self.arrays.create_dataset("samples", shape=(0, *data.shape[1:]), chunks=data.shape, dtype=data.dtype, compressor=compressor)
+
+        if self.attrs is not None:
+            for key, val in self.attrs.items():
+                self.arrays["samples"].attrs[key] = val
+
+        self.arrays.create_dataset("systemtime", shape=(0, 1), chunks=100, dtype=systemtime.dtype, compressor=compressor)
+
+        sn = np.array(data.shape[:1])[:, np.newaxis]
+        self.arrays.create_dataset("samplenumber", shape=(0, 1), chunks=100, dtype=sn.dtype, compressor=compressor)
+        # print([(k, v.shape) for k, v in self.arrays.items()])
+
+    def _append_data(self, data, systemtime):
+        # print(data.shape, self.arrays["samples"].shape, self.arrays["samplenumber"].shape)
+        self.arrays["samples"].append(data, axis=0)
+
+        samplenumber = np.array(data.shape[:1])[:, np.newaxis]  # self.f.root['samples'].shape[:1]
+        self.arrays["samplenumber"].append(samplenumber, axis=0)
+
+        self.arrays["systemtime"].append(systemtime, axis=0)
+
+    def _loop(self, data):
+        data_to_save, systemtime = data  # unpack
+        if self.vanilla:
+            self._init_data(data_to_save, np.array([systemtime])[:, np.newaxis])
+            self.vanilla = False
+        self._append_data(data_to_save, np.array([systemtime])[:, np.newaxis])
+
+    def _cleanup(self):
+        logger.warning("cleaning")
+        try:
+            self.f.close()
+        except:
             logger.debug(f"{self.file_name} already closed.")
 
 
@@ -220,7 +291,7 @@ class SaveDLP_HDF(BaseCallback):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if tables_import_error is not None:
-            logger.exception('Could not import tables. Aborting!', exc_info=tables_import_error)
+            logger.exception("Could not import tables. Aborting!", exc_info=tables_import_error)
             raise tables_import_error
 
         self.file_name = file_name
@@ -238,13 +309,9 @@ class SaveDLP_HDF(BaseCallback):
             group = self.f.create_group("/", name=grp_name)
             self.arrays[grp_name] = dict()
             for key, val in grp_data.items():
-                self.arrays[grp_name][key] = self.f.create_earray(
-                    group, key, tables.Atom.from_dtype(np.array(val).dtype), shape=(0,), chunkshape=(1000,), filters=filters
-                )
+                self.arrays[grp_name][key] = self.f.create_earray(group, key, tables.Atom.from_dtype(np.array(val).dtype), shape=(0,), chunkshape=(1000,), filters=filters)
 
-        self.arrays["systemtime"] = self.f.create_earray(
-            self.f.root, "systemtime", tables.Atom.from_dtype(systemtime.dtype), shape=(0,), chunkshape=(1000,), filters=filters
-        )
+        self.arrays["systemtime"] = self.f.create_earray(self.f.root, "systemtime", tables.Atom.from_dtype(systemtime.dtype), shape=(0,), chunkshape=(1000,), filters=filters)
         self.vanilla = False
 
     def _append_data(self, data, systemtime):
@@ -320,9 +387,7 @@ class RealtimeDSS(BaseCallback):
         data = data[:, : self.input_shape[-1]]
         data = ss.sosfiltfilt(self.sos_bp, data, axis=0).astype(np.float16)
         self.data_buffer = self._append_to_buffer(self.data_buffer, data)
-        batch = self.data_buffer.reshape(
-            (1, *self.data_buffer.shape)
-        )  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
+        batch = self.data_buffer.reshape((1, *self.data_buffer.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
         # batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
         prediction = self.model.predict(batch)
 
@@ -368,6 +433,17 @@ if __name__ == "__main__":
     # ct.close()
 
     ct = SaveHDF.make_concurrent({"file_name": "test"})
+    ct.start()
+    for _ in range(10):
+        timestamp = time.time()
+        print(timestamp)
+        # ct.send((np.random.randn(10_000, 4), timestamp))
+        ct.send((np.zeros((10_000, 4)), timestamp))
+        time.sleep(1)
+    ct.finish()
+    ct.close()
+
+    ct = SaveZarr.make_concurrent({"file_name": "test"})
     ct.start()
     for _ in range(10):
         timestamp = time.time()
