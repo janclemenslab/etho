@@ -252,41 +252,41 @@
         </div>
         <article role="main">
           <h1>Source code for etho.cli</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">defopt</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">platform</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">rich</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">defopt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rich</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">client</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">client</span>
 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
     <span class="n">client</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="version"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.version">[docs]</a><span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="version"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.version">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Displays system, version, and hardware info.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        debug (bool): Display exception info for failed imports. Defaults to False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">etho</span>
-    <span class="kn">import</span> <span class="nn">sys</span>
-    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-    <span class="kn">import</span> <span class="nn">scipy</span>
-    <span class="kn">import</span> <span class="nn">h5py</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">etho</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">pyqtgraph</span>
-        <span class="kn">import</span> <span class="nn">qtpy</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pyqtgraph</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">qtpy</span>
 
         <span class="n">has_gui</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
@@ -331,14 +331,14 @@
                 <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;     DEBUG info&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="no_gui"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.no_gui">[docs]</a><span class="k">def</span> <span class="nf">no_gui</span><span class="p">():</span>
+<div class="viewcode-block" id="no_gui"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.no_gui">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">no_gui</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Could not import the GUI. For instructions on how to install the GUI, check the docs janclemenslab.org/etho/install.html.&quot;&quot;&quot;</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not import the GUI.&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;For instructions on how to install the GUI,&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;check the docs janclemenslab.org/etho/install.html.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="init"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.init">[docs]</a><span class="k">def</span> <span class="nf">init</span><span class="p">():</span>
+<div class="viewcode-block" id="init"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.init">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializes config files and folders.&quot;&quot;&quot;</span>
     <span class="n">home</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
 
@@ -372,7 +372,6 @@
         <span class="s2">&quot;playlistfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/playlists&quot;</span><span class="p">,</span>
         <span class="s2">&quot;protocolfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/protocols&quot;</span><span class="p">,</span>
         <span class="s2">&quot;stimfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/stim&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;datafolder&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating default directories:&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -427,7 +426,7 @@
     <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">playlist</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.main">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Command line interface for DAS.&quot;&quot;&quot;</span>
     <span class="n">subcommands</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
@@ -435,9 +434,9 @@
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">subcommands</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;call&quot;</span><span class="p">:</span> <span class="n">client</span><span class="o">.</span><span class="n">client</span><span class="p">})</span>
+        <span class="n">subcommands</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;run&quot;</span><span class="p">:</span> <span class="n">client</span><span class="o">.</span><span class="n">client</span><span class="p">})</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">app</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
 
         <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">main</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>

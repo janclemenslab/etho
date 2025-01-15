@@ -252,12 +252,12 @@
         </div>
         <article role="main">
           <h1>Source code for etho.utils.shuffled_cycle</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">cycle</span>
-<span class="kn">import</span> <span class="nn">random</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cycle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 
 
-<div class="viewcode-block" id="shuffled_cycle"><a class="viewcode-back" href="../../../api/etho.utils.shuffled_cycle.html#etho.utils.shuffled_cycle.shuffled_cycle">[docs]</a><span class="k">class</span> <span class="nc">shuffled_cycle</span><span class="p">(</span><span class="n">cycle</span><span class="p">):</span>
+<div class="viewcode-block" id="shuffled_cycle"><a class="viewcode-back" href="../../../api/etho.utils.shuffled_cycle.html#etho.utils.shuffled_cycle.shuffled_cycle">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">shuffled_cycle</span><span class="p">(</span><span class="n">cycle</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Shuffled cycle.</span>
 
 <span class="sd">    cycle(&#39;ABCD&#39;)                  --&gt; ABCD ABCD ABCD ...</span>
@@ -265,7 +265,7 @@
 <span class="sd">    cycle(&#39;ABCD&#39;, shuffle=&#39;full&#39;)  --&gt; ACCBBDBDCABA ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">it</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;block&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">it</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;block&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;.</span>
 
 <span class="sd">        Arguments:</span>
@@ -280,7 +280,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_it</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
-    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return next item in iterator.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">)</span>  <span class="c1"># wrap index</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span> <span class="o">==</span> <span class="s2">&quot;block&quot;</span><span class="p">:</span>
@@ -293,7 +293,7 @@
         <span class="c1">#     idx = self._pos</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">cp</span> <span class="o">=</span> <span class="n">shuffled_cycle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span><span class="p">)</span>
         <span class="n">cp</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span>
         <span class="k">return</span> <span class="n">cp</span></div>

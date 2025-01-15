@@ -252,12 +252,12 @@
         </div>
         <article role="main">
           <h1>Source code for etho.services.dlp.dlp_make_warpfiles</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 
-<div class="viewcode-block" id="get_transformation_matrices"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_make_warpfiles.html#etho.services.dlp.dlp_make_warpfiles.get_transformation_matrices">[docs]</a><span class="k">def</span> <span class="nf">get_transformation_matrices</span><span class="p">(</span><span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span><span class="p">,</span> <span class="n">proj_rois</span><span class="p">):</span>
+<div class="viewcode-block" id="get_transformation_matrices"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_make_warpfiles.html#etho.services.dlp.dlp_make_warpfiles.get_transformation_matrices">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_transformation_matrices</span><span class="p">(</span><span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span><span class="p">,</span> <span class="n">proj_rois</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get transformation matrices from normalized projection coordinates</span>
 <span class="sd">    to normalized image coordinates</span>
@@ -299,7 +299,7 @@
     <span class="k">return</span> <span class="n">transformation_matrices</span></div>
 
 
-<div class="viewcode-block" id="create_warpfile"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_make_warpfiles.html#etho.services.dlp.dlp_make_warpfiles.create_warpfile">[docs]</a><span class="k">def</span> <span class="nf">create_warpfile</span><span class="p">(</span><span class="n">projection_height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">projection_width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">projector_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="create_warpfile"><a class="viewcode-back" href="../../../../api/etho.services.dlp.dlp_make_warpfiles.html#etho.services.dlp.dlp_make_warpfiles.create_warpfile">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">create_warpfile</span><span class="p">(</span><span class="n">projection_height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">projection_width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">projector_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to create and save a warp mesh file</span>
 

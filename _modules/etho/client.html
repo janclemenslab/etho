@@ -252,31 +252,31 @@
         </div>
         <article role="main">
           <h1>Source code for etho.client</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">cycle</span>
-<span class="kn">from</span> <span class="nn">rich.progress</span> <span class="kn">import</span> <span class="n">Progress</span>
-<span class="kn">import</span> <span class="nn">rich</span>
-<span class="kn">import</span> <span class="nn">threading</span>
-<span class="kn">import</span> <span class="nn">_thread</span> <span class="k">as</span> <span class="nn">thread</span>
-<span class="kn">import</span> <span class="nn">queue</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">import</span> <span class="nn">psutil</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cycle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.progress</span><span class="w"> </span><span class="kn">import</span> <span class="n">Progress</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rich</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_thread</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">thread</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">queue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
 
-<span class="kn">from</span> <span class="nn">.utils.tui</span> <span class="kn">import</span> <span class="n">rich_information</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.tui</span><span class="w"> </span><span class="kn">import</span> <span class="n">rich_information</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">config</span>
-<span class="kn">from</span> <span class="nn">.utils.config</span> <span class="kn">import</span> <span class="n">readconfig</span><span class="p">,</span> <span class="n">undefaultify</span>
-<span class="kn">from</span> <span class="nn">.utils.sound</span> <span class="kn">import</span> <span class="n">parse_table</span><span class="p">,</span> <span class="n">load_sounds</span><span class="p">,</span> <span class="n">build_playlist</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">readconfig</span><span class="p">,</span> <span class="n">undefaultify</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.sound</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_table</span><span class="p">,</span> <span class="n">load_sounds</span><span class="p">,</span> <span class="n">build_playlist</span>
 
-<span class="kn">from</span> <span class="nn">.services.ThuAZeroService</span> <span class="kn">import</span> <span class="n">THUA</span>
-<span class="kn">from</span> <span class="nn">.services.DAQZeroService</span> <span class="kn">import</span> <span class="n">DAQ</span>
-<span class="kn">from</span> <span class="nn">.services.GCMZeroService</span> <span class="kn">import</span> <span class="n">GCM</span>
-<span class="kn">from</span> <span class="nn">.services.NICounterZeroService</span> <span class="kn">import</span> <span class="n">NIC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.services.ThuAZeroService</span><span class="w"> </span><span class="kn">import</span> <span class="n">THUA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.services.DAQZeroService</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAQ</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.services.GCMZeroService</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCM</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.services.NICounterZeroService</span><span class="w"> </span><span class="kn">import</span> <span class="n">NIC</span>
 
 
-<span class="k">def</span> <span class="nf">timed</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">timed</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">quit_fun</span> <span class="o">=</span> <span class="n">thread</span><span class="o">.</span><span class="n">interrupt_main</span>  <span class="c1"># raises KeyboardInterrupt</span>
     <span class="n">timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">quit_fun</span><span class="p">)</span>
     <span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -289,7 +289,7 @@
     <span class="k">return</span> <span class="n">result</span>
 
 
-<span class="k">def</span> <span class="nf">kill_child_processes</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kill_child_processes</span><span class="p">():</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">()</span>
     <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">:</span>
@@ -302,11 +302,10 @@
         <span class="n">child</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>  <span class="c1"># unfriendly termination</span>
 
 
-<div class="viewcode-block" id="client"><a class="viewcode-back" href="../../api/etho.client.html#etho.client.client">[docs]</a><span class="k">def</span> <span class="nf">client</span><span class="p">(</span>
+<div class="viewcode-block" id="client"><a class="viewcode-back" href="../../api/etho.client.html#etho.client.client">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span>
     <span class="n">protocolfile</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">playlistfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
     <span class="n">save_prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">show_progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -318,13 +317,12 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Starts an experiment.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        host (str): _description_</span>
 <span class="sd">        protocolfile (str): _description_</span>
 <span class="sd">        playlistfile (Optional[str]): _description_.</span>
-<span class="sd">        save_prefix (Optional[str]): _description_.</span>
-<span class="sd">        show_progress (bool): _description_.</span>
-<span class="sd">        debug (bool): _description_.</span>
-<span class="sd">        preview (bool): _description_.</span>
+<span class="sd">        save_prefix (Optional[str]): Specify the stem of the filename for all saved data and logs. Will defaults to HOSTNAME-YYYYMMDD_hhmmss, where HOSTNAME is the computer name the service is run on (typically localhost).</span>
+<span class="sd">        show_progress (bool): Show a progress bar. Disable if performance is criticial.</span>
+<span class="sd">        debug (bool): More verbose logs.</span>
+<span class="sd">        preview (bool): Preview the camera (will disable saving and logging and only open a window with the camera view).</span>
 <span class="sd">        _stop_event (threading.Event, optional): Used to stop the task from an outside thread. Defaults to None.</span>
 <span class="sd">        _done_event (threading.Event, optional): Set to signal that the task is done/stopped to an outside thread. Defaults to None.</span>
 <span class="sd">        _queue (queue.Queue, optional): Signal the expected duration of the task to outside funs. Defaults to None.</span>
@@ -334,8 +332,7 @@
     <span class="n">prot</span> <span class="o">=</span> <span class="n">readconfig</span><span class="p">(</span><span class="n">protocolfile</span><span class="p">)</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">prot</span><span class="p">)</span>
     <span class="n">defaults</span> <span class="o">=</span> <span class="n">config</span>
-    <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">host</span>
-
+    <span class="n">defaults</span><span class="p">[</span><span class="s1">&#39;host&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span>
     <span class="k">if</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;python_exe&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;python_exe&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;python&quot;</span>
     <span class="k">if</span> <span class="n">defaults</span><span class="p">[</span><span class="s2">&quot;serializer&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -355,7 +352,6 @@
         <span class="c1"># update `this`` with service specific host params</span>
         <span class="k">if</span> <span class="s2">&quot;host&quot;</span> <span class="ow">in</span> <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;THUA&quot;</span><span class="p">]:</span>
             <span class="n">this</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="s2">&quot;THUA&quot;</span><span class="p">][</span><span class="s2">&quot;host&quot;</span><span class="p">])</span>
-
         <span class="n">thua</span> <span class="o">=</span> <span class="n">THUA</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
             <span class="n">this</span><span class="p">[</span><span class="s2">&quot;serializer&quot;</span><span class="p">],</span>
             <span class="n">this</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">],</span>
@@ -375,7 +371,6 @@
 
         <span class="k">if</span> <span class="s2">&quot;port&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prot</span><span class="p">[</span><span class="n">gcm_key</span><span class="p">]:</span>
             <span class="n">prot</span><span class="p">[</span><span class="n">gcm_key</span><span class="p">][</span><span class="s2">&quot;port&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GCM</span><span class="o">.</span><span class="n">SERVICE_PORT</span> <span class="o">+</span> <span class="n">gcm_cnt</span>
-
         <span class="n">gcm</span> <span class="o">=</span> <span class="n">GCM</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
             <span class="n">this</span><span class="p">[</span><span class="s2">&quot;serializer&quot;</span><span class="p">],</span>
             <span class="n">this</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">],</span>
@@ -562,7 +557,7 @@
         <span class="k">return</span> <span class="n">services</span></div>
 
 
-<div class="viewcode-block" id="cli_progress"><a class="viewcode-back" href="../../api/etho.client.html#etho.client.cli_progress">[docs]</a><span class="k">def</span> <span class="nf">cli_progress</span><span class="p">(</span>
+<div class="viewcode-block" id="cli_progress"><a class="viewcode-back" href="../../api/etho.client.html#etho.client.cli_progress">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">cli_progress</span><span class="p">(</span>
     <span class="n">services</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">save_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">stop_event</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

@@ -252,31 +252,31 @@
         </div>
         <article role="main">
           <h1>Source code for etho.services.camera.spinnaker_old</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseCam</span>
-<span class="kn">import</span> <span class="nn">cv2</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCam</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">PySpin</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">PySpin</span>
     <span class="n">pyspin_error</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">pyspin_error</span><span class="p">:</span>
     <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="Spinnaker_OLD"><a class="viewcode-back" href="../../../../api/etho.services.camera.spinnaker_old.html#etho.services.camera.spinnaker_old.Spinnaker_OLD">[docs]</a><span class="k">class</span> <span class="nc">Spinnaker_OLD</span><span class="p">(</span><span class="n">BaseCam</span><span class="p">):</span>
+<div class="viewcode-block" id="Spinnaker_OLD"><a class="viewcode-back" href="../../../../api/etho.services.camera.spinnaker_old.html#etho.services.camera.spinnaker_old.Spinnaker_OLD">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Spinnaker_OLD</span><span class="p">(</span><span class="n">BaseCam</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Supports older FLIR cameras (Flea3, Grasshopper) with only partial support for the Spinnaker SDK.&quot;&quot;&quot;</span>
     <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;SPO&#39;</span>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serialnumber</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serialnumber</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">pyspin_error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pyspin_error</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serialnumber</span> <span class="o">=</span> <span class="n">serialnumber</span>
 
-    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_system</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">System_GetInstance</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cam_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cam_system</span><span class="o">.</span><span class="n">GetCameras</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cam_list</span><span class="o">.</span><span class="n">GetBySerial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialnumber</span><span class="p">)</span>
@@ -300,7 +300,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">processor</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">ImageProcessor</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">SetColorProcessing</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Spinnaker_OLD.get"><a class="viewcode-back" href="../../../../api/etho.services.camera.spinnaker_old.html#etho.services.camera.spinnaker_old.Spinnaker_OLD.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Spinnaker_OLD.get"><a class="viewcode-back" href="../../../../api/etho.services.camera.spinnaker_old.html#etho.services.camera.spinnaker_old.Spinnaker_OLD.get">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="c1"># get image</span>
         <span class="n">im</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GetNextImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
@@ -319,11 +319,11 @@
             <span class="k">return</span> <span class="n">BGR</span><span class="p">,</span> <span class="n">image_timestamp</span><span class="p">,</span> <span class="n">system_stimestamp</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">roi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">roi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">OffsetX</span><span class="o">.</span><span class="n">GetValue</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">OffsetY</span><span class="o">.</span><span class="n">GetValue</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Width</span><span class="o">.</span><span class="n">GetValue</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Height</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
 
     <span class="nd">@roi</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">roi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0_y0_x_y</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">roi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0_y0_x_y</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x0_y0_x_y</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -335,11 +335,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_min_max_inc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">OffsetY</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">y0</span><span class="p">))</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">framerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">framerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">AcquisitionFrameRate</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
 
     <span class="nd">@framerate</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">framerate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">framerate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="n">nodemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GetNodeMap</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TriggerMode</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">TriggerMode_Off</span><span class="p">)</span>
         <span class="n">node</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CEnumerationPtr</span><span class="p">(</span><span class="n">nodemap</span><span class="o">.</span><span class="n">GetNode</span><span class="p">(</span><span class="s1">&#39;AcquisitionFrameRateAuto&#39;</span><span class="p">))</span>
@@ -348,29 +348,29 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">AcquisitionFrameRate</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Gamma</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
 
     <span class="nd">@gamma</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="c1"># self.c.GammaEnabled.SetValue(bool(True))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Gamma</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">brightness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">brightness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">BlackLevel</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
 
     <span class="nd">@brightness</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">brightness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">brightness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
         <span class="c1"># self.c.BlackLevelSelector.SetValue(PySpin.BlackLevelSelector_All)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">BlackLevel</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ExposureTime</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
 
     <span class="nd">@exposure</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;AUTO&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ExposureAuto</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">ExposureAuto_Continuous</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -379,18 +379,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ExposureTime</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Gain</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
 
     <span class="nd">@gain</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;AUTO&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GainAuto</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">GainAuto_Continuous</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GainAuto</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">GainAuto_Off</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Gain</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">optimize_auto_exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">optimize_auto_exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s1">&#39;AutoExposureControlLoopDamping&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s1">&#39;AutoExposureLightingMode_Val&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Frontlight</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s1">&#39;AutoExposureExposureTimeLowerLimit&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
@@ -398,18 +398,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s1">&#39;AutoExposureEVCompensation&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">external_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">external_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TriggerMode</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
 
     <span class="nd">@external_trigger</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">external_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">external_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TriggerMode</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">TriggerMode_Off</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TriggerSource</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">TriggerSource_Line3</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TriggerMode</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">TriggerMode_On</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_generate_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_rw_modes</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">PySpin</span><span class="o">.</span><span class="n">RO</span><span class="p">:</span> <span class="s2">&quot;read only&quot;</span><span class="p">,</span>
@@ -449,7 +449,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attr_types</span><span class="p">[</span><span class="n">pit</span><span class="p">](</span><span class="n">node</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span><span class="p">:</span>
 
             <span class="n">prop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
@@ -467,7 +467,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span><span class="p">:</span>
 
             <span class="n">prop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
@@ -487,7 +487,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_min_max_inc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_min_max_inc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">,</span> <span class="n">inc</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">GetMin</span><span class="p">(),</span> <span class="n">prop</span><span class="o">.</span><span class="n">GetMax</span><span class="p">(),</span> <span class="n">prop</span><span class="o">.</span><span class="n">GetInc</span><span class="p">()</span>
 
         <span class="n">prop_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">prop</span><span class="o">.</span><span class="n">GetValue</span><span class="p">())</span>
@@ -500,7 +500,7 @@
                 <span class="n">value</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">_estimate_timestamp_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp_offset_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_estimate_timestamp_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp_offset_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets offset between system time and timestamps.&quot;&quot;&quot;</span>
         <span class="c1"># This method is required because the timestamp stored in the camera is relative to when it was powered on, so an</span>
         <span class="c1"># offset needs to be applied to get it into epoch time; from tests I’ve done, this appears to be accurate to ~1e-3</span>
@@ -516,13 +516,13 @@
         <span class="c1"># Return the median value</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">timestamp_offsets</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">enable_gpio_strobe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">enable_gpio_strobe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>  <span class="c1"># self._set_gpio_strobe(enable=True)</span>
 
-    <span class="k">def</span> <span class="nf">disable_gpio_strobe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">disable_gpio_strobe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>  <span class="c1"># self._set_gpio_strobe(enable=False)</span>
 
-    <span class="k">def</span> <span class="nf">set_node_and_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">entry_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_node_and_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">entry_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">nodemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GetNodeMap</span><span class="p">()</span>
 
         <span class="n">node</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CEnumerationPtr</span><span class="p">(</span><span class="n">nodemap</span><span class="o">.</span><span class="n">GetNode</span><span class="p">(</span><span class="n">node_name</span><span class="p">))</span>
@@ -548,22 +548,22 @@
     <span class="c1">#     self.set_node_and_entry(&quot;LineMode&quot;, line_mode)</span>
     <span class="c1">#     self.set_node_and_entry(&quot;LineSource&quot;, &quot;ExposureActive&quot;)</span>
 
-<div class="viewcode-block" id="Spinnaker_OLD.reset"><a class="viewcode-back" href="../../../../api/etho.services.camera.spinnaker_old.html#etho.services.camera.spinnaker_old.Spinnaker_OLD.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sleep</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">):</span>
+<div class="viewcode-block" id="Spinnaker_OLD.reset"><a class="viewcode-back" href="../../../../api/etho.services.camera.spinnaker_old.html#etho.services.camera.spinnaker_old.Spinnaker_OLD.reset">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sleep</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">):</span>
         <span class="n">device_reset</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CCommandPtr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GetNodeMap</span><span class="p">()</span><span class="o">.</span><span class="n">GetNode</span><span class="p">(</span><span class="s2">&quot;DeviceReset&quot;</span><span class="p">))</span>
         <span class="n">device_reset</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">BeginAcquisition</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">EndAcquisition</span><span class="p">()</span>  <span class="c1"># not sure this works if BeginAcquistion has not been called</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>  <span class="c1"># should check if cam started</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">DeInit</span><span class="p">()</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span>

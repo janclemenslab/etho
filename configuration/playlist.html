@@ -379,7 +379,7 @@
 <section id="parsing">
 <h2>Parsing<a class="headerlink" href="#parsing" title="Permalink to this headline">#</a></h2>
 <p>Load the playlist like so:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ethomaster.utils.sound</span> <span class="kn">import</span> <span class="n">parse_table</span><span class="p">,</span> <span class="n">normalize_table</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ethomaster.utils.sound</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_table</span><span class="p">,</span> <span class="n">normalize_table</span>
 <span class="c1"># returns a raw pandas dataframe</span>
 <span class="n">raw_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">playlistfilename</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="c1"># casts all cells in the table to lists of the correct type and</span>
@@ -390,7 +390,7 @@
 </div>
 <p>Or simply <code class="docutils literal notranslate"><span class="pre">playlist</span> <span class="pre">=</span> <span class="pre">parse_table(playlistfilename)</span></code>.</p>
 <p>Sounds can be generated from the playlist via:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ethomaster.utils.sound</span> <span class="kn">import</span> <span class="n">load_sounds</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ethomaster.utils.sound</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_sounds</span>
 <span class="n">sounds</span> <span class="o">=</span> <span class="n">load_sounds</span><span class="p">(</span><span class="n">playlist</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">attenuation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stimfolder</span><span class="o">=</span><span class="s1">&#39;~/stimuli&#39;</span><span class="p">):</span>
 </pre></div>
 </div>

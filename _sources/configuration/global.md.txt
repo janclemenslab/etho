@@ -1,12 +1,11 @@
 # Global configuration
-Global config via import `from ethomaster import config` via [pyyaml](https://pyyaml.org), which reads the `ethoconfig.yaml` file in the `~/ethoconfig` directory.
+Global config via import `from . import config` via [pyyaml](https://pyyaml.org), which reads the `ethoconfig.yaml` file in the `~/ethoconfig` directory.
 ```yaml
-  user: USER # default user for starting remote services via ssh
-  name: localhost # name/IP of head
-  savefolder: C:/Users/USER/data
+  python_exe: C:/Users/USER/miniconda3/python.exe # point to the python executable - used when starting the services. Can point to a python exe in a different environment. This global value can be overriden for each service in the protocol. That way, different services can run in different environments during the same experiment.
   playlistfolder: C:/Users/USER/ethoconfig/playlists
   protocolfolder: C:/Users/USER/ethoconfig/protocols
-  stimfolder: C:/Users/USER/ethoconfig/stim
-  calibrationfolder: C:/Users/USER/ethoconfig/calibrations
-  python_exe: C:/Users/USER/miniconda3/python.exe # point to the python executable - used when starting the services. Can point to a python exe in an environment.
+  stimfolder: C:/Users/USER/ethoconfig/stim  # folder for reading stimulus wav files specified in the playlists
+  calibrationfolder: C:/Users/USER/ethoconfig/calibrations  # for saving calibration files (audio, opto, piezo) [FUTURE]
+  savefolder: C:/Users/USER/data  # this is the parent directory for saving all videos, audios, logs etc.
+  user: USER # default user for starting remote services via ssh [OPTIONAL]
 ```

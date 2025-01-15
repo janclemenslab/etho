@@ -256,19 +256,21 @@
           <section id="experimental-protocols">
 <h1>Experimental protocols<a class="headerlink" href="#experimental-protocols" title="Permalink to this headline">#</a></h1>
 <p>For experiment-specific settings.</p>
-<section id="make">
-<h2>Make<a class="headerlink" href="#make" title="Permalink to this headline">#</a></h2>
+<section id="general-fields">
+<h2>General fields<a class="headerlink" href="#general-fields" title="Permalink to this headline">#</a></h2>
 <p><span class="xref myst">yaml</span> format. The following fields are supported:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">USER</span><span class="w">  </span><span class="c1"># OPTIONAL - default user set in ethoconfig.yml</span>
-<span class="nt">savefolder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/Users/USER/data</span><span class="w"> </span><span class="c1"># OPTIONAL - default set in ethoconfig.yml - this is where the recordings will be saved</span>
-<span class="nt">maxduration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90</span><span class="w"> </span><span class="c1"># seconds</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">maxduration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90</span><span class="w"> </span><span class="c1"># seconds</span>
 <span class="nt">use_services</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">GCM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">DAQ</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names</span>
-<span class="nt">serializer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pickle</span><span class="w">  </span><span class="c1"># save default</span>
+<span class="nt">serializer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pickle</span><span class="w">  </span><span class="c1"># OPTIONAL save default</span>
+<span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">USER</span><span class="w">  </span><span class="c1"># OPTIONAL - only required if you want to run services on remote computers</span>
+<span class="nt">savefolder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/Users/USER/data</span><span class="w"> </span><span class="c1"># OPTIONAL - default set in ethoconfig.yml - this is where the recordings will be saved</span>
 <span class="nt">python_exe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/miniconda/envs/etho/python.exe</span><span class="w">   </span><span class="c1"># OPTIONAL - default set in ethoconfig.yml - run this prot in specific env</span>
 </pre></div>
 </div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># SERVICE specific parameters</span>
-<span class="nt">GCM</span><span class="p">:</span><span class="w">  </span><span class="c1"># generic camera interface with different backends   cam_type: Ximea  # or Spinnaker or FlyCapture2</span>
+</section>
+<section id="service-specific-parameters">
+<h2>Service specific parameters<a class="headerlink" href="#service-specific-parameters" title="Permalink to this headline">#</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">GCM</span><span class="p">:</span><span class="w">  </span><span class="c1"># generic camera interface with different backends   cam_type: Ximea  # or Spinnaker or FlyCapture2</span>
 <span class="w">  </span><span class="nt">frame_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100.0</span><span class="w">  </span><span class="c1"># frames per second</span>
 <span class="w">  </span><span class="nt">frame_width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">640</span><span class="w">  </span><span class="c1"># pixels</span>
 <span class="w">  </span><span class="nt">frame_height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w">  </span><span class="c1"># pixels</span>
@@ -283,7 +285,7 @@
 <span class="w">  </span><span class="nt">binning</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">  </span><span class="c1"># set horz and vert binning - typically, 1, 2, 4 is available</span>
 <span class="w">  </span><span class="nt">optimize_auto_exposure</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w">  </span><span class="c1"># defaults to False</span>
 <span class="w">  </span><span class="nt">external_trigger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"> </span><span class="c1">#</span>
-<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w">  </span><span class="c1"># individual services can run on specific hosts</span>
+<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w">  </span><span class="c1"># OPTIONAL individual services can run on specific hosts</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.1.42</span>
 <span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ncb</span>
 <span class="w">    </span><span class="nt">python_exe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/miniconda/envs/etho/python.exe</span>
@@ -303,9 +305,10 @@
 <span class="w">  </span><span class="nt">clock_source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OnboardClock</span>
 <span class="w">  </span><span class="nt">samplingrate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span><span class="w"> </span><span class="c1"># Hz</span>
 <span class="w">  </span><span class="nt">shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"> </span><span class="c1"># block-randomize order of stimuli for playback</span>
-<span class="w">  </span><span class="nt">ledamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+<span class="w">  </span><span class="nt">ledamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span><span class="w">  </span><span class="c1"># sets the amplitude of the MIRROR_LED - see playlist docs for details.</span>
 <span class="w">  </span><span class="nt">analog_chans_in</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ai0</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">analog_chans_out</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ao0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ao1</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">python_exe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/miniconda/envs/etho/python.exe</span><span class="w">  </span><span class="c1"># OPTIONAL - run this service in env.</span>
 <span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">save_h5</span><span class="p">:</span><span class="w">   </span><span class="c1"># save data as hdfs (has no params)</span>
 <span class="w">    </span><span class="nt">plot</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot traces using matplotlib OR</span>
@@ -371,12 +374,14 @@
 </pre></div>
 </div>
 </section>
-<section id="parse">
-<h2>Parse<a class="headerlink" href="#parse" title="Permalink to this headline">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ethomaster.utils.config</span> <span class="kn">import</span> <span class="n">readconfig</span>
-<span class="n">prot</span> <span class="o">=</span> <span class="n">readconfig</span><span class="p">(</span><span class="n">protocolfile</span><span class="p">)</span>
-</pre></div>
-</div>
+<section id="callbacks">
+<h2>Callbacks<a class="headerlink" href="#callbacks" title="Permalink to this headline">#</a></h2>
+<section id="time-series-data">
+<h3>Time series data<a class="headerlink" href="#time-series-data" title="Permalink to this headline">#</a></h3>
+</section>
+<section id="image-data">
+<h3>Image data<a class="headerlink" href="#image-data" title="Permalink to this headline">#</a></h3>
+</section>
 </section>
 </section>
 
@@ -436,8 +441,13 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Experimental protocols</a><ul>
-<li><a class="reference internal" href="#make">Make</a></li>
-<li><a class="reference internal" href="#parse">Parse</a></li>
+<li><a class="reference internal" href="#general-fields">General fields</a></li>
+<li><a class="reference internal" href="#service-specific-parameters">Service specific parameters</a></li>
+<li><a class="reference internal" href="#callbacks">Callbacks</a><ul>
+<li><a class="reference internal" href="#time-series-data">Time series data</a></li>
+<li><a class="reference internal" href="#image-data">Image data</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

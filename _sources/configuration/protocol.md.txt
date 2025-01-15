@@ -1,19 +1,19 @@
 # Experimental protocols
 For experiment-specific settings.
 
-### Make
+## General fields
 [yaml](pyyaml.org) format. The following fields are supported:
 ```yaml
-user: USER  # OPTIONAL - default user set in ethoconfig.yml
-savefolder: C:/Users/USER/data # OPTIONAL - default set in ethoconfig.yml - this is where the recordings will be saved
 maxduration: 90 # seconds
 use_services: [GCM, DAQ]  # list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names
-serializer: pickle  # save default
+serializer: pickle  # OPTIONAL save default
+user: USER  # OPTIONAL - only required if you want to run services on remote computers
+savefolder: C:/Users/USER/data # OPTIONAL - default set in ethoconfig.yml - this is where the recordings will be saved
 python_exe: C:/miniconda/envs/etho/python.exe   # OPTIONAL - default set in ethoconfig.yml - run this prot in specific env
 ```
 
+## Service specific parameters
 ```yaml
-# SERVICE specific parameters
 GCM:  # generic camera interface with different backends   cam_type: Ximea  # or Spinnaker or FlyCapture2
   frame_rate: 100.0  # frames per second
   frame_width: 640  # pixels
@@ -29,7 +29,7 @@ GCM:  # generic camera interface with different backends   cam_type: Ximea  # or
   binning: 1  # set horz and vert binning - typically, 1, 2, 4 is available
   optimize_auto_exposure: True  # defaults to False
   external_trigger: False #
-  host:  # individual services can run on specific hosts
+  host:  # OPTIONAL individual services can run on specific hosts
     name: 192.168.1.42
     user: ncb
     python_exe: C:/miniconda/envs/etho/python.exe
@@ -49,9 +49,10 @@ DAQ:
   clock_source: OnboardClock
   samplingrate: 5000 # Hz
   shuffle: True # block-randomize order of stimuli for playback
-  ledamp: 1.0
+  ledamp: 1.0  # sets the amplitude of the MIRROR_LED - see playlist docs for details.
   analog_chans_in: [ai0]
   analog_chans_out: [ao0, ao1]
+  python_exe: C:/miniconda/envs/etho/python.exe  # OPTIONAL - run this service in env.
   callbacks:
     save_h5:   # save data as hdfs (has no params)
     plot:  # plot traces using matplotlib OR
@@ -116,8 +117,9 @@ DLP:  # DLP projector
       led_duration: 180
 ```
 
-### Parse
-```python
-from ethomaster.utils.config import readconfig
-prot = readconfig(protocolfile)
-```
+## Callbacks
+### Time series data
+
+
+### Image data
+
