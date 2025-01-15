@@ -270,7 +270,29 @@
 </section>
 <section id="service-specific-parameters">
 <h2>Service specific parameters<a class="headerlink" href="#service-specific-parameters" title="Permalink to this headline">#</a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">GCM</span><span class="p">:</span><span class="w">  </span><span class="c1"># generic camera interface with different backends   cam_type: Ximea  # or Spinnaker or FlyCapture2</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">GCM</span><span class="p">:</span><span class="w">  </span><span class="c1"># Minimal example</span>
+<span class="w">  </span><span class="nt">cam_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Spinnaker</span><span class="w">  </span><span class="c1"># for FLIR cameras, or: Basler, Ximea, Hamamatsu</span>
+<span class="w">  </span><span class="nt">cam_serialnumber</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30959651</span>
+<span class="w">  </span><span class="nt">frame_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100.0</span><span class="w">  </span><span class="c1"># frames per second</span>
+<span class="w">  </span><span class="nt">frame_width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">640</span><span class="w">  </span><span class="c1"># pixels</span>
+<span class="w">  </span><span class="nt">frame_height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w">  </span><span class="c1"># pixels</span>
+<span class="w">  </span><span class="nt">shutter_speed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5_000</span><span class="w"> </span><span class="c1"># us=5ms</span>
+<span class="w">  </span><span class="nt">frame_offx</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">78</span><span class="w">  </span><span class="c1"># pixels</span>
+<span class="w">  </span><span class="nt">frame_offy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w">  </span><span class="c1"># pixels</span>
+<span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">save_avi</span><span class="p">:</span><span class="w">  </span><span class="c1"># save frames as avi using opencv VideoWriter</span>
+<span class="w">    </span><span class="nt">save_timestamps</span><span class="p">:</span><span class="w">  </span><span class="c1"># save timestamp for each frame to h5 file</span>
+
+<span class="nt">DAQ</span><span class="p">:</span><span class="w">  </span><span class="c1"># Minimal example</span>
+<span class="w">  </span><span class="nt">samplingrate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span><span class="w"> </span><span class="c1"># Hz</span>
+<span class="w">  </span><span class="nt">shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"> </span><span class="c1"># block-randomize order of stimuli for playback</span>
+<span class="w">  </span><span class="nt">analog_chans_in</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ai0</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">analog_chans_out</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ao0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ao1</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">save_h5</span><span class="p">:</span><span class="w">   </span><span class="c1"># save data and timestamps as hdfs</span>
+
+
+<span class="nt">GCM</span><span class="p">:</span><span class="w">  </span><span class="c1"># generic camera interface with different backends   cam_type: Ximea  # or Spinnaker (for FLIR cameras) or Basler or ximea or hamamatsu</span>
 <span class="w">  </span><span class="nt">frame_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100.0</span><span class="w">  </span><span class="c1"># frames per second</span>
 <span class="w">  </span><span class="nt">frame_width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">640</span><span class="w">  </span><span class="c1"># pixels</span>
 <span class="w">  </span><span class="nt">frame_height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w">  </span><span class="c1"># pixels</span>
@@ -378,9 +400,11 @@
 <h2>Callbacks<a class="headerlink" href="#callbacks" title="Permalink to this headline">#</a></h2>
 <section id="time-series-data">
 <h3>Time series data<a class="headerlink" href="#time-series-data" title="Permalink to this headline">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">save_h5</span></code>, <code class="docutils literal notranslate"><span class="pre">plot_fast</span></code></p>
 </section>
 <section id="image-data">
 <h3>Image data<a class="headerlink" href="#image-data" title="Permalink to this headline">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">disp</span></code>, <code class="docutils literal notranslate"><span class="pre">disp_fast</span></code>, <code class="docutils literal notranslate"><span class="pre">save_timestamps</span></code>, <code class="docutils literal notranslate"><span class="pre">save_avi</span></code></p>
 </section>
 </section>
 </section>

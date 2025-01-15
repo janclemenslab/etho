@@ -14,7 +14,29 @@ python_exe: C:/miniconda/envs/etho/python.exe   # OPTIONAL - default set in etho
 
 ## Service specific parameters
 ```yaml
-GCM:  # generic camera interface with different backends   cam_type: Ximea  # or Spinnaker or FlyCapture2
+GCM:  # Minimal example
+  cam_type: Spinnaker  # for FLIR cameras, or: Basler, Ximea, Hamamatsu
+  cam_serialnumber: 30959651
+  frame_rate: 100.0  # frames per second
+  frame_width: 640  # pixels
+  frame_height: 200  # pixels
+  shutter_speed: 5_000 # us=5ms
+  frame_offx: 78  # pixels
+  frame_offy: 10  # pixels
+  callbacks:
+    save_avi:  # save frames as avi using opencv VideoWriter
+    save_timestamps:  # save timestamp for each frame to h5 file
+
+DAQ:  # Minimal example
+  samplingrate: 10000 # Hz
+  shuffle: True # block-randomize order of stimuli for playback
+  analog_chans_in: [ai0]
+  analog_chans_out: [ao0, ao1]
+  callbacks:
+    save_h5:   # save data and timestamps as hdfs
+
+
+GCM:  # generic camera interface with different backends   cam_type: Ximea  # or Spinnaker (for FLIR cameras) or Basler or ximea or hamamatsu
   frame_rate: 100.0  # frames per second
   frame_width: 640  # pixels
   frame_height: 200  # pixels
@@ -119,7 +141,7 @@ DLP:  # DLP projector
 
 ## Callbacks
 ### Time series data
-
+`save_h5`, `plot_fast`
 
 ### Image data
-
+`disp`, `disp_fast`, `save_timestamps`, `save_avi`
