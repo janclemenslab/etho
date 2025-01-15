@@ -199,11 +199,11 @@ class SaveHDF(BaseCallback):
 
     def _loop(self, data):
         data_to_save, systemtime = data  # unpack
-
+        sn = np.array([systemtime])[:, np.newaxis]
         if self.vanilla:
-            self._init_data(data_to_save, np.array([systemtime])[:, np.newaxis])
+            self._init_data(data_to_save, sn)
             self.vanilla = False
-        self._append_data(data_to_save, np.array([systemtime])[:, np.newaxis])
+        self._append_data(data_to_save, sn)
 
     def _cleanup(self):
         logger.warning("cleaning")
@@ -263,10 +263,11 @@ class SaveZarr(BaseCallback):
 
     def _loop(self, data):
         data_to_save, systemtime = data  # unpack
+        sn = np.array([systemtime])[:, np.newaxis]
         if self.vanilla:
-            self._init_data(data_to_save, np.array([systemtime])[:, np.newaxis])
+            self._init_data(data_to_save, sn)
             self.vanilla = False
-        self._append_data(data_to_save, np.array([systemtime])[:, np.newaxis])
+        self._append_data(data_to_save, sn)
 
     def _cleanup(self):
         logger.warning("cleaning")

@@ -11,7 +11,7 @@ import sys
 logger = logging.getLogger(__name__)
 
 try:
-    from .call import client
+    from . import client
 except Exception as e:
     logging.error(e)
     client = None
@@ -89,8 +89,9 @@ def init():
     home = Path.home()
 
     cfg = {
-        "GENERAL": {"user": "ncb", "folder": str(home), "save_directory": str(home / "data"), "python_exe": sys.executable},
-        "HEAD": {},
+        "user": "ncb",
+        "savefolder": str(home / "data"),
+        "python_exe": sys.executable,
         "ATTENUATION": {
             -1: 1,
             0: 1,
@@ -117,22 +118,19 @@ def init():
         "playlistfolder": "ethoconfig/playlists",
         "protocolfolder": "ethoconfig/protocols",
         "stimfolder": "ethoconfig/stim",
-        "datafolder": "data",
     }
     logging.info("Creating default directories:")
     for name, path in paths.items():
         logging.info("   " + path)
         p = home / Path(path)
         p.mkdir(parents=True, exist_ok=True)
-        cfg["HEAD"][name] = str(p)
+        cfg[name] = str(p)
 
     rich.print(cfg)
 
     path_cfg = home / "ethoconfig" / "ethoconfig.yml"
     if path_cfg.exists():
-        logging.info(
-            f"The configuration file {str(path_cfg)} exists. Will not overwrite. Delete the file or update it manually."
-        )
+        logging.info(f"The configuration file {str(path_cfg)} exists. Will not overwrite. Delete the file or update it manually.")
     else:
         logging.info(f"Writing configuration to {str(path_cfg)}.")
         with open(path_cfg, mode="w") as f:
@@ -141,7 +139,8 @@ def init():
     logging.info("Generating test files:")
     # generate test protocol
     protocol = {
-        "NODE": {"maxduration": 30, "use_services": ["GCM"]},
+        "maxduration": 30,
+        "use_services": ["GCM"],
         "GCM": {
             "frame_rate": 30,
             "frame_width": 320,
@@ -181,10 +180,9 @@ def main():
     }
 
     if client is not None:
-        subcommands.update({"call": client.client})
-
+        subcommands.update({"run": client.client})
     try:
-        from .gui import app
+        from . import app
 
         subcommands["gui"] = app.main
     except (ImportError, ModuleNotFoundError):

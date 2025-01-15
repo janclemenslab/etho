@@ -9,19 +9,17 @@ import _thread as thread
 import queue
 from typing import Optional, Union, Dict, Any
 import psutil
-import signal
-import os
 
-from ..utils.tui import rich_information
+from .utils.tui import rich_information
 
-from .. import config
-from ..utils.config import readconfig, undefaultify
-from ..utils.sound import parse_table, load_sounds, build_playlist
+from . import config
+from .utils.config import readconfig, undefaultify
+from .utils.sound import parse_table, load_sounds, build_playlist
 
-from ..services.ThuAZeroService import THUA
-from ..services.DAQZeroService import DAQ
-from ..services.GCMZeroService import GCM
-from ..services.NICounterZeroService import NIC
+from .services.ThuAZeroService import THUA
+from .services.DAQZeroService import DAQ
+from .services.GCMZeroService import GCM
+from .services.NICounterZeroService import NIC
 
 
 def timed(fn, s, *args, **kwargs):
@@ -54,7 +52,6 @@ def client(
     protocolfile: str,
     playlistfile: Optional[str] = None,
     *,
-    host: str = "localhost",
     save_prefix: Optional[str] = None,
     show_progress: bool = True,
     debug: bool = False,
@@ -66,13 +63,12 @@ def client(
     """Starts an experiment.
 
     Args:
-        host (str): _description_
         protocolfile (str): _description_
         playlistfile (Optional[str]): _description_.
-        save_prefix (Optional[str]): _description_.
-        show_progress (bool): _description_.
-        debug (bool): _description_.
-        preview (bool): _description_.
+        save_prefix (Optional[str]): Specify the stem of the filename for all saved data and logs. Will defaults to HOSTNAME-YYYYMMDD_hhmmss, where HOSTNAME is the computer name the service is run on (typically localhost).
+        show_progress (bool): Show a progress bar. Disable if performance is criticial.
+        debug (bool): More verbose logs.
+        preview (bool): Preview the camera (will disable saving and logging and only open a window with the camera view).
         _stop_event (threading.Event, optional): Used to stop the task from an outside thread. Defaults to None.
         _done_event (threading.Event, optional): Set to signal that the task is done/stopped to an outside thread. Defaults to None.
         _queue (queue.Queue, optional): Signal the expected duration of the task to outside funs. Defaults to None.
@@ -81,15 +77,12 @@ def client(
     # load config/protocols
     prot = readconfig(protocolfile)
     logging.debug(prot)
-
-    defaults = config["GENERAL"]
-    defaults.update(prot["NODE"])
-    defaults["host"] = host
-
-    if defaults['python_exe'] is None:
-        defaults['python_exe'] = 'python'
-    if defaults['serializer'] is None:
-        defaults['serializer'] = 'pickle'
+    defaults = config
+    defaults['host'] = 'localhost'
+    if defaults["python_exe"] is None:
+        defaults["python_exe"] = "python"
+    if defaults["serializer"] is None:
+        defaults["serializer"] = "pickle"
 
     rich.print(defaults)
     # unique file name for video and node-local logs
@@ -100,7 +93,7 @@ def client(
     new_console = debug
 
     services = {}
-    if "THUA" in prot["NODE"]["use_services"] and not preview:
+    if "THUA" in prot["use_services"] and not preview:
         this = defaults.copy()
         # update `this`` with service specific host params
         if "host" in prot["THUA"]:
@@ -109,35 +102,25 @@ def client(
             this["serializer"],
             this["user"],
             this["host"],
-            this["working_directory"],
             this["python_exe"],
         )
-        thua.setup(
-            prot["THUA"]["port"], prot["THUA"]["interval"], this["maxduration"] + 10
-        )
-        thua.init_local_logger(
-            "{0}/{1}/{1}_thu.log".format(this["save_directory"], save_prefix)
-        )
+        thua.setup(prot["THUA"]["port"], prot["THUA"]["interval"], prot["maxduration"] + 10)
+        thua.init_local_logger("{0}/{1}/{1}_thu.log".format(this["savefolder"], save_prefix))
         services["THUA"] = thua
 
-    gcm_keys = [key for key in prot["NODE"]["use_services"] if "GCM" in key]
+    gcm_keys = [key for key in prot["use_services"] if "GCM" in key]
     for gcm_cnt, gcm_key in enumerate(gcm_keys):
-        # if gcm_key in prot["NODE"]["use_services"] and gcm_key in prot:
+        # if gcm_key in prot["use_services"] and gcm_key in prot:
         this = defaults.copy()
-        # update `this` with service specific host params
-        host_is_remote = False
-        if "host" in prot[gcm_key]:
-            this.update(prot[gcm_key]["host"])
-            host_is_remote = True
+        this.update(prot[gcm_key])
+        host_is_remote = "host" in prot[gcm_key]
 
         if "port" not in prot[gcm_key]:
             prot[gcm_key]["port"] = GCM.SERVICE_PORT + gcm_cnt
-
         gcm = GCM.make(
             this["serializer"],
             this["user"],
             this["host"],
-            this["working_directory"],
             this["python_exe"],
             host_is_remote=host_is_remote,
             new_console=new_console,
@@ -146,7 +129,7 @@ def client(
 
         cam_params = undefaultify(prot[gcm_key])
         if not preview:
-            maxduration = this["maxduration"] + 10
+            maxduration = prot["maxduration"] + 10
         else:
             maxduration = 1_000_000
 
@@ -155,25 +138,20 @@ def client(
 
         save_suffix = f"_{gcm_cnt+1}" if gcm_cnt > 0 else ""
         gcm.setup(
-            f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}",
+            f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}",
             maxduration,
             cam_params,
         )
 
         if not preview:
-            gcm.init_local_logger(
-                f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log"
-            )
+            gcm.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log")
         services[gcm_key] = gcm
 
-    daq_keys = [key for key in prot["NODE"]["use_services"] if "DAQ" in key]
+    daq_keys = [key for key in prot["use_services"] if "DAQ" in key]
     daq_keys = [] if preview else daq_keys
     for daq_cnt, daq_key in enumerate(daq_keys):
-        # if "DAQ2" in prot["NODE"]["use_services"]:
         this = defaults.copy()
-        # update `this`` with service specific host params
-        # if "GCM" in prot and "host" in prot["GCM"]:
-        #     this.update(prot["GCM"]["host"])
+        this.update(prot[daq_key])
 
         if "device" not in prot[daq_key]:
             prot[daq_key]["device"] = "Dev1"
@@ -195,17 +173,15 @@ def client(
             fs,
             attenuation=attenuation,
             LEDamp=prot[daq_key]["ledamp"],
-            stimfolder=config["HEAD"]["stimfolder"],
+            stimfolder=config["stimfolder"],
         )
         sounds = [sound.astype(np.float64) for sound in sounds]
 
         # Generate stimulus sequence (shuffle, loop playlist)
-        playlist_items, totallen = build_playlist(
-            sounds, this["maxduration"], fs, shuffle=prot[daq_key]["shuffle"]
-        )
-        if this["maxduration"] == -1:
+        playlist_items, totallen = build_playlist(sounds, prot["maxduration"], fs, shuffle=prot[daq_key]["shuffle"])
+        if prot["maxduration"] == -1:
             logging.info(f"Setting maxduration from playlist to {totallen}.")
-            this["maxduration"] = totallen
+            prot["maxduration"] = totallen
             playlist_items = cycle(playlist_items)  # iter(playlist_items)
         else:
             playlist_items = cycle(playlist_items)
@@ -214,12 +190,8 @@ def client(
         # TODO: catch errors if channel numbers are inconsistent - sounds[ii].shape[-1] should be nb_analog+nb_digital
         if prot[daq_key]["digital_chans_out"] is not None:
             nb_digital_chans_out = len(prot[daq_key]["digital_chans_out"])
-            digital_data = [
-                snd[:, -nb_digital_chans_out:].astype(np.uint8) for snd in sounds
-            ]
-            analog_data = [
-                snd[:, :-nb_digital_chans_out] for snd in sounds
-            ]  # remove digital traces from stimset
+            digital_data = [snd[:, -nb_digital_chans_out:].astype(np.uint8) for snd in sounds]
+            analog_data = [snd[:, :-nb_digital_chans_out] for snd in sounds]  # remove digital traces from stimset
         else:
             digital_data = None
             analog_data = sounds
@@ -228,36 +200,42 @@ def client(
             this["serializer"],
             this["user"],
             this["host"],
-            this["working_directory"],
             this["python_exe"],
             new_console=new_console,
             port=prot[daq_key]["port"],
         )
         save_suffix = f"_{daq_cnt+1}" if daq_cnt > 0 else ""
         daq.setup(
-            f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}",
+            f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}",
             playlist_items,
             playlist,
-            this["maxduration"],
+            prot["maxduration"],
             fs,
             dev_name=prot[daq_key]["device"],
             clock_source=prot[daq_key]["clock_source"],
             nb_inputsamples_per_cycle=prot[daq_key]["nb_inputsamples_per_cycle"],
-            analog_chans_out=prot[daq_key]["analog_chans_out"],
             analog_chans_in=prot[daq_key]["analog_chans_in"],
-            digital_chans_out=prot[daq_key]["digital_chans_out"],
+            analog_chans_in_limits=None,
+            analog_chans_in_terminals=None,
+            analog_chans_out=prot[daq_key]["analog_chans_out"],
+            analog_chans_out_limits=None,
             analog_data_out=analog_data,
+            digital_chans_out=prot[daq_key]["digital_chans_out"],
             digital_data_out=digital_data,
-            metadata={"analog_chans_in_info": prot[daq_key]["analog_chans_in_info"]},
+            metadata={
+                "analog_chans_in_info": prot[daq_key]["analog_chans_in_info"],
+                "analog_chans_out_info": prot[daq_key]["analog_chans_out_info"],
+                "digitial_chans_out_info": prot[daq_key]["digitial_chans_out_info"],
+            },
             params=undefaultify(prot[daq_key]),
         )
-        daq.init_local_logger(
-            f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log"
-        )
+        daq.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log")
         services[daq_key] = daq
 
-    if "NIC" in prot["NODE"]["use_services"]:
+    if "NIC" in prot["use_services"]:
         this = defaults.copy()
+        this.update(prot["NIC"])
+
         # update `this`` with service specific host params
         if "host" in prot["NIC"]:
             this.update(prot["NIC"]["host"])
@@ -266,23 +244,20 @@ def client(
             this["serializer"],
             this["user"],
             this["host"],
-            this["working_directory"],
             this["python_exe"],
             new_console=new_console,
-            port=prot[daq_key]["port"],
+            port=prot["NIC"]["port"],
         )
 
         nic_params = undefaultify(prot["NIC"])
         nic.setup(
             nic_params["output_channel"],
-            this["maxduration"] + 10,
+            prot["maxduration"] + 10,
             nic_params["frequency"],
             nic_params["duty_cycle"],
             nic_params,
         )
-        nic.init_local_logger(
-            f"{this['save_directory']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log"
-        )
+        nic.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log")
 
     # display config info
     for key, s in services.items():
@@ -299,7 +274,7 @@ def client(
     time.sleep(0.5)
 
     # start the counter task for triggering frames
-    if "NIC" in prot["NODE"]["use_services"]:
+    if "NIC" in prot["use_services"]:
         logging.info("   NI Counter service.")
         nic.start()
         time_last_cam_started = time.time()
@@ -345,9 +320,7 @@ def cli_progress(
     with Progress() as progress:
         tasks = {}
         for service_name, service in services.items():
-            tasks[service_name] = progress.add_task(
-                f"[red]{service_name}", total=service.progress()["total"]
-            )
+            tasks[service_name] = progress.add_task(f"[red]{service_name}", total=service.progress()["total"])
         RUN = True
         STOPPED_PREMATURELY = False
         while RUN and not progress.finished:
@@ -361,9 +334,7 @@ def cli_progress(
                     description = None
                     if "framenumber" in p:
                         description = f"{task_name} {p['framenumber_delta'] / p['elapsed_delta']: 7.2f} fps"
-                    progress.update(
-                        task_id, completed=p["elapsed"], description=description
-                    )
+                    progress.update(task_id, completed=p["elapsed"], description=description)
                 except:  # if call times out, stop progress display - this will stop the display whenever a task times out - not necessarily when a task is done
                     progress.stop_task(task_id)
             time.sleep(1)
@@ -379,7 +350,7 @@ def cli_progress(
         logging.info("Finishing jobs.")
         for service_name, service in services.items():
             logging.info(f"   {service_name}")
-            if service_name == 'THUA':
+            if service_name == "THUA":
                 continue
             # if service_name == 'GCM' and service.finished:
             #     continue
@@ -396,4 +367,3 @@ def cli_progress(
     logging.info("Cleaning up jobs.")
     kill_child_processes()
     logging.info(f"Done with experiment {save_prefix}.")
-

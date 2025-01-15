@@ -45,7 +45,7 @@ class ZeroClient(zerorpc.Client):
         ctx = zmq.Context()
         ctx.LINGER = 0
         pub = ctx.socket(zmq.PUB)
-        head_ip = config["HEAD"]["name"]  # log to head
+        head_ip = config["name"]  # log to head
         pub.connect("tcp://{0}:{1}".format(head_ip, self.LOGGING_PORT))
 
         self.log = logging.getLogger()
@@ -70,13 +70,10 @@ class ZeroClient(zerorpc.Client):
         handler.setLevel(log_level)
         self.log.addHandler(handler)
 
-    def start_server(self, server_name, folder_name=".", warmup=2, timeout=5, run_local: bool = True, new_console: bool = False):
+    def start_server(self, server_name, warmup=2, timeout=5, run_local: bool = True, new_console: bool = False):
         self.log.info(f"   {self.SERVICE_NAME} starting")
-        # cmd = "cd {0} && {1}".format(folder_name, server_name)
-        cmd = "{1}".format(folder_name, server_name)
-
-        self.sr.run(cmd, timeout=timeout, new_console=new_console, run_local=run_local, disown=True)
-        self.pid = self.sr.pid(query=cmd)
+        self.sr.run(server_name, timeout=timeout, new_console=new_console, run_local=run_local, disown=True)
+        self.pid = self.sr.pid(query=server_name)
         self.log.info(f"   {self.SERVICE_NAME} warmup")
         time.sleep(warmup)  # wait for server to warm up
         status = self.sr.is_running(self.pid)

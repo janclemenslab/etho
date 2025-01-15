@@ -177,7 +177,7 @@ def build_playlist(
     soundlist: List[np.array],
     duration: float,
     fs: float,
-    shuffle=True,
+    shuffle=False,
     sound_order=None,
 ):
     """Block-shuffle playlist and concatenate to duration."""

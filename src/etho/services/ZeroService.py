@@ -6,10 +6,7 @@ from zmq.log.handlers import PUBHandler
 import socket
 import time
 import os
-import subprocess
 from typing import Optional, Dict, Any
-import sys
-import signal
 import psutil
 
 
@@ -68,7 +65,6 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         serializer: str,
         user: str,
         host: str,
-        folder_name: str,
         python_exe: str = "python",
         host_is_remote: bool = False,
         host_is_win: bool = True,
@@ -92,7 +88,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
             python_exe=python_exe,
         )
         logging.debug("   starting server:")
-        ret = service.start_server(server_name, folder_name, warmup=1, new_console=new_console, run_local=run_local)
+        ret = service.start_server(server_name, warmup=1, new_console=new_console, run_local=run_local)
         logging.debug(f'{"success" if ret else "FAILED"}.')
         logging.debug("   connecting to server:")
 

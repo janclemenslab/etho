@@ -7,11 +7,11 @@ from typing import Union, Optional
 import os
 import logging
 import time
-import psutil, signal
+import psutil
 import threading
 import queue
 
-from qtpy import QtWidgets, QtCore
+from qtpy import QtWidgets
 from qtpy.QtWidgets import (
     QApplication,
     QTableView,
@@ -33,9 +33,9 @@ from qtpy.QtCore import QAbstractTableModel, Qt
 
 from pyqtgraph.parametertree import Parameter, ParameterTree
 
-from ..utils.sound import parse_table
-from ..call import client
-from ..utils.config import readconfig
+from .utils.sound import parse_table
+from . import client
+from .utils.config import readconfig
 
 
 logger = logging.getLogger(__name__)
@@ -114,34 +114,32 @@ class TableView(QTableView):
 # format to parametertree
 def from_yaml(d, readonly=True):
     pt = []
-    for k, v in d.items():
-        pt.append({"name": k, "type": "group", "children": []})
-        for key, val in v.items():
-            item = {"name": key}
-            if isinstance(val, list):
-                item["type"] = "group"
-                item["original_type"] = list
-                item["children"] = [{"name": str(it), "type": "bool", "value": True} for it in val]
-            if isinstance(val, dict):
-                # for callbacks, value is a dict - add key val of that as list
-                item["type"] = "group"
-                item["original_type"] = dict
-                item["children"] = []
-                for val_key, val_val in val.items():
-                    child_item = {
-                        "name": str(val_key),
-                        "type": "str",
-                        "value": str(val_val),
-                    }
-                    item["children"].append(child_item)
-            elif val is None:  # Fall back for None values
-                item["type"] = "str"
-                item["value"] = str(val)
-            else:
-                item["type"] = type(val).__name__
-                item["value"] = val
-            pt[-1]["children"].append(item)
-    p = Parameter.create(name="params", type="group", children=pt)
+    for key, val in d.items():
+        item = {"name": key}
+        if isinstance(val, list):
+            item["type"] = "group"
+            item["original_type"] = list
+            item["children"] = [{"name": str(it), "type": "bool", "value": True} for it in val]
+        if isinstance(val, dict):
+            # for callbacks, value is a dict - add key val of that as list
+            item["type"] = "group"
+            item["original_type"] = dict
+            item["children"] = []
+            for val_key, val_val in val.items():
+                child_item = {
+                    "name": str(val_key),
+                    "type": "str",
+                    "value": str(val_val),
+                }
+                item["children"].append(child_item)
+        elif val is None:  # Fall back for None values
+            item["type"] = "str"
+            item["value"] = str(val)
+        else:
+            item["type"] = type(val).__name__
+            item["value"] = val
+        pt.append(item)
+    p = Parameter.create(name="Protocol parameters", type="group", children=pt)
     if readonly:
         children_read_only(p.children())
     return p
@@ -253,7 +251,7 @@ class MainWindow(QMainWindow):
         # rich.print(config)
         if protocol_folder is None:
             config = readconfig()
-            protocol_folder = config["HEAD"]["protocolfolder"]
+            protocol_folder = config["protocolfolder"]
         self.protocol_folder = Path(protocol_folder)
 
         if not self.protocol_folder.exists():
@@ -263,7 +261,7 @@ class MainWindow(QMainWindow):
 
         if playlist_folder is None:
             config = readconfig()
-            playlist_folder = config["HEAD"]["playlistfolder"]
+            playlist_folder = config["playlistfolder"]
         self.playlist_folder = Path(playlist_folder)
 
         if not self.playlist_folder.exists():
@@ -418,7 +416,6 @@ class MainWindow(QMainWindow):
             "protocolfile": (self.protocol_folder / self.protocols_view.selected_string).as_posix(),
             "debug": self.button["Debug"].isChecked(),
             "show_progress": self.button["Progress"].isChecked(),
-            "host": "localhost",
             "save_prefix": None,
             "preview": preview,
             "_stop_event": stop_event,
