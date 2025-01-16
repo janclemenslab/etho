@@ -25,6 +25,12 @@ The first row is a header that contain the following column names:
 
 Each row in the playlist defines one trial, with a total duration of `silencePre` + "duration of stimulus" + `silencePost`. For multi-channel outputs in which the stimuli have different durations, the total duration is set by the duration of the longest stimulus across all channels. Shorter stimuli will be zero-padded the end.
 
+(multi-channel)=
+## Defining multi-channel stimulation
+- For the `stimFileName` column: One entry per channel, as a bracketed, comma-separated list, `[stim_on_chan1, stim_on_chan2, ...]`. Analog and digital output channels are concatenated, starting with the analog outputs and ending with the digital outputs. E.g. if you define two analog output channels and one digital output channel in your protocol, then the stimuli will map as follow `[stim_first_analog_out, stim_second_analog_out, stim_digital_out]`. Whitespace surrounding stimulus names is stripped.
+<!-- `[,stim2]` defines stimulation in which the first output channel is filled with zeros. -->
+- The remaining columns in the playlist can be provided as as bracketed comma-separated lists of values, `[1, 0.2, 2]`, to set different intensities etc. for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.
+
 (magic)=
 ## Magic stimulus names
 The stimulus name can point to a wav file with the predefined waveform in the `ethoconfig/stim`. However, there are _magic_ names for stimuli that are created on demand. They start with prefix and allow you to specify stimulus parameters in the filename:
@@ -37,11 +43,6 @@ The stimulus name can point to a wav file with the predefined waveform in the `e
   - `SI_START` will set the digital output to 1 for the first 2ms of the trial (starting at sample 0, _not_ at silencePre)
   - `SI_STOP` and `SI_NEXT` will set the last 2ms of the trial (_not_ before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to "rising", the stop and next triggers to "falling". See [ScanImage docs](https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html) for details.
 
-(multi-channel)=
-## Defining multi-channel stimulation
-- For the `stimFileName` column: One entry per channel, as a bracketed, comma-separated list, `[stim_on_chan1, stim_on_chan2, ...]`. Analog and digital output channels are concatenated, starting with the analog outputs and ending with the digital outputs. E.g. if you define two analog output channels and one digital output channel in your protocol, then the stimuli will map as follow `[stim_first_analog_out, stim_second_analog_out, stim_digital_out]`. Whitespace surrounding stimulus names is stripped.
-<!-- `[,stim2]` defines stimulation in which the first output channel is filled with zeros. -->
-- The remaining columns in the playlist can be provided as as bracketed comma-separated lists of values, `[1, 0.2, 2]`, to set different intensities etc. for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.
 
 <!--
 ## Parsing

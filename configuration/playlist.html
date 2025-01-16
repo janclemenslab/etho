@@ -325,6 +325,16 @@
 </ul>
 <p>Each row in the playlist defines one trial, with a total duration of <code class="docutils literal notranslate"><span class="pre">silencePre</span></code> + “duration of stimulus” + <code class="docutils literal notranslate"><span class="pre">silencePost</span></code>. For multi-channel outputs in which the stimuli have different durations, the total duration is set by the duration of the longest stimulus across all channels. Shorter stimuli will be zero-padded the end.</p>
 </section>
+<section id="defining-multi-channel-stimulation">
+<span id="multi-channel"></span><h2>Defining multi-channel stimulation<a class="headerlink" href="#defining-multi-channel-stimulation" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>For the <code class="docutils literal notranslate"><span class="pre">stimFileName</span></code> column: One entry per channel, as a bracketed, comma-separated list, <code class="docutils literal notranslate"><span class="pre">[stim_on_chan1,</span> <span class="pre">stim_on_chan2,</span> <span class="pre">...]</span></code>. Analog and digital output channels are concatenated, starting with the analog outputs and ending with the digital outputs. E.g. if you define two analog output channels and one digital output channel in your protocol, then the stimuli will map as follow <code class="docutils literal notranslate"><span class="pre">[stim_first_analog_out,</span> <span class="pre">stim_second_analog_out,</span> <span class="pre">stim_digital_out]</span></code>. Whitespace surrounding stimulus names is stripped.</p></li>
+</ul>
+<!-- `[,stim2]` defines stimulation in which the first output channel is filled with zeros. -->
+<ul class="simple">
+<li><p>The remaining columns in the playlist can be provided as as bracketed comma-separated lists of values, <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0.2,</span> <span class="pre">2]</span></code>, to set different intensities etc. for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.</p></li>
+</ul>
+</section>
 <section id="magic-stimulus-names">
 <span id="magic"></span><h2>Magic stimulus names<a class="headerlink" href="#magic-stimulus-names" title="Permalink to this headline">#</a></h2>
 <p>The stimulus name can point to a wav file with the predefined waveform in the <code class="docutils literal notranslate"><span class="pre">ethoconfig/stim</span></code>. However, there are <em>magic</em> names for stimuli that are created on demand. They start with prefix and allow you to specify stimulus parameters in the filename:</p>
@@ -339,16 +349,6 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code> and <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code> will set the last 2ms of the trial (<em>not</em> before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to “rising”, the stop and next triggers to “falling”. See <a class="reference external" href="https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html">ScanImage docs</a> for details.</p></li>
 </ul>
 </li>
-</ul>
-</section>
-<section id="defining-multi-channel-stimulation">
-<span id="multi-channel"></span><h2>Defining multi-channel stimulation<a class="headerlink" href="#defining-multi-channel-stimulation" title="Permalink to this headline">#</a></h2>
-<ul class="simple">
-<li><p>For the <code class="docutils literal notranslate"><span class="pre">stimFileName</span></code> column: One entry per channel, as a bracketed, comma-separated list, <code class="docutils literal notranslate"><span class="pre">[stim_on_chan1,</span> <span class="pre">stim_on_chan2,</span> <span class="pre">...]</span></code>. Analog and digital output channels are concatenated, starting with the analog outputs and ending with the digital outputs. E.g. if you define two analog output channels and one digital output channel in your protocol, then the stimuli will map as follow <code class="docutils literal notranslate"><span class="pre">[stim_first_analog_out,</span> <span class="pre">stim_second_analog_out,</span> <span class="pre">stim_digital_out]</span></code>. Whitespace surrounding stimulus names is stripped.</p></li>
-</ul>
-<!-- `[,stim2]` defines stimulation in which the first output channel is filled with zeros. -->
-<ul class="simple">
-<li><p>The remaining columns in the playlist can be provided as as bracketed comma-separated lists of values, <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0.2,</span> <span class="pre">2]</span></code>, to set different intensities etc. for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.</p></li>
 </ul>
 <!--
 ## Parsing
@@ -429,8 +429,8 @@ This will return a list of multidimensional numpy arrays, one item per row in th
             <ul>
 <li><a class="reference internal" href="#">Stimulus playlists</a><ul>
 <li><a class="reference internal" href="#playlist-format">Playlist format</a></li>
-<li><a class="reference internal" href="#magic-stimulus-names">Magic stimulus names</a></li>
 <li><a class="reference internal" href="#defining-multi-channel-stimulation">Defining multi-channel stimulation</a></li>
+<li><a class="reference internal" href="#magic-stimulus-names">Magic stimulus names</a></li>
 </ul>
 </li>
 </ul>
