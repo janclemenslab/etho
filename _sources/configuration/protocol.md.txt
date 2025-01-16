@@ -58,7 +58,7 @@ host:  # OPTIONAL individual services can run on specific hosts
 ```
 
 ### National Instruments DAQ cards.
-Name of block _must_ start with `DAQ`. If you want to use multiple NI-daq devices, create one block for each of them and add a suffix, e.g. `DAQ1`, `DAQ2`, etc. Minimal example:
+Name of block _must_ start with `DAQ`. If you want to use multiple NI-daq devices in a single experiment, create one block for each of them and add a suffix, e.g. `DAQ1`, `DAQ2`, etc. Minimal example:
 
 #### Required
 - `samplingrate: 10000`: Float or int in Hz.
@@ -93,7 +93,7 @@ callbacks:
 ```
 
 ### Camera
-Generic camera interface with different backends.
+Generic camera interface with different backends. Name of block _must_ start with `GCM`. If you want to use multiple cameras in a single experiment, create one block for each of them and add a suffix, e.g. `GCM1`, `GCM2`, etc.
 
 #### Required
 - `cam_type: Ximea` or `Spinnaker` (for FLIR cameras) or `Basler` or `Hamamatsu`
