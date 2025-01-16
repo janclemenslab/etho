@@ -287,7 +287,7 @@
 <td><p>100</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>mediocre_stim.wav, MIRROR_LED</p></td>
+<tr class="row-even"><td><p>[mediocre_stim.wav, MIRROR_LED]</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
 <td><p>0</p></td>
@@ -327,20 +327,12 @@
 <td><p>[100, 200]</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>[, SIN_200_0_2000]</p></td>
-<td><p>1000</p></td>
-<td><p>1000</p></td>
-<td><p>0</p></td>
-<td><p>1.0</p></td>
-<td><p>100</p></td>
-<td><p></p></td>
-</tr>
 </tbody>
 </table>
 </div>
 <p>The first row is a header that contain the following column names:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>: If not a magic name, full filename (w/ extension but w/o directory). File needs to be single-channel <code class="docutils literal notranslate"><span class="pre">*.wav</span></code>. Currently defined magic names are: <code class="docutils literal notranslate"><span class="pre">SIN*</span></code>, <code class="docutils literal notranslate"><span class="pre">PUL*</span></code>, <code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code>, <code class="docutils literal notranslate"><span class="pre">CLOCK</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SCANIMAGE_NEXT</span></code> (see below for details what these do - typically define on-the-fly generated stimuli).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>: If not a magic name, full filename (w/ extension but w/o directory). File needs to be single-channel <code class="docutils literal notranslate"><span class="pre">*.wav</span></code>, placed in the <code class="docutils literal notranslate"><span class="pre">stimfolder</span></code> defined in the <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global configuration file</span></a>. Currently defined magic names are: <code class="docutils literal notranslate"><span class="pre">SIN*</span></code>, <code class="docutils literal notranslate"><span class="pre">PUL*</span></code>, <code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code>, <code class="docutils literal notranslate"><span class="pre">CLOCK</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SCANIMAGE_NEXT</span></code> (see <a class="reference internal" href="#magic"><span class="std std-ref">below</span></a> for details).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">silencePre</span></code> (ms): zeros <em>pre</em>-pended to the stimulus</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">silencePost</span></code> (ms): zeros <em>post</em>-pended to the stimulus</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">delayPost</span></code> (ms, <em>unused</em>):description</p></li>
@@ -350,52 +342,51 @@
 </ul>
 </section>
 <section id="magic-stimulus-names">
-<h2>Magic stimulus names<a class="headerlink" href="#magic-stimulus-names" title="Permalink to this headline">#</a></h2>
-<p>The stimulus name can point to a wav file in the <code class="docutils literal notranslate"><span class="pre">ethoconfig/stim</span></code>. Or:</p>
+<span id="magic"></span><h2>Magic stimulus names<a class="headerlink" href="#magic-stimulus-names" title="Permalink to this headline">#</a></h2>
+<p>The stimulus name can point to a wav file with the predefined waveform in the <code class="docutils literal notranslate"><span class="pre">ethoconfig/stim</span></code>. However, there are <em>magic</em> names for stimuli that are created on demand. They start with prefix and allow you to specify stimulus parameters in the filename:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">SIN_frequency_phase_duration</span></code>: Generate sinusoid with frequency (Hz), phase (rad), and duration (ms) specified in the stimulus name. Will start after silencePre and end before silencePost.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SIN_frequency_phase_duration</span></code>: Generate sinusoid with frequency (Hz), phase (rad), and duration (ms) specified in the stimulus name. Will start after silencePre and end before silencePost. E.g. <code class="docutils literal notranslate"><span class="pre">SIN_100_0_1000</span></code> will produce a sinusoid with a frequency of 100Hz, a phase of 0, and duration of 1000ms.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">PUL_pulseDur_pulsePau_pulseNumber_pulseDelay</span></code>: Generate pulse train (square pulses) with pulse duration, pause, number and intial delay specified in stimulus name (all time units in ms). Will start after silencePre and end before silencePost.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code>: Will mirror the stimulus in the first channel that does not as a pulse train (pdur &amp; ppau 5ms). Will start after silencePre and end before silencePost.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CLOCK_pulseDur_pulsePau</span></code>: Create a clock signal (for instance for continuously triggering frames). Generate continuous pulse train with pulse duration and pause specified in stimulus name (all time units in ms). Will start after sample 0 (<em>not</em> silencePre) and end at the last sample (<em>not</em> before silencePost).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code>: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. All three stimuli should be specified in the playlist for each stimulus, not just the first or the last one. This will make sure that e.g. starts are triggered even with shuffled playback. <code class="docutils literal notranslate"><span class="pre">SI_START</span></code> will set the digital output to 1 for the first 2ms of the stimulus (starting at sample 0, <em>not</em> at silencePre), <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code> and <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code> will set the last 2ms (<em>not</em> before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to “rising”, the stop and next triggers to “falling”. See <a class="reference external" href="https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html">ScanImage docs</a> for details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code>: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. All three stimuli should be specified in the playlist for each stimulus, not just the first or the last one. This will make sure that e.g. starts are triggered even with shuffled playback:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code> will set the digital output to 1 for the first 2ms of the trial (starting at sample 0, <em>not</em> at silencePre)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code> and <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code> will set the last 2ms of the trial (<em>not</em> before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to “rising”, the stop and next triggers to “falling”. See <a class="reference external" href="https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html">ScanImage docs</a> for details.</p></li>
+</ul>
+</li>
 </ul>
 </section>
-<section id="there-are-several-ways-to-specify-multi-channel-data">
-<h2>There are several ways to specify multi-channel data:<a class="headerlink" href="#there-are-several-ways-to-specify-multi-channel-data" title="Permalink to this headline">#</a></h2>
+<section id="defining-multi-channel-stimulation">
+<h2>Defining multi-channel stimulation<a class="headerlink" href="#defining-multi-channel-stimulation" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
-<li><p>Remaining columns will be duplicated to have same number of elements as the output channels. Rows #5 will be converted implicitly to row #6 - note that this can be problematic if stimuli required different attenuations (e.g. if stimuli on different channels have different frequencies) since the <code class="docutils literal notranslate"><span class="pre">frequency</span></code> field will also be duplicated.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">[,stim2]</span></code> defines stimulation in which the first output channel is filled with zeros.</p></li>
-<li><p>Duration of a row in the playlist is given by the duration of the longest stimulus across channels. All stimuli will start at the same time (after silencePre). Shorter stimuli will be padded with zeros at the end to match duration of longest stimulus in the channel set.</p></li>
+<li><p>For the <code class="docutils literal notranslate"><span class="pre">stimFileName</span></code> column: One entry per channel, as a bracketed, comma-separated list, <code class="docutils literal notranslate"><span class="pre">[stim_on_chan1,</span> <span class="pre">stim_on_chan2,</span> <span class="pre">...]</span></code>. Analog and digital output channels are concatenated, starting with the analog outputs and ending with the digital outputs. E.g. if you define two analog output channels and one digital output channel in your protocol, then the stimuli will map as follow <code class="docutils literal notranslate"><span class="pre">[stim_first_analog_out,</span> <span class="pre">stim_second_analog_out,</span> <span class="pre">stim_digital_out]</span></code>. Whitespace surrounding stimulus names is stripped.</p></li>
 </ul>
-</section>
-<section id="multi-channel-stimulation">
-<h2>Multi-channel stimulation<a class="headerlink" href="#multi-channel-stimulation" title="Permalink to this headline">#</a></h2>
+<!-- `[,stim2]` defines stimulation in which the first output channel is filled with zeros. -->
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>: One entry per channel, as a bracketed, comma-separated list, <code class="docutils literal notranslate"><span class="pre">[stim_on_chan1,</span> <span class="pre">stim_on_chan2,</span> <span class="pre">...]</span></code>. Analog and digital are concatenated, with the first channels being the analog outputs, followed by the digital outputs. Whitespace surrounding stimulus names is stripped). <code class="docutils literal notranslate"><span class="pre">[,stim2]</span></code> defines stimulation in which the first output channel is filled with zeros.</p></li>
-<li><p>The remaining columns can also be given as comma-separated lists of values to set different intensities or <code class="docutils literal notranslate"><span class="pre">silencePre</span></code> for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.</p></li>
-<li><p>The total duration of the multi-channel stimulus is adjusted to the duration of the longest stimulus across all channels, by zero-padding at the end the shorter stimuli.</p></li>
+<li><p>The remaining columns in the playlist can be provided as as bracketed comma-separated lists of values, <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0.2,</span> <span class="pre">2]</span></code>, to set different intensities etc. for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.</p></li>
+<li><p>The total duration of the multi-channel stimulus is adjusted to the duration of the longest stimulus across all channels, by zero-padding the end the shorter stimuli.</p></li>
 </ul>
-</section>
-<section id="parsing">
-<h2>Parsing<a class="headerlink" href="#parsing" title="Permalink to this headline">#</a></h2>
-<p>Load the playlist like so:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ethomaster.utils.sound</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_table</span><span class="p">,</span> <span class="n">normalize_table</span>
-<span class="c1"># returns a raw pandas dataframe</span>
-<span class="n">raw_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">playlistfilename</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="c1"># casts all cells in the table to lists of the correct type and</span>
-<span class="n">parsed_table</span> <span class="o">=</span> <span class="n">parse_table</span><span class="p">(</span><span class="n">raw_table</span><span class="p">,</span> <span class="n">dtypes</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span>
-<span class="c1"># normalizes all cells in a row to have the same number of entries as there are stimuli</span>
-<span class="n">playlist</span> <span class="o">=</span> <span class="n">normalize_table</span><span class="p">(</span><span class="n">parsed_table</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Or simply <code class="docutils literal notranslate"><span class="pre">playlist</span> <span class="pre">=</span> <span class="pre">parse_table(playlistfilename)</span></code>.</p>
-<p>Sounds can be generated from the playlist via:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ethomaster.utils.sound</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_sounds</span>
-<span class="n">sounds</span> <span class="o">=</span> <span class="n">load_sounds</span><span class="p">(</span><span class="n">playlist</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">attenuation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stimfolder</span><span class="o">=</span><span class="s1">&#39;~/stimuli&#39;</span><span class="p">):</span>
-</pre></div>
-</div>
-<p>This will return a list of multidimensional numpy arrays, one item per row in the playlist file.</p>
-</section>
+<!--
+## Parsing
+Load the playlist like so:
+```python
+from ethomaster.utils.sound import parse_table, normalize_table
+# returns a raw pandas dataframe
+raw_table = pd.read_table(playlistfilename, dtype=None, delimiter='\t')
+# casts all cells in the table to lists of the correct type and
+parsed_table = parse_table(raw_table, dtypes=[str, float, float, float, float, float, str])
+# normalizes all cells in a row to have the same number of entries as there are stimuli
+playlist = normalize_table(parsed_table)
+```
+Or simply `playlist = parse_table(playlistfilename)`.
+
+Sounds can be generated from the playlist via:
+```python
+from ethomaster.utils.sound import load_sounds
+sounds = load_sounds(playlist, fs=1000, attenuation=None, stimfolder='~/stimuli'):
+```
+This will return a list of multidimensional numpy arrays, one item per row in the playlist file. --></section>
 </section>
 
         </article>
@@ -456,9 +447,7 @@
 <li><a class="reference internal" href="#">Stimulus playlists</a><ul>
 <li><a class="reference internal" href="#playlist-format">Playlist format</a></li>
 <li><a class="reference internal" href="#magic-stimulus-names">Magic stimulus names</a></li>
-<li><a class="reference internal" href="#there-are-several-ways-to-specify-multi-channel-data">There are several ways to specify multi-channel data:</a></li>
-<li><a class="reference internal" href="#multi-channel-stimulation">Multi-channel stimulation</a></li>
-<li><a class="reference internal" href="#parsing">Parsing</a></li>
+<li><a class="reference internal" href="#defining-multi-channel-stimulation">Defining multi-channel stimulation</a></li>
 </ul>
 </li>
 </ul>
