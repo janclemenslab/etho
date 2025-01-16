@@ -57,7 +57,6 @@ host:  # OPTIONAL individual services can run on specific hosts
     savefolder: C:/Users/ncb/data
 ```
 
-### DAQ
 ### National Instruments DAQ cards.
 Name of block _must_ start with `DAQ`. If you want to use multiple NI-daq devices, create one block for each of them and add a suffix, e.g. `DAQ1`, `DAQ2`, etc. Minimal example:
 
