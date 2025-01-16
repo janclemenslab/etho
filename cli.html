@@ -262,17 +262,18 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: etho [-h] [--version] {call,version,gui} ...
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: etho [-h] [--version] {version,init,run,gui} ...
 
 positional arguments:
-  {call,version,gui}
-    call              Starts an experiment.
-    version           Displays system, version, and hardware info.
-    gui               Opens the graphical user interface.
+  {version,init,run,gui}
+    version             Displays system, version, and hardware info.
+    init                Initializes config files and folders.
+    run                 Starts an experiment.
+    gui                 Opens the graphical user interface.
 
-optional arguments:
-  -h, --help          show this help message and exit
-  --version           show program&#39;s version number and exit
+options:
+  -h, --help            show this help message and exit
+  --version             show program&#39;s version number and exit
 
 </pre></div>
 </div>
@@ -291,7 +292,7 @@ optional arguments:
 
 Initializes config files and folders.
 
-optional arguments:
+options:
   -h, --help  show this help message and exit
 
 </pre></div>
@@ -318,7 +319,7 @@ positional arguments:
   playlist_folder  Folder with playlist files.
                    Defaults to value [&#39;HEAD&#39;][&#39;playlistfolder&#39;] from ~/ethoconfig.yml.
 
-optional arguments:
+options:
   -h, --help       show this help message and exit
 
 </pre></div>
@@ -330,16 +331,15 @@ optional arguments:
 <h2>Start an experiment<a class="headerlink" href="#start-an-experiment" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>etho<span class="w"> </span>call<span class="w"> </span>--help
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>etho<span class="w"> </span>run<span class="w"> </span>--help
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: etho call [-h] [--host HOST] [--save-prefix SAVE_PREFIX]
-                 [--show-test-image | --no-show-test-image]
-                 [--show-progress | --no-show-progress]
-                 [-d | --debug | --no-debug] [-p | --preview | --no-preview]
-                 protocolfile [playlistfile]
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: etho run [-h] [--save-prefix SAVE_PREFIX]
+                [--show-progress | --no-show-progress]
+                [-d | --debug | --no-debug] [-p | --preview | --no-preview]
+                protocolfile [playlistfile]
 
 Starts an experiment.
 
@@ -347,19 +347,16 @@ positional arguments:
   protocolfile          _description_
   playlistfile          _description_.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
-  --host HOST           _description_
   --save-prefix SAVE_PREFIX
-                        _description_.
-  --show-test-image, --no-show-test-image
-                        _description_.
+                        Specify the stem of the filename for all saved data and logs. Will defaults to HOSTNAME-YYYYMMDD_hhmmss, where HOSTNAME is the computer name the service is run on (typically localhost).
   --show-progress, --no-show-progress
-                        _description_.
+                        Show a progress bar. Disable if performance is criticial.
   -d, --debug, --no-debug
-                        _description_.
+                        More verbose logs.
   -p, --preview, --no-preview
-                        _description_.
+                        Preview the camera (will disable saving and logging and only open a window with the camera view).
 
 </pre></div>
 </div>
@@ -379,7 +376,7 @@ optional arguments:
 
 Displays system, version, and hardware info.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -d, --debug, --no-debug
                         Display exception info for failed imports. Defaults to False.
@@ -395,26 +392,30 @@ optional arguments:
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:etho.cli:macOS-13.2-arm64-arm-64bit
-INFO:etho.cli:etho v0.11.0
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:etho.cli:macOS-14.7.1-arm64-arm-64bit
+INFO:etho.cli:etho v0.18.0
+INFO:etho.cli:
+INFO:etho.cli:  LIBRARY VERSIONS
+INFO:etho.cli:    python v3.10.16 | packaged by conda-forge | (main, Dec  5 2024, 14:20:01) [Clang 18.1.8 ]
+INFO:etho.cli:    pandas v2.2.3
+INFO:etho.cli:    numpy v2.2.1
+INFO:etho.cli:    h5py v3.12.1
+INFO:etho.cli:    scipy v1.15.1
+INFO:etho.cli:
 INFO:etho.cli:  GUI SUPPORT
 INFO:etho.cli:     GUI is available.
-INFO:etho.cli:     pyqtgraph v0.13.3
-INFO:etho.cli:     PySide2 v5.15.8
-INFO:etho.cli:     Qt v5.15.8
-INFO:etho.cli:     qtpy v2.3.1
-INFO:etho.cli:  LIBRARY VERSIONS
-INFO:etho.cli:    python v3.9.16 | packaged by conda-forge | (main, Feb  1 2023, 21:38:11) 
-[Clang 14.0.6 ]
-INFO:etho.cli:    pandas v2.0.3
-INFO:etho.cli:    numpy v1.25.2
-INFO:etho.cli:    h5py v3.9.0
-INFO:etho.cli:    scipy v1.11.2
+INFO:etho.cli:     pyqtgraph v0.13.7
+INFO:etho.cli:     PySide6 v6.8.1
+INFO:etho.cli:     Qt v6.8.1
+INFO:etho.cli:     qtpy v2.4.2
 INFO:etho.cli:
 INFO:etho.cli:  HARDWARE SUPPORT
-WARNING:etho.cli:     Spinnaker SDK is NOT available.
-WARNING:etho.cli:     NI daqmx is NOT available.
-WARNING:etho.cli:     FlyCapture SDK is NOT available.
+WARNING:etho.cli:     Spinnaker camera SDK (PySpin) is NOT available.
+WARNING:etho.cli:     FlyCapture camera SDK (PyCapture2) is NOT available.
+WARNING:etho.cli:     Ximea camera SDK (ximea) is NOT available.
+WARNING:etho.cli:     DCAM (Hamamatsu) camera SDK (pylablib) is NOT available.
+WARNING:etho.cli:     NI daqmx (pydaqmx) is NOT available.
+WARNING:etho.cli:     Lightcrafter projector (pycrafter4500) is NOT available.
 
 </pre></div>
 </div>
