@@ -255,6 +255,7 @@
         <article role="main">
           <section id="stimulus-playlists">
 <h1>Stimulus playlists<a class="headerlink" href="#stimulus-playlists" title="Permalink to this headline">#</a></h1>
+<p>Define outputs for NI-daq.</p>
 <section id="playlist-format">
 <h2>Playlist format<a class="headerlink" href="#playlist-format" title="Permalink to this headline">#</a></h2>
 <p>Playlists are tables saved as tab-delimited text files:</p>
@@ -264,82 +265,65 @@
 <tr class="row-odd"><th class="head"><p>stimFileName</p></th>
 <th class="head"><p>silencePre</p></th>
 <th class="head"><p>silencePost</p></th>
-<th class="head"><p>delayPost</p></th>
 <th class="head"><p>intensity</p></th>
 <th class="head"><p>freq</p></th>
-<th class="head"><p>MODE</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>superstimulus.wav</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
-<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
-<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>SIN_100_0_3000</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
-<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
-<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>[mediocre_stim.wav, MIRROR_LED]</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
-<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
-<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>[PUL_5_10_10_0, SIN_200_0_2000]</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
-<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
-<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>[SIN_100_0_3000, SIN_200_0_2000]</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
-<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
-<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>[SIN_100_0_3000, SIN_200_0_2000]</p></td>
 <td><p>[1000, 1000]</p></td>
 <td><p>[1000, 1000]</p></td>
-<td><p>[0, 0]</p></td>
 <td><p>[1.0, 1.0]</p></td>
 <td><p>[100, 100]</p></td>
-<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>[SIN_100_0_3000, SIN_200_0_2000]</p></td>
 <td><p>[1000, 2000]</p></td>
 <td><p>[2000, 1000]</p></td>
-<td><p>[0, 0]</p></td>
 <td><p>[1.0, 2.0]</p></td>
 <td><p>[100, 200]</p></td>
-<td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>The first row is a header that contain the following column names:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>: If not a magic name, full filename (w/ extension but w/o directory). File needs to be single-channel <code class="docutils literal notranslate"><span class="pre">*.wav</span></code>, placed in the <code class="docutils literal notranslate"><span class="pre">stimfolder</span></code> defined in the <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global configuration file</span></a>. Currently defined magic names are: <code class="docutils literal notranslate"><span class="pre">SIN*</span></code>, <code class="docutils literal notranslate"><span class="pre">PUL*</span></code>, <code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code>, <code class="docutils literal notranslate"><span class="pre">CLOCK</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SCANIMAGE_NEXT</span></code> (see <a class="reference internal" href="#magic"><span class="std std-ref">below</span></a> for details).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>: If not a magic name, full filename (w/ extension but w/o directory). File needs to be single-channel <code class="docutils literal notranslate"><span class="pre">*.wav</span></code>, placed in the <code class="docutils literal notranslate"><span class="pre">stimfolder</span></code> defined in the <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global configuration file</span></a>. Currently defined magic names are: <code class="docutils literal notranslate"><span class="pre">SIN*</span></code>, <code class="docutils literal notranslate"><span class="pre">PUL*</span></code>, <code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code>, <code class="docutils literal notranslate"><span class="pre">CLOCK</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SCANIMAGE_NEXT</span></code> (see <a class="reference internal" href="#magic"><span class="std std-ref">below</span></a> for details). If you specified multiple output channels (analog and digital) in your protocol, you <em>must</em> provide one <a class="reference internal" href="#multi-channel"><span class="std std-ref">stimulus filename per channel</span></a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">silencePre</span></code> (ms): zeros <em>pre</em>-pended to the stimulus</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">silencePost</span></code> (ms): zeros <em>post</em>-pended to the stimulus</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delayPost</span></code> (ms, <em>unused</em>):description</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">intensity</span></code> (mm/s or dB for sound, mW/mm2 for light): Stimulus intensity.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">freq</span></code> (Hz for sound or nm for light): Used as a key into the attenuation dictionary defined in the global, rig-specific configuration file <code class="docutils literal notranslate"><span class="pre">ethoconfig.ini</span></code>. The frequency specific attenuation value scales the stimulus such that 1V in the stimulus maps to 1 intensity unit.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">MODE</span></code> (<em>unused</em>): Can be used to define callbacks.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">freq</span></code> (Hz for sound or nm for light): Used as a key into the calibration files</p></li>
 </ul>
+<p>Each row in the playlist defines one trial, with a total duration of <code class="docutils literal notranslate"><span class="pre">silencePre</span></code> + “duration of stimulus” + <code class="docutils literal notranslate"><span class="pre">silencePost</span></code>. For multi-channel outputs in which the stimuli have different durations, the total duration is set by the duration of the longest stimulus across all channels. Shorter stimuli will be zero-padded the end.</p>
 </section>
 <section id="magic-stimulus-names">
 <span id="magic"></span><h2>Magic stimulus names<a class="headerlink" href="#magic-stimulus-names" title="Permalink to this headline">#</a></h2>
@@ -358,14 +342,13 @@
 </ul>
 </section>
 <section id="defining-multi-channel-stimulation">
-<h2>Defining multi-channel stimulation<a class="headerlink" href="#defining-multi-channel-stimulation" title="Permalink to this headline">#</a></h2>
+<span id="multi-channel"></span><h2>Defining multi-channel stimulation<a class="headerlink" href="#defining-multi-channel-stimulation" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
 <li><p>For the <code class="docutils literal notranslate"><span class="pre">stimFileName</span></code> column: One entry per channel, as a bracketed, comma-separated list, <code class="docutils literal notranslate"><span class="pre">[stim_on_chan1,</span> <span class="pre">stim_on_chan2,</span> <span class="pre">...]</span></code>. Analog and digital output channels are concatenated, starting with the analog outputs and ending with the digital outputs. E.g. if you define two analog output channels and one digital output channel in your protocol, then the stimuli will map as follow <code class="docutils literal notranslate"><span class="pre">[stim_first_analog_out,</span> <span class="pre">stim_second_analog_out,</span> <span class="pre">stim_digital_out]</span></code>. Whitespace surrounding stimulus names is stripped.</p></li>
 </ul>
 <!-- `[,stim2]` defines stimulation in which the first output channel is filled with zeros. -->
 <ul class="simple">
 <li><p>The remaining columns in the playlist can be provided as as bracketed comma-separated lists of values, <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0.2,</span> <span class="pre">2]</span></code>, to set different intensities etc. for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.</p></li>
-<li><p>The total duration of the multi-channel stimulus is adjusted to the duration of the longest stimulus across all channels, by zero-padding the end the shorter stimuli.</p></li>
 </ul>
 <!--
 ## Parsing

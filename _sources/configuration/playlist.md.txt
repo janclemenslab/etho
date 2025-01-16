@@ -1,28 +1,29 @@
 # Stimulus playlists
+Define outputs for NI-daq.
 
 ## Playlist format
 Playlists are tables saved as tab-delimited text files:
 
-| stimFileName                     | silencePre   | silencePost  | delayPost | intensity  | freq       | MODE |
-|----------------------------------|--------------|--------------|-----------|------------|------------|------|
-| superstimulus.wav                    | 1000         | 1000         | 0         | 1.0        | 100        |      |
-| SIN_100_0_3000                   | 1000         | 1000         | 0         | 1.0        | 100        |      |
-| [mediocre_stim.wav, MIRROR_LED]        | 1000         | 1000         | 0         | 1.0        | 100        |      |
-| [PUL_5_10_10_0, SIN_200_0_2000]      | 1000         | 1000         | 0         | 1.0        | 100        |      |
-| [SIN_100_0_3000, SIN_200_0_2000] | 1000         | 1000         | 0         | 1.0        | 100        |      |
-| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 1000] | [1000, 1000] | [0, 0]    | [1.0, 1.0] | [100, 100] |      |
-| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 2000] | [2000, 1000] | [0, 0]    | [1.0, 2.0] | [100, 200] |      |
+| stimFileName                     | silencePre   | silencePost  | intensity  | freq       |
+|----------------------------------|--------------|--------------|------------|------------|
+| superstimulus.wav                    | 1000         | 1000         | 1.0        | 100        |
+| SIN_100_0_3000                   | 1000         | 1000         | 1.0        | 100        |
+| [mediocre_stim.wav, MIRROR_LED]        | 1000         | 1000         | 1.0        | 100        |
+| [PUL_5_10_10_0, SIN_200_0_2000]      | 1000         | 1000         | 1.0        | 100        |
+| [SIN_100_0_3000, SIN_200_0_2000] | 1000         | 1000         | 1.0        | 100        |
+| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 1000] | [1000, 1000] | [1.0, 1.0] | [100, 100] |
+| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 2000] | [2000, 1000] | [1.0, 2.0] | [100, 200] |
 
 
 The first row is a header that contain the following column names:
 
-* `stimFileName`: If not a magic name, full filename (w/ extension but w/o directory). File needs to be single-channel `*.wav`, placed in the `stimfolder` defined in the [global configuration file](global-configuration). Currently defined magic names are: `SIN*`, `PUL*`, `MIRROR_LED`, `CLOCK`, `SI_START`, `SI_STOP`, `SCANIMAGE_NEXT` (see [below](magic) for details).
+* `stimFileName`: If not a magic name, full filename (w/ extension but w/o directory). File needs to be single-channel `*.wav`, placed in the `stimfolder` defined in the [global configuration file](global-configuration). Currently defined magic names are: `SIN*`, `PUL*`, `MIRROR_LED`, `CLOCK`, `SI_START`, `SI_STOP`, `SCANIMAGE_NEXT` (see [below](magic) for details). If you specified multiple output channels (analog and digital) in your protocol, you _must_ provide one [stimulus filename per channel](multi-channel).
 * `silencePre` (ms): zeros _pre_-pended to the stimulus
 * `silencePost` (ms): zeros _post_-pended to the stimulus
-* `delayPost` (ms, _unused_):description
 * `intensity` (mm/s or dB for sound, mW/mm2 for light): Stimulus intensity.
-* `freq` (Hz for sound or nm for light): Used as a key into the attenuation dictionary defined in the global, rig-specific configuration file `ethoconfig.ini`. The frequency specific attenuation value scales the stimulus such that 1V in the stimulus maps to 1 intensity unit.
-* `MODE` (_unused_): Can be used to define callbacks.
+* `freq` (Hz for sound or nm for light): Used as a key into the calibration files
+
+Each row in the playlist defines one trial, with a total duration of `silencePre` + "duration of stimulus" + `silencePost`. For multi-channel outputs in which the stimuli have different durations, the total duration is set by the duration of the longest stimulus across all channels. Shorter stimuli will be zero-padded the end.
 
 (magic)=
 ## Magic stimulus names
@@ -36,12 +37,11 @@ The stimulus name can point to a wav file with the predefined waveform in the `e
   - `SI_START` will set the digital output to 1 for the first 2ms of the trial (starting at sample 0, _not_ at silencePre)
   - `SI_STOP` and `SI_NEXT` will set the last 2ms of the trial (_not_ before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to "rising", the stop and next triggers to "falling". See [ScanImage docs](https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html) for details.
 
-
+(multi-channel)=
 ## Defining multi-channel stimulation
 - For the `stimFileName` column: One entry per channel, as a bracketed, comma-separated list, `[stim_on_chan1, stim_on_chan2, ...]`. Analog and digital output channels are concatenated, starting with the analog outputs and ending with the digital outputs. E.g. if you define two analog output channels and one digital output channel in your protocol, then the stimuli will map as follow `[stim_first_analog_out, stim_second_analog_out, stim_digital_out]`. Whitespace surrounding stimulus names is stripped.
 <!-- `[,stim2]` defines stimulation in which the first output channel is filled with zeros. -->
 - The remaining columns in the playlist can be provided as as bracketed comma-separated lists of values, `[1, 0.2, 2]`, to set different intensities etc. for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.
-- The total duration of the multi-channel stimulus is adjusted to the duration of the longest stimulus across all channels, by zero-padding the end the shorter stimuli.
 
 <!--
 ## Parsing
