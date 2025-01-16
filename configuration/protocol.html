@@ -322,8 +322,12 @@
 <span class="w">    </span><span class="nt">save_timestamps</span><span class="p">:</span><span class="w">  </span><span class="c1"># save timestamps for each frame to h5 file</span>
 <span class="w">    </span><span class="nt">disp</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot frames using opencv</span>
 <span class="w">    </span><span class="nt">disp_fast</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot frames using pyqtgraph (faster?)</span>
-
-<span class="nt">DAQ</span><span class="p">:</span>
+</pre></div>
+</div>
+<section id="daq">
+<h3>DAQ<a class="headerlink" href="#daq" title="Permalink to this headline">#</a></h3>
+<p>National Instruments DAQ cards. Block should start named <code class="docutils literal notranslate"><span class="pre">DAQ</span></code>. If you want to use multiple NI-daq devices, create a block for each of them and name them <code class="docutils literal notranslate"><span class="pre">DAQ1</span></code>, <code class="docutils literal notranslate"><span class="pre">DAQ2</span></code>, etc. Minimal example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">DAQ</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">clock_source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OnboardClock</span>
 <span class="w">  </span><span class="nt">samplingrate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span><span class="w"> </span><span class="c1"># Hz</span>
 <span class="w">  </span><span class="nt">shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"> </span><span class="c1"># block-randomize order of stimuli for playback</span>
@@ -335,66 +339,90 @@
 <span class="w">    </span><span class="nt">save_h5</span><span class="p">:</span><span class="w">   </span><span class="c1"># save data as hdfs (has no params)</span>
 <span class="w">    </span><span class="nt">plot</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot traces using matplotlib OR</span>
 <span class="w">    </span><span class="nt">plot_fast</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot traces using pyqtgraph (much faster!) (use either `plot` or plot_fast`, never both)</span>
-
-
-<span class="nt">DAQ</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">clock_source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OnboardClock</span>
-<span class="w">  </span><span class="nt">samplingrate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span><span class="w"> </span><span class="c1"># Hz</span>
-<span class="w">  </span><span class="nt">shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"> </span><span class="c1"># block-randomize order of stimuli for playback</span>
-<span class="w">  </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dev1</span>
-<span class="w">  </span><span class="nt">analog_chans_in</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ai0</span><span class="p p-Indicator">:</span><span class="nv">8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ai9</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ai10</span><span class="p p-Indicator">]</span>
-<span class="w">  </span><span class="nt">analog_chans_in_limits</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">],</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">],</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">]]</span><span class="w"> </span><span class="c1"># or &quot;10&quot;</span>
-<span class="w">  </span><span class="nt">analog_chans_in_terminal</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">RSE</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">NRSE</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Diff</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># defaults to RSE</span>
-<span class="w">  </span><span class="nt">analog_chans_out</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ao0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ao1</span><span class="p p-Indicator">]</span>
-<span class="w">  </span><span class="nt">analog_chans_out_limits</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">10</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">10</span><span class="p p-Indicator">]</span>
-<span class="w">  </span><span class="nt">digital_chans_out</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">...</span><span class="p p-Indicator">]</span>
-<span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">save_h5</span><span class="p">:</span><span class="w">   </span><span class="c1"># save data as hdfs (has no params)</span>
-<span class="w">    </span><span class="nt">plot</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot traces using matplotlib OR</span>
-<span class="w">    </span><span class="nt">plot_fast</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot traces using pyqtgraph (much faster!) (use either `plot` or plot_fast`, never both)</span>
-
-<span class="nt">THUA</span><span class="p">:</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">pin ???</span>
-
-<span class="nt">CAM</span><span class="p">:</span><span class="w">  </span><span class="c1"># pi camera</span>
-<span class="w">  </span><span class="nt">framerate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w"> </span><span class="c1"># frames per second</span>
-<span class="w">  </span><span class="nt">framewidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span><span class="w"> </span><span class="c1"># pixels</span>
-<span class="w">  </span><span class="nt">frameheight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span><span class="w"> </span><span class="c1"># pixels</span>
-<span class="w">  </span><span class="nt">shutterspeed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span><span class="w"> </span><span class="c1"># ns=10ms</span>
-<span class="w">  </span><span class="nt">annotate_frame_num</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"> </span><span class="c1"># print frame number in each frame</span>
-<span class="w">  </span><span class="c1"># currently unused picamera options but probably useful</span>
-<span class="w">  </span><span class="nt">exposuremode</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;fixedfps&#39;</span>
-<span class="w">  </span><span class="nt">video_denoise</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
-
-<span class="nt">THU</span><span class="p">:</span><span class="w"> </span><span class="c1"># pi temperature and humidity sensor</span>
-<span class="w">  </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">17</span><span class="w"> </span><span class="c1"># GPIO PIN for read out</span>
-<span class="w">  </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span><span class="w"> </span><span class="c1"># seconds, log temperature and humidity every 20 seconds</span>
-
-<span class="nt">OPT2</span><span class="p">:</span><span class="w">  </span><span class="c1"># pi opto led control</span>
-<span class="w">  </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">25</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">24</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># red and green led channel</span>
-<span class="w">  </span><span class="nt">playlist_channels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span>
-
-<span class="nt">SND</span><span class="p">:</span><span class="w">  </span><span class="c1"># pi sound playback via pygame</span>
-<span class="w">  </span><span class="nt">samplingrate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">44100</span><span class="w">  </span><span class="c1"># Hz</span>
-<span class="w">  </span><span class="nt">shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w">  </span><span class="c1"># block-randomize order of stimuli for playback</span>
-<span class="w">  </span><span class="nt">ledamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1300</span><span class="w">  </span><span class="c1"># amplitude of the IR LED used for syncing audio and video</span>
-<span class="w">  </span><span class="nt">playlist_channels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">]</span>
-
-<span class="nt">REL</span><span class="p">:</span><span class="w">  </span><span class="c1"># pi relay control (for backlight and illumination)</span>
-<span class="w">  </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">22</span>
-
-<span class="nt">DLP</span><span class="p">:</span><span class="w">  </span><span class="c1"># DLP projector</span>
-<span class="w">  </span><span class="nt">warpfile</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Z:/#Data/flyball/projector/warpmesh_1140x912.data&#39;</span>
-<span class="w">  </span><span class="nt">use_warping</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
-<span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">savedlp_h5</span><span class="p">:</span><span class="w">  </span><span class="c1"># save per-frame stimulus parameters to `_dlp.h5`</span>
-<span class="w">  </span><span class="nt">runners</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">LED_blinker</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Rect&#39;</span><span class="w">  </span><span class="c1"># should be the classname: `psychopy.visuals.NAME`</span>
-<span class="w">      </span><span class="nt">led_frame</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">360</span>
-<span class="w">      </span><span class="nt">led_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180</span>
 </pre></div>
 </div>
+<section id="required">
+<h4>Required<a class="headerlink" href="#required" title="Permalink to this headline">#</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">samplingrate:</span> <span class="pre">10000</span></code>: Float or int in Hz.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_in:</span> <span class="pre">[ai0,</span> <span class="pre">ai1,</span> <span class="pre">ai2]</span></code>: Must specify at least one input channel, even if you do not want to record. Otherwise the DAQ system will not work for stupid technical reasons. <em>FUTURE: define blocks [ai0:2]</em></p></li>
+</ul>
+</section>
+<section id="optional">
+<h4>Optional<a class="headerlink" href="#optional" title="Permalink to this headline">#</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">device:</span> <span class="pre">Dev1</span></code>: Name of NI-daq device to use. Check NI-MAX for a list of device names. Defaults to <code class="docutils literal notranslate"><span class="pre">Dev1</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminals:</span> <span class="pre">RSE</span></code>: Terminal type. Allowed values: <code class="docutils literal notranslate"><span class="pre">RSE</span></code>, <code class="docutils literal notranslate"><span class="pre">NRSE</span></code>, <code class="docutils literal notranslate"><span class="pre">Diff</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">RSE</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shuffle:</span> <span class="pre">True</span></code>: Block-randomize order of stimuli in playlist. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">callbacks:</span></code> Allowed values are: <code class="docutils literal notranslate"><span class="pre">plot</span></code>, <code class="docutils literal notranslate"><span class="pre">plot_fast</span></code>, <code class="docutils literal notranslate"><span class="pre">save_h5</span></code>, <code class="docutils literal notranslate"><span class="pre">save_zarr</span></code>, <code class="docutils literal notranslate"><span class="pre">savedlp_h5</span></code>. See [callbacks] for details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_in_limits:</span> <span class="pre">[[0,</span> <span class="pre">5],</span> <span class="pre">[0,</span> <span class="pre">10],</span> <span class="pre">[-10,</span> <span class="pre">10]]</span></code> Limits for analog channels. Defaults to <code class="docutils literal notranslate"><span class="pre">10</span></code> (sets limits to +/-10 for all analog channels). One of:</p>
+<ul>
+<li><p>a single pos number specifying symmetrical limits for all channels, e.g. <code class="docutils literal notranslate"><span class="pre">5</span></code></p></li>
+<li><p>a list of single pos numbers specifying symmetrical limits for each channel, e.g. <code class="docutils literal notranslate"><span class="pre">[5,</span> <span class="pre">10,</span> <span class="pre">2]</span></code></p></li>
+<li><p>a list of two numbers (first should be smaller than second) specifying upper and lower limit for each channel, e.g. <code class="docutils literal notranslate"><span class="pre">[[0,</span> <span class="pre">5],</span> <span class="pre">[0,</span> <span class="pre">10],</span> <span class="pre">[-10,</span> <span class="pre">10]]</span></code></p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>DAQ:
+  clock_source: OnboardClock
+  samplingrate: 10000 # Hz
+  shuffle: True # block-randomize order of stimuli for playback
+  device: Dev1
+  analog_chans_in: [ai0, ai1, ai2]  # FUTURE: define blocks [ai0:2]
+  analog_chans_in_limits: [[0, 5], [0, 10], [-10, 10]] # either a single pos number specifying symmetrical limits for all analog_chans_in_terminal: [RSE, NRSE, Diff]  # defaults to RSE
+  analog_chans_out: [ao0, ao1]
+  analog_chans_out_limits: [10, 10]
+  digital_chans_out: [...]
+  terminals: RSE  # OPTIONAL: can specify &quot;RSE&quot;, &quot;NRSE&quot; or &quot;Diff&quot;,  defaults to &quot;RSE&quot;
+  callbacks:
+    save_h5:   # save data as hdfs (has no params)
+    plot:  # plot traces using matplotlib OR
+    plot_fast:  # plot traces using pyqtgraph (much faster!) (use either `plot` or plot_fast`, never both)
+
+THUA:
+  pin ???
+
+CAM:  # pi camera
+  framerate: 30 # frames per second
+  framewidth: 1000 # pixels
+  frameheight: 1000 # pixels
+  shutterspeed: 10000 # ns=10ms
+  annotate_frame_num: False # print frame number in each frame
+  # currently unused picamera options but probably useful
+  exposuremode: &#39;fixedfps&#39;
+  video_denoise: False
+
+THU: # pi temperature and humidity sensor
+  pin: 17 # GPIO PIN for read out
+  interval: 20 # seconds, log temperature and humidity every 20 seconds
+
+OPT2:  # pi opto led control
+  pin: [25, 24]  # red and green led channel
+  playlist_channels: [2, 3]
+
+SND:  # pi sound playback via pygame
+  samplingrate: 44100  # Hz
+  shuffle: False  # block-randomize order of stimuli for playback
+  ledamp: 1300  # amplitude of the IR LED used for syncing audio and video
+  playlist_channels: [0, 1]
+
+REL:  # pi relay control (for backlight and illumination)
+  pin: 22
+
+DLP:  # DLP projector
+  warpfile: &#39;Z:/#Data/flyball/projector/warpmesh_1140x912.data&#39;
+  use_warping: False
+  callbacks:
+    savedlp_h5:  # save per-frame stimulus parameters to `_dlp.h5`
+  runners:
+    LED_blinker:
+      object: &#39;Rect&#39;  # should be the classname: `psychopy.visuals.NAME`
+      led_frame: 360
+      led_duration: 180
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 <section id="callbacks">
 <h2>Callbacks<a class="headerlink" href="#callbacks" title="Permalink to this headline">#</a></h2>
@@ -466,7 +494,14 @@
             <ul>
 <li><a class="reference internal" href="#">Experimental protocols</a><ul>
 <li><a class="reference internal" href="#general-fields">General fields</a></li>
-<li><a class="reference internal" href="#service-specific-parameters">Service specific parameters</a></li>
+<li><a class="reference internal" href="#service-specific-parameters">Service specific parameters</a><ul>
+<li><a class="reference internal" href="#daq">DAQ</a><ul>
+<li><a class="reference internal" href="#required">Required</a></li>
+<li><a class="reference internal" href="#optional">Optional</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#callbacks">Callbacks</a><ul>
 <li><a class="reference internal" href="#time-series-data">Time series data</a></li>
 <li><a class="reference internal" href="#image-data">Image data</a></li>

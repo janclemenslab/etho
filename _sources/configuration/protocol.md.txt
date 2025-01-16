@@ -66,7 +66,11 @@ GCM:  # generic camera interface with different backends   cam_type: Ximea  # or
     save_timestamps:  # save timestamps for each frame to h5 file
     disp:  # plot frames using opencv
     disp_fast:  # plot frames using pyqtgraph (faster?)
+```
 
+### DAQ
+National Instruments DAQ cards. Block should start named `DAQ`. If you want to use multiple NI-daq devices, create a block for each of them and name them `DAQ1`, `DAQ2`, etc. Minimal example:
+```yaml
 DAQ:
   clock_source: OnboardClock
   samplingrate: 5000 # Hz
@@ -79,19 +83,35 @@ DAQ:
     save_h5:   # save data as hdfs (has no params)
     plot:  # plot traces using matplotlib OR
     plot_fast:  # plot traces using pyqtgraph (much faster!) (use either `plot` or plot_fast`, never both)
+```
+
+#### Required
+- `samplingrate: 10000`: Float or int in Hz.
+- `analog_chans_in: [ai0, ai1, ai2]`: Must specify at least one input channel, even if you do not want to record. Otherwise the DAQ system will not work for stupid technical reasons. _FUTURE: define blocks [ai0:2]_
+
+#### Optional
+- `device: Dev1`: Name of NI-daq device to use. Check NI-MAX for a list of device names. Defaults to `Dev1`.
+- `terminals: RSE`: Terminal type. Allowed values: `RSE`, `NRSE`, `Diff`. Defaults to `RSE`.
+- `shuffle: True`: Block-randomize order of stimuli in playlist. Defaults to `False`.
+- `callbacks:` Allowed values are: `plot`, `plot_fast`, `save_h5`, `save_zarr`, `savedlp_h5`. See [callbacks] for details.
+- `analog_chans_in_limits: [[0, 5], [0, 10], [-10, 10]]` Limits for analog channels. Defaults to `10` (sets limits to +/-10 for all analog channels). One of:
+  - a single pos number specifying symmetrical limits for all channels, e.g. `5`
+  - a list of single pos numbers specifying symmetrical limits for each channel, e.g. `[5, 10, 2]`
+  - a list of two numbers (first should be smaller than second) specifying upper and lower limit for each channel, e.g. `[[0, 5], [0, 10], [-10, 10]]`
 
 
+```
 DAQ:
   clock_source: OnboardClock
   samplingrate: 10000 # Hz
   shuffle: True # block-randomize order of stimuli for playback
   device: Dev1
-  analog_chans_in: [ai0:8, ai9, ai10]
-  analog_chans_in_limits: [[0, 5], [0, 10], [-10, 10]] # or "10"
-  analog_chans_in_terminal: [RSE, NRSE, Diff]  # defaults to RSE
+  analog_chans_in: [ai0, ai1, ai2]  # FUTURE: define blocks [ai0:2]
+  analog_chans_in_limits: [[0, 5], [0, 10], [-10, 10]] # either a single pos number specifying symmetrical limits for all analog_chans_in_terminal: [RSE, NRSE, Diff]  # defaults to RSE
   analog_chans_out: [ao0, ao1]
   analog_chans_out_limits: [10, 10]
   digital_chans_out: [...]
+  terminals: RSE  # OPTIONAL: can specify "RSE", "NRSE" or "Diff",  defaults to "RSE"
   callbacks:
     save_h5:   # save data as hdfs (has no params)
     plot:  # plot traces using matplotlib OR
