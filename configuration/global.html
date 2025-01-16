@@ -254,9 +254,9 @@
         </div>
         <article role="main">
           <section id="global-configuration">
-<h1>Global configuration<a class="headerlink" href="#global-configuration" title="Permalink to this headline">#</a></h1>
+<span id="id1"></span><h1>Global configuration<a class="headerlink" href="#global-configuration" title="Permalink to this headline">#</a></h1>
 <p>Global config via import <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">.</span> <span class="pre">import</span> <span class="pre">config</span></code> via <a class="reference external" href="https://pyyaml.org">pyyaml</a>, which reads the <code class="docutils literal notranslate"><span class="pre">ethoconfig.yaml</span></code> file in the <code class="docutils literal notranslate"><span class="pre">~/ethoconfig</span></code> directory.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">python_exe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/Users/USER/miniconda3/python.exe</span><span class="w"> </span><span class="c1"># point to the python executable - used when starting the services. Can point to a python exe in a different environment. This global value can be overriden for each service in the protocol. That way, different services can run in different environments during the same experiment.</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="w">  </span><span class="nt">python_exe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/Users/USER/miniconda3/python.exe</span><span class="w"> </span><span class="c1"># point to the python executable in the etho environment. Used when starting the services. This global value can be overriden by specifying a `python_exe` for each service in the the [protocol]. That way, different services can run in different environments during the same experiment.</span>
 <span class="w">  </span><span class="nt">playlistfolder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/Users/USER/ethoconfig/playlists</span>
 <span class="w">  </span><span class="nt">protocolfolder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/Users/USER/ethoconfig/protocols</span>
 <span class="w">  </span><span class="nt">stimfolder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/Users/USER/ethoconfig/stim</span><span class="w">  </span><span class="c1"># folder for reading stimulus wav files specified in the playlists</span>
@@ -265,6 +265,15 @@
 <span class="w">  </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">USER</span><span class="w"> </span><span class="c1"># default user for starting remote services via ssh [OPTIONAL]</span>
 </pre></div>
 </div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">python_exe:</span> <span class="pre">C:/Users/USER/miniconda3/python.exe</span></code>: Path of the python executable in the etho environment. Used when starting the services. This global value can be overriden by specifying a <code class="docutils literal notranslate"><span class="pre">python_exe</span></code> for each service in the <a class="reference internal" href="protocol.html#id1"><span class="std std-ref">protocol</span></a>. That way, different services can run in different environments during the same experiment.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">playlistfolder:</span> <span class="pre">C:/Users/USER/ethoconfig/playlists</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">protocolfolder:</span> <span class="pre">C:/Users/USER/ethoconfig/protocols</span></code></p></li>
+<li><p>`stimfolder: C:/Users/USER/ethoconfig/stim  # folder for reading stimulus wav files specified in the playlists</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calibrationfolder:</span> <span class="pre">C:/Users/USER/ethoconfig/calibrations</span></code>: <em>Currently unused</em> Folder with calibration files (audio, opto, piezo)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">savefolder:</span> <span class="pre">C:/Users/USER/data</span></code>: Parent directory for saving all videos, audios, logs etc.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user:</span> <span class="pre">USER</span></code>: <em>Optional</em> Default user for starting remote services via ssh.</p></li>
+</ul>
 </section>
 
         </article>

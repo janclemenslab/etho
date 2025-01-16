@@ -1,28 +1,22 @@
-# Experimental protocols
-For experiment-specific settings.
 
-## General fields
-[yaml](pyyaml.org) format. The following fields are supported:
+# Experimental protocols
+(experimental-protocols)=
+[yaml](pyyaml.org) format. For experiment-specific settings.
+
+Minimal example with camera and NI-daq:
 ```yaml
 maxduration: 90 # seconds
-use_services: [GCM, DAQ]  # list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names
-serializer: pickle  # OPTIONAL save default
-user: USER  # OPTIONAL - only required if you want to run services on remote computers
-savefolder: C:/Users/USER/data # OPTIONAL - default set in ethoconfig.yml - this is where the recordings will be saved
-python_exe: C:/miniconda/envs/etho/python.exe   # OPTIONAL - default set in ethoconfig.yml - run this prot in specific env
-```
+use_services: [GCM, DAQ]
 
-## Service specific parameters
-```yaml
 GCM:  # Minimal example
   cam_type: Spinnaker  # for FLIR cameras, or: Basler, Ximea, Hamamatsu
   cam_serialnumber: 30959651
   frame_rate: 100.0  # frames per second
   frame_width: 640  # pixels
   frame_height: 200  # pixels
-  shutter_speed: 5_000 # us=5ms
   frame_offx: 78  # pixels
   frame_offy: 10  # pixels
+  shutter_speed: 5_000 # us=5ms
   callbacks:
     save_avi:  # save frames as avi using opencv VideoWriter
     save_timestamps:  # save timestamp for each frame to h5 file
@@ -34,89 +28,114 @@ DAQ:  # Minimal example
   analog_chans_out: [ao0, ao1]
   callbacks:
     save_h5:   # save data and timestamps as hdfs
+```
 
 
-GCM:  # generic camera interface with different backends   cam_type: Ximea  # or Spinnaker (for FLIR cameras) or Basler or ximea or hamamatsu
-  frame_rate: 100.0  # frames per second
-  frame_width: 640  # pixels
-  frame_height: 200  # pixels
-  shutter_speed: 5_000 # us=5ms
-  frame_offx: 78  # pixels
-  frame_offy: 10  # pixels
-  brightness: 0.0 # OPTIONAL
-  exposure: 0.0  # OPTIONAL
-  gamma: 1.0  # OPTIONAL
-  gain: 0.0
-  cam_serialnumber: 30959651  # MQ013CG-ON
-  binning: 1  # set horz and vert binning - typically, 1, 2, 4 is available
-  optimize_auto_exposure: True  # defaults to False
-  external_trigger: False #
-  host:  # OPTIONAL individual services can run on specific hosts
+## General fields
+
+- `maxduration: 90` # seconds
+- `use_services: [GCM, DAQ]`  # list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names
+- `serializer: pickle`  # OPTIONAL save default
+
+
+## Service specific parameters
+
+### All services
+
+- `callbacks`: _(Optional)_ Must be set if you want to save or display aqcuired data. See below for which services accept which kinds of callbacks.
+- `python_exe: anaconda/envs/my_special_env/python.exe`: _(Optional)_ Override [global](global-configuration) `python_exe` to run this service in a specific environment.
+- `host`: _(Optional, Unused)_ Run this service on a different computer. Requires the following information:
+  - `name: 192.168.1.2`: Name/IP address of remote computer
+  - `user: my_user_name`: User name to for ssh login on the remote computer. Need to setup passwordless ssh.
+  - `python_exe: C:/miniconda/envs/etho/python.exe`
+  - `savefolder: C:/Users/ncb/data`
+```yaml
+host:  # OPTIONAL individual services can run on specific hosts
     name: 192.168.1.42
     user: ncb
     python_exe: C:/miniconda/envs/etho/python.exe
     savefolder: C:/Users/ncb/data
-  callbacks:
-    save_avi:  # save frames as avi using opencv VideoWriter (has no params)
-    save_avi_vidread:  # save frames as avi using VidRead
-      ffmpeg_params:  # configure ffmpeg backend - need to prepend `-` to each param
-        -crf: 16
-    save_avi_fast:  # or save frames as avi using Nvidia's GPU-based VideoProcessingFramework
-      VPF_bin_path: C:/Users/ncb/vpf/bin3.7  # path to the directory containing the binaries for VPF
-    save_timestamps:  # save timestamps for each frame to h5 file
-    disp:  # plot frames using opencv
-    disp_fast:  # plot frames using pyqtgraph (faster?)
 ```
 
 ### DAQ
-National Instruments DAQ cards. Block should start named `DAQ`. If you want to use multiple NI-daq devices, create a block for each of them and name them `DAQ1`, `DAQ2`, etc. Minimal example:
-```yaml
-DAQ:
-  clock_source: OnboardClock
-  samplingrate: 5000 # Hz
-  shuffle: True # block-randomize order of stimuli for playback
-  ledamp: 1.0  # sets the amplitude of the MIRROR_LED - see playlist docs for details.
-  analog_chans_in: [ai0]
-  analog_chans_out: [ao0, ao1]
-  python_exe: C:/miniconda/envs/etho/python.exe  # OPTIONAL - run this service in env.
-  callbacks:
-    save_h5:   # save data as hdfs (has no params)
-    plot:  # plot traces using matplotlib OR
-    plot_fast:  # plot traces using pyqtgraph (much faster!) (use either `plot` or plot_fast`, never both)
-```
+### National Instruments DAQ cards.
+Name of block _must_ start with `DAQ`. If you want to use multiple NI-daq devices, create one block for each of them and add a suffix, e.g. `DAQ1`, `DAQ2`, etc. Minimal example:
 
 #### Required
 - `samplingrate: 10000`: Float or int in Hz.
-- `analog_chans_in: [ai0, ai1, ai2]`: Must specify at least one input channel, even if you do not want to record. Otherwise the DAQ system will not work for stupid technical reasons. _FUTURE: define blocks [ai0:2]_
+- `analog_chans_in: [ai0, ai1, ai2]`: Must specify at least one input channel, even if you do not want to record. Otherwise the DAQ system will not work for stupid technical reasons. _FUTURE: define blocks `[ai0:2]`, allow cross-channel tasks `[Dev1/ai0, Dev2/ai0]`_
 
 #### Optional
 - `device: Dev1`: Name of NI-daq device to use. Check NI-MAX for a list of device names. Defaults to `Dev1`.
-- `terminals: RSE`: Terminal type. Allowed values: `RSE`, `NRSE`, `Diff`. Defaults to `RSE`.
+- `terminals: RSE`: Terminal type for all analog channels. Allowed values: `RSE`, `NRSE`, `Diff`. Defaults to `RSE`.
 - `shuffle: True`: Block-randomize order of stimuli in playlist. Defaults to `False`.
+- `clock_source: OnboardClock` _(Optional)_
 - `callbacks:` Allowed values are: `plot`, `plot_fast`, `save_h5`, `save_zarr`, `savedlp_h5`. See [callbacks] for details.
-- `analog_chans_in_limits: [[0, 5], [0, 10], [-10, 10]]` Limits for analog channels. Defaults to `10` (sets limits to +/-10 for all analog channels). One of:
+- `analog_chans_in_info: ['left microphone', 'right microphone']`: Description of the different channels so you know what's what.
+- `analog_chans_in_limits: [[0, 5], [0, 10], [-10, 10]]`: Limits for analog channels. Defaults to `10` (sets limits to +/-10 for all analog channels). One of:
   - a single pos number specifying symmetrical limits for all channels, e.g. `5`
   - a list of single pos numbers specifying symmetrical limits for each channel, e.g. `[5, 10, 2]`
   - a list of two numbers (first should be smaller than second) specifying upper and lower limit for each channel, e.g. `[[0, 5], [0, 10], [-10, 10]]`
+- `analog_chans_out: ['ao0', 'ao1']` : Description of the different channels so you know what's what.
+- `analog_chans_out_info: ['left speaker', 'right speaker']` : Description of the different channels so you know what's what.
+- `digital_chans_out: [port0/line1, port0/line2, port0/line3]`
+- `digital_chans_out_info: ['start trigger', 'stop trigger', 'next trigger']`: Description of the different channels so you know what's what.
 
-
+#### Callbacks
+- `save_h5:` save data as hdfs (has no params) - analog data and timestamps (every second?).
+- `save_zarr:` save data as zarr (has no params) - analog data and timestamps (every second?).
+- `plot_fast:` plot traces using pyqtgraph. Can select which channels to plot by providing the zero-based indices of the analog input channels with `channels_to_plot`. E.g `channels_to_plot: [0, 1, 2]` will plot the first three analog input channels.
+- `plot:` Alternativel, plot traces using matplotlib (slower). Can select which input channels are plotted with `channels_to_plot` (see above).
+```yaml
+callbacks:
+  save_h5:   # save data as hdfs (has no params)
+  plot_fast:  # plot traces using pyqtgraph
+    channels_to_plot: [0, 1, 2]  # plot the first three input channels
 ```
-DAQ:
-  clock_source: OnboardClock
-  samplingrate: 10000 # Hz
-  shuffle: True # block-randomize order of stimuli for playback
-  device: Dev1
-  analog_chans_in: [ai0, ai1, ai2]  # FUTURE: define blocks [ai0:2]
-  analog_chans_in_limits: [[0, 5], [0, 10], [-10, 10]] # either a single pos number specifying symmetrical limits for all analog_chans_in_terminal: [RSE, NRSE, Diff]  # defaults to RSE
-  analog_chans_out: [ao0, ao1]
-  analog_chans_out_limits: [10, 10]
-  digital_chans_out: [...]
-  terminals: RSE  # OPTIONAL: can specify "RSE", "NRSE" or "Diff",  defaults to "RSE"
-  callbacks:
-    save_h5:   # save data as hdfs (has no params)
-    plot:  # plot traces using matplotlib OR
-    plot_fast:  # plot traces using pyqtgraph (much faster!) (use either `plot` or plot_fast`, never both)
 
+### Camera
+Generic camera interface with different backends.
+
+#### Required
+- `cam_type: Ximea` or Spinnaker (for FLIR cameras) or Basler or ximea or hamamatsu
+- `cam_serialnumber: 30959651`:
+- `frame_rate: 100.0`: frames per second
+- `frame_width: 640`: pixels
+- `frame_height: 200`: pixels
+- `shutter_speed: 5_000`: Exposure time in microseconds.
+
+#### Optional
+- `frame_offx: 78`: x-offset of ROI in pixels. Defaults to 0.
+- `frame_offy: 10`: y-offset of ROI in pixels. Defaults to 0.
+- `binning: 1`: Set horz and vert frame binning. Defaults to 1 (no binning). Typically, 1, 2, 4 is available. Not supported by all camera types.
+- `brightness: 0.0`: Brightness. Defaults to 0
+- `gamma: 1.0`: Gamma value. Defaults to 1
+- `gain: 0.0`: Digital gain. Defaults to 0
+- `optimize_auto_exposure: False`: Defaults to False
+- `external_trigger: False`: Defaults to False
+
+#### Callbacks
+- `disp:`  # plot frames using opencv
+- `disp_fast:`  # plot frames using pyqtgraph (faster?)
+- `save_timestamps:`  # save timestamps for each frame to h5 file
+- `save_avi`: save frames as avi using opencv VideoWriter (has no params)
+- `save_avi_vidgear`: save frames as avi using VidGear
+    ffmpeg_params:  # configure ffmpeg backend - need to prepend `-` to each param
+      -crf: 16
+- `save_avi_fast`  # or save frames as avi using Nvidia's GPU-based VideoProcessingFramework
+    `VPF_bin_path: C:/Users/ncb/vpf/bin3.7` path to the directory containing the binaries for VPF
+- `saveimg_h5` Save frames as h5 file.
+- `save_ffmpegcv`
+```yaml
+callbacks:
+  save_avi:   # save video file
+  save_timestamps:   # save frame timestamps
+  disp_fast:  # plot traces using pyqtgraph
+```
+
+
+### Misc services
+```yaml
 THUA:
   pin ???
 

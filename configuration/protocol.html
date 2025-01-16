@@ -255,30 +255,20 @@
         <article role="main">
           <section id="experimental-protocols">
 <h1>Experimental protocols<a class="headerlink" href="#experimental-protocols" title="Permalink to this headline">#</a></h1>
-<p>For experiment-specific settings.</p>
-<section id="general-fields">
-<h2>General fields<a class="headerlink" href="#general-fields" title="Permalink to this headline">#</a></h2>
-<p><span class="xref myst">yaml</span> format. The following fields are supported:</p>
+<p id="id1"><span class="xref myst">yaml</span> format. For experiment-specific settings.</p>
+<p>Minimal example with camera and NI-daq:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">maxduration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90</span><span class="w"> </span><span class="c1"># seconds</span>
-<span class="nt">use_services</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">GCM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">DAQ</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names</span>
-<span class="nt">serializer</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pickle</span><span class="w">  </span><span class="c1"># OPTIONAL save default</span>
-<span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">USER</span><span class="w">  </span><span class="c1"># OPTIONAL - only required if you want to run services on remote computers</span>
-<span class="nt">savefolder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/Users/USER/data</span><span class="w"> </span><span class="c1"># OPTIONAL - default set in ethoconfig.yml - this is where the recordings will be saved</span>
-<span class="nt">python_exe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/miniconda/envs/etho/python.exe</span><span class="w">   </span><span class="c1"># OPTIONAL - default set in ethoconfig.yml - run this prot in specific env</span>
-</pre></div>
-</div>
-</section>
-<section id="service-specific-parameters">
-<h2>Service specific parameters<a class="headerlink" href="#service-specific-parameters" title="Permalink to this headline">#</a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">GCM</span><span class="p">:</span><span class="w">  </span><span class="c1"># Minimal example</span>
+<span class="nt">use_services</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">GCM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">DAQ</span><span class="p p-Indicator">]</span>
+
+<span class="nt">GCM</span><span class="p">:</span><span class="w">  </span><span class="c1"># Minimal example</span>
 <span class="w">  </span><span class="nt">cam_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Spinnaker</span><span class="w">  </span><span class="c1"># for FLIR cameras, or: Basler, Ximea, Hamamatsu</span>
 <span class="w">  </span><span class="nt">cam_serialnumber</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30959651</span>
 <span class="w">  </span><span class="nt">frame_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100.0</span><span class="w">  </span><span class="c1"># frames per second</span>
 <span class="w">  </span><span class="nt">frame_width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">640</span><span class="w">  </span><span class="c1"># pixels</span>
 <span class="w">  </span><span class="nt">frame_height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w">  </span><span class="c1"># pixels</span>
-<span class="w">  </span><span class="nt">shutter_speed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5_000</span><span class="w"> </span><span class="c1"># us=5ms</span>
 <span class="w">  </span><span class="nt">frame_offx</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">78</span><span class="w">  </span><span class="c1"># pixels</span>
 <span class="w">  </span><span class="nt">frame_offy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w">  </span><span class="c1"># pixels</span>
+<span class="w">  </span><span class="nt">shutter_speed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5_000</span><span class="w"> </span><span class="c1"># us=5ms</span>
 <span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">save_avi</span><span class="p">:</span><span class="w">  </span><span class="c1"># save frames as avi using opencv VideoWriter</span>
 <span class="w">    </span><span class="nt">save_timestamps</span><span class="p">:</span><span class="w">  </span><span class="c1"># save timestamp for each frame to h5 file</span>
@@ -290,142 +280,189 @@
 <span class="w">  </span><span class="nt">analog_chans_out</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ao0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ao1</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">save_h5</span><span class="p">:</span><span class="w">   </span><span class="c1"># save data and timestamps as hdfs</span>
-
-
-<span class="nt">GCM</span><span class="p">:</span><span class="w">  </span><span class="c1"># generic camera interface with different backends   cam_type: Ximea  # or Spinnaker (for FLIR cameras) or Basler or ximea or hamamatsu</span>
-<span class="w">  </span><span class="nt">frame_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100.0</span><span class="w">  </span><span class="c1"># frames per second</span>
-<span class="w">  </span><span class="nt">frame_width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">640</span><span class="w">  </span><span class="c1"># pixels</span>
-<span class="w">  </span><span class="nt">frame_height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w">  </span><span class="c1"># pixels</span>
-<span class="w">  </span><span class="nt">shutter_speed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5_000</span><span class="w"> </span><span class="c1"># us=5ms</span>
-<span class="w">  </span><span class="nt">frame_offx</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">78</span><span class="w">  </span><span class="c1"># pixels</span>
-<span class="w">  </span><span class="nt">frame_offy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w">  </span><span class="c1"># pixels</span>
-<span class="w">  </span><span class="nt">brightness</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span><span class="w"> </span><span class="c1"># OPTIONAL</span>
-<span class="w">  </span><span class="nt">exposure</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span><span class="w">  </span><span class="c1"># OPTIONAL</span>
-<span class="w">  </span><span class="nt">gamma</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span><span class="w">  </span><span class="c1"># OPTIONAL</span>
-<span class="w">  </span><span class="nt">gain</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0</span>
-<span class="w">  </span><span class="nt">cam_serialnumber</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30959651</span><span class="w">  </span><span class="c1"># MQ013CG-ON</span>
-<span class="w">  </span><span class="nt">binning</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">  </span><span class="c1"># set horz and vert binning - typically, 1, 2, 4 is available</span>
-<span class="w">  </span><span class="nt">optimize_auto_exposure</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w">  </span><span class="c1"># defaults to False</span>
-<span class="w">  </span><span class="nt">external_trigger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"> </span><span class="c1">#</span>
-<span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w">  </span><span class="c1"># OPTIONAL individual services can run on specific hosts</span>
+</pre></div>
+</div>
+<section id="general-fields">
+<h2>General fields<a class="headerlink" href="#general-fields" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">maxduration:</span> <span class="pre">90</span></code> # seconds</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use_services:</span> <span class="pre">[GCM,</span> <span class="pre">DAQ]</span></code>  # list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">serializer:</span> <span class="pre">pickle</span></code>  # OPTIONAL save default</p></li>
+</ul>
+</section>
+<section id="service-specific-parameters">
+<h2>Service specific parameters<a class="headerlink" href="#service-specific-parameters" title="Permalink to this headline">#</a></h2>
+<section id="all-services">
+<h3>All services<a class="headerlink" href="#all-services" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">callbacks</span></code>: <em>(Optional)</em> Must be set if you want to save or display aqcuired data. See below for which services accept which kinds of callbacks.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python_exe:</span> <span class="pre">anaconda/envs/my_special_env/python.exe</span></code>: <em>(Optional)</em> Override <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global</span></a> <code class="docutils literal notranslate"><span class="pre">python_exe</span></code> to run this service in a specific environment.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">host</span></code>: <em>(Optional, Unused)</em> Run this service on a different computer. Requires the following information:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">name:</span> <span class="pre">192.168.1.2</span></code>: Name/IP address of remote computer</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user:</span> <span class="pre">my_user_name</span></code>: User name to for ssh login on the remote computer. Need to setup passwordless ssh.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python_exe:</span> <span class="pre">C:/miniconda/envs/etho/python.exe</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">savefolder:</span> <span class="pre">C:/Users/ncb/data</span></code></p></li>
+</ul>
+</li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">host</span><span class="p">:</span><span class="w">  </span><span class="c1"># OPTIONAL individual services can run on specific hosts</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.1.42</span>
 <span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ncb</span>
 <span class="w">    </span><span class="nt">python_exe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/miniconda/envs/etho/python.exe</span>
 <span class="w">    </span><span class="nt">savefolder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/Users/ncb/data</span>
-<span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">save_avi</span><span class="p">:</span><span class="w">  </span><span class="c1"># save frames as avi using opencv VideoWriter (has no params)</span>
-<span class="w">    </span><span class="nt">save_avi_vidread</span><span class="p">:</span><span class="w">  </span><span class="c1"># save frames as avi using VidRead</span>
-<span class="w">      </span><span class="nt">ffmpeg_params</span><span class="p">:</span><span class="w">  </span><span class="c1"># configure ffmpeg backend - need to prepend `-` to each param</span>
-<span class="w">        </span><span class="nt">-crf</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">16</span>
-<span class="w">    </span><span class="nt">save_avi_fast</span><span class="p">:</span><span class="w">  </span><span class="c1"># or save frames as avi using Nvidia&#39;s GPU-based VideoProcessingFramework</span>
-<span class="w">      </span><span class="nt">VPF_bin_path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/Users/ncb/vpf/bin3.7</span><span class="w">  </span><span class="c1"># path to the directory containing the binaries for VPF</span>
-<span class="w">    </span><span class="nt">save_timestamps</span><span class="p">:</span><span class="w">  </span><span class="c1"># save timestamps for each frame to h5 file</span>
-<span class="w">    </span><span class="nt">disp</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot frames using opencv</span>
-<span class="w">    </span><span class="nt">disp_fast</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot frames using pyqtgraph (faster?)</span>
 </pre></div>
 </div>
+</section>
 <section id="daq">
 <h3>DAQ<a class="headerlink" href="#daq" title="Permalink to this headline">#</a></h3>
-<p>National Instruments DAQ cards. Block should start named <code class="docutils literal notranslate"><span class="pre">DAQ</span></code>. If you want to use multiple NI-daq devices, create a block for each of them and name them <code class="docutils literal notranslate"><span class="pre">DAQ1</span></code>, <code class="docutils literal notranslate"><span class="pre">DAQ2</span></code>, etc. Minimal example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">DAQ</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">clock_source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OnboardClock</span>
-<span class="w">  </span><span class="nt">samplingrate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span><span class="w"> </span><span class="c1"># Hz</span>
-<span class="w">  </span><span class="nt">shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"> </span><span class="c1"># block-randomize order of stimuli for playback</span>
-<span class="w">  </span><span class="nt">ledamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span><span class="w">  </span><span class="c1"># sets the amplitude of the MIRROR_LED - see playlist docs for details.</span>
-<span class="w">  </span><span class="nt">analog_chans_in</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ai0</span><span class="p p-Indicator">]</span>
-<span class="w">  </span><span class="nt">analog_chans_out</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ao0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ao1</span><span class="p p-Indicator">]</span>
-<span class="w">  </span><span class="nt">python_exe</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:/miniconda/envs/etho/python.exe</span><span class="w">  </span><span class="c1"># OPTIONAL - run this service in env.</span>
-<span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">save_h5</span><span class="p">:</span><span class="w">   </span><span class="c1"># save data as hdfs (has no params)</span>
-<span class="w">    </span><span class="nt">plot</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot traces using matplotlib OR</span>
-<span class="w">    </span><span class="nt">plot_fast</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot traces using pyqtgraph (much faster!) (use either `plot` or plot_fast`, never both)</span>
-</pre></div>
-</div>
+</section>
+<section id="national-instruments-daq-cards">
+<h3>National Instruments DAQ cards.<a class="headerlink" href="#national-instruments-daq-cards" title="Permalink to this headline">#</a></h3>
+<p>Name of block <em>must</em> start with <code class="docutils literal notranslate"><span class="pre">DAQ</span></code>. If you want to use multiple NI-daq devices, create one block for each of them and add a suffix, e.g. <code class="docutils literal notranslate"><span class="pre">DAQ1</span></code>, <code class="docutils literal notranslate"><span class="pre">DAQ2</span></code>, etc. Minimal example:</p>
 <section id="required">
 <h4>Required<a class="headerlink" href="#required" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">samplingrate:</span> <span class="pre">10000</span></code>: Float or int in Hz.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_in:</span> <span class="pre">[ai0,</span> <span class="pre">ai1,</span> <span class="pre">ai2]</span></code>: Must specify at least one input channel, even if you do not want to record. Otherwise the DAQ system will not work for stupid technical reasons. <em>FUTURE: define blocks [ai0:2]</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_in:</span> <span class="pre">[ai0,</span> <span class="pre">ai1,</span> <span class="pre">ai2]</span></code>: Must specify at least one input channel, even if you do not want to record. Otherwise the DAQ system will not work for stupid technical reasons. <em>FUTURE: define blocks <code class="docutils literal notranslate"><span class="pre">[ai0:2]</span></code>, allow cross-channel tasks <code class="docutils literal notranslate"><span class="pre">[Dev1/ai0,</span> <span class="pre">Dev2/ai0]</span></code></em></p></li>
 </ul>
 </section>
 <section id="optional">
 <h4>Optional<a class="headerlink" href="#optional" title="Permalink to this headline">#</a></h4>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">device:</span> <span class="pre">Dev1</span></code>: Name of NI-daq device to use. Check NI-MAX for a list of device names. Defaults to <code class="docutils literal notranslate"><span class="pre">Dev1</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">terminals:</span> <span class="pre">RSE</span></code>: Terminal type. Allowed values: <code class="docutils literal notranslate"><span class="pre">RSE</span></code>, <code class="docutils literal notranslate"><span class="pre">NRSE</span></code>, <code class="docutils literal notranslate"><span class="pre">Diff</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">RSE</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminals:</span> <span class="pre">RSE</span></code>: Terminal type for all analog channels. Allowed values: <code class="docutils literal notranslate"><span class="pre">RSE</span></code>, <code class="docutils literal notranslate"><span class="pre">NRSE</span></code>, <code class="docutils literal notranslate"><span class="pre">Diff</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">RSE</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">shuffle:</span> <span class="pre">True</span></code>: Block-randomize order of stimuli in playlist. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clock_source:</span> <span class="pre">OnboardClock</span></code> <em>(Optional)</em></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">callbacks:</span></code> Allowed values are: <code class="docutils literal notranslate"><span class="pre">plot</span></code>, <code class="docutils literal notranslate"><span class="pre">plot_fast</span></code>, <code class="docutils literal notranslate"><span class="pre">save_h5</span></code>, <code class="docutils literal notranslate"><span class="pre">save_zarr</span></code>, <code class="docutils literal notranslate"><span class="pre">savedlp_h5</span></code>. See [callbacks] for details.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_in_limits:</span> <span class="pre">[[0,</span> <span class="pre">5],</span> <span class="pre">[0,</span> <span class="pre">10],</span> <span class="pre">[-10,</span> <span class="pre">10]]</span></code> Limits for analog channels. Defaults to <code class="docutils literal notranslate"><span class="pre">10</span></code> (sets limits to +/-10 for all analog channels). One of:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_in_info:</span> <span class="pre">['left</span> <span class="pre">microphone',</span> <span class="pre">'right</span> <span class="pre">microphone']</span></code>: Description of the different channels so you know what’s what.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_in_limits:</span> <span class="pre">[[0,</span> <span class="pre">5],</span> <span class="pre">[0,</span> <span class="pre">10],</span> <span class="pre">[-10,</span> <span class="pre">10]]</span></code>: Limits for analog channels. Defaults to <code class="docutils literal notranslate"><span class="pre">10</span></code> (sets limits to +/-10 for all analog channels). One of:</p>
 <ul>
 <li><p>a single pos number specifying symmetrical limits for all channels, e.g. <code class="docutils literal notranslate"><span class="pre">5</span></code></p></li>
 <li><p>a list of single pos numbers specifying symmetrical limits for each channel, e.g. <code class="docutils literal notranslate"><span class="pre">[5,</span> <span class="pre">10,</span> <span class="pre">2]</span></code></p></li>
 <li><p>a list of two numbers (first should be smaller than second) specifying upper and lower limit for each channel, e.g. <code class="docutils literal notranslate"><span class="pre">[[0,</span> <span class="pre">5],</span> <span class="pre">[0,</span> <span class="pre">10],</span> <span class="pre">[-10,</span> <span class="pre">10]]</span></code></p></li>
 </ul>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_out:</span> <span class="pre">['ao0',</span> <span class="pre">'ao1']</span></code> : Description of the different channels so you know what’s what.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_out_info:</span> <span class="pre">['left</span> <span class="pre">speaker',</span> <span class="pre">'right</span> <span class="pre">speaker']</span></code> : Description of the different channels so you know what’s what.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">digital_chans_out:</span> <span class="pre">[port0/line1,</span> <span class="pre">port0/line2,</span> <span class="pre">port0/line3]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">digital_chans_out_info:</span> <span class="pre">['start</span> <span class="pre">trigger',</span> <span class="pre">'stop</span> <span class="pre">trigger',</span> <span class="pre">'next</span> <span class="pre">trigger']</span></code>: Description of the different channels so you know what’s what.</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>DAQ:
-  clock_source: OnboardClock
-  samplingrate: 10000 # Hz
-  shuffle: True # block-randomize order of stimuli for playback
-  device: Dev1
-  analog_chans_in: [ai0, ai1, ai2]  # FUTURE: define blocks [ai0:2]
-  analog_chans_in_limits: [[0, 5], [0, 10], [-10, 10]] # either a single pos number specifying symmetrical limits for all analog_chans_in_terminal: [RSE, NRSE, Diff]  # defaults to RSE
-  analog_chans_out: [ao0, ao1]
-  analog_chans_out_limits: [10, 10]
-  digital_chans_out: [...]
-  terminals: RSE  # OPTIONAL: can specify &quot;RSE&quot;, &quot;NRSE&quot; or &quot;Diff&quot;,  defaults to &quot;RSE&quot;
-  callbacks:
-    save_h5:   # save data as hdfs (has no params)
-    plot:  # plot traces using matplotlib OR
-    plot_fast:  # plot traces using pyqtgraph (much faster!) (use either `plot` or plot_fast`, never both)
-
-THUA:
-  pin ???
-
-CAM:  # pi camera
-  framerate: 30 # frames per second
-  framewidth: 1000 # pixels
-  frameheight: 1000 # pixels
-  shutterspeed: 10000 # ns=10ms
-  annotate_frame_num: False # print frame number in each frame
-  # currently unused picamera options but probably useful
-  exposuremode: &#39;fixedfps&#39;
-  video_denoise: False
-
-THU: # pi temperature and humidity sensor
-  pin: 17 # GPIO PIN for read out
-  interval: 20 # seconds, log temperature and humidity every 20 seconds
-
-OPT2:  # pi opto led control
-  pin: [25, 24]  # red and green led channel
-  playlist_channels: [2, 3]
-
-SND:  # pi sound playback via pygame
-  samplingrate: 44100  # Hz
-  shuffle: False  # block-randomize order of stimuli for playback
-  ledamp: 1300  # amplitude of the IR LED used for syncing audio and video
-  playlist_channels: [0, 1]
-
-REL:  # pi relay control (for backlight and illumination)
-  pin: 22
-
-DLP:  # DLP projector
-  warpfile: &#39;Z:/#Data/flyball/projector/warpmesh_1140x912.data&#39;
-  use_warping: False
-  callbacks:
-    savedlp_h5:  # save per-frame stimulus parameters to `_dlp.h5`
-  runners:
-    LED_blinker:
-      object: &#39;Rect&#39;  # should be the classname: `psychopy.visuals.NAME`
-      led_frame: 360
-      led_duration: 180
+</section>
+<section id="callbacks">
+<h4>Callbacks<a class="headerlink" href="#callbacks" title="Permalink to this headline">#</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">save_h5:</span></code> save data as hdfs (has no params) - analog data and timestamps (every second?).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save_zarr:</span></code> save data as zarr (has no params) - analog data and timestamps (every second?).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot_fast:</span></code> plot traces using pyqtgraph. Can select which channels to plot by providing the zero-based indices of the analog input channels with <code class="docutils literal notranslate"><span class="pre">channels_to_plot</span></code>. E.g <code class="docutils literal notranslate"><span class="pre">channels_to_plot:</span> <span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></code> will plot the first three analog input channels.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">plot:</span></code> Alternativel, plot traces using matplotlib (slower). Can select which input channels are plotted with <code class="docutils literal notranslate"><span class="pre">channels_to_plot</span></code> (see above).</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">callbacks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">save_h5</span><span class="p">:</span><span class="w">   </span><span class="c1"># save data as hdfs (has no params)</span>
+<span class="w">  </span><span class="nt">plot_fast</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot traces using pyqtgraph</span>
+<span class="w">    </span><span class="nt">channels_to_plot</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># plot the first three input channels</span>
 </pre></div>
 </div>
 </section>
 </section>
+<section id="camera">
+<h3>Camera<a class="headerlink" href="#camera" title="Permalink to this headline">#</a></h3>
+<p>Generic camera interface with different backends.</p>
+<section id="id2">
+<h4>Required<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cam_type:</span> <span class="pre">Ximea</span></code> or Spinnaker (for FLIR cameras) or Basler or ximea or hamamatsu</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cam_serialnumber:</span> <span class="pre">30959651</span></code>:</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frame_rate:</span> <span class="pre">100.0</span></code>: frames per second</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frame_width:</span> <span class="pre">640</span></code>: pixels</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frame_height:</span> <span class="pre">200</span></code>: pixels</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shutter_speed:</span> <span class="pre">5_000</span></code>: Exposure time in microseconds.</p></li>
+</ul>
 </section>
-<section id="callbacks">
-<h2>Callbacks<a class="headerlink" href="#callbacks" title="Permalink to this headline">#</a></h2>
+<section id="id3">
+<h4>Optional<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">frame_offx:</span> <span class="pre">78</span></code>: x-offset of ROI in pixels. Defaults to 0.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frame_offy:</span> <span class="pre">10</span></code>: y-offset of ROI in pixels. Defaults to 0.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">binning:</span> <span class="pre">1</span></code>: Set horz and vert frame binning. Defaults to 1 (no binning). Typically, 1, 2, 4 is available. Not supported by all camera types.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">brightness:</span> <span class="pre">0.0</span></code>: Brightness. Defaults to 0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gamma:</span> <span class="pre">1.0</span></code>: Gamma value. Defaults to 1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gain:</span> <span class="pre">0.0</span></code>: Digital gain. Defaults to 0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">optimize_auto_exposure:</span> <span class="pre">False</span></code>: Defaults to False</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">external_trigger:</span> <span class="pre">False</span></code>: Defaults to False</p></li>
+</ul>
+</section>
+<section id="id4">
+<h4>Callbacks<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">disp:</span></code>  # plot frames using opencv</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">disp_fast:</span></code>  # plot frames using pyqtgraph (faster?)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save_timestamps:</span></code>  # save timestamps for each frame to h5 file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save_avi</span></code>: save frames as avi using opencv VideoWriter (has no params)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save_avi_vidgear</span></code>: save frames as avi using VidGear
+ffmpeg_params:  # configure ffmpeg backend - need to prepend <code class="docutils literal notranslate"><span class="pre">-</span></code> to each param
+-crf: 16</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save_avi_fast</span></code>  # or save frames as avi using Nvidia’s GPU-based VideoProcessingFramework
+<code class="docutils literal notranslate"><span class="pre">VPF_bin_path:</span> <span class="pre">C:/Users/ncb/vpf/bin3.7</span></code> path to the directory containing the binaries for VPF</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">saveimg_h5</span></code> Save frames as h5 file.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save_ffmpegcv</span></code></p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">callbacks</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">save_avi</span><span class="p">:</span><span class="w">   </span><span class="c1"># save video file</span>
+<span class="w">  </span><span class="nt">save_timestamps</span><span class="p">:</span><span class="w">   </span><span class="c1"># save frame timestamps</span>
+<span class="w">  </span><span class="nt">disp_fast</span><span class="p">:</span><span class="w">  </span><span class="c1"># plot traces using pyqtgraph</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="misc-services">
+<h3>Misc services<a class="headerlink" href="#misc-services" title="Permalink to this headline">#</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">THUA</span><span class="p">:</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">pin ???</span>
+
+<span class="nt">CAM</span><span class="p">:</span><span class="w">  </span><span class="c1"># pi camera</span>
+<span class="w">  </span><span class="nt">framerate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span><span class="w"> </span><span class="c1"># frames per second</span>
+<span class="w">  </span><span class="nt">framewidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span><span class="w"> </span><span class="c1"># pixels</span>
+<span class="w">  </span><span class="nt">frameheight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span><span class="w"> </span><span class="c1"># pixels</span>
+<span class="w">  </span><span class="nt">shutterspeed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span><span class="w"> </span><span class="c1"># ns=10ms</span>
+<span class="w">  </span><span class="nt">annotate_frame_num</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"> </span><span class="c1"># print frame number in each frame</span>
+<span class="w">  </span><span class="c1"># currently unused picamera options but probably useful</span>
+<span class="w">  </span><span class="nt">exposuremode</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;fixedfps&#39;</span>
+<span class="w">  </span><span class="nt">video_denoise</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+
+<span class="nt">THU</span><span class="p">:</span><span class="w"> </span><span class="c1"># pi temperature and humidity sensor</span>
+<span class="w">  </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">17</span><span class="w"> </span><span class="c1"># GPIO PIN for read out</span>
+<span class="w">  </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span><span class="w"> </span><span class="c1"># seconds, log temperature and humidity every 20 seconds</span>
+
+<span class="nt">OPT2</span><span class="p">:</span><span class="w">  </span><span class="c1"># pi opto led control</span>
+<span class="w">  </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">25</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">24</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># red and green led channel</span>
+<span class="w">  </span><span class="nt">playlist_channels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3</span><span class="p p-Indicator">]</span>
+
+<span class="nt">SND</span><span class="p">:</span><span class="w">  </span><span class="c1"># pi sound playback via pygame</span>
+<span class="w">  </span><span class="nt">samplingrate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">44100</span><span class="w">  </span><span class="c1"># Hz</span>
+<span class="w">  </span><span class="nt">shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w">  </span><span class="c1"># block-randomize order of stimuli for playback</span>
+<span class="w">  </span><span class="nt">ledamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1300</span><span class="w">  </span><span class="c1"># amplitude of the IR LED used for syncing audio and video</span>
+<span class="w">  </span><span class="nt">playlist_channels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">]</span>
+
+<span class="nt">REL</span><span class="p">:</span><span class="w">  </span><span class="c1"># pi relay control (for backlight and illumination)</span>
+<span class="w">  </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">22</span>
+
+<span class="nt">DLP</span><span class="p">:</span><span class="w">  </span><span class="c1"># DLP projector</span>
+<span class="w">  </span><span class="nt">warpfile</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Z:/#Data/flyball/projector/warpmesh_1140x912.data&#39;</span>
+<span class="w">  </span><span class="nt">use_warping</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">savedlp_h5</span><span class="p">:</span><span class="w">  </span><span class="c1"># save per-frame stimulus parameters to `_dlp.h5`</span>
+<span class="w">  </span><span class="nt">runners</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">LED_blinker</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Rect&#39;</span><span class="w">  </span><span class="c1"># should be the classname: `psychopy.visuals.NAME`</span>
+<span class="w">      </span><span class="nt">led_frame</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">360</span>
+<span class="w">      </span><span class="nt">led_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2>Callbacks<a class="headerlink" href="#id5" title="Permalink to this headline">#</a></h2>
 <section id="time-series-data">
 <h3>Time series data<a class="headerlink" href="#time-series-data" title="Permalink to this headline">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">save_h5</span></code>, <code class="docutils literal notranslate"><span class="pre">plot_fast</span></code></p>
@@ -495,14 +532,24 @@ DLP:  # DLP projector
 <li><a class="reference internal" href="#">Experimental protocols</a><ul>
 <li><a class="reference internal" href="#general-fields">General fields</a></li>
 <li><a class="reference internal" href="#service-specific-parameters">Service specific parameters</a><ul>
-<li><a class="reference internal" href="#daq">DAQ</a><ul>
+<li><a class="reference internal" href="#all-services">All services</a></li>
+<li><a class="reference internal" href="#daq">DAQ</a></li>
+<li><a class="reference internal" href="#national-instruments-daq-cards">National Instruments DAQ cards.</a><ul>
 <li><a class="reference internal" href="#required">Required</a></li>
 <li><a class="reference internal" href="#optional">Optional</a></li>
+<li><a class="reference internal" href="#callbacks">Callbacks</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#camera">Camera</a><ul>
+<li><a class="reference internal" href="#id2">Required</a></li>
+<li><a class="reference internal" href="#id3">Optional</a></li>
+<li><a class="reference internal" href="#id4">Callbacks</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#callbacks">Callbacks</a><ul>
+<li><a class="reference internal" href="#misc-services">Misc services</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id5">Callbacks</a><ul>
 <li><a class="reference internal" href="#time-series-data">Time series data</a></li>
 <li><a class="reference internal" href="#image-data">Image data</a></li>
 </ul>
