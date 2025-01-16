@@ -60,6 +60,16 @@ host:  # OPTIONAL individual services can run on specific hosts
 ### National Instruments DAQ cards.
 Name of block _must_ start with `DAQ`. If you want to use multiple NI-daq devices in a single experiment, create one block for each of them and add a suffix, e.g. `DAQ1`, `DAQ2`, etc. Minimal example:
 
+```yaml
+DAQ:  # Minimal example
+  samplingrate: 10000 # Hz
+  shuffle: True # block-randomize order of stimuli for playback
+  analog_chans_in: [ai0]
+  analog_chans_out: [ao0, ao1]
+  callbacks:
+    save_h5:   # save data and timestamps as hdfs
+```
+
 #### Required
 - `samplingrate: 10000`: Float or int in Hz.
 - `analog_chans_in: [ai0, ai1, ai2]`: Must specify at least one input channel, even if you do not want to record. Otherwise the DAQ system will not work for stupid technical reasons. _FUTURE: define blocks `[ai0:2]`, allow cross-channel tasks `[Dev1/ai0, Dev2/ai0]`_
@@ -93,7 +103,22 @@ callbacks:
 ```
 
 ### Camera
-Generic camera interface with different backends. Name of block _must_ start with `GCM`. If you want to use multiple cameras in a single experiment, create one block for each of them and add a suffix, e.g. `GCM1`, `GCM2`, etc.
+Generic camera interface with different backends. Name of block _must_ start with `GCM`. If you want to use multiple cameras in a single experiment, create one block for each of them and add a suffix, e.g. `GCM1`, `GCM2`, etc. Minimal example:
+
+```yaml
+GCM:  # Minimal example
+  cam_type: Spinnaker  # for FLIR cameras, or: Basler, Ximea, Hamamatsu
+  cam_serialnumber: 30959651
+  frame_rate: 100.0  # frames per second
+  frame_width: 640  # pixels
+  frame_height: 200  # pixels
+  frame_offx: 78  # pixels
+  frame_offy: 10  # pixels
+  shutter_speed: 5_000 # us=5ms
+  callbacks:
+    save_avi:  # save frames as avi using opencv VideoWriter
+    save_timestamps:  # save timestamp for each frame to h5 file
+```
 
 #### Required
 - `cam_type: Ximea` or `Spinnaker` (for FLIR cameras) or `Basler` or `Hamamatsu`
