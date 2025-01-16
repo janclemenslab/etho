@@ -96,7 +96,7 @@ callbacks:
 Generic camera interface with different backends.
 
 #### Required
-- `cam_type: Ximea` or Spinnaker (for FLIR cameras) or Basler or ximea or hamamatsu
+- `cam_type: Ximea` or `Spinnaker` (for FLIR cameras) or `Basler` or `Hamamatsu`
 - `cam_serialnumber: 30959651`:
 - `frame_rate: 100.0`: frames per second
 - `frame_width: 640`: pixels
