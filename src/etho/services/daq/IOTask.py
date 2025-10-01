@@ -31,6 +31,7 @@ class IOTask(daq.Task):
         nb_inputsamples_per_cycle=None,
         clock_source=None,
         terminals: Optional[List[str]] = None,
+        duration: Optional[float] = None,
         logger=None,
     ):
         """[summary]
@@ -40,7 +41,7 @@ class IOTask(daq.Task):
             cha_name (list, optional): [description]. Defaults to ["ai0"].
             limits (float, optional): [description]. Defaults to 10.0.
             rate (float, optional): [description]. Defaults to 10000.0.
-            nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
+            nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None (fs samples=1 second).
             clock_source (str, optional): None for AI-synced clock.
                                           Use 'OnboardClock' for boards that don't support this (USB-DAQ).
                                           Defaults to None.
