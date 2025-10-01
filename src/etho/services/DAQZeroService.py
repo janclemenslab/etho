@@ -33,13 +33,14 @@ class DAQ(BaseZeroService):
         playlist_info=None,
         duration: float = -1,
         fs: int = 10000,
-        display=False,
-        realtime=False,
         dev_name="Dev1",
         nb_inputsamples_per_cycle=None,
         clock_source=None,
         analog_chans_out: Optional[Sequence[str]] = None,
+        analog_chans_out_limits=None,
         analog_chans_in: Sequence[str] = ["ai0"],
+        analog_chans_in_limits=None,
+        analog_chans_in_terminals=None,
         digital_chans_out: Optional[Sequence[str]] = None,
         analog_data_out: Optional[Sequence[np.ndarray]] = None,
         digital_data_out: Optional[Sequence] = None,
@@ -54,8 +55,6 @@ class DAQ(BaseZeroService):
             playlist_info ([type], optional): [description]. Defaults to None.
             duration (float, optional): [description]. Defaults to -1.
             fs (int, optional): [description]. Defaults to 10000.
-            display (bool, optional): [description]. Defaults to False.
-            realtime (bool, optional): [description]. Defaults to False.
             nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.
             clock_source (str, optional): None for AI-synced clock.
                                           Use 'OnboardClock' for boards that don't support this (USB-DAQ).
@@ -84,7 +83,12 @@ class DAQ(BaseZeroService):
         self.playlist_info = playlist_info
 
         self.analog_chans_out = analog_chans_out
+        self.analog_chans_out_limits = analog_chans_out_limits
+
         self.analog_chans_in = analog_chans_in
+        self.analog_chans_in_limits = analog_chans_in_limits
+        self.analog_chans_in_terminals= analog_chans_in_terminals
+
         self.digital_chans_out = digital_chans_out
 
         # ANALOG OUTPUT
