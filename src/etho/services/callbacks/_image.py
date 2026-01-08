@@ -36,6 +36,15 @@ try:
 except Exception as pyqtgraph_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
     pass
 
+try:
+    import zarr
+    from numcodecs import Blosc
+
+    zarr_import_error = None
+except Exception as zarr_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
+    pass
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -505,7 +514,7 @@ class ImageWriterH5(BaseCallback):
             "timestamp",
             tables.Atom.from_dtype(np.array(timestamp).dtype),
             shape=[0, *timestamp.shape[1:]],
-            chunkshape=[*timestamp.shape],
+            chunkshape=[10, *timestamp.shape[1:]],
             filters=filters,
         )
 
@@ -528,6 +537,63 @@ class ImageWriterH5(BaseCallback):
             self.f.close()
         else:
             logging.debug(f"{self.file_name} already closed.")
+
+
+@for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@register_callback
+class ImageWriterZarr(BaseCallback):
+
+    FRIENDLY_NAME = "saveimg_zarr"
+    SUFFIX = "_images.zarr"
+
+    def __init__(self, data_source, *, file_name, attrs=None, poll_timeout=0.01, **kwargs):
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        if zarr_import_error is not None:
+            logger.exception("Could not import zarr. Aborting!", exc_info=tables_import_error)
+            raise zarr_import_error
+
+        self.file_name = file_name
+        self.f = zarr.DirectoryStore(self.file_name + self.SUFFIX)  # ONLY FOR ZARR2 - otherwise zarr.storage.LocalStore
+        self.vanilla: bool = True
+        self.arrays = zarr.group(self.f, overwrite=True)
+        self.attrs = attrs
+
+    @classmethod
+    def make_concurrent(cls, task_kwargs, comms="queue"):
+        return ConcurrentTask(task=cls.make_run, task_kwargs=task_kwargs, comms=comms)
+
+    def _init_data(self, data, timestamp):
+        compressor = Blosc(cname="zstd", clevel=3, shuffle=Blosc.BITSHUFFLE)
+
+        self.arrays.create_dataset("images", shape=(0, *data.shape[1:]), chunks=(30, *data.shape[1:]), dtype=data.dtype, compressor=compressor)
+
+        if self.attrs is not None:
+            for key, val in self.attrs.items():
+                self.arrays["images"].attrs[key] = val
+
+        self.arrays.create_dataset("timestamp", shape=(0, *timestamp.shape[1:]), chunks=(100, *timestamp.shape[1:]), dtype=timestamp.dtype, compressor=None)
+
+    def _append_data(self, data, timestamp):
+        self.arrays["images"].append(data, axis=0)
+        self.arrays["timestamp"].append(timestamp, axis=0)
+
+
+    def _loop(self, data):
+        data_to_save, timestamp = data  # unpack
+        data_to_save = data_to_save[np.newaxis,...]
+        timestamp = np.array([timestamp])[:, np.newaxis]
+        if self.vanilla:
+            self._init_data(data_to_save, timestamp)
+            self.vanilla = False
+        self._append_data(data_to_save, timestamp)
+
+    def _cleanup(self):
+        logger.warning("cleaning")
+        try:
+            self.f.close()
+        except:
+            logger.debug(f"{self.file_name} already closed.")
 
 
 @for_all_methods(log_exceptions(logger))
