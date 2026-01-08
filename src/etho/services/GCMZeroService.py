@@ -61,6 +61,7 @@ class GCM(BaseZeroService):
         self.c.gamma = params["gamma"]
         self.c.gain = params["gain"]
         self.c.framerate = params["frame_rate"]
+        self.c.binning = params["binning"]
 
         if "optimize_auto_exposure" in params and params["optimize_auto_exposure"]:
             self.c.optimize_auto_exposure()

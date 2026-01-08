@@ -114,6 +114,14 @@ class BaseCam:
     def external_trigger(self, value: bool = False):
         pass
 
+    @property
+    def binning(self):
+        pass
+
+    @binning.setter
+    def binning(self, value: int = 1):
+        pass
+
     def enable_gpio_strobe(self):
         pass
 
@@ -151,5 +159,6 @@ class BaseCam:
             "gamma": self.gamma,
             "gain": self.gain,
             "framerate": self.framerate,
+            "binning": self.binning,
         }
         return info

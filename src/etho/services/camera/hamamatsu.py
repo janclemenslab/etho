@@ -41,12 +41,12 @@ class Hamamatsu(BaseCam):
     def binning(self) -> Tuple[int, int]:
         # (horizontal, vertical)
         binning = self.c.get_attribute_value("BINNING")
-        return (binning, binning) 
+        return (binning, binning)
 
     @binning.setter
     def binning(self, binsize):
-        # if binsize not in [1, 2, 4]:
-        #     raise ValueError(f'Incorrect binsize arg value {binsize}. Must be 1, 2, or 4.')
+        if binsize not in [1, 2, 4]:
+            raise ValueError(f'Incorrect binsize arg value {binsize}. Must be 1, 2, or 4.')
         self.c.set_attribute_value("BINNING", binsize)
 
     @property
