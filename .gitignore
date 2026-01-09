@@ -101,3 +101,5 @@ ENV/
 scratch
 _docs
 src.old
+
+tests/ethoconfig
