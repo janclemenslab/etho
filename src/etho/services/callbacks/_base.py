@@ -2,10 +2,18 @@ import queue
 import time
 from ..utils.concurrent_task import ConcurrentTask
 from . import register_callback
+from typing import Optional
 
 
 class BaseCallback:
-    def __init__(self, data_source, poll_timeout: float = None, rate: float = 0, **kwargs):
+    def __init__(self, data_source, poll_timeout: Optional[float] = None, rate: float = 0, **kwargs):
+        """_summary_
+
+        Args:
+            data_source (_type_): Queue, pipe or ...
+            poll_timeout (Optional[float], optional): Timeout for polling data source. Defaults to None.
+            rate (float, optional): Rate (interval between calls in seconds) at which callback is called. Defaults to 0 (no rate limiting).
+        """
         self.data_source = data_source
         self.poll_timeout = poll_timeout
         self.RUN: bool = True
