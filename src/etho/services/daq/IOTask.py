@@ -166,7 +166,8 @@ class IOTask(daq.Task):
             if clock_source is None:
                 clock_source = "ai/SampleClock"  # use clock of analog input
                 self.CfgDigEdgeStartTrig("ai/StartTrigger", daq.DAQmx_Val_Rising)
-            else:
+            else:  # software trigger
+                clock_source = None  # weird, but necessary to make it work with cheap NI USB interfaces
                 self.DisableStartTrig()
         else:  # analog input
             clock_source = "OnboardClock"  # use internal clock
