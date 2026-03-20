@@ -111,34 +111,46 @@ class TableView(QTableView):
             os.system(f"code {self.folder}/{self.selected_string}")
 
 
+def _parameter_item(name, value):
+    item = {"name": str(name)}
+
+    if isinstance(value, dict):
+        item["type"] = "group"
+        item["original_type"] = "dict"
+        item["children"] = [_parameter_item(key, val) for key, val in value.items()]
+    elif isinstance(value, list):
+        item["type"] = "group"
+        item["original_type"] = "list"
+        scalar_names = [str(val) for val in value if not isinstance(val, (dict, list))]
+        use_checkboxes = len(scalar_names) == len(value) and len(set(scalar_names)) == len(scalar_names)
+        if use_checkboxes:
+            item["list_mode"] = "checkbox"
+            item["children"] = [{"name": str(val), "type": "bool", "value": True, "original_value": val} for val in value]
+        else:
+            item["children"] = [_parameter_item(idx, val) for idx, val in enumerate(value)]
+    elif isinstance(value, bool):
+        item["type"] = "bool"
+        item["value"] = value
+    elif isinstance(value, int):
+        item["type"] = "int"
+        item["value"] = value
+    elif isinstance(value, float):
+        item["type"] = "float"
+        item["value"] = value
+    elif value is None:
+        item["type"] = "str"
+        item["value"] = ""
+        item["original_type"] = "none"
+    else:
+        item["type"] = "str"
+        item["value"] = str(value)
+
+    return item
+
+
 # format to parametertree
 def from_yaml(d, readonly=True):
-    pt = []
-    for key, val in d.items():
-        item = {"name": key}
-        if isinstance(val, list):
-            item["type"] = "group"
-            item["original_type"] = list
-            item["children"] = [{"name": str(it), "type": "bool", "value": True} for it in val]
-        if isinstance(val, dict):
-            # for callbacks, value is a dict - add key val of that as list
-            item["type"] = "group"
-            item["original_type"] = dict
-            item["children"] = []
-            for val_key, val_val in val.items():
-                child_item = {
-                    "name": str(val_key),
-                    "type": "str",
-                    "value": str(val_val),
-                }
-                item["children"].append(child_item)
-        elif val is None:  # Fall back for None values
-            item["type"] = "str"
-            item["value"] = str(val)
-        else:
-            item["type"] = type(val).__name__
-            item["value"] = val
-        pt.append(item)
+    pt = [_parameter_item(key, val) for key, val in d.items()]
     p = Parameter.create(name="Protocol parameters", type="group", children=pt)
     if readonly:
         children_read_only(p.children())
@@ -154,8 +166,17 @@ def children_read_only(children):
 
 
 def to_yaml(p):
-    # TODO: unwrap this recursively into a hierarcchy of dictionaries
-    rich.print(p.saveState()["children"])
+    if p.children():
+        if p.opts.get("original_type") == "list":
+            if p.opts.get("list_mode") == "checkbox":
+                return [child.opts.get("original_value", child.name()) for child in p.children() if child.value()]
+            return [to_yaml(child) for child in p.children()]
+        return {child.name(): to_yaml(child) for child in p.children()}
+
+    value = p.value()
+    if p.opts.get("original_type") == "none":
+        return yaml.safe_load(value)
+    return value
 
 
 def load(filename: str):
@@ -315,6 +336,9 @@ class MainWindow(QMainWindow):
         widget.setLayout(self.layout)
         self.setCentralWidget(widget)
 
+    def on_protocol_changed(self, param, changes):
+        self.current_protocol = to_yaml(param)
+
     def refresh_lists(self, init: bool = False):
         playlist_files = sorted(self.playlist_folder.glob("*.txt"))
         if len(playlist_files) == 0:
@@ -343,12 +367,19 @@ class MainWindow(QMainWindow):
         df_protocols = pd.DataFrame({"protocol": sorted([Path(plf).name for plf in protocol_files])})
         # Content of selected protocol file
         protocol_file = Path(protocol_files[0]).name
-        protocol_from_filename = lambda filename: from_yaml(load(self.protocol_folder / filename))
+        protocol_from_filename = lambda filename: from_yaml(load(self.protocol_folder / filename), readonly=False)
         protocol_model = protocol_from_filename(protocol_file)
 
         protocol_view = ParameterTree()
-        protocol_view.setParameters(protocol_model, showTop=False)
-        protocol_view.replaceData = protocol_view.setParameters
+
+        def set_protocol_model(parameter):
+            self.current_protocol = to_yaml(parameter)
+            parameter.sigTreeStateChanged.connect(self.on_protocol_changed)
+            protocol_view.protocol_model = parameter
+            protocol_view.setParameters(parameter, showTop=False)
+
+        set_protocol_model(protocol_model)
+        protocol_view.replaceData = set_protocol_model
         protocol_view.data_from_filename = protocol_from_filename
 
         # List of protocol files
@@ -414,6 +445,7 @@ class MainWindow(QMainWindow):
         kwargs = {
             "playlistfile": (self.playlist_folder / self.playlists_view.selected_string).as_posix(),
             "protocolfile": (self.protocol_folder / self.protocols_view.selected_string).as_posix(),
+            "protocol": self.current_protocol,
             "debug": self.button["Debug"].isChecked(),
             "show_progress": self.button["Progress"].isChecked(),
             "save_prefix": None,

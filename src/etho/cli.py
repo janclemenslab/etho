@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 import rich
 import sys
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,26 @@ try:
 except Exception as e:
     logging.error(e)
     client = None
+
+
+def run(
+    protocolfile: str,
+    playlistfile: Optional[str] = None,
+    *,
+    save_prefix: Optional[str] = None,
+    show_progress: bool = True,
+    debug: bool = False,
+    preview: bool = False,
+):
+    """Starts an experiment from the CLI."""
+    return client.client(
+        protocolfile=protocolfile,
+        playlistfile=playlistfile,
+        save_prefix=save_prefix,
+        show_progress=show_progress,
+        debug=debug,
+        preview=preview,
+    )
 
 
 def version(*, debug: bool = False):
@@ -180,7 +201,7 @@ def main():
     }
 
     if client is not None:
-        subcommands.update({"run": client.client})
+        subcommands.update({"run": run})
     try:
         from . import app
 

@@ -13,7 +13,7 @@ import psutil
 from .utils.tui import rich_information
 
 from . import config
-from .utils.config import readconfig, undefaultify
+from .utils.config import defaultify, readconfig, undefaultify
 from .utils.sound import parse_table, load_sounds, build_playlist
 
 from .services.ThuAZeroService import THUA
@@ -49,9 +49,10 @@ def kill_child_processes():
 
 
 def client(
-    protocolfile: str,
+    protocolfile: Optional[str],
     playlistfile: Optional[str] = None,
     *,
+    protocol: Optional[Dict[str, Any]] = None,
     save_prefix: Optional[str] = None,
     show_progress: bool = True,
     debug: bool = False,
@@ -63,8 +64,9 @@ def client(
     """Starts an experiment.
 
     Args:
-        protocolfile (str): _description_
+        protocolfile (Optional[str]): Path to the protocol file.
         playlistfile (Optional[str]): _description_.
+        protocol (Optional[Dict[str, Any]]): Protocol parameters provided directly by the GUI.
         save_prefix (Optional[str]): Specify the stem of the filename for all saved data and logs. Will defaults to HOSTNAME-YYYYMMDD_hhmmss, where HOSTNAME is the computer name the service is run on (typically localhost).
         show_progress (bool): Show a progress bar. Disable if performance is criticial.
         debug (bool): More verbose logs.
@@ -75,7 +77,10 @@ def client(
     """
 
     # load config/protocols
-    prot = readconfig(protocolfile)
+    if protocol is not None:
+        prot = defaultify(protocol)
+    else:
+        prot = readconfig(protocolfile)
     logging.debug(prot)
     defaults = config
     if defaults["host"] is None:
