@@ -29,7 +29,7 @@ from qtpy.QtWidgets import (
     QProgressBar,
 )
 
-from qtpy.QtCore import QAbstractTableModel, Qt
+from qtpy.QtCore import QAbstractTableModel, Qt, QTimer
 
 from pyqtgraph.parametertree import Parameter, ParameterTree
 
@@ -291,6 +291,12 @@ class MainWindow(QMainWindow):
         logging.info(f"Loading playlists from {self.playlist_folder}.")
 
         self.setWindowTitle("etho control")
+        self.run_thread = None
+        self.stop_event = None
+        self.done_event = None
+        self.run_timer = QTimer(self)
+        self.run_timer.setInterval(200)
+        self.run_timer.timeout.connect(self.sync_run_state)
 
         # Buttons
         buttons = QVBoxLayout()
@@ -299,6 +305,8 @@ class MainWindow(QMainWindow):
         self.button["Refresh lists"].clicked.connect(self.refresh_lists)
         self.button["Start"] = QPushButton("Start")
         self.button["Start"].clicked.connect(self.start)
+        self.button["Stop"] = QPushButton("Stop")
+        self.button["Stop"].clicked.connect(self.request_stop)
         self.button["Camera_preview"] = QPushButton("Camera preview")
         self.button["Camera_preview"].clicked.connect(self.camera_preview)
         self.button["Debug"] = QCheckBox("Debug")
@@ -335,6 +343,7 @@ class MainWindow(QMainWindow):
         widget = QWidget()
         widget.setLayout(self.layout)
         self.setCentralWidget(widget)
+        self.set_run_buttons(False)
 
     def on_protocol_changed(self, param, changes):
         self.current_protocol = to_yaml(param)
@@ -424,6 +433,9 @@ class MainWindow(QMainWindow):
             self.protocols_view = protocols_view
 
     def start(self, preview: bool = False):
+        if self.run_thread is not None and self.run_thread.is_alive():
+            return
+
         msg = []
         if self.playlists_view.selected_string is None:
             msg.append("playlist")
@@ -440,7 +452,6 @@ class MainWindow(QMainWindow):
 
         stop_event = threading.Event()
         done_event = threading.Event()
-        queue_total = queue.Queue()
 
         kwargs = {
             "playlistfile": (self.playlist_folder / self.playlists_view.selected_string).as_posix(),
@@ -448,21 +459,69 @@ class MainWindow(QMainWindow):
             "protocol": self.current_protocol,
             "debug": self.button["Debug"].isChecked(),
             "show_progress": self.button["Progress"].isChecked(),
+            "monitor": True,
             "save_prefix": None,
             "preview": preview,
             "_stop_event": stop_event,
             "_done_event": done_event,
-            "_queue": queue_total,
         }
 
         rich.print("Starting experiment with these args:")
         rich.print(kwargs)
 
-        t = threading.Thread(target=client.client, kwargs=kwargs)
-        t.start()
+        self.stop_event = stop_event
+        self.done_event = done_event
+        self.run_thread = threading.Thread(target=self.run_client, kwargs=kwargs, daemon=True)
+        self.set_run_buttons(True)
+        self.run_thread.start()
+        self.run_timer.start()
 
         # dlg = RunDialog(stop_event, done_event, queue_total)
         # dlg.exec_()
+
+    def run_client(self, **kwargs):
+        done_event = kwargs.get("_done_event")
+        try:
+            client.client(**kwargs)
+        except Exception:
+            logging.exception("Experiment failed.")
+        finally:
+            if done_event is not None:
+                done_event.set()
+
+    def request_stop(self):
+        if self.stop_event is None:
+            return
+        self.stop_event.set()
+        self.set_run_buttons(True, stopping=True)
+
+    def sync_run_state(self):
+        if self.run_thread is None:
+            self.run_timer.stop()
+            self.set_run_buttons(False)
+            return
+
+        if self.stop_event is not None and self.stop_event.is_set():
+            self.set_run_buttons(True, stopping=True)
+
+        if self.run_thread.is_alive():
+            return
+
+        if self.done_event is not None and not self.done_event.is_set():
+            return
+
+        self.run_timer.stop()
+        self.run_thread = None
+        self.stop_event = None
+        self.done_event = None
+        self.set_run_buttons(False)
+
+    def set_run_buttons(self, running: bool, stopping: bool = False):
+        self.button["Start"].setEnabled(not running)
+        self.button["Camera_preview"].setEnabled(not running)
+        self.button["Refresh lists"].setEnabled(not running)
+        self.button["Stop"].setEnabled(running and not stopping)
+        self.button["Stop"].setText("Stopping..." if stopping else "Stop")
 
     def camera_preview(self):
         self.start(preview=True)

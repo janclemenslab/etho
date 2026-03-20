@@ -55,6 +55,7 @@ def client(
     protocol: Optional[Dict[str, Any]] = None,
     save_prefix: Optional[str] = None,
     show_progress: bool = True,
+    monitor: bool = False,
     debug: bool = False,
     preview: bool = False,
     _stop_event: Optional[threading.Event] = None,
@@ -69,6 +70,7 @@ def client(
         protocol (Optional[Dict[str, Any]]): Protocol parameters provided directly by the GUI.
         save_prefix (Optional[str]): Specify the stem of the filename for all saved data and logs. Will defaults to HOSTNAME-YYYYMMDD_hhmmss, where HOSTNAME is the computer name the service is run on (typically localhost).
         show_progress (bool): Show a progress bar. Disable if performance is criticial.
+        monitor (bool): Keep the run in the progress/cleanup loop even when the progress display is hidden.
         debug (bool): More verbose logs.
         preview (bool): Preview the camera (will disable saving and logging and only open a window with the camera view).
         _stop_event (threading.Event, optional): Used to stop the task from an outside thread. Defaults to None.
@@ -298,13 +300,13 @@ def client(
 
     logging.info("All services started.")
 
-    if show_progress:
+    if monitor or show_progress:
         total = 0
         for service_name, service in services.items():
             total = max(total, service.progress()["total"])
         if _queue is not None:
             _queue.put(total)
-        cli_progress(services, save_prefix, _stop_event, _done_event)
+        cli_progress(services, save_prefix, _stop_event, _done_event, show_progress=show_progress)
     else:
         return services
 
@@ -314,6 +316,7 @@ def cli_progress(
     save_prefix: str,
     stop_event: Optional[threading.Event] = None,
     done_event: Optional[threading.Event] = None,
+    show_progress: bool = True,
 ):
     """_summary_
 
@@ -323,53 +326,53 @@ def cli_progress(
         stop_event (_type_, optional): Used to stop the task from an outside thread. Defaults to None.
         done_event (_type_, optional): Set to signal that the task is done/stopped to an outside thread. Defaults to None.
     """
-    with Progress() as progress:
-        tasks = {}
-        for service_name, service in services.items():
-            tasks[service_name] = progress.add_task(f"[red]{service_name}", total=service.progress()["total"])
-        RUN = True
-        STOPPED_PREMATURELY = False
-        while RUN and not progress.finished:
-            for task_name, task_id in tasks.items():
+    STOPPED_PREMATURELY = False
+    try:
+        with Progress(disable=not show_progress) as progress:
+            tasks = {}
+            for service_name, service in services.items():
+                tasks[service_name] = progress.add_task(f"[red]{service_name}", total=service.progress()["total"])
+            RUN = True
+            while RUN and not progress.finished:
+                for task_name, task_id in tasks.items():
+                    if stop_event is not None and stop_event.is_set():
+                        break
+                    if progress._tasks[task_id].finished:
+                        continue
+                    try:
+                        p = timed(services[task_name].progress, 5)
+                        description = None
+                        if "framenumber" in p:
+                            description = f"{task_name} {p['framenumber_delta'] / p['elapsed_delta']: 7.2f} fps"
+                        progress.update(task_id, completed=p["elapsed"], description=description)
+                    except:  # if call times out, stop progress display - this will stop the display whenever a task times out - not necessarily when a task is done
+                        progress.stop_task(task_id)
+                time.sleep(1)
+
                 if stop_event is not None and stop_event.is_set():
-                    break
-                if progress._tasks[task_id].finished:
+                    logging.info("Received STOP signal. Cancelling jobs:")
+                    for task_name, task_id in tasks.items():
+                        progress.stop_task(task_id)
+                    RUN = False
+                    STOPPED_PREMATURELY = True
+        time.sleep(1)
+        if STOPPED_PREMATURELY:
+            logging.info("Finishing jobs.")
+            for service_name, service in services.items():
+                logging.info(f"   {service_name}")
+                if service_name == "THUA":
                     continue
                 try:
-                    p = timed(services[task_name].progress, 5)
-                    description = None
-                    if "framenumber" in p:
-                        description = f"{task_name} {p['framenumber_delta'] / p['elapsed_delta']: 7.2f} fps"
-                    progress.update(task_id, completed=p["elapsed"], description=description)
-                except:  # if call times out, stop progress display - this will stop the display whenever a task times out - not necessarily when a task is done
-                    progress.stop_task(task_id)
-            time.sleep(1)
+                    service.finish()
+                except Exception as e:
+                    logging.warning("     Failed.")
+                    print(e)
+                logging.info("       done.")
 
-            if stop_event is not None and stop_event.is_set():
-                logging.info("Received STOP signal. Cancelling jobs:")
-                for task_name, task_id in tasks.items():
-                    progress.stop_task(task_id)
-                RUN = False
-                STOPPED_PREMATURELY = True
-    time.sleep(1)
-    if STOPPED_PREMATURELY:
-        logging.info("Finishing jobs.")
-        for service_name, service in services.items():
-            logging.info(f"   {service_name}")
-            if service_name == "THUA":
-                continue
-            # if service_name == 'GCM' and service.finished:
-            #     continue
-            try:
-                service.finish()
-            except Exception as e:
-                logging.warning("     Failed.")
-                print(e)
-            logging.info("       done.")
-
-    time.sleep(4)
-    if stop_event is not None and not stop_event.is_set() and done_event is not None:
-        done_event.set()
-    logging.info("Cleaning up jobs.")
-    kill_child_processes()
-    logging.info(f"Done with experiment {save_prefix}.")
+        time.sleep(4)
+    finally:
+        logging.info("Cleaning up jobs.")
+        kill_child_processes()
+        if done_event is not None:
+            done_event.set()
+        logging.info(f"Done with experiment {save_prefix}.")
