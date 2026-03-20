@@ -78,7 +78,8 @@ def client(
     prot = readconfig(protocolfile)
     logging.debug(prot)
     defaults = config
-    defaults['host'] = 'localhost'
+    if defaults["host"] is None:
+        defaults["host"] = "localhost"
     if defaults["python_exe"] is None:
         defaults["python_exe"] = "python"
     if defaults["serializer"] is None:
@@ -136,7 +137,7 @@ def client(
         if preview:
             cam_params["callbacks"] = {"disp_fast": None}
 
-        save_suffix = f"_{gcm_cnt+1}" if gcm_cnt > 0 else ""
+        save_suffix = f"_{gcm_cnt + 1}" if gcm_cnt > 0 else ""
         gcm.setup(
             f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}",
             maxduration,
@@ -204,7 +205,7 @@ def client(
             new_console=new_console,
             port=prot[daq_key]["port"],
         )
-        save_suffix = f"_{daq_cnt+1}" if daq_cnt > 0 else ""
+        save_suffix = f"_{daq_cnt + 1}" if daq_cnt > 0 else ""
         daq.setup(
             f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}",
             playlist_items,
