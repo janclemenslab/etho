@@ -17,6 +17,7 @@ from .utils.config import defaultify, readconfig, undefaultify
 from .utils.sound import parse_table, load_sounds, build_playlist
 
 from .services.ThuAZeroService import THUA
+from .services.GOVZeroService import GOV
 from .services.DAQZeroService import DAQ
 from .services.GCMZeroService import GCM
 from .services.NICounterZeroService import NIC
@@ -115,6 +116,29 @@ def client(
         thua.setup(prot["THUA"]["port"], prot["THUA"]["interval"], prot["maxduration"] + 10)
         thua.init_local_logger("{0}/{1}/{1}_thu.log".format(this["savefolder"], save_prefix))
         services["THUA"] = thua
+
+    if "GOV" in prot["use_services"] and not preview:
+        this = defaults.copy()
+        if "host" in prot["GOV"]:
+            this.update(prot["GOV"]["host"])
+
+        if prot["GOV"].get("port") is None:
+            prot["GOV"]["port"] = GOV.SERVICE_PORT
+
+        interval = prot["GOV"].get("interval")
+        if interval is None:
+            interval = 60
+
+        gov = GOV.make(
+            this["serializer"],
+            this["user"],
+            this["host"],
+            this["python_exe"],
+            port=prot["GOV"]["port"],
+        )
+        gov.setup(prot["GOV"]["address"], interval, prot["maxduration"] + 10)
+        gov.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}_gov.log")
+        services["GOV"] = gov
 
     gcm_keys = [key for key in prot["use_services"] if "GCM" in key]
     for gcm_cnt, gcm_key in enumerate(gcm_keys):
@@ -275,7 +299,7 @@ def client(
     # First, start video services - this will start acquisition or, if external triggering is enabled, arm the cameras to wait for the triggers
     time_last_cam_started = time.time() + 5  # in case no cam was initialized
     for service_name, service in services.items():
-        if "GCM" in service_name or "THUA" in service_name:
+        if "GCM" in service_name or "THUA" in service_name or "GOV" in service_name:
             logging.info(f"   {service_name}.")
             service.start()
             time_last_cam_started = time.time()
