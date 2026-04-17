@@ -117,6 +117,8 @@ class DummyAdvertisement:
 def make_service(interval=60, address="AA:BB:CC:DD:EE:FF"):
     service = object.__new__(GOV)
     service.log = DummyLogger()
+    service.console_messages = []
+    service._write_to_console = service.console_messages.append
     service.address = normalize_address(address)
     service.interval = interval
     service.measurement = None
@@ -161,6 +163,7 @@ def test_detection_callback_filters_by_address():
     assert service.measurement.humidity == 47.5
     assert service.log.messages
     assert service.log.messages[-1].endswith(",19.8,47.5")
+    assert service.console_messages[-1].endswith(",19.8,47.5")
 
 
 def test_logging_is_throttled_by_interval():
@@ -172,6 +175,7 @@ def test_logging_is_throttled_by_interval():
     service._record_measurement(first, seen_at=0)
     service._maybe_log_latest_measurement(now_monotonic=0)
     assert service.log.messages == ["2024-01-01 12:00:00,21.9,63.1"]
+    assert service.console_messages == ["2024-01-01 12:00:00,21.9,63.1"]
 
     service._record_measurement(second, seen_at=30)
     service._maybe_log_latest_measurement(now_monotonic=30)
@@ -179,6 +183,10 @@ def test_logging_is_throttled_by_interval():
 
     service._maybe_log_latest_measurement(now_monotonic=61)
     assert service.log.messages == [
+        "2024-01-01 12:00:00,21.9,63.1",
+        "2024-01-01 12:00:30,22.0,64.0",
+    ]
+    assert service.console_messages == [
         "2024-01-01 12:00:00,21.9,63.1",
         "2024-01-01 12:00:30,22.0,64.0",
     ]

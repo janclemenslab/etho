@@ -108,12 +108,12 @@ class GOV(BaseZeroService):
     def start(self):
         self._time_started = time.time()
         self._scanner_thread.start()
-        self.log.info(f"scanning for {self.address}")
-        self.log.info(f"logging at {self.interval:.1f}s resolution")
+        self._emit_info(f"scanning for {self.address}")
+        self._emit_info(f"logging at {self.interval:.1f}s resolution")
         if hasattr(self, "_thread_timer"):
-            self.log.info(f"duration {self.duration} seconds")
+            self._emit_info(f"duration {self.duration} seconds")
             self._thread_timer.start()
-            self.log.info("finish timer started")
+            self._emit_info("finish timer started")
 
     def _scanner_worker(self, stop_event):
         try:
@@ -170,10 +170,21 @@ class GOV(BaseZeroService):
             self._last_logged_measurement_seen_at = self._latest_measurement_seen_at
             self._last_emit_monotonic = now_monotonic
 
-        self.log.info(line)
+        self._emit_info(line)
+
+    def _write_to_console(self, message: str):
+        print(message, flush=True)
+
+    def _emit_info(self, message: str):
+        self.log.info(message)
+        self._write_to_console(message)
+
+    def _emit_warning(self, message: str):
+        self.log.warning(message)
+        self._write_to_console(message)
 
     def finish(self, stop_service=False):
-        self.log.warning("stopping")
+        self._emit_warning("stopping")
         if hasattr(self, "_thread_stopper"):
             self._thread_stopper.set()
         if hasattr(self, "_thread_timer"):
@@ -181,7 +192,7 @@ class GOV(BaseZeroService):
         if hasattr(self, "_scanner_thread") and self._scanner_thread.is_alive() and threading.current_thread() is not self._scanner_thread:
             self._scanner_thread.join(timeout=5)
 
-        self.log.warning("   stopped ")
+        self._emit_warning("   stopped ")
         self._flush_loggers()
         if stop_service:
             time.sleep(2)
