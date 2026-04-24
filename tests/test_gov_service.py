@@ -192,6 +192,17 @@ def test_logging_is_throttled_by_interval():
     ]
 
 
+def test_console_write_ignores_invalid_stdout(monkeypatch):
+    service = make_service()
+
+    def raise_invalid_stdout(*args, **kwargs):
+        raise OSError(22, "Invalid argument")
+
+    monkeypatch.setattr("builtins.print", raise_invalid_stdout)
+
+    service._write_to_console("scanning")
+
+
 def test_client_wires_gov_service(monkeypatch):
     class FakeRemoteService:
         def __init__(self):
