@@ -173,7 +173,12 @@ class GOV(BaseZeroService):
         self._emit_info(line)
 
     def _write_to_console(self, message: str):
-        print(message, flush=True)
+        try:
+            print(message, flush=True)
+        except OSError:
+            # Hidden/disowned Windows service processes can have an invalid stdout.
+            # Logging should continue even when there is no usable console.
+            pass
 
     def _emit_info(self, message: str):
         self.log.info(message)
