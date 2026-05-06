@@ -11,23 +11,19 @@ from .. import config
 class ZeroClient(zerorpc.Client):
     def __init__(
         self,
-        ssh_address: str,
+        host: str,
         service_name: str = "CLIENT",
         logging_port: str = "1460",
         serializer: str = "default",
-        host_is_win: bool = False,
-        host_is_remote: bool = False,
         python_exe: str = "python",
     ):
         """_summary_
 
         Args:
-            ssh_address (str): Full string required for ssh login, USER@HOST.
+            host (str): Host name or IP address used for ZeroRPC connections.
             service_name (str, optional): _description_. Defaults to 'CLIENT'.
             logging_port (str, optional): _description_. Defaults to '1460'.
             serializer (str, optional): _description_. Defaults to 'default'.
-            host_is_win (bool, optional): _description_. Defaults to False.
-            host_is_remote (bool, optional): _description_. Defaults to False.
         """
         self.SERVICE_NAME = service_name
         self.LOGGING_PORT = logging_port
@@ -37,8 +33,8 @@ class ZeroClient(zerorpc.Client):
         super(ZeroClient, self).__init__(timeout=180, heartbeat=90, context=ctx)
         self._init_network_logger()
 
-        self.sr = Runner(ssh_address, host_is_win=host_is_win, host_is_remote=host_is_remote, python_exe=python_exe)
-        self.pid = None  # pid of server process on remote machine
+        self.sr = Runner(host, python_exe=python_exe)
+        self.pid = None  # pid of local server process
 
     def _init_network_logger(self, log_level: int = logging.INFO):
         # TODO: set log levels of logger and handler
@@ -70,9 +66,9 @@ class ZeroClient(zerorpc.Client):
         handler.setLevel(log_level)
         self.log.addHandler(handler)
 
-    def start_server(self, server_name, warmup=2, timeout=5, run_local: bool = True, new_console: bool = False):
+    def start_server(self, server_name, warmup=2, timeout=5, new_console: bool = False):
         self.log.info(f"   {self.SERVICE_NAME} starting")
-        self.sr.run(server_name, timeout=timeout, new_console=new_console, run_local=run_local, disown=True)
+        self.sr.run(server_name, timeout=timeout, new_console=new_console, disown=True)
         self.pid = self.sr.pid(query=server_name)
         self.log.info(f"   {self.SERVICE_NAME} warmup")
         time.sleep(warmup)  # wait for server to warm up

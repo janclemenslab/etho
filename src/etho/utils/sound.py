@@ -214,7 +214,6 @@ def load_sounds(
     calibration: Dict = None,
     LEDamp: float = 1.0,
     stimfolder: str = "./",
-    cast2int: bool = False,
     aslist: bool = False,
     stim_key: str = "stimulus",
     ignore_stop: bool = False,
@@ -331,9 +330,6 @@ def load_sounds(
                 x = tmp_x[: len(x)]
 
         x = np.concatenate(xx, axis=1)
-        # TODO: move these backend-specific things out of this function
-        if cast2int:  # needed for RPI - gets sound as int16 at max range, do not do this for DAQ!!
-            x = x.astype(np.int16)
         if aslist:
             x = x.tolist()
         sounddata.append(x)

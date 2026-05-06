@@ -95,9 +95,7 @@ def oneshot_trigger(this, trigger_names, do_port="/Dev1/port0/line1:3"):
     try:
         nit = NIT.make(
             this["serializer"],
-            this["user"],
             this["host"],
-            this["working_directory"],
             this["python_exe"],
             new_console=False,
         )

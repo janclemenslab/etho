@@ -3,10 +3,10 @@ import logging
 import numpy as np
 from typing import Tuple, Optional
 from .base import BaseCam, gray2rgb
-import cv2
 
 try:
     import pypylon.pylon as py
+
     pylon_error = None
 except ImportError as pylon_error:
     pass
@@ -18,8 +18,8 @@ class Basler(BaseCam):
     def __init__(self, serialnumber):
         if pylon_error is not None:
             raise pylon_error
-        self.serialnumber = str(serialnumber)
-        self.timestamp_offset = 0
+        self.serialnumber: str = str(serialnumber)
+        self.timestamp_offset: float = 0.0
 
     def init(self):
         # self.bus =
@@ -68,7 +68,7 @@ class Basler(BaseCam):
 
     def _estimate_timestamp_offset(self) -> float:
         return 0
-    
+
     @property
     def binning(self) -> Tuple[int, int]:
         return self.c.BinningHorizontal.Value, self.c.BinningVertical.Value
@@ -159,7 +159,6 @@ class Basler(BaseCam):
     @property
     def framerate(self):
         return self.c.AcquisitionFrameRate.Value
-
 
     @framerate.setter
     def framerate(self, value: float):

@@ -16,7 +16,6 @@ from . import config
 from .utils.config import defaultify, readconfig, undefaultify
 from .utils.sound import parse_table, load_sounds, build_playlist
 
-from .services.ThuAZeroService import THUA
 from .services.GOVZeroService import GOV
 from .services.DAQZeroService import DAQ
 from .services.GCMZeroService import GCM
@@ -47,6 +46,17 @@ def kill_child_processes():
     _, still_alive = psutil.wait_procs(children, timeout=3)
     for child in still_alive:
         child.kill()  # unfriendly termination
+
+
+def _reject_remote_host_blocks(prot: Dict[str, Any]) -> None:
+    remote_services = []
+    for service_name in prot["use_services"]:
+        service_config = prot.get(service_name, {})
+        if isinstance(service_config, dict) and "host" in service_config:
+            remote_services.append(service_name)
+    if remote_services:
+        services = ", ".join(remote_services)
+        raise ValueError(f"Remote service hosts are no longer supported. Remove the 'host' block from: {services}.")
 
 
 def client(
@@ -92,6 +102,7 @@ def client(
         defaults["python_exe"] = "python"
     if defaults["serializer"] is None:
         defaults["serializer"] = "pickle"
+    _reject_remote_host_blocks(prot)
 
     rich.print(defaults)
     # unique file name for video and node-local logs
@@ -102,25 +113,8 @@ def client(
     new_console = debug
 
     services = {}
-    if "THUA" in prot["use_services"] and not preview:
-        this = defaults.copy()
-        # update `this`` with service specific host params
-        if "host" in prot["THUA"]:
-            this.update(prot["THUA"]["host"])
-        thua = THUA.make(
-            this["serializer"],
-            this["user"],
-            this["host"],
-            this["python_exe"],
-        )
-        thua.setup(prot["THUA"]["port"], prot["THUA"]["interval"], prot["maxduration"] + 10)
-        thua.init_local_logger("{0}/{1}/{1}_thu.log".format(this["savefolder"], save_prefix))
-        services["THUA"] = thua
-
     if "GOV" in prot["use_services"] and not preview:
         this = defaults.copy()
-        if "host" in prot["GOV"]:
-            this.update(prot["GOV"]["host"])
 
         if prot["GOV"].get("port") is None:
             prot["GOV"]["port"] = GOV.SERVICE_PORT
@@ -131,7 +125,6 @@ def client(
 
         gov = GOV.make(
             this["serializer"],
-            this["user"],
             this["host"],
             this["python_exe"],
             port=prot["GOV"]["port"],
@@ -145,16 +138,13 @@ def client(
         # if gcm_key in prot["use_services"] and gcm_key in prot:
         this = defaults.copy()
         this.update(prot[gcm_key])
-        host_is_remote = "host" in prot[gcm_key]
 
         if "port" not in prot[gcm_key]:
             prot[gcm_key]["port"] = GCM.SERVICE_PORT + gcm_cnt
         gcm = GCM.make(
             this["serializer"],
-            this["user"],
             this["host"],
             this["python_exe"],
-            host_is_remote=host_is_remote,
             new_console=new_console,
             port=prot[gcm_key]["port"],
         )
@@ -230,7 +220,6 @@ def client(
 
         daq = DAQ.make(
             this["serializer"],
-            this["user"],
             this["host"],
             this["python_exe"],
             new_console=new_console,
@@ -268,13 +257,8 @@ def client(
         this = defaults.copy()
         this.update(prot["NIC"])
 
-        # update `this`` with service specific host params
-        if "host" in prot["NIC"]:
-            this.update(prot["NIC"]["host"])
-
         nic = NIC.make(
             this["serializer"],
-            this["user"],
             this["host"],
             this["python_exe"],
             new_console=new_console,
@@ -299,7 +283,7 @@ def client(
     # First, start video services - this will start acquisition or, if external triggering is enabled, arm the cameras to wait for the triggers
     time_last_cam_started = time.time() + 5  # in case no cam was initialized
     for service_name, service in services.items():
-        if "GCM" in service_name or "THUA" in service_name or "GOV" in service_name:
+        if "GCM" in service_name or "GOV" in service_name:
             logging.info(f"   {service_name}.")
             service.start()
             time_last_cam_started = time.time()
@@ -384,8 +368,6 @@ def cli_progress(
             logging.info("Finishing jobs.")
             for service_name, service in services.items():
                 logging.info(f"   {service_name}")
-                if service_name == "THUA":
-                    continue
                 try:
                     service.finish()
                 except Exception as e:

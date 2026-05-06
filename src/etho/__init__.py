@@ -1,6 +1,5 @@
 """etho"""
 
-__version__ = "0.21.0"
 # load global config on import
 try:
     from .utils.config import readconfig

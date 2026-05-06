@@ -3,6 +3,8 @@ import sys
 import threading
 import types
 
+import pytest
+
 if "scipy" not in sys.modules:
     scipy = types.ModuleType("scipy")
     scipy_io = types.ModuleType("scipy.io")
@@ -44,7 +46,15 @@ if "zerorpc" not in sys.modules:
         def stop(self, *args, **kwargs):
             return None
 
+    class Client:
+        def __init__(self, *args, **kwargs):
+            return None
+
+        def connect(self, *args, **kwargs):
+            return None
+
     zerorpc.Context = Context
+    zerorpc.Client = Client
     zerorpc.Server = Server
     sys.modules["zerorpc"] = zerorpc
 
@@ -61,7 +71,6 @@ if "etho.utils.tui" not in sys.modules:
     sys.modules["etho.utils.tui"] = tui
 
 for module_name, class_name in (
-    ("etho.services.ThuAZeroService", "THUA"),
     ("etho.services.DAQZeroService", "DAQ"),
     ("etho.services.GCMZeroService", "GCM"),
     ("etho.services.NICounterZeroService", "NIC"),
@@ -204,7 +213,7 @@ def test_console_write_ignores_invalid_stdout(monkeypatch):
 
 
 def test_client_wires_gov_service(monkeypatch):
-    class FakeRemoteService:
+    class FakeService:
         def __init__(self):
             self.setup_args = None
             self.log_path = None
@@ -227,9 +236,9 @@ def test_client_wires_gov_service(monkeypatch):
         last_instance = None
 
         @classmethod
-        def make(cls, serializer, user, host, python_exe, port=None):
-            instance = FakeRemoteService()
-            instance.make_args = (serializer, user, host, python_exe, port)
+        def make(cls, serializer, host, python_exe, port=None):
+            instance = FakeService()
+            instance.make_args = (serializer, host, python_exe, port)
             cls.last_instance = instance
             return instance
 
@@ -252,3 +261,20 @@ def test_client_wires_gov_service(monkeypatch):
     assert service.setup_args == ("AA:BB:CC:DD:EE:FF", 60, 15)
     assert service.started is True
     assert service.log_path.endswith("testgov/testgov_gov.log")
+
+
+def test_client_rejects_remote_service_host_block():
+    protocol = {
+        "maxduration": 5,
+        "use_services": ["GOV"],
+        "GOV": {
+            "address": "AA:BB:CC:DD:EE:FF",
+            "host": {
+                "name": "192.168.1.2",
+                "user": "ncb",
+            },
+        },
+    }
+
+    with pytest.raises(ValueError, match="Remote service hosts are no longer supported"):
+        client.client(None, protocol=protocol, save_prefix="testgov", show_progress=False)

@@ -8,13 +8,22 @@ authors = [
        {name = "Jan Clemens", email = "clemensjan@googlemail.com"},
 ]
 classifiers = ["License :: OSI Approved :: MIT License"]
-dynamic = ["version", "description"]
+dynamic = ["description"]
 requires-python = ">3.6"
-dependencies = ['numpy', 'scipy', 'pyyaml', 'zerorpc', 'pandas', 'pyzmq', 'pygame', 'bleak']
-readme = "README.md"
+dependencies = ['numpy', 'scipy', 'h5py', 'opencv-python-headless', 'bleak',
+                'pandas', 'pyzmq', 'gevent', 'future', 'pillow', 'msgpack-python',
+                'pyyaml', 'ipython', 'defopt', 'msgpack-numpy', 'rich', 'psutil',
+                'pydaqmx', 'pyqtgraph', 'qtpy', 'PySide6-Essentials', 'zarr',
+                'zerorpc @ git+https://github.com/postpop/zerorpc-python']
+readme= "README.md"
+version="0.22.0"
 
 [project.scripts]
 etho = "etho.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest", "flit>=3.2"]
+doc = ["sphinx", "furo", "sphinx-inline-tabs", "sphinx-copybutton", "ghp-import", "myst-nb", "sphinx-panels", "sphinxcontrib-images"]
 
 [project.urls]
 source = "https://github.com/janclemenslab/etho"

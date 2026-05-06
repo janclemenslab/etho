@@ -12,6 +12,7 @@ import threading
 import queue
 
 from qtpy import QtWidgets
+from qtpy.QtGui import QIcon, QPalette
 from qtpy.QtWidgets import (
     QApplication,
     QTableView,
@@ -39,6 +40,23 @@ from .utils.config import readconfig
 
 
 logger = logging.getLogger(__name__)
+
+_ICON_DIR = Path(__file__).with_name("assets")
+_LIGHT_ICON = _ICON_DIR / "etho_icon1_pipeline_light.svg"
+_DARK_ICON = _ICON_DIR / "etho_icon1_pipeline_dark.svg"
+
+
+def _system_icon(app: QApplication) -> QIcon:
+    icon_path = _LIGHT_ICON
+    try:
+        window_role = getattr(getattr(QPalette, "ColorRole", QPalette), "Window")
+        if app.palette().color(window_role).lightness() < 128:
+            icon_path = _DARK_ICON
+    except Exception:
+        pass
+    if not icon_path.exists():
+        icon_path = _LIGHT_ICON
+    return QIcon(icon_path.as_posix())
 
 
 class PandasModel(QAbstractTableModel):
@@ -537,8 +555,11 @@ def main(protocol_folder: Optional[str] = None, playlist_folder: Optional[str] =
                                          Defaults to value ['HEAD']['playlistfolder'] from `~/ethoconfig.yml`.
     """
     app = QApplication(sys.argv)
+    icon = _system_icon(app)
+    app.setWindowIcon(icon)
 
     m = MainWindow(protocol_folder, playlist_folder)
+    m.setWindowIcon(icon)
     m.show()
 
     sys.exit(app.exec_())
