@@ -1,5 +1,9 @@
 """etho"""
 
+from importlib.metadata import version
+
+__version__ = version("etho")
+
 # load global config on import
 try:
     from .utils.config import readconfig

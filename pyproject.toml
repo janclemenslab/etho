@@ -13,8 +13,7 @@ requires-python = ">3.6"
 dependencies = ['numpy', 'scipy', 'h5py', 'opencv-python-headless', 'bleak',
                 'pandas', 'pyzmq', 'gevent', 'future', 'pillow', 'msgpack-python',
                 'pyyaml', 'ipython', 'defopt', 'msgpack-numpy', 'rich', 'psutil',
-                'pydaqmx', 'pyqtgraph', 'qtpy', 'PySide6-Essentials', 'zarr',
-                'zerorpc @ git+git+https://github.com/postpop/zerorpc-python']
+                'pydaqmx', 'pyqtgraph', 'qtpy', 'PySide6-Essentials', 'zarr', 'zerorpc-numpy']
 
 readme= "README.md"
 version="0.22.1"
@@ -23,7 +22,7 @@ version="0.22.1"
 etho = "etho.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest", "flit>=3.2"]
+dev = ["pytest", "flit>=3.2,<4"]
 doc = ["sphinx", "furo", "sphinx-inline-tabs", "sphinx-copybutton", "ghp-import", "myst-nb", "sphinx-panels", "sphinxcontrib-images"]
 
 [project.urls]
