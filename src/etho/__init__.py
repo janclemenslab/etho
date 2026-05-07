@@ -9,8 +9,9 @@ except PackageNotFoundError:
 
 # load global config on import
 try:
-    from .utils.config import readconfig
+    from .utils.config import defaultify, readconfig
 
     config = readconfig()
-except FileNotFoundError as e:
+except FileNotFoundError:
     print("No configuration file found. Run `etho init`")
+    config = defaultify({})

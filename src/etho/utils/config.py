@@ -8,9 +8,7 @@ from typing import Dict, Union, Optional
 # Find global config file
 HOME = str(pathlib.Path.home())
 GLOBALCONFIGFILEPATH = os.path.join(HOME, "ethoconfig/ethoconfig.yml")
-
-if not os.path.exists(GLOBALCONFIGFILEPATH):
-    raise FileNotFoundError("No config file found. Should be at ~/ethoconfig/ethoconfig.yml")
+MISSING_CONFIG_MESSAGE = "No config file found. Should be at ~/ethoconfig/ethoconfig.yml"
 
 
 def defaultify(d: Dict, defaultfactory=lambda: None) -> defaultdict:
@@ -35,6 +33,8 @@ def saveconfig(filename: str, prot: Union[Dict, defaultdict]):
 def readconfig(filename: Optional[str] = None) -> defaultdict:
     if filename is None:
         filename = GLOBALCONFIGFILEPATH
+        if not os.path.exists(filename):
+            raise FileNotFoundError(MISSING_CONFIG_MESSAGE)
 
     with open(filename, "r") as f:
         config_dict = yaml.load(f.read(), Loader=yaml.FullLoader)
