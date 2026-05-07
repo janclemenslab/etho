@@ -1,8 +1,11 @@
 """etho"""
 
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 
-__version__ = version("etho")
+try:
+    __version__ = version("etho-python")
+except PackageNotFoundError:
+    __version__ = "0+unknown"
 
 # load global config on import
 try:
