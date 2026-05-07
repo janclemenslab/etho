@@ -9,10 +9,10 @@ authors = [
 ]
 classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["description"]
-requires-python = ">3.6"
+requires-python = ">=3.10"
 dependencies = ['numpy', 'scipy', 'h5py', 'opencv-python-headless', 'bleak',
                 'pandas', 'pyzmq', 'gevent', 'future', 'pillow', 'msgpack-python',
-                'pyyaml', 'ipython', 'defopt', 'msgpack-numpy', 'rich', 'psutil',
+                'pyyaml', 'ipython', 'defopt', 'msgpack-numpy', 'rich', 'psutil', 'tables',
                 'pydaqmx', 'pyqtgraph', 'qtpy', 'PySide6-Essentials', 'zarr', 'zerorpc-numpy']
 
 readme= "README.md"
