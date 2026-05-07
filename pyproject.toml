@@ -16,7 +16,7 @@ dependencies = ['numpy', 'scipy', 'h5py', 'opencv-python-headless', 'bleak',
                 'pydaqmx', 'pyqtgraph', 'qtpy', 'PySide6-Essentials', 'zarr', 'zerorpc-numpy']
 
 readme= "README.md"
-version="0.22.1"
+version="0.23.0"
 
 [project.scripts]
 etho = "etho.cli:main"
