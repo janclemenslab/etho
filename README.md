@@ -83,9 +83,10 @@ https://janclemenslab.org/etho/install.html
 Typical installation:
 
 ```bash
-git clone https://github.com/janclemenslab/etho
-cd etho
-pip install -e .
+conda create -n etho -y python=3.13 uv pip
+uv venv etho
+source etho/bin/activate
+uv pip install etho-python
 ```
 
 Some hardware backends require additional vendor SDKs and drivers.
