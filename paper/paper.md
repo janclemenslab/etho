@@ -1,0 +1,1 @@
+# `etho`: A Python framework for coordinating stimuli, data acquisition, and hardware control in neuroscience experiments
