@@ -59,3 +59,13 @@ TODO
 ```
 
 A [JOSS paper](paper/paper.md) describing the software is in preparation.
+
+The `etho` software has been used in the following publications:
+
+- Vijendravarma, R. K., Narasimha, S., Steinfath, E., Clemens, J., & Leopold, P. (2022). *Drosophila* females have an acoustic preference for symmetric males. Proceedings of the National Academy of Sciences, 119(13), e2116136119. https://doi.org/10.1073/pnas.2116136119
+
+- Steinfath, E., Khalili, A., Stenger, M., Schultze, B. L., Nair, S. R., Alizadeh, K., & Clemens, J. (2025). A neural circuit for context-dependent multimodal signaling in *Drosophila*. Nature Communications, 16, 9472. https://doi.org/10.1038/s41467-025-64907-9
+
+- Palacios-Muñoz, A., & Clemens, J. (2025). *Drosophila* males integrate song and pheromones using context-specific strategies. bioRxiv. https://doi.org/10.1101/2025.07.25.666755
+
+- Ravindran Nair, S., Palacios-Muñoz, A., Martineau, S., Nasr, M., & Clemens, J. (2026). Sex-specific behavioral feedback modulates sensorimotor processing and drives flexible social behavior. Nature Communications, 17, 4026. https://doi.org/10.1038/s41467-026-72057-9
