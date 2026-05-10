@@ -15,6 +15,8 @@ The software is designed to make experiments reproducible, configurable, and mai
 
 from the underlying device code.
 
+See the [documentation](https://janclemenslab.org/etho) for details.
+
 
 ## Installation
 
