@@ -10,11 +10,12 @@ authors = [
 classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["description"]
 requires-python = ">=3.10"
-dependencies = ['numpy', 'scipy', 'h5py', 'opencv-python-headless', 'bleak',
+dependencies = [
+                'numpy', 'scipy', 'h5py', 'opencv-python-headless', 'bleak',
                 'pandas', 'pyzmq', 'gevent', 'future', 'pillow', 'msgpack-python',
                 'pyyaml', 'ipython', 'defopt', 'msgpack-numpy', 'rich', 'psutil', 'tables',
-                'pydaqmx', 'pyqtgraph', 'qtpy', 'PySide6-Essentials', 'zarr', 'zerorpc-numpy']
-
+                'pydaqmx', 'pyqtgraph', 'qtpy', 'PySide6-Essentials', 'zarr', 'zerorpc-numpy'
+                ]
 readme= "README.md"
 version="0.23.0"
 
@@ -23,7 +24,12 @@ etho = "etho.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest", "flit>=3.2,<4"]
-doc = ["sphinx", "furo", "sphinx-inline-tabs", "sphinx-copybutton", "ghp-import", "myst-nb", "sphinx-panels", "sphinxcontrib-images"]
+doc = [
+       "sphinx", "furo", "shibuya", "sphinx-copybutton", "ghp-import",
+       "myst-nb", "sphinx-panels", "sphinxcontrib-images",
+       "sphinx-tabs", "sphinx-iconify", "sphinx-design",
+
+       ]
 
 [project.urls]
 source = "https://github.com/janclemenslab/etho"

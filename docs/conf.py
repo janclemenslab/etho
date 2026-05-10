@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath("../src"))
 # -- Project information -----------------------------------------------------
 
 project = "etho"
-copyright = "2021, Jan Clemens"
+copyright = "2026, Jan Clemens"
 author = "Jan Clemens"
 
 # -- General configuration ---------------------------------------------------
@@ -27,6 +27,7 @@ author = "Jan Clemens"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    "sphinx_tabs.tabs",
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
     "sphinx.ext.napoleon",
@@ -36,8 +37,9 @@ extensions = [
     "sphinx_panels",
     "sphinxcontrib.images",
     "sphinx.ext.autosectionlabel",
-    "sphinx_inline_tabs",
     "sphinx_copybutton",
+    "sphinx_iconify",
+    "sphinx_design",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,9 +57,15 @@ exclude_patterns += ["README.md"]
 html_static_path = ["_static"]
 
 html_theme_options = {
-    "sidebar_hide_name": True,
-    "light_logo": "etho_icon1_pipeline_light.svg",
-    "dark_logo": "etho_icon1_pipeline_dark.svg",
+    "accent_color": "violet",
+    "light_logo": "_static/etho_light.svg",
+    "dark_logo": "_static/etho_dark.svg",
+    "github_url": "https://github.com/janclemenslab/etho",
+    "nav_links": [
+        {"title": "Installation", "url": "install"},
+        {"title": "Tutorial", "url": "tutorial"},
+        {"title": "Configuration", "url": "configuration/configuration"},
+    ],
 }
 
 
@@ -98,7 +106,9 @@ autosectionlabel_prefix_document = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "furo"
+# html_theme = "furo"
+html_theme = "shibuya"
+
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
