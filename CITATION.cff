@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use etho in your research, please cite the software using the metadata below."
+title: "etho"
+abstract: "A Python framework for coordinating stimuli, data acquisition, and hardware control in neuroscience experiments."
+type: software
+
+authors:
+  - family-names: Clemens
+    given-names: Jan
+    orcid: "https://orcid.org/0000-0003-4200-8097"
+    affiliation: "Carl von Ossietzky University, Oldenburg, Germany"
+
+repository-code: "https://github.com/janclemenslab/etho"
+license: MIT
+
+preferred-citation:
+  type: article
+  title: "etho: A Python framework for coordinating stimuli, data acquisition, and hardware control in neuroscience experiments"
+  authors:
+    - family-names: Clemens
+      given-names: Jan
+      orcid: "https://orcid.org/0000-0003-4200-8097"
+      affiliation: "Carl von Ossietzky University, Oldenburg, Germany"
+  journal: "tbd"
+  year: 2026
+  date-released: 2026-05-10
