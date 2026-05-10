@@ -58,4 +58,4 @@ If you use `etho`earch, please cite:
 TODO
 ```
 
-A JOSS paper describing the software is in preparation.
+A [JOSS paper](paper/paper.md) describing the software is in preparation.
