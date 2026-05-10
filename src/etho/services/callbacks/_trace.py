@@ -2,7 +2,6 @@
 
 import logging
 import numpy as np
-from numpy.core.numeric import False_
 import scipy.signal as ss
 
 from ..utils.concurrent_task import ConcurrentTask
@@ -118,7 +117,7 @@ class PlotPQG(BaseCallback):
             w.setXRange(0, self.nb_samples, padding=0)
             w.setYRange(-5, 5)
             w.setMouseEnabled(x=False, y=False)
-            w.enableAutoRange("xy", False_)
+            w.enableAutoRange("xy", np.False_)
             self.p.append(w.plot(pen="k"))
         print(self.p)
         self.win.show()

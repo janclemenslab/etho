@@ -36,7 +36,7 @@ def parse_table(
     """
     if isinstance(table, str):
         table = pd.read_table(table, dtype=None, delimiter="\t", decimal=".")
-    tb = table.values
+    tb = table.to_numpy(dtype=object, copy=True)
     for row, row_values in enumerate(tb):
         for col, cell in enumerate(row_values):
             tb[row, col] = parse_cell(cell, dtypes[col])
@@ -52,7 +52,7 @@ def normalize_table(table: pd.DataFrame) -> pd.DataFrame:
     E.g. if two stimFileName but only one intensity, will duplicate the intensity entries.
     """
     # strict - throw error in case of inconsistencies
-    tb = table.values
+    tb = table.to_numpy(dtype=object, copy=True)
     for row, row_values in enumerate(tb):
         nchans = len(row_values[0])  # 1. get n stim channels from len(stimFileName)
         for col, cell in enumerate(row_values[1:]):
