@@ -3,6 +3,7 @@
 [![Test](https://github.com/janclemenslab/etho/actions/workflows/python-package.yml/badge.svg)](https://github.com/janclemenslab/etho/actions/workflows/python-package.yml)
 [![Documentation](https://img.shields.io/badge/docs-online-blue)](https://janclemenslab.org/etho)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![DOI](https://zenodo.org/badge/120959515.svg)](https://doi.org/10.5281/zenodo.20110619)
 
 `etho` is an open-source Python framework for running behavioral neuroscience experiments that require coordinated stimulus presentation, hardware control, data acquisition, and experiment logging.
 
