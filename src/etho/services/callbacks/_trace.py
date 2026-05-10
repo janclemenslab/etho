@@ -2,12 +2,10 @@
 
 import logging
 import numpy as np
-import scipy.signal as ss
 
 from ..utils.concurrent_task import ConcurrentTask
 from ..utils.log_exceptions import for_all_methods, log_exceptions
 from . import register_callback
-from typing import List
 from ._base import BaseCallback
 
 try:
@@ -15,11 +13,6 @@ try:
 
     tables_import_error = None
 except ImportError as tables_import_error:
-    pass
-
-try:
-    import peakutils
-except ImportError:
     pass
 
 try:
@@ -46,7 +39,7 @@ logger = logging.getLogger(__name__)
 class PlotMPL(BaseCallback):
     FRIENDLY_NAME = "plot"
 
-    def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: List, nb_samples: int = 10_000, **kwargs):
+    def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: list, nb_samples: int = 10_000, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
         self.channels_to_plot = channels_to_plot
         self.nb_channels = len(self.channels_to_plot)
@@ -93,7 +86,7 @@ class PlotMPL(BaseCallback):
 class PlotPQG(BaseCallback):
     FRIENDLY_NAME = "plot_fast"
 
-    def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: List, nb_samples: int = 10_000, **kwargs):
+    def __init__(self, data_source, *, poll_timeout=0.01, channels_to_plot: list, nb_samples: int = 10_000, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if pyqtgraph_import_error is not None:
@@ -332,93 +325,6 @@ class SaveDLP_HDF(BaseCallback):
             self.f.close()
         else:
             logging.debug(f"{self.file_name} already closed.")
-
-
-@for_all_methods(log_exceptions(logger))
-@register_callback
-class RealtimeDSS(BaseCallback):
-    def __init__(self, data_source, *, poll_timeout=0.01, model_save_name: str = None, **kwargs):
-        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
-        """Coroutine for rt processing of data."""
-        from utils.zeroclient import ZeroClient
-        from services.ANAZeroService import ANA
-        import subprocess
-        import tensorflow as tf
-        import das
-        import das.utils
-        import das.event_utils
-
-        print("   started RT processing")
-        ip_address = "localhost"
-        # init DAQ for output
-        self.nit = ZeroClient(ip_address, "nidaq")
-        self.sp = subprocess.Popen("python -m ethoservice.ANAZeroService")
-        self.nit.connect("tcp://{0}:{1}".format(ip_address, ANA.SERVICE_PORT))
-        self.nit.setup(-1, 0)
-        # nit.init_local_logger('{0}/{1}/{1}_nit.log'.format(daq_save_folder, filename))
-
-        self.samplerate = 10_000  # make sure audio data and the annotations are all on the same sampling rate
-        # bandpass to get rid of slow baseline fluctuations and high-freuqency ripples
-        self.sos_bp = ss.butter(5, [50, 1000], "bandpass", output="sos", fs=self.samplerate)
-
-        print("preparing network")
-        # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations1024/20191109_074320'
-        # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations4096/20191108_235948'
-        # model_save_name = 'C:/Users/ncb.UG-MGEN/dss/vibrations8192/20191109_080559'
-        self.model_save_name = model_save_name
-        self.model, self.params = das.utils.load_model_and_params(self.model_save_name)
-        self.input_shape = self.model.inputs[0].shape[1:]
-        self.model.predict(np.zeros((1, *self.input_shape)))  # use model.input_shape
-
-        self.data_buffer = np.zeros(self.input_shape)
-        self.started = False
-
-    @classmethod
-    def make_concurrent(cls, task_kwargs, comms="array"):
-        return ConcurrentTask(task=cls.make_run, task_kwargs=task_kwargs, comms=comms)
-
-    def _append_to_buffer(self, buffer, x):
-        buffer = np.roll(buffer, shift=-x.shape[0], axis=0)
-        buffer[-len(x) :, ...] = x
-        return buffer
-
-    def _loop(self, data):
-        # TODO: save raw data, filtered data and prediction to file...
-        data = data[:, : self.input_shape[-1]]
-        data = ss.sosfiltfilt(self.sos_bp, data, axis=0).astype(np.float16)
-        self.data_buffer = self._append_to_buffer(self.data_buffer, data)
-        batch = self.data_buffer.reshape((1, *self.data_buffer.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
-        # batch = data.reshape((1, *data.shape))  # model expects [nb_batches, nb_samples=1024, nb_channels=16]
-        prediction = self.model.predict(batch)
-
-        # detect vibration pulses:
-        # pulsetimes_pred, pulsetimes_pred_confidence = dss.event_utils.detect_events((prediction[0, ..., 1]>0.2).astype(np.float), thres=0.5, min_dist=500)
-        pulsetimes_pred = peakutils.indexes(prediction[0, ..., 1], thres=0.25, min_dist=500, thres_abs=True)
-
-        # filter vibrations by preceding IPI
-        min_ipi = 1000  # 100ms
-        max_ipi = 2000  # 200ms
-        good_pulses = np.logical_and(np.diff(pulsetimes_pred, append=0) > min_ipi, np.diff(pulsetimes_pred, append=0) < max_ipi)
-        print(pulsetimes_pred, pulsetimes_pred[good_pulses])
-        pulsetimes_pred = pulsetimes_pred[good_pulses]
-        vibrations_present = len(pulsetimes_pred) > 1
-
-        if not self.started and vibrations_present:
-            print("   sending START")
-            self.nit.send_trigger(1.5, duration=3)
-            self.started = True
-        elif self.started and not vibrations_present:
-            self.nit.send_trigger(0, duration=None)
-            self.started = False
-
-    def _cleanup(self):
-        print("   stopped RT processing")
-        self.nit.send_trigger(0, duration=None)
-        self.nit.finish()
-        self.nit.stop_server()
-        del self.nit
-        self.sp.terminate()
-        self.sp.kill()
 
 
 if __name__ == "__main__":

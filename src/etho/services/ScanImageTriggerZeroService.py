@@ -2,23 +2,53 @@ from .ZeroService import BaseZeroService
 import time
 import sys
 import numpy as np
+from . import register_service
 from .utils.log_exceptions import for_all_methods, log_exceptions
+from ..utils.config import undefaultify
 import logging
 
 try:
     import PyDAQmx as daq
+
     pydaqmx_import_error = None
-except ImportError as pydaqmx_import_error:
+except (ImportError, NotImplementedError) as pydaqmx_import_error:
     pass
 
 
+TRIGGER_TYPES: dict[str, list] = {"START": [1, 0, 0], "STOP": [0, 1, 0], "NEXT": [0, 0, 1], "NULL": [0, 0, 0]}
+
+
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
-class NIT(BaseZeroService):
+@register_service
+class SIT(BaseZeroService):
     """[summary]"""
 
     LOGGING_PORT = 1450  # set this to range 1420-1460
     SERVICE_PORT = 4250  # last to digits match logging output_channels - but start with "42" instead of "14"
-    SERVICE_NAME = "NIT"  # short, uppercase, 3-letter ID of the service (equals class name)
+    SERVICE_NAME = "SIT"  # short, uppercase, 3-letter ID of the service (equals class name)
+    CLIENT_START_GROUP = "trigger"
+
+    @classmethod
+    def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):
+        this = defaults.copy()
+        this.update(prot[service_key])
+
+        if prot[service_key].get("port") is None:
+            prot[service_key]["port"] = cls.SERVICE_PORT + service_index
+
+        service = cls.make(
+            this["serializer"],
+            this["host"],
+            this["python_exe"],
+            new_console=new_console,
+            port=prot[service_key]["port"],
+        )
+
+        params = undefaultify(prot[service_key])
+        service.setup(params.get("duration", prot["maxduration"]), params["output_channels"])
+        save_suffix = f"_{service_index + 1}" if service_index > 0 else ""
+        service.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_sit.log")
+        return service
 
     def setup(self, duration, output_channels):
         """Setup the trigger service (intiates the digital output channels).
@@ -91,23 +121,22 @@ class NIT(BaseZeroService):
 
 def oneshot_trigger(this, trigger_names, do_port="/Dev1/port0/line1:3"):
 
-    trigger_types = {"START": [1, 0, 0], "STOP": [0, 1, 0], "NEXT": [0, 0, 1], "NULL": [0, 0, 0]}
     try:
-        nit = NIT.make(
+        sit = SIT.make(
             this["serializer"],
             this["host"],
             this["python_exe"],
             new_console=False,
         )
-        nit.setup(-1, do_port)
+        sit.setup(-1, do_port)
         for trigger_name in trigger_names:
             logging.info(f"sending {trigger_name}")
-            nit.send_trigger(trigger_types[trigger_name])
+            sit.send_trigger(TRIGGER_TYPES[trigger_name])
     except Exception as e:
         logging.exception(e)
-    nit.finish()
-    nit.stop_server()
-    del nit
+    sit.finish()
+    sit.stop_server()
+    del sit
 
 
 if __name__ == "__main__":
@@ -115,6 +144,6 @@ if __name__ == "__main__":
         ser = sys.argv[1]
     else:
         ser = "default"
-    s = NIT(serializer=ser)
-    s.bind("tcp://0.0.0.0:{0}".format(NIT.SERVICE_PORT))  # broadcast on all IPs
+    s = SIT(serializer=ser)
+    s.bind("tcp://0.0.0.0:{0}".format(SIT.SERVICE_PORT))  # broadcast on all IPs
     s.run()

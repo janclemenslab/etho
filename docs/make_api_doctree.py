@@ -4,9 +4,8 @@ import os
 ignore_modules = [
     # These modules depend on optional hardware SDKs or plotting stacks that
     # are not expected to be importable on a normal documentation workstation.
-    "etho.services.ANAZeroService",
     "etho.services.DLPZeroService",
-    "etho.services.NITriggerZeroService",
+    "etho.services.ScanImageTriggerZeroService",
     "etho.services.daq",
     "etho.services.dlp.dlp_runners",
 ]
