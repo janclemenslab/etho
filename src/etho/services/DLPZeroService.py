@@ -2,8 +2,10 @@
 from .ZeroService import BaseZeroService  # import super class
 import time  # for timer
 import threading
+from . import register_service
 from .utils.log_exceptions import for_all_methods, log_exceptions
 from .dlp import dlp_runners
+from ..utils.config import undefaultify
 import logging
 import defopt
 from typing import Optional
@@ -22,11 +24,36 @@ except ImportError as dlp_import_error:
 
 # decorate all methods in the class so that exceptions are properly logged
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@register_service
 class DLP(BaseZeroService):
 
     LOGGING_PORT = 1453  # set this to range 1420-1460
     SERVICE_PORT = 4253  # last two digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "DLP"  # short, uppercase, 3-letter ID of the service (must equal class name)
+    CLIENT_START_GROUP = "pre"
+
+    @classmethod
+    def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):
+        this = defaults.copy()
+        this.update(prot[service_key])
+
+        if prot[service_key].get("port") is None:
+            prot[service_key]["port"] = cls.SERVICE_PORT + service_index
+
+        service = cls.make(
+            this["serializer"],
+            this["host"],
+            this["python_exe"],
+            new_console=new_console,
+            port=prot[service_key]["port"],
+        )
+
+        params = undefaultify(prot[service_key])
+        save_suffix = f"_{service_index + 1}" if service_index > 0 else ""
+        savefilename = f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}"
+        service.setup(prot["maxduration"], savefilename, params)
+        service.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_{service_key.lower()}.log")
+        return service
 
     def setup(self, duration, logfilename, params=None):
         if dlp_import_error is not None:

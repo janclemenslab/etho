@@ -2,7 +2,9 @@ from .ZeroService import BaseZeroService
 import time
 import sys
 import numpy as np
+from . import register_service
 from .utils.log_exceptions import for_all_methods, log_exceptions
+from ..utils.config import undefaultify
 import logging
 import threading
 
@@ -14,12 +16,42 @@ except (ImportError, NotImplementedError) as pydaqmx_import_error:
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@register_service
 class NIC(BaseZeroService):
     """[summary]"""
 
     LOGGING_PORT = 1450  # set this to range 1420-1460
     SERVICE_PORT = 4250  # last to digits match logging output_channels - but start with "42" instead of "14"
     SERVICE_NAME = "NIC"  # short, uppercase, 3-letter ID of the service (equals class name)
+    CLIENT_START_GROUP = "trigger"
+
+    @classmethod
+    def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):
+        this = defaults.copy()
+        this.update(prot[service_key])
+
+        if prot[service_key].get("port") is None:
+            prot[service_key]["port"] = cls.SERVICE_PORT + service_index
+
+        service = cls.make(
+            this["serializer"],
+            this["host"],
+            this["python_exe"],
+            new_console=new_console,
+            port=prot[service_key]["port"],
+        )
+
+        params = undefaultify(prot[service_key])
+        service.setup(
+            params["output_channel"],
+            prot["maxduration"] + 10,
+            params["frequency"],
+            params["duty_cycle"],
+            params,
+        )
+        save_suffix = f"_{service_index + 1}" if service_index > 0 else ""
+        service.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_nic.log")
+        return service
 
     def setup(self, output_channel, duration, frequency, duty_cycle, params):
         """Setup the counter service (intiates the digital output channels).
@@ -87,6 +119,10 @@ if __name__ == "__main__":
         ser = sys.argv[1]
     else:
         ser = "default"
+    if len(sys.argv) > 2:
+        port = sys.argv[2]
+    else:
+        port = NIC.SERVICE_PORT
     s = NIC(serializer=ser)
-    s.bind("tcp://0.0.0.0:{0}".format(NIC.SERVICE_PORT))  # broadcast on all IPs
+    s.bind("tcp://0.0.0.0:{0}".format(port))  # broadcast on all IPs
     s.run()

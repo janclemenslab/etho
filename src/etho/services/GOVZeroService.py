@@ -10,6 +10,7 @@ from typing import Any, Optional
 import defopt
 
 from .ZeroService import BaseZeroService
+from . import register_service
 from .utils.log_exceptions import for_all_methods, log_exceptions
 
 try:
@@ -67,10 +68,38 @@ def format_measurement_log_line(measurement: H5075Measurement) -> str:
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@register_service
 class GOV(BaseZeroService):
     LOGGING_PORT = 1455
     SERVICE_PORT = 4255
     SERVICE_NAME = "GOV"
+    CLIENT_START_GROUP = "pre"
+
+    @classmethod
+    def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):
+        if preview:
+            return None
+
+        this = defaults.copy()
+        this.update(prot[service_key])
+
+        if prot[service_key].get("port") is None:
+            prot[service_key]["port"] = cls.SERVICE_PORT + service_index
+
+        interval = prot[service_key].get("interval")
+        if interval is None:
+            interval = DEFAULT_INTERVAL
+
+        service = cls.make(
+            this["serializer"],
+            this["host"],
+            this["python_exe"],
+            new_console=new_console,
+            port=prot[service_key]["port"],
+        )
+        service.setup(prot[service_key]["address"], interval, prot["maxduration"] + 10)
+        service.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}_{service_key.lower()}.log")
+        return service
 
     def setup(self, address: str, interval: float = DEFAULT_INTERVAL, duration: float = 0):
         if bleak_import_error is not None:

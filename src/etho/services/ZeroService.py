@@ -37,6 +37,7 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     LOGGING_PORT: Optional[int] = None  # network port used for publishing log messages
     SERVICE_PORT: Optional[int] = None  # network port for communicating with the head
     SERVICE_NAME: Optional[str] = None
+    CLIENT_START_GROUP = "pre"
 
     def __init__(self, *args, serializer: str = "default", head_ip: str = "192.168.1.1", **kwargs):
         """[summary]
@@ -89,6 +90,10 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
         ret = service.connect("tcp://{0}:{1}".format(host, port))
         logging.debug(f'{"success" if ret else "FAILED"}.')
         return service
+
+    @classmethod
+    def setup_client(cls, *args, **kwargs):
+        raise NotImplementedError(f"{cls.__name__} must implement setup_client() for etho.client.")
 
     def _init_network_logger(self, head_ip: str = "192.168.1.1", log_level: int = logging.INFO):
         """Initialize logger that publishes messages over the network format.

@@ -5,8 +5,10 @@ import logging
 import defopt
 from typing import Optional
 
+from . import register_service
 from .utils.log_exceptions import for_all_methods, log_exceptions
 from .utils.concurrent_task import Pipe
+from ..utils.config import undefaultify
 
 try:
     from pybmt.callback.threshold_callback import ThresholdCallback
@@ -19,11 +21,35 @@ except ImportError as pybmt_error:
 
 # decorate all methods in the class so that exceptions are properly logged
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@register_service
 class BLT(BaseZeroService):
 
     LOGGING_PORT = 1452  # set this to range 1420-1460
     SERVICE_PORT = 4252  # last two digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "BLT"  # short, uppercase, 3-letter ID of the service (must equal class name)
+    CLIENT_START_GROUP = "pre"
+
+    @classmethod
+    def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):
+        this = defaults.copy()
+        this.update(prot[service_key])
+
+        if prot[service_key].get("port") is None:
+            prot[service_key]["port"] = cls.SERVICE_PORT + service_index
+
+        service = cls.make(
+            this["serializer"],
+            this["host"],
+            this["python_exe"],
+            new_console=new_console,
+            port=prot[service_key]["port"],
+        )
+
+        params = undefaultify(prot[service_key])
+        save_suffix = f"_{service_index + 1}" if service_index > 0 else ""
+        service.setup(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}", prot["maxduration"], params)
+        service.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_{service_key.lower()}.log")
+        return service
 
     def setup(self, savefilename, duration, params):
         if pybmt_error is not None:

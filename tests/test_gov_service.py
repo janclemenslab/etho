@@ -50,6 +50,7 @@ class DummyAdvertisement:
 
 def make_service(interval=60, address="AA:BB:CC:DD:EE:FF"):
     service = object.__new__(GOV)
+    service._acceptor_task = None
     service.log = DummyLogger()
     service.console_messages = []
     service._write_to_console = service.console_messages.append
@@ -156,18 +157,15 @@ def test_client_wires_gov_service(monkeypatch):
         def start(self):
             self.started = True
 
-    class FakeGOV:
-        SERVICE_PORT = 4255
-        last_instance = None
+    instances = []
 
-        @classmethod
-        def make(cls, serializer, host, python_exe, port=None):
-            instance = FakeService()
-            instance.make_args = (serializer, host, python_exe, port)
-            cls.last_instance = instance
-            return instance
+    def fake_make(cls, serializer, host, python_exe, port=None, new_console=False):
+        instance = FakeService()
+        instance.make_args = (serializer, host, python_exe, port, new_console)
+        instances.append(instance)
+        return instance
 
-    monkeypatch.setattr(client, "GOV", FakeGOV)
+    monkeypatch.setattr(GOV, "make", classmethod(fake_make))
     monkeypatch.setattr(client, "rich_information", lambda *args, **kwargs: None)
 
     protocol = {
@@ -180,9 +178,10 @@ def test_client_wires_gov_service(monkeypatch):
 
     services = client.client(None, protocol=protocol, save_prefix="testgov", show_progress=False)
 
-    service = FakeGOV.last_instance
+    service = instances[0]
     assert services["GOV"] is service
-    assert service.make_args[-1] == FakeGOV.SERVICE_PORT
+    assert service.make_args[3] == GOV.SERVICE_PORT
+    assert service.make_args[4] is False
     assert service.setup_args == ("AA:BB:CC:DD:EE:FF", 60, 15)
     assert service.started is True
     assert service.log_path.endswith("testgov/testgov_gov.log")

@@ -81,29 +81,40 @@ lifecycle used by the built-in services.
    logging ports in the `1420-1460` range and service ports beginning with
    `42`; the last two digits normally match.
 4. Set `SERVICE_NAME` to the class name.
-5. Implement `setup(...)` for hardware allocation, run configuration, worker
+5. Implement `setup_client(...)` for protocol-to-service wiring. This is where
+   the service reads its protocol block, assigns its default port, calls
+   `make(...)`, calls the remote `setup(...)`, and initializes the local logger.
+6. Implement `setup(...)` for hardware allocation, run configuration, worker
    thread setup, and `self.info`.
-6. Implement `start()` to start workers, hardware acquisition, timers, and
+7. Implement `start()` to start workers, hardware acquisition, timers, and
    callbacks.
-7. Implement `finish(stop_service=False)` to stop timers, signal workers, close
+8. Implement `finish(stop_service=False)` to stop timers, signal workers, close
    hardware, close callbacks, and optionally call `service_stop()`.
-8. Implement `is_busy()`, `test()`, and `cleanup()`.
-9. Keep the module-level `cli()` and `if __name__ == "__main__"` block so
+9. Implement `is_busy()`, `test()`, and `cleanup()`.
+10. Keep the module-level `cli()` and `if __name__ == "__main__"` block so
    `BaseZeroService.make(...)` can launch the service with `python -m`.
 
 The template shows the expected structure:
 
 ```python
+from . import register_service
 from .ZeroService import BaseZeroService
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@register_service
 class TMP(BaseZeroService):
     LOGGING_PORT = 1443
     SERVICE_PORT = 4243
     SERVICE_NAME = "TMP"
+    CLIENT_START_GROUP = "pre"
+
+    @classmethod
+    def setup_client(cls, service_key, service_index, prot, defaults,
+                     playlistfile, save_prefix, preview, new_console):
+        ...
 
     def setup(self, duration):
         self.duration = float(duration)
@@ -131,22 +142,23 @@ or equivalent stop signal so `finish()` can stop the worker cleanly.
 
 ## Wiring A Service Into Experiments
 
-A service module is not enough for `etho run` by itself. The experiment client
-must know how to construct it from a protocol.
+`etho run` looks up services in `etho.services.SERVICE_REGISTRY` by their
+`SERVICE_NAME`. Suffixed protocol names such as `GCM2` resolve to `GCM`. Do not
+edit `src/etho/client.py` for a new service; register the service class with
+`@register_service` and import the service from `src/etho/services/__init__.py`
+so the decorator runs.
 
-1. Import the service class in `src/etho/client.py`.
-2. Add a client branch that recognizes the protocol service name or prefix in
-   `use_services`.
-3. Merge global defaults with the service block.
-4. Assign a default port when the protocol does not provide one.
-5. Call `<SERVICE>.make(...)`.
-6. Call `setup(...)` with arguments from the protocol.
-7. Initialize the local logger with `init_local_logger(...)`.
-8. Store the service in the `services` dictionary.
-9. Start it in the correct order relative to cameras, triggers, DAQ output, and
-   other hardware.
-10. Add protocol documentation and a focused test that proves the client wires
-    the new service correctly.
+`setup_client(...)` receives the protocol, global defaults, playlist path,
+`save_prefix`, preview flag, and debug console flag. It should return the
+configured remote service client, or `None` when the service should be skipped
+for that run.
+
+Set `CLIENT_START_GROUP` only when start order matters:
+
+- `pre`: default; starts before trigger and DAQ services.
+- `trigger`: starts after `pre` services.
+- `daq`: starts after `pre` and `trigger` services, with the existing startup
+  delay.
 
 Minimal protocol shape:
 
@@ -159,8 +171,8 @@ TMP:
   port: 4243
 ```
 
-The exact service block should match the new service's `setup(...)` signature
-and any runtime options it needs.
+The exact service block should match what the new service's `setup_client(...)`
+passes into its remote `setup(...)` call.
 
 ## Documentation And Tests
 

@@ -1,7 +1,5 @@
 import time
-import numpy as np
 import logging
-from itertools import cycle
 from rich.progress import Progress
 import rich
 import threading
@@ -13,13 +11,8 @@ import psutil
 from .utils.tui import rich_information
 
 from . import config
-from .utils.config import defaultify, readconfig, undefaultify
-from .utils.sound import parse_table, load_sounds, build_playlist
-
-from .services.GOVZeroService import GOV
-from .services.DAQZeroService import DAQ
-from .services.GCMZeroService import GCM
-from .services.NICounterZeroService import NIC
+from . import services as service_module
+from .utils.config import defaultify, readconfig
 
 
 def timed(fn, s, *args, **kwargs):
@@ -57,6 +50,71 @@ def _reject_remote_host_blocks(prot: Dict[str, Any]) -> None:
     if remote_services:
         services = ", ".join(remote_services)
         raise ValueError(f"Remote service hosts are no longer supported. Remove the 'host' block from: {services}.")
+
+
+def _setup_services(prot, defaults, playlistfile, save_prefix, preview, new_console):
+    services = {}
+    service_classes = {}
+    service_counts = {}
+
+    for service_name in prot["use_services"]:
+        service_class = service_module.service_class_for(service_name)
+        service_type = service_class.SERVICE_NAME
+        service_index = service_counts.get(service_type, 0)
+        service_counts[service_type] = service_index + 1
+
+        service = service_class.setup_client(
+            service_name,
+            service_index,
+            prot,
+            defaults,
+            playlistfile,
+            save_prefix,
+            preview,
+            new_console,
+        )
+        if service is None:
+            continue
+
+        services[service_name] = service
+        service_classes[service_name] = service_class
+
+    return services, service_classes
+
+
+def _start_services(services, service_classes):
+    logging.info("Starting services")
+
+    start_groups = {service_name: getattr(service_classes[service_name], "CLIENT_START_GROUP", "pre") for service_name in services}
+    started_groups = set()
+    time_last_prereq_started = time.time()
+
+    def start_group(group):
+        nonlocal time_last_prereq_started
+        started_groups.add(group)
+        for service_name, service in services.items():
+            if start_groups[service_name] != group:
+                continue
+            logging.info(f"   {service_name}.")
+            service.start()
+            if group in {"pre", "trigger"}:
+                time_last_prereq_started = time.time()
+
+    start_group("pre")
+    time.sleep(0.5)
+    start_group("trigger")
+
+    if "daq" in start_groups.values():
+        wait_remaining = 5 - (time.time() - time_last_prereq_started)
+        if wait_remaining > 0:
+            time.sleep(wait_remaining)
+    start_group("daq")
+
+    for group in start_groups.values():
+        if group not in started_groups:
+            start_group(group)
+
+    logging.info("All services started.")
 
 
 def client(
@@ -112,201 +170,13 @@ def client(
 
     new_console = debug
 
-    services = {}
-    if "GOV" in prot["use_services"] and not preview:
-        this = defaults.copy()
-
-        if prot["GOV"].get("port") is None:
-            prot["GOV"]["port"] = GOV.SERVICE_PORT
-
-        interval = prot["GOV"].get("interval")
-        if interval is None:
-            interval = 60
-
-        gov = GOV.make(
-            this["serializer"],
-            this["host"],
-            this["python_exe"],
-            port=prot["GOV"]["port"],
-        )
-        gov.setup(prot["GOV"]["address"], interval, prot["maxduration"] + 10)
-        gov.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}_gov.log")
-        services["GOV"] = gov
-
-    gcm_keys = [key for key in prot["use_services"] if "GCM" in key]
-    for gcm_cnt, gcm_key in enumerate(gcm_keys):
-        # if gcm_key in prot["use_services"] and gcm_key in prot:
-        this = defaults.copy()
-        this.update(prot[gcm_key])
-
-        if "port" not in prot[gcm_key]:
-            prot[gcm_key]["port"] = GCM.SERVICE_PORT + gcm_cnt
-        gcm = GCM.make(
-            this["serializer"],
-            this["host"],
-            this["python_exe"],
-            new_console=new_console,
-            port=prot[gcm_key]["port"],
-        )
-
-        cam_params = undefaultify(prot[gcm_key])
-        if not preview:
-            maxduration = prot["maxduration"] + 10
-        else:
-            maxduration = 1_000_000
-
-        if preview:
-            cam_params["callbacks"] = {"disp_fast": None}
-
-        save_suffix = f"_{gcm_cnt + 1}" if gcm_cnt > 0 else ""
-        gcm.setup(
-            f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}",
-            maxduration,
-            cam_params,
-        )
-
-        if not preview:
-            gcm.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log")
-        services[gcm_key] = gcm
-
-    daq_keys = [key for key in prot["use_services"] if "DAQ" in key]
-    daq_keys = [] if preview else daq_keys
-    for daq_cnt, daq_key in enumerate(daq_keys):
-        this = defaults.copy()
-        this.update(prot[daq_key])
-
-        if "device" not in prot[daq_key]:
-            prot[daq_key]["device"] = "Dev1"
-
-        if "port" not in prot[daq_key]:
-            prot[daq_key]["port"] = DAQ.SERVICE_PORT + daq_cnt
-
-        if this["host"] in config["ATTENUATION"]:  # use node specific attenuation data
-            attenuation = config["ATTENUATION"][this["host"]]
-            logging.info(f"Using attenuation data specific to {this['host']}.")
-        else:
-            attenuation = config["ATTENUATION"]
-
-        # Load/generate all stimuli specified in playlist
-        fs = prot[daq_key]["samplingrate"]
-        playlist = parse_table(playlistfile)
-        sounds = load_sounds(
-            playlist,
-            fs,
-            attenuation=attenuation,
-            LEDamp=prot[daq_key]["ledamp"],
-            stimfolder=config["stimfolder"],
-        )
-        sounds = [sound.astype(np.float64) for sound in sounds]
-
-        # Generate stimulus sequence (shuffle, loop playlist)
-        playlist_items, totallen = build_playlist(sounds, prot["maxduration"], fs, shuffle=prot[daq_key]["shuffle"])
-        if prot["maxduration"] == -1:
-            logging.info(f"Setting maxduration from playlist to {totallen}.")
-            prot["maxduration"] = totallen
-            playlist_items = cycle(playlist_items)  # iter(playlist_items)
-        else:
-            playlist_items = cycle(playlist_items)
-
-        # split analog and digital outputs
-        # TODO: catch errors if channel numbers are inconsistent - sounds[ii].shape[-1] should be nb_analog+nb_digital
-        if prot[daq_key]["digital_chans_out"] is not None:
-            nb_digital_chans_out = len(prot[daq_key]["digital_chans_out"])
-            digital_data = [snd[:, -nb_digital_chans_out:].astype(np.uint8) for snd in sounds]
-            analog_data = [snd[:, :-nb_digital_chans_out] for snd in sounds]  # remove digital traces from stimset
-        else:
-            digital_data = None
-            analog_data = sounds
-
-        daq = DAQ.make(
-            this["serializer"],
-            this["host"],
-            this["python_exe"],
-            new_console=new_console,
-            port=prot[daq_key]["port"],
-        )
-        save_suffix = f"_{daq_cnt + 1}" if daq_cnt > 0 else ""
-        daq.setup(
-            f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}",
-            playlist_items,
-            playlist,
-            prot["maxduration"],
-            fs,
-            dev_name=prot[daq_key]["device"],
-            clock_source=prot[daq_key]["clock_source"],
-            nb_inputsamples_per_cycle=prot[daq_key]["nb_inputsamples_per_cycle"],
-            analog_chans_in=prot[daq_key]["analog_chans_in"],
-            # analog_chans_in_limits=None,
-            # analog_chans_in_terminals=None,
-            analog_chans_out=prot[daq_key]["analog_chans_out"],
-            # analog_chans_out_limits=None,
-            analog_data_out=analog_data,
-            digital_chans_out=prot[daq_key]["digital_chans_out"],
-            digital_data_out=digital_data,
-            metadata={
-                "analog_chans_in_info": prot[daq_key]["analog_chans_in_info"],
-                "analog_chans_out_info": prot[daq_key]["analog_chans_out_info"],
-                "digitial_chans_out_info": prot[daq_key]["digitial_chans_out_info"],
-            },
-            params=undefaultify(prot[daq_key]),
-        )
-        daq.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log")
-        services[daq_key] = daq
-
-    if "NIC" in prot["use_services"]:
-        this = defaults.copy()
-        this.update(prot["NIC"])
-
-        nic = NIC.make(
-            this["serializer"],
-            this["host"],
-            this["python_exe"],
-            new_console=new_console,
-            port=prot["NIC"]["port"],
-        )
-
-        nic_params = undefaultify(prot["NIC"])
-        nic.setup(
-            nic_params["output_channel"],
-            prot["maxduration"] + 10,
-            nic_params["frequency"],
-            nic_params["duty_cycle"],
-            nic_params,
-        )
-        nic.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log")
+    services, service_classes = _setup_services(prot, defaults, playlistfile, save_prefix, preview, new_console)
 
     # display config info
     for key, s in services.items():
         rich_information(s.information(), prefix=key)
 
-    logging.info("Starting services")
-    # First, start video services - this will start acquisition or, if external triggering is enabled, arm the cameras to wait for the triggers
-    time_last_cam_started = time.time() + 5  # in case no cam was initialized
-    for service_name, service in services.items():
-        if "GCM" in service_name or "GOV" in service_name:
-            logging.info(f"   {service_name}.")
-            service.start()
-            time_last_cam_started = time.time()
-    time.sleep(0.5)
-
-    # start the counter task for triggering frames
-    if "NIC" in prot["use_services"]:
-        logging.info("   NI Counter service.")
-        nic.start()
-        time_last_cam_started = time.time()
-
-    # Wait 5 seconds for cams to run
-    if daq_keys:
-        while time.time() - time_last_cam_started < 5:
-            time.sleep(0.1)
-
-    # Start DAQ services
-    for service_name, service in services.items():
-        if "DAQ" in service_name:
-            logging.info(f"   {service_name}.")
-            service.start()
-
-    logging.info("All services started.")
+    _start_services(services, service_classes)
 
     if monitor or show_progress:
         total = 0

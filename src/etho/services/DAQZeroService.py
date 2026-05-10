@@ -3,7 +3,12 @@ import time
 import threading
 import sys
 import copy
+from itertools import cycle
 from typing import Iterable, Sequence, Optional, Dict, Any
+from . import register_service
+from .. import config as global_config
+from ..utils.config import undefaultify
+from ..utils.sound import parse_table, load_sounds, build_playlist
 from .utils.log_exceptions import for_all_methods, log_exceptions
 from .callbacks import callbacks
 import logging
@@ -19,12 +24,91 @@ except (ImportError, NameError, NotImplementedError) as daqmx_import_error:
 
 
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
+@register_service
 class DAQ(BaseZeroService):
     """Bundles and synchronizes analog/digital input and output tasks."""
 
     LOGGING_PORT = 1449  # set this to range 1420-1460
     SERVICE_PORT = 4249  # last to digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "DAQ"  # short, uppercase, 3-letter ID of the service (equals class name)
+    CLIENT_START_GROUP = "daq"
+
+    @classmethod
+    def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):
+        if preview:
+            return None
+
+        this = defaults.copy()
+        this.update(prot[service_key])
+
+        if prot[service_key].get("device") is None:
+            prot[service_key]["device"] = "Dev1"
+
+        if prot[service_key].get("port") is None:
+            prot[service_key]["port"] = cls.SERVICE_PORT + service_index
+
+        if this["host"] in global_config["ATTENUATION"]:
+            attenuation = global_config["ATTENUATION"][this["host"]]
+            logging.info(f"Using attenuation data specific to {this['host']}.")
+        else:
+            attenuation = global_config["ATTENUATION"]
+
+        fs = prot[service_key]["samplingrate"]
+        playlist = parse_table(playlistfile)
+        sounds = load_sounds(
+            playlist,
+            fs,
+            attenuation=attenuation,
+            LEDamp=prot[service_key]["ledamp"],
+            stimfolder=global_config["stimfolder"],
+        )
+        sounds = [sound.astype(np.float64) for sound in sounds]
+
+        playlist_items, totallen = build_playlist(sounds, prot["maxduration"], fs, shuffle=prot[service_key]["shuffle"])
+        if prot["maxduration"] == -1:
+            logging.info(f"Setting maxduration from playlist to {totallen}.")
+            prot["maxduration"] = totallen
+        playlist_items = cycle(playlist_items)
+
+        if prot[service_key]["digital_chans_out"] is not None:
+            nb_digital_chans_out = len(prot[service_key]["digital_chans_out"])
+            digital_data = [snd[:, -nb_digital_chans_out:].astype(np.uint8) for snd in sounds]
+            analog_data = [snd[:, :-nb_digital_chans_out] for snd in sounds]
+        else:
+            digital_data = None
+            analog_data = sounds
+
+        service = cls.make(
+            this["serializer"],
+            this["host"],
+            this["python_exe"],
+            new_console=new_console,
+            port=prot[service_key]["port"],
+        )
+        save_suffix = f"_{service_index + 1}" if service_index > 0 else ""
+        service.setup(
+            f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}",
+            playlist_items,
+            playlist,
+            prot["maxduration"],
+            fs,
+            dev_name=prot[service_key]["device"],
+            clock_source=prot[service_key]["clock_source"],
+            nb_inputsamples_per_cycle=prot[service_key]["nb_inputsamples_per_cycle"],
+            analog_chans_in=prot[service_key]["analog_chans_in"],
+            analog_chans_out=prot[service_key]["analog_chans_out"],
+            analog_data_out=analog_data,
+            digital_chans_out=prot[service_key]["digital_chans_out"],
+            digital_data_out=digital_data,
+            metadata={
+                "analog_chans_in_info": prot[service_key]["analog_chans_in_info"],
+                "analog_chans_out_info": prot[service_key]["analog_chans_out_info"],
+                "digitial_chans_out_info": prot[service_key]["digitial_chans_out_info"],
+            },
+            params=undefaultify(prot[service_key]),
+        )
+        service.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_daq.log")
+        return service
 
     def setup(
         self,

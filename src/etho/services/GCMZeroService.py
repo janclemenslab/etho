@@ -2,9 +2,11 @@ from .ZeroService import BaseZeroService
 import time
 import threading
 import sys
+from . import register_service
 from .utils.log_exceptions import for_all_methods, log_exceptions
 import logging
 from ..services import camera
+from ..utils.config import undefaultify
 from .callbacks import callbacks
 
 
@@ -12,10 +14,45 @@ logger = logging.getLogger(__name__)
 
 
 @for_all_methods(log_exceptions(logger))
+@register_service
 class GCM(BaseZeroService):
     LOGGING_PORT = 1446  # set this to range 1420-1460
     SERVICE_PORT = 4246  # last to digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "GCM"  # short, uppercase, 3-letter ID of the service (equals class name)
+    CLIENT_START_GROUP = "pre"
+
+    @classmethod
+    def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):
+        this = defaults.copy()
+        this.update(prot[service_key])
+
+        if prot[service_key].get("port") is None:
+            prot[service_key]["port"] = cls.SERVICE_PORT + service_index
+
+        service = cls.make(
+            this["serializer"],
+            this["host"],
+            this["python_exe"],
+            new_console=new_console,
+            port=prot[service_key]["port"],
+        )
+
+        params = undefaultify(prot[service_key])
+        duration = 1_000_000 if preview else prot["maxduration"] + 10
+
+        if preview:
+            params["callbacks"] = {"disp_fast": None}
+
+        save_suffix = f"_{service_index + 1}" if service_index > 0 else ""
+        service.setup(
+            f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}",
+            duration,
+            params,
+        )
+
+        if not preview:
+            service.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log")
+        return service
 
     def setup(self, savefilename, duration, params):
         self._time_started = None
