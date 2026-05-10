@@ -17,9 +17,8 @@ DLP:
 
 NOTE: for the logging to work, ensure that the values returned by `status` have the same type when initialized.
 """
+
 import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
 from typing import Callable, Optional, Dict
 
 
@@ -140,9 +139,7 @@ class ObjectMoverSizer(DLP_runner):
             Dict[str: float/int]: values should be numbers - not lists or np.arrays!
 
         """
-        self.object = object(
-            win=win, units="norm", size=0, pos=[-1, 0], radius=2 * 1 / 270, autoDraw=True, fillColor=[-1, -1, -1], lineWidth=0
-        )
+        self.object = object(win=win, units="norm", size=0, pos=[-1, 0], radius=2 * 1 / 270, autoDraw=True, fillColor=[-1, -1, -1], lineWidth=0)
         # self.object = object(win=win, units = 'norm', size=self.led_size, pos=self.led_pos,
         #                       autoDraw = True, fillColor=[-1, -1, -1], lineWidth=0, opacity=1)
 
@@ -177,16 +174,7 @@ class ObjectMoverSizer(DLP_runner):
 class ObjectCirclesGrid(DLP_runner):
     """Move and resize object based on `size` and `position` fields in npz file."""
 
-    def __init__(
-        self,
-        win,
-        object,
-        grid_direction_change_frames: int = 30 * 180,
-        grid_speed: float = 2 / 180,
-        grid_direction: int = 1,
-        ncircles: int = 1,
-        **kwignore
-    ):
+    def __init__(self, win, object, grid_direction_change_frames: int = 30 * 180, grid_speed: float = 2 / 180, grid_direction: int = 1, ncircles: int = 1, **kwignore):
         """Set up grid of circles, using a list of Circles.
 
         Args:
