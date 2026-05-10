@@ -240,6 +240,9 @@ lifecycle used by the built-in services.</p>
 logging ports in the <code class="docutils literal notranslate"><span class="pre">1420-1460</span></code> range and service ports beginning with
 <code class="docutils literal notranslate"><span class="pre">42</span></code>; the last two digits normally match.</p></li>
 <li><p>Set <code class="docutils literal notranslate"><span class="pre">SERVICE_NAME</span></code> to the class name.</p></li>
+<li><p>Implement <code class="docutils literal notranslate"><span class="pre">setup_client(...)</span></code> for protocol-to-service wiring. This is where
+the service reads its protocol block, assigns its default port, calls
+<code class="docutils literal notranslate"><span class="pre">make(...)</span></code>, calls the remote <code class="docutils literal notranslate"><span class="pre">setup(...)</span></code>, and initializes the local logger.</p></li>
 <li><p>Implement <code class="docutils literal notranslate"><span class="pre">setup(...)</span></code> for hardware allocation, run configuration, worker
 thread setup, and <code class="docutils literal notranslate"><span class="pre">self.info</span></code>.</p></li>
 <li><p>Implement <code class="docutils literal notranslate"><span class="pre">start()</span></code> to start workers, hardware acquisition, timers, and
@@ -251,35 +254,43 @@ hardware, close callbacks, and optionally call <code class="docutils literal not
 <code class="docutils literal notranslate"><span class="pre">BaseZeroService.make(...)</span></code> can launch the service with <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span></code>.</p></li>
 </ol>
 <p>The template shows the expected structure:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">.ZeroService</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseZeroService</span>
-</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">.utils.log_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">for_all_methods</span><span class="p">,</span> <span class="n">log_exceptions</span>
-</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-</span><span data-line="4">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_service</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">.ZeroService</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseZeroService</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">.utils.log_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">for_all_methods</span><span class="p">,</span> <span class="n">log_exceptions</span>
+</span><span data-line="4"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 </span><span data-line="5">
-</span><span data-line="6"><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_exceptions</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)))</span>
-</span><span data-line="7"><span class="k">class</span><span class="w"> </span><span class="nc">TMP</span><span class="p">(</span><span class="n">BaseZeroService</span><span class="p">):</span>
-</span><span data-line="8">    <span class="n">LOGGING_PORT</span> <span class="o">=</span> <span class="mi">1443</span>
-</span><span data-line="9">    <span class="n">SERVICE_PORT</span> <span class="o">=</span> <span class="mi">4243</span>
-</span><span data-line="10">    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">&quot;TMP&quot;</span>
-</span><span data-line="11">
-</span><span data-line="12">    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
-</span><span data-line="13">        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
-</span><span data-line="14">        <span class="o">...</span>
-</span><span data-line="15">
-</span><span data-line="16">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="17">        <span class="o">...</span>
-</span><span data-line="18">
-</span><span data-line="19">    <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span data-line="20">        <span class="o">...</span>
-</span><span data-line="21">
-</span><span data-line="22">    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="23">        <span class="o">...</span>
-</span><span data-line="24">
-</span><span data-line="25">    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="26">        <span class="o">...</span>
-</span><span data-line="27">
-</span><span data-line="28">    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="29">        <span class="o">...</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_exceptions</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)))</span>
+</span><span data-line="8"><span class="nd">@register_service</span>
+</span><span data-line="9"><span class="k">class</span><span class="w"> </span><span class="nc">TMP</span><span class="p">(</span><span class="n">BaseZeroService</span><span class="p">):</span>
+</span><span data-line="10">    <span class="n">LOGGING_PORT</span> <span class="o">=</span> <span class="mi">1443</span>
+</span><span data-line="11">    <span class="n">SERVICE_PORT</span> <span class="o">=</span> <span class="mi">4243</span>
+</span><span data-line="12">    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">&quot;TMP&quot;</span>
+</span><span data-line="13">    <span class="n">CLIENT_START_GROUP</span> <span class="o">=</span> <span class="s2">&quot;pre&quot;</span>
+</span><span data-line="14">
+</span><span data-line="15">    <span class="nd">@classmethod</span>
+</span><span data-line="16">    <span class="k">def</span><span class="w"> </span><span class="nf">setup_client</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">service_key</span><span class="p">,</span> <span class="n">service_index</span><span class="p">,</span> <span class="n">prot</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span>
+</span><span data-line="17">                     <span class="n">playlistfile</span><span class="p">,</span> <span class="n">save_prefix</span><span class="p">,</span> <span class="n">preview</span><span class="p">,</span> <span class="n">new_console</span><span class="p">):</span>
+</span><span data-line="18">        <span class="o">...</span>
+</span><span data-line="19">
+</span><span data-line="20">    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+</span><span data-line="21">        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+</span><span data-line="22">        <span class="o">...</span>
+</span><span data-line="23">
+</span><span data-line="24">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="25">        <span class="o">...</span>
+</span><span data-line="26">
+</span><span data-line="27">    <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span data-line="28">        <span class="o">...</span>
+</span><span data-line="29">
+</span><span data-line="30">    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="31">        <span class="o">...</span>
+</span><span data-line="32">
+</span><span data-line="33">    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="34">        <span class="o">...</span>
+</span><span data-line="35">
+</span><span data-line="36">    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="37">        <span class="o">...</span>
 </span></pre></div>
 </div>
 <p>Services that run continuously should do the work in a thread or hardware task
@@ -288,23 +299,22 @@ or equivalent stop signal so <code class="docutils literal notranslate"><span cl
 </section>
 <section id="wiring-a-service-into-experiments">
 <h2>Wiring A Service Into Experiments<a class="headerlink" href="#wiring-a-service-into-experiments" title="Link to this heading">¶</a></h2>
-<p>A service module is not enough for <code class="docutils literal notranslate"><span class="pre">etho</span> <span class="pre">run</span></code> by itself. The experiment client
-must know how to construct it from a protocol.</p>
-<ol class="arabic simple">
-<li><p>Import the service class in <code class="docutils literal notranslate"><span class="pre">src/etho/client.py</span></code>.</p></li>
-<li><p>Add a client branch that recognizes the protocol service name or prefix in
-<code class="docutils literal notranslate"><span class="pre">use_services</span></code>.</p></li>
-<li><p>Merge global defaults with the service block.</p></li>
-<li><p>Assign a default port when the protocol does not provide one.</p></li>
-<li><p>Call <code class="docutils literal notranslate"><span class="pre">&lt;SERVICE&gt;.make(...)</span></code>.</p></li>
-<li><p>Call <code class="docutils literal notranslate"><span class="pre">setup(...)</span></code> with arguments from the protocol.</p></li>
-<li><p>Initialize the local logger with <code class="docutils literal notranslate"><span class="pre">init_local_logger(...)</span></code>.</p></li>
-<li><p>Store the service in the <code class="docutils literal notranslate"><span class="pre">services</span></code> dictionary.</p></li>
-<li><p>Start it in the correct order relative to cameras, triggers, DAQ output, and
-other hardware.</p></li>
-<li><p>Add protocol documentation and a focused test that proves the client wires
-the new service correctly.</p></li>
-</ol>
+<p><code class="docutils literal notranslate"><span class="pre">etho</span> <span class="pre">run</span></code> looks up services in <code class="docutils literal notranslate"><span class="pre">etho.services.SERVICE_REGISTRY</span></code> by their
+<code class="docutils literal notranslate"><span class="pre">SERVICE_NAME</span></code>. Suffixed protocol names such as <code class="docutils literal notranslate"><span class="pre">GCM2</span></code> resolve to <code class="docutils literal notranslate"><span class="pre">GCM</span></code>. Do not
+edit <code class="docutils literal notranslate"><span class="pre">src/etho/client.py</span></code> for a new service; register the service class with
+<code class="docutils literal notranslate"><span class="pre">&#64;register_service</span></code> and import the service from <code class="docutils literal notranslate"><span class="pre">src/etho/services/__init__.py</span></code>
+so the decorator runs.</p>
+<p><code class="docutils literal notranslate"><span class="pre">setup_client(...)</span></code> receives the protocol, global defaults, playlist path,
+<code class="docutils literal notranslate"><span class="pre">save_prefix</span></code>, preview flag, and debug console flag. It should return the
+configured remote service client, or <code class="docutils literal notranslate"><span class="pre">None</span></code> when the service should be skipped
+for that run.</p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">CLIENT_START_GROUP</span></code> only when start order matters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pre</span></code>: default; starts before trigger and DAQ services.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">trigger</span></code>: starts after <code class="docutils literal notranslate"><span class="pre">pre</span></code> services.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">daq</span></code>: starts after <code class="docutils literal notranslate"><span class="pre">pre</span></code> and <code class="docutils literal notranslate"><span class="pre">trigger</span></code> services, with the existing startup
+delay.</p></li>
+</ul>
 <p>Minimal protocol shape:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">maxduration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
 </span><span data-line="2"><span class="nt">use_services</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">TMP</span><span class="p p-Indicator">]</span>
@@ -314,8 +324,8 @@ the new service correctly.</p></li>
 </span><span data-line="6"><span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4243</span>
 </span></pre></div>
 </div>
-<p>The exact service block should match the new service’s <code class="docutils literal notranslate"><span class="pre">setup(...)</span></code> signature
-and any runtime options it needs.</p>
+<p>The exact service block should match what the new service’s <code class="docutils literal notranslate"><span class="pre">setup_client(...)</span></code>
+passes into its remote <code class="docutils literal notranslate"><span class="pre">setup(...)</span></code> call.</p>
 </section>
 <section id="documentation-and-tests">
 <h2>Documentation And Tests<a class="headerlink" href="#documentation-and-tests" title="Link to this heading">¶</a></h2>

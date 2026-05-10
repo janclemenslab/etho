@@ -7,7 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
     <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -78,6 +78,7 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../extensions.html">Extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../hardware/hardware.html">Hardware</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/nidaq.html">National Instruments DAQ</a></li>
@@ -165,102 +166,128 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">.ZeroService</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseZeroService</span>  <span class="c1"># import super class</span>
 </span><span data-line="4"><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 </span><span data-line="5"><span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
-</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">.utils.log_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">for_all_methods</span><span class="p">,</span> <span class="n">log_exceptions</span>
-</span><span data-line="7"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-</span><span data-line="8"><span class="kn">import</span><span class="w"> </span><span class="nn">defopt</span>
-</span><span data-line="9"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
-</span><span data-line="10">
-</span><span data-line="11">
-</span><span data-line="12"><span class="c1"># decorate all methods in the class so that exceptions are properly logged</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_service</span>
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">.utils.log_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">for_all_methods</span><span class="p">,</span> <span class="n">log_exceptions</span>
+</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">..utils.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">undefaultify</span>
+</span><span data-line="9"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span data-line="10"><span class="kn">import</span><span class="w"> </span><span class="nn">defopt</span>
+</span><span data-line="11"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+</span><span data-line="12">
+</span><span data-line="13">
+</span><span data-line="14"><span class="c1"># decorate all methods in the class so that exceptions are properly logged</span>
 <div class="viewcode-block" id="TMP">
 <a class="viewcode-back" href="../../../api/etho.services.TemplateZeroService.html#etho.services.TemplateZeroService.TMP">[docs]</a>
-</span><span data-line="13"><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_exceptions</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)))</span>
-</span><span data-line="14"><span class="k">class</span><span class="w"> </span><span class="nc">TMP</span><span class="p">(</span><span class="n">BaseZeroService</span><span class="p">):</span>
-</span><span data-line="15">    <span class="n">LOGGING_PORT</span> <span class="o">=</span> <span class="mi">1443</span>  <span class="c1"># set this to range 1420-1460</span>
-</span><span data-line="16">    <span class="n">SERVICE_PORT</span> <span class="o">=</span> <span class="mi">4243</span>  <span class="c1"># last two digits match logging port - but start with &quot;42&quot; instead of &quot;14&quot;</span>
-</span><span data-line="17">    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">&quot;TMP&quot;</span>  <span class="c1"># short, uppercase, 3-letter ID of the service (must equal class name)</span>
-</span><span data-line="18">
-</span><span data-line="19">    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
-</span><span data-line="20">        <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="21">        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+</span><span data-line="15"><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_exceptions</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)))</span>
+</span><span data-line="16"><span class="nd">@register_service</span>
+</span><span data-line="17"><span class="k">class</span><span class="w"> </span><span class="nc">TMP</span><span class="p">(</span><span class="n">BaseZeroService</span><span class="p">):</span>
+</span><span data-line="18">    <span class="n">LOGGING_PORT</span> <span class="o">=</span> <span class="mi">1443</span>  <span class="c1"># set this to range 1420-1460</span>
+</span><span data-line="19">    <span class="n">SERVICE_PORT</span> <span class="o">=</span> <span class="mi">4243</span>  <span class="c1"># last two digits match logging port - but start with &quot;42&quot; instead of &quot;14&quot;</span>
+</span><span data-line="20">    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">&quot;TMP&quot;</span>  <span class="c1"># short, uppercase, 3-letter ID of the service (must equal class name)</span>
+</span><span data-line="21">    <span class="n">CLIENT_START_GROUP</span> <span class="o">=</span> <span class="s2">&quot;pre&quot;</span>
 </span><span data-line="22">
-</span><span data-line="23">        <span class="c1"># APPLICATION SPECIFIC SETUP CODE HERE</span>
-</span><span data-line="24">
-</span><span data-line="25">        <span class="c1"># background jobs should be run and controlled via a thread</span>
-</span><span data-line="26">        <span class="c1"># threads can be stopped by setting an event: `_thread_stopper.set()`</span>
-</span><span data-line="27">        <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
-</span><span data-line="28">        <span class="c1"># and/or via a timer</span>
-</span><span data-line="29">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="30">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;stop_service&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
-</span><span data-line="31">        <span class="c1">#</span>
-</span><span data-line="32">        <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="p">,))</span>
-</span><span data-line="33">
-</span><span data-line="34">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="35">        <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span data-line="36">
-</span><span data-line="37">        <span class="c1"># background jobs should be run and controlled via a thread</span>
-</span><span data-line="38">        <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span data-line="39">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;started&quot;</span><span class="p">)</span>
-</span><span data-line="40">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
-</span><span data-line="41">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;duration </span><span class="si">{0}</span><span class="s2"> seconds&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
-</span><span data-line="42">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span data-line="43">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;finish timer started&quot;</span><span class="p">)</span>
+</span><span data-line="23">    <span class="nd">@classmethod</span>
+</span><span data-line="24">    <span class="k">def</span><span class="w"> </span><span class="nf">setup_client</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">service_key</span><span class="p">,</span> <span class="n">service_index</span><span class="p">,</span> <span class="n">prot</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">playlistfile</span><span class="p">,</span> <span class="n">save_prefix</span><span class="p">,</span> <span class="n">preview</span><span class="p">,</span> <span class="n">new_console</span><span class="p">):</span>
+</span><span data-line="25">        <span class="n">this</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span data-line="26">        <span class="n">this</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">])</span>
+</span><span data-line="27">
+</span><span data-line="28">        <span class="k">if</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="29">            <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;port&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SERVICE_PORT</span> <span class="o">+</span> <span class="n">service_index</span>
+</span><span data-line="30">
+</span><span data-line="31">        <span class="n">service</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
+</span><span data-line="32">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;serializer&quot;</span><span class="p">],</span>
+</span><span data-line="33">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
+</span><span data-line="34">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;python_exe&quot;</span><span class="p">],</span>
+</span><span data-line="35">            <span class="n">new_console</span><span class="o">=</span><span class="n">new_console</span><span class="p">,</span>
+</span><span data-line="36">            <span class="n">port</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;port&quot;</span><span class="p">],</span>
+</span><span data-line="37">        <span class="p">)</span>
+</span><span data-line="38">
+</span><span data-line="39">        <span class="n">params</span> <span class="o">=</span> <span class="n">undefaultify</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">])</span>
+</span><span data-line="40">        <span class="n">service</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;duration&quot;</span><span class="p">,</span> <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">]))</span>
+</span><span data-line="41">        <span class="n">save_suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">service_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">service_index</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+</span><span data-line="42">        <span class="n">service</span><span class="o">.</span><span class="n">init_local_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">this</span><span class="p">[</span><span class="s1">&#39;savefolder&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}{</span><span class="n">save_suffix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">service_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="p">)</span>
+</span><span data-line="43">        <span class="k">return</span> <span class="n">service</span>
 </span><span data-line="44">
-</span><span data-line="45">    <span class="k">def</span><span class="w"> </span><span class="nf">_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_event</span><span class="p">):</span>
-</span><span data-line="46">        <span class="n">RUN</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span data-line="47">        <span class="k">while</span> <span class="n">RUN</span><span class="p">:</span>
-</span><span data-line="48">            <span class="k">if</span> <span class="n">stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-</span><span data-line="49">                <span class="n">RUN</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="50">            <span class="c1"># APPLICATION SPECIFIC RUN CODE HERE</span>
-</span><span data-line="51">
-</span><span data-line="52">    <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span data-line="53">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;stopping&quot;</span><span class="p">)</span>
-</span><span data-line="54">        <span class="c1"># stop thread if necessary</span>
-</span><span data-line="55">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_stopper&quot;</span><span class="p">):</span>
-</span><span data-line="56">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-</span><span data-line="57">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
-</span><span data-line="58">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
-</span><span data-line="59">        <span class="c1"># clean up code here</span>
-</span><span data-line="60">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;   stopped &quot;</span><span class="p">)</span>
-</span><span data-line="61">        <span class="c1"># mode log file and savefilename</span>
-</span><span data-line="62">        <span class="k">if</span> <span class="n">stop_service</span><span class="p">:</span>
-</span><span data-line="63">            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</span><span data-line="64">            <span class="bp">self</span><span class="o">.</span><span class="n">service_stop</span><span class="p">()</span>
-</span><span data-line="65">
-</span><span data-line="66">    <span class="k">def</span><span class="w"> </span><span class="nf">disp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="67">        <span class="k">pass</span>
-</span><span data-line="68">
-</span><span data-line="69">    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="70">        <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># should return True/False</span>
-</span><span data-line="71">
-</span><span data-line="72">    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="73">        <span class="k">return</span> <span class="kc">True</span>
-</span><span data-line="74">
-</span><span data-line="75">    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="76">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
-</span><span data-line="77">        <span class="c1"># your code here</span>
-</span><span data-line="78">        <span class="k">return</span> <span class="kc">True</span>
-</span><span data-line="79">
-</span><span data-line="80">    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="81">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_busy</span><span class="p">():</span>
-</span><span data-line="82">            <span class="k">pass</span>  <span class="c1"># your code here</span>
-</span><span data-line="83">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="84">            <span class="k">return</span> <span class="kc">None</span></div>
+</span><span data-line="45">    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+</span><span data-line="46">        <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="47">        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+</span><span data-line="48">
+</span><span data-line="49">        <span class="c1"># APPLICATION SPECIFIC SETUP CODE HERE</span>
+</span><span data-line="50">
+</span><span data-line="51">        <span class="c1"># background jobs should be run and controlled via a thread</span>
+</span><span data-line="52">        <span class="c1"># threads can be stopped by setting an event: `_thread_stopper.set()`</span>
+</span><span data-line="53">        <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+</span><span data-line="54">        <span class="c1"># and/or via a timer</span>
+</span><span data-line="55">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="56">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;stop_service&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+</span><span data-line="57">        <span class="c1">#</span>
+</span><span data-line="58">        <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="p">,))</span>
+</span><span data-line="59">
+</span><span data-line="60">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="61">        <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span data-line="62">
+</span><span data-line="63">        <span class="c1"># background jobs should be run and controlled via a thread</span>
+</span><span data-line="64">        <span class="bp">self</span><span class="o">.</span><span class="n">_worker_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span data-line="65">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;started&quot;</span><span class="p">)</span>
+</span><span data-line="66">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
+</span><span data-line="67">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;duration </span><span class="si">{0}</span><span class="s2"> seconds&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
+</span><span data-line="68">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span data-line="69">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;finish timer started&quot;</span><span class="p">)</span>
+</span><span data-line="70">
+</span><span data-line="71">    <span class="k">def</span><span class="w"> </span><span class="nf">_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_event</span><span class="p">):</span>
+</span><span data-line="72">        <span class="n">RUN</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="73">        <span class="k">while</span> <span class="n">RUN</span><span class="p">:</span>
+</span><span data-line="74">            <span class="k">if</span> <span class="n">stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+</span><span data-line="75">                <span class="n">RUN</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="76">            <span class="c1"># APPLICATION SPECIFIC RUN CODE HERE</span>
+</span><span data-line="77">
+</span><span data-line="78">    <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span data-line="79">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;stopping&quot;</span><span class="p">)</span>
+</span><span data-line="80">        <span class="c1"># stop thread if necessary</span>
+</span><span data-line="81">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_stopper&quot;</span><span class="p">):</span>
+</span><span data-line="82">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+</span><span data-line="83">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
+</span><span data-line="84">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+</span><span data-line="85">        <span class="c1"># clean up code here</span>
+</span><span data-line="86">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;   stopped &quot;</span><span class="p">)</span>
+</span><span data-line="87">        <span class="c1"># mode log file and savefilename</span>
+</span><span data-line="88">        <span class="k">if</span> <span class="n">stop_service</span><span class="p">:</span>
+</span><span data-line="89">            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span data-line="90">            <span class="bp">self</span><span class="o">.</span><span class="n">service_stop</span><span class="p">()</span>
+</span><span data-line="91">
+</span><span data-line="92">    <span class="k">def</span><span class="w"> </span><span class="nf">disp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="93">        <span class="k">pass</span>
+</span><span data-line="94">
+</span><span data-line="95">    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="96">        <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># should return True/False</span>
+</span><span data-line="97">
+</span><span data-line="98">    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="99">        <span class="k">return</span> <span class="kc">True</span>
+</span><span data-line="100">
+</span><span data-line="101">    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="102">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span data-line="103">        <span class="c1"># your code here</span>
+</span><span data-line="104">        <span class="k">return</span> <span class="kc">True</span>
+</span><span data-line="105">
+</span><span data-line="106">    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="107">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_busy</span><span class="p">():</span>
+</span><span data-line="108">            <span class="k">pass</span>  <span class="c1"># your code here</span>
+</span><span data-line="109">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="110">            <span class="k">return</span> <span class="kc">None</span></div>
 
-</span><span data-line="85">
-</span><span data-line="86">
-</span><span data-line="87"><span class="k">def</span><span class="w"> </span><span class="nf">cli</span><span class="p">(</span><span class="n">serializer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span data-line="88">    <span class="k">if</span> <span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="89">        <span class="n">port</span> <span class="o">=</span> <span class="n">TMP</span><span class="o">.</span><span class="n">SERVICE_PORT</span>
-</span><span data-line="90">    <span class="n">s</span> <span class="o">=</span> <span class="n">TMP</span><span class="p">(</span><span class="n">serializer</span><span class="o">=</span><span class="n">serializer</span><span class="p">)</span>
-</span><span data-line="91">    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;tcp://0.0.0.0:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>  <span class="c1"># broadcast on all IPs</span>
-</span><span data-line="92">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;running TMPZeroService&quot;</span><span class="p">)</span>
-</span><span data-line="93">    <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</span><span data-line="94">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
-</span><span data-line="95">
-</span><span data-line="96">
-</span><span data-line="97"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span data-line="98">    <span class="n">defopt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cli</span><span class="p">)</span>
+</span><span data-line="111">
+</span><span data-line="112">
+</span><span data-line="113"><span class="k">def</span><span class="w"> </span><span class="nf">cli</span><span class="p">(</span><span class="n">serializer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span data-line="114">    <span class="k">if</span> <span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="115">        <span class="n">port</span> <span class="o">=</span> <span class="n">TMP</span><span class="o">.</span><span class="n">SERVICE_PORT</span>
+</span><span data-line="116">    <span class="n">s</span> <span class="o">=</span> <span class="n">TMP</span><span class="p">(</span><span class="n">serializer</span><span class="o">=</span><span class="n">serializer</span><span class="p">)</span>
+</span><span data-line="117">    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;tcp://0.0.0.0:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>  <span class="c1"># broadcast on all IPs</span>
+</span><span data-line="118">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;running TMPZeroService&quot;</span><span class="p">)</span>
+</span><span data-line="119">    <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span data-line="120">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+</span><span data-line="121">
+</span><span data-line="122">
+</span><span data-line="123"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span data-line="124">    <span class="n">defopt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cli</span><span class="p">)</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

@@ -26,14 +26,14 @@ Python command-line or GUI entry point.
          Etho uses YAML configuration files for rig and experiment settings, and
          supports dynamic configuration changes during runtime.
 
-    .. grid-item-card:: Realtime data logging
+    .. grid-item-card:: Realtime
          :link: logging
          :link-type: doc
 
          Etho supports realtime logging of video and audio data, with flexible
          configuration of what data to log and how to save it.
 
-    .. grid-item-card:: Fast parallel execution
+    .. grid-item-card:: Fast & parallel
 
          Etho executes hardware services and logging callbacks in parallel, making use of multi-core and GPU hardware.
 
@@ -43,7 +43,7 @@ Python command-line or GUI entry point.
 
          Etho provides a terminal interface and a GUI for configuring, monitoring, and controlling experiments.
 
-    .. grid-item-card:: Easy extensibility
+    .. grid-item-card:: Modular & extensible
          :link: extensions
          :link-type: doc
 

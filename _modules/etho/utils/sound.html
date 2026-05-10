@@ -7,7 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
     <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -78,6 +78,7 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../extensions.html">Extensions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../hardware/hardware.html">Hardware</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/nidaq.html">National Instruments DAQ</a></li>
@@ -203,7 +204,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="36"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="37">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
 </span><span data-line="38">        <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
-</span><span data-line="39">    <span class="n">tb</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">values</span>
+</span><span data-line="39">    <span class="n">tb</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span data-line="40">    <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">row_values</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tb</span><span class="p">):</span>
 </span><span data-line="41">        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row_values</span><span class="p">):</span>
 </span><span data-line="42">            <span class="n">tb</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_cell</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
@@ -222,7 +223,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="52"><span class="sd">    E.g. if two stimFileName but only one intensity, will duplicate the intensity entries.</span>
 </span><span data-line="53"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="54">    <span class="c1"># strict - throw error in case of inconsistencies</span>
-</span><span data-line="55">    <span class="n">tb</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">values</span>
+</span><span data-line="55">    <span class="n">tb</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span data-line="56">    <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="n">row_values</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tb</span><span class="p">):</span>
 </span><span data-line="57">        <span class="n">nchans</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># 1. get n stim channels from len(stimFileName)</span>
 </span><span data-line="58">        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row_values</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
