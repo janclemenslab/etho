@@ -1,210 +1,158 @@
-
-# Experimental protocols
 (experimental-protocols)=
-[yaml](pyyaml.org) format. For experiment-specific settings.
+# Experimental Protocols
 
-Minimal example with camera and NI-daq:
+Protocols are YAML files that define the services used for an experiment and
+the hardware parameters passed to those services.
+
+## Minimal Camera And DAQ Example
+
 ```yaml
-maxduration: 90 # seconds
+maxduration: 90
 use_services: [GCM, DAQ]
 
-GCM:  # Minimal example
-  cam_type: Spinnaker  # for FLIR cameras, or: Basler, Ximea, Hamamatsu
+GCM:
+  cam_type: Spinnaker
   cam_serialnumber: 30959651
-  frame_rate: 100.0  # frames per second
-  frame_width: 640  # pixels
-  frame_height: 200  # pixels
-  frame_offx: 78  # pixels
-  frame_offy: 10  # pixels
-  shutter_speed: 5_000 # us=5ms
+  frame_rate: 100.0
+  frame_width: 640
+  frame_height: 200
+  frame_offx: 78
+  frame_offy: 10
+  shutter_speed: 5000
   callbacks:
-    save_avi:  # save frames as avi using opencv VideoWriter
-    save_timestamps:  # save timestamp for each frame to h5 file
+    save_avi:
+    save_timestamps:
 
-DAQ:  # Minimal example
-  samplingrate: 10000 # Hz
-  shuffle: True # block-randomize order of stimuli for playback
+DAQ:
+  samplingrate: 10000
+  shuffle: true
   analog_chans_in: [ai0]
+  analog_chans_in_info: [microphone]
   analog_chans_out: [ao0, ao1]
+  analog_chans_out_info: [speaker, led]
+  digital_chans_out:
+  digitial_chans_out_info:
+  ledamp: 5
   callbacks:
-    save_h5:   # save data and timestamps as hdfs
+    save_h5:
 ```
 
+YAML accepts empty values as `null`, which is useful for optional fields such as
+`digital_chans_out`.
 
-## General fields
+## Top-Level Fields
 
-- `maxduration: 90` # seconds
-- `use_services: [GCM, DAQ]`  # list services by their 3-letter abbreviations. only these will be run! See service-specific parameters below for valid names
-- `serializer: pickle`  # OPTIONAL save default
+- `maxduration`: Experiment duration in seconds. Use `-1` to play the playlist once and derive duration from the playlist.
+- `use_services`: List of service blocks to start. Examples: `[GCM]`, `[GCM, DAQ]`, `[GCM1, GCM2, DAQ]`.
+- `serializer`: Optional ZeroRPC serializer. Defaults to `pickle`.
 
+Service blocks are launched locally. Per-service `host` blocks are no longer
+supported and are rejected by the client.
 
-## Service specific parameters
+## Shared Service Fields
 
-### All services
+- `python_exe`: Optional service-level Python executable override.
+- `callbacks`: Optional mapping of callback names to callback parameters. Use an empty mapping value when a callback has no parameters.
+- `port`: Optional service port override. Defaults are assigned by service type.
 
-- `callbacks`: _(Optional)_ Must be set if you want to save or display aqcuired data. See below for which services accept which kinds of callbacks.
-- `python_exe: anaconda/envs/my_special_env/python.exe`: _(Optional)_ Override [global](global-configuration) `python_exe` to run this service in a specific environment.
-- `host`: _(Optional, Unused)_ Run this service on a different computer. Requires the following information:
-  - `name: 192.168.1.2`: Name/IP address of remote computer
-  - `user: my_user_name`: User name to for ssh login on the remote computer. Need to setup passwordless ssh.
-  - `python_exe: C:/miniconda/envs/etho/python.exe`
-  - `savefolder: C:/Users/ncb/data`
+## DAQ Service
+
+DAQ service block names must start with `DAQ`. Use suffixes for multiple DAQ
+services, such as `DAQ1` and `DAQ2`.
+
+DAQ fields:
+
+- `samplingrate`: Sample rate in Hz.
+- `device`: NI device name from NI-MAX. Defaults to `Dev1`.
+- `clock_source`: Leave empty for the AI-synchronized default. Use `OnboardClock` for devices that need the onboard clock.
+- `nb_inputsamples_per_cycle`: Optional chunk size for analog input callbacks.
+- `shuffle`: Block-randomize playlist order.
+- `analog_chans_in`: Analog input channels, such as `[ai0, ai1]`.
+- `analog_chans_in_info`: Human-readable labels for analog input channels.
+- `analog_chans_out`: Analog output channels, such as `[ao0, ao1]`.
+- `analog_chans_out_info`: Human-readable labels for analog output channels.
+- `digital_chans_out`: Digital output channels, such as `[port0/line1, port0/line2]`.
+- `digitial_chans_out_info`: Human-readable labels for digital output channels. This spelling matches the current client metadata key.
+- `ledamp`: LED amplitude used by `MIRROR_LED` playlist entries.
+
+Common DAQ callbacks:
+
+- `save_h5`: Save analog input data and metadata to HDF5.
+- `save_zarr`: Save analog input data and metadata to Zarr.
+- `plot_fast`: Display analog traces with pyqtgraph.
+- `plot`: Display analog traces with matplotlib.
+- `savedlp_h5`: Save DLP frame/stimulus metadata.
+
+## Camera Service
+
+Camera service block names must start with `GCM`. Use suffixes for multiple
+cameras, such as `GCM1` and `GCM2`.
+
+Camera fields:
+
+- `cam_type`: One of `Dummy`, `Spinnaker`, `Basler`, `Ximea`, or `Hamamatsu`.
+- `cam_serialnumber`: Camera serial number. The dummy camera accepts arbitrary values.
+- `frame_rate`: Requested frame rate in frames per second.
+- `frame_width`: ROI width in pixels.
+- `frame_height`: ROI height in pixels.
+- `shutter_speed`: Exposure time in microseconds for the generic camera service.
+- `frame_offx`: ROI x offset in pixels. Defaults to `0`.
+- `frame_offy`: ROI y offset in pixels. Defaults to `0`.
+- `binning`: Horizontal and vertical binning factor. Defaults to `1`.
+- `brightness`: Camera brightness or black level. Defaults to `0`.
+- `gamma`: Gamma value. Defaults to `1`.
+- `gain`: Digital gain. Defaults to `0`.
+- `optimize_auto_exposure`: Run backend-specific auto-exposure optimization before acquisition.
+- `external_trigger`: Arm the camera for external triggering after a test image has been acquired.
+
+Common camera callbacks:
+
+- `disp`: Display frames with OpenCV.
+- `disp_fast`: Display frames with pyqtgraph.
+- `disp_back`: Display a center/back view helper.
+- `disp_top`: Display a center/top view helper.
+- `save_timestamps`: Save system and camera timestamps.
+- `save_avi`: Save video with OpenCV `VideoWriter`.
+- `save_ffmpegcv`: Save video with an ffmpegcv backend.
+- `save_vidgear`: Save video through VidGear.
+- `save_vidgear_round`: Save rounded/cropped VidGear output.
+- `save_avi_fast`: Save video with the NVIDIA Video Processing Framework.
+- `saveimg_h5`: Save frames to HDF5.
+- `saveimg_zarr`: Save frames to Zarr.
+
+## GOV Sensor Service
+
+The `GOV` service logs Govee H5075 temperature/humidity BLE advertisements.
+
 ```yaml
-host:  # OPTIONAL individual services can run on specific hosts
-    name: 192.168.1.42
-    user: ncb
-    python_exe: C:/miniconda/envs/etho/python.exe
-    savefolder: C:/Users/ncb/data
+maxduration: 600
+use_services: [GOV]
+
+GOV:
+  address: AA:BB:CC:DD:EE:FF
+  interval: 60
 ```
 
-### National Instruments DAQ cards.
-Name of block _must_ start with `DAQ`. If you want to use multiple NI-daq devices in a single experiment, create one block for each of them and add a suffix, e.g. `DAQ1`, `DAQ2`, etc. Minimal example:
+- `address`: Required BLE device address.
+- `interval`: Logging interval in seconds. Defaults to `60`.
+
+## DLP Projector Service
+
+DLP support is rig-specific and depends on optional projector software. A
+typical block has this shape:
 
 ```yaml
-DAQ:  # Minimal example
-  samplingrate: 10000 # Hz
-  shuffle: True # block-randomize order of stimuli for playback
-  analog_chans_in: [ai0]
-  analog_chans_out: [ao0, ao1]
+DLP:
+  warpfile: Z:/Data/projector/warpmesh_1140x912.data
+  use_warping: false
   callbacks:
-    save_h5:   # save data and timestamps as hdfs
-```
-
-#### Required
-- `samplingrate: 10000`: Float or int in Hz.
-- `analog_chans_in: [ai0, ai1, ai2]`: Must specify at least one input channel, even if you do not want to record. Otherwise the DAQ system will not work for stupid technical reasons. _FUTURE: define blocks `[ai0:2]`, allow cross-channel tasks `[Dev1/ai0, Dev2/ai0]`_
-
-#### Optional
-- `device: Dev1`: Name of NI-daq device to use. Check NI-MAX for a list of device names. Defaults to `Dev1`.
-- `terminals: RSE`: Terminal type for all analog channels. Allowed values: `RSE`, `NRSE`, `Diff`. Defaults to `RSE`.
-- `shuffle: True`: Block-randomize order of stimuli in playlist. Defaults to `False`.
-- `clock_source: OnboardClock` _(Optional)_
-- `callbacks:` Allowed values are: `plot`, `plot_fast`, `save_h5`, `save_zarr`, `savedlp_h5`. See [callbacks] for details.
-- `analog_chans_in_info: ['left microphone', 'right microphone']`: Description of the different channels so you know what's what.
-- `analog_chans_in_limits: [[0, 5], [0, 10], [-10, 10]]`: Limits for analog channels. Defaults to `10` (sets limits to +/-10 for all analog channels). One of:
-  - a single pos number specifying symmetrical limits for all channels, e.g. `5`
-  - a list of single pos numbers specifying symmetrical limits for each channel, e.g. `[5, 10, 2]`
-  - a list of two numbers (first should be smaller than second) specifying upper and lower limit for each channel, e.g. `[[0, 5], [0, 10], [-10, 10]]`
-- `analog_chans_out: ['ao0', 'ao1']` : Description of the different channels so you know what's what.
-- `analog_chans_out_info: ['left speaker', 'right speaker']` : Description of the different channels so you know what's what.
-- `digital_chans_out: [port0/line1, port0/line2, port0/line3]`
-- `digital_chans_out_info: ['start trigger', 'stop trigger', 'next trigger']`: Description of the different channels so you know what's what.
-
-#### Callbacks
-- `save_h5:` save data as hdfs (has no params) - analog data and timestamps (every second?).
-- `save_zarr:` save data as zarr (has no params) - analog data and timestamps (every second?).
-- `plot_fast:` plot traces using pyqtgraph. Can select which channels to plot by providing the zero-based indices of the analog input channels with `channels_to_plot`. E.g `channels_to_plot: [0, 1, 2]` will plot the first three analog input channels.
-- `plot:` Alternativel, plot traces using matplotlib (slower). Can select which input channels are plotted with `channels_to_plot` (see above).
-```yaml
-callbacks:
-  save_h5:   # save data as hdfs (has no params)
-  plot_fast:  # plot traces using pyqtgraph
-    channels_to_plot: [0, 1, 2]  # plot the first three input channels
-```
-
-### Camera
-Generic camera interface with different backends. Name of block _must_ start with `GCM`. If you want to use multiple cameras in a single experiment, create one block for each of them and add a suffix, e.g. `GCM1`, `GCM2`, etc. Minimal example:
-
-```yaml
-GCM:  # Minimal example
-  cam_type: Spinnaker  # for FLIR cameras, or: Basler, Ximea, Hamamatsu
-  cam_serialnumber: 30959651
-  frame_rate: 100.0  # frames per second
-  frame_width: 640  # pixels
-  frame_height: 200  # pixels
-  frame_offx: 78  # pixels
-  frame_offy: 10  # pixels
-  shutter_speed: 5_000 # us=5ms
-  callbacks:
-    save_avi:  # save frames as avi using opencv VideoWriter
-    save_timestamps:  # save timestamp for each frame to h5 file
-```
-
-#### Required
-- `cam_type: Ximea` or `Spinnaker` (for FLIR cameras) or `Basler` or `Hamamatsu`
-- `cam_serialnumber: 30959651`:
-- `frame_rate: 100.0`: frames per second
-- `frame_width: 640`: pixels
-- `frame_height: 200`: pixels
-- `shutter_speed: 5_000`: Exposure time in microseconds.
-
-#### Optional
-- `frame_offx: 78`: x-offset of ROI in pixels. Defaults to 0.
-- `frame_offy: 10`: y-offset of ROI in pixels. Defaults to 0.
-- `binning: 1`: Set horz and vert frame binning. Defaults to 1 (no binning). Typically, 1, 2, 4 is available. Not supported by all camera types.
-- `brightness: 0.0`: Brightness. Defaults to 0
-- `gamma: 1.0`: Gamma value. Defaults to 1
-- `gain: 0.0`: Digital gain. Defaults to 0
-- `optimize_auto_exposure: False`: Defaults to False
-- `external_trigger: False`: Defaults to False
-
-#### Callbacks
-- `disp:`  # plot frames using opencv
-- `disp_fast:`  # plot frames using pyqtgraph (faster?)
-- `save_timestamps:`  # save timestamps for each frame to h5 file
-- `save_avi`: save frames as avi using opencv VideoWriter (has no params)
-- `save_avi_vidgear`: save frames as avi using VidGear
-    ffmpeg_params:  # configure ffmpeg backend - need to prepend `-` to each param
-      -crf: 16
-- `save_avi_fast`  # or save frames as avi using Nvidia's GPU-based VideoProcessingFramework
-    `VPF_bin_path: C:/Users/ncb/vpf/bin3.7` path to the directory containing the binaries for VPF
-- `saveimg_h5` Save frames as h5 file.
-- `save_ffmpegcv`
-```yaml
-callbacks:
-  save_avi:   # save video file
-  save_timestamps:   # save frame timestamps
-  disp_fast:  # plot traces using pyqtgraph
-```
-
-
-### Misc services
-```yaml
-THUA:
-  pin ???
-
-CAM:  # pi camera
-  framerate: 30 # frames per second
-  framewidth: 1000 # pixels
-  frameheight: 1000 # pixels
-  shutterspeed: 10000 # ns=10ms
-  annotate_frame_num: False # print frame number in each frame
-  # currently unused picamera options but probably useful
-  exposuremode: 'fixedfps'
-  video_denoise: False
-
-THU: # pi temperature and humidity sensor
-  pin: 17 # GPIO PIN for read out
-  interval: 20 # seconds, log temperature and humidity every 20 seconds
-
-OPT2:  # pi opto led control
-  pin: [25, 24]  # red and green led channel
-  playlist_channels: [2, 3]
-
-SND:  # pi sound playback via pygame
-  samplingrate: 44100  # Hz
-  shuffle: False  # block-randomize order of stimuli for playback
-  ledamp: 1300  # amplitude of the IR LED used for syncing audio and video
-  playlist_channels: [0, 1]
-
-REL:  # pi relay control (for backlight and illumination)
-  pin: 22
-
-DLP:  # DLP projector
-  warpfile: 'Z:/#Data/flyball/projector/warpmesh_1140x912.data'
-  use_warping: False
-  callbacks:
-    savedlp_h5:  # save per-frame stimulus parameters to `_dlp.h5`
+    savedlp_h5:
   runners:
     LED_blinker:
-      object: 'Rect'  # should be the classname: `psychopy.visuals.NAME`
+      object: Rect
       led_frame: 360
       led_duration: 180
 ```
 
-## Callbacks
-### Time series data
-`save_h5`, `plot_fast`
-
-### Image data
-`disp`, `disp_fast`, `save_timestamps`, `save_avi`
+Validate projector dependencies on the rig with `etho version --debug` before
+using a DLP protocol.

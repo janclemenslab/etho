@@ -1,66 +1,74 @@
-# Stimulus playlists
-Define outputs for NI-daq.
+# Stimulus Playlists
 
-## Playlist format
-Playlists are tables saved as tab-delimited text files:
+Playlists define the trial-level output for the DAQ service. They are
+tab-delimited text files.
 
-| stimFileName                     | silencePre   | silencePost  | intensity  | freq       |
-|----------------------------------|--------------|--------------|------------|------------|
-| superstimulus.wav                | 1000         | 1000         | 1.0        | 100        |
-| SIN_100_0_3000                   | 1000         | 1000         | 1.0        | 100        |
-| [mediocre_stim.wav, MIRROR_LED]  | 1000         | 1000         | 1.0        | 100        |
-| [PUL_5_10_10_0, SIN_200_0_2000]  | 1000         | 1000         | 1.0        | 100        |
-| [SIN_100_0_3000, SIN_200_0_2000] | 1000         | 1000         | 1.0        | 100        |
-| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 1000] | [1000, 1000] | [1.0, 1.0] | [100, 100] |
-| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 2000] | [2000, 1000] | [1.0, 2.0] | [100, 200] |
+## Playlist Format
 
+The parser expects these columns in this order:
 
-The first row is a header that contain the following column names:
+```text
+stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
+```
 
-* `stimFileName`: If not a magic name, full filename (w/ extension but w/o directory). File needs to be single-channel `*.wav`, placed in the `stimfolder` defined in the [global configuration file](global-configuration). Currently defined magic names are: `SIN*`, `PUL*`, `MIRROR_LED`, `CLOCK`, `SI_START`, `SI_STOP`, `SCANIMAGE_NEXT` (see [below](magic) for details). If you specified multiple output channels (analog and digital) in your protocol, you _must_ provide one [stimulus filename per channel](multi-channel).
-* `silencePre` (ms): zeros _pre_-pended to the stimulus
-* `silencePost` (ms): zeros _post_-pended to the stimulus
-* `intensity` (mm/s or dB for sound, mW/mm2 for light): Stimulus intensity.
-* `freq` (Hz for sound or nm for light): Used as a key into the calibration files
+Example:
 
-Each row in the playlist defines one trial, with a total duration of `silencePre` + "duration of stimulus" + `silencePost`. For multi-channel outputs in which the stimuli have different durations, the total duration is set by the duration of the longest stimulus across all channels. Shorter stimuli will be zero-padded the end.
+| stimFileName                     | silencePre   | silencePost  | delayPost | intensity  | freq       | MODE |
+|----------------------------------|--------------|--------------|-----------|------------|------------|------|
+| superstimulus.wav                | 1000         | 1000         | 0         | 1.0        | 100        |      |
+| SIN_100_0_3000                   | 1000         | 1000         | 0         | 1.0        | 100        |      |
+| [mediocre_stim.wav, MIRROR_LED]  | 1000         | 1000         | 0         | 1.0        | 100        |      |
+| [PUL_5_10_10_0, SIN_200_0_2000]  | 1000         | 1000         | 0         | 1.0        | 100        |      |
+| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 2000] | [2000, 1000] | 0         | [1.0, 2.0] | [100, 200] |      |
+
+Column meanings:
+
+- `stimFileName`: WAV/HDF5 stimulus filename or a generated stimulus name.
+- `silencePre`: Silence before the stimulus, in milliseconds.
+- `silencePost`: Silence after the stimulus, in milliseconds.
+- `delayPost`: Parsed for compatibility with existing playlists.
+- `intensity`: Output multiplier. For calibrated sounds or LEDs, use the unit convention established by the rig calibration.
+- `freq`: Key into the attenuation table in `ethoconfig.yml`.
+- `MODE`: Parsed for compatibility with existing playlists.
+
+Each row defines one trial. The trial duration is `silencePre`, plus the longest
+stimulus across output channels, plus `silencePost`. Shorter output channels are
+zero-padded to match the longest channel.
 
 (multi-channel)=
-## Defining multi-channel stimulation
-- For the `stimFileName` column: One entry per channel, as a bracketed, comma-separated list, `[stim_on_chan1, stim_on_chan2, ...]`. Analog and digital output channels are concatenated, starting with the analog outputs and ending with the digital outputs. E.g. if you define two analog output channels and one digital output channel in your protocol, then the stimuli will map as follow `[stim_first_analog_out, stim_second_analog_out, stim_digital_out]`. Whitespace surrounding stimulus names is stripped.
-<!-- `[,stim2]` defines stimulation in which the first output channel is filled with zeros. -->
-- The remaining columns in the playlist can be provided as as bracketed comma-separated lists of values, `[1, 0.2, 2]`, to set different intensities etc. for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.
+## Multi-Channel Stimulation
+
+For multi-channel output, write list values in brackets:
+
+```text
+[stim_on_chan1, stim_on_chan2, stim_on_chan3]
+```
+
+Channel order follows the DAQ protocol: analog outputs first, then digital
+outputs. For example, if the protocol defines two analog outputs and one digital
+output, the playlist order is:
+
+```text
+[first_analog_output, second_analog_output, digital_output]
+```
+
+Other columns may also use bracketed lists, such as `[1.0, 0.5]` for
+channel-specific intensity. If a list has fewer entries than `stimFileName`, the
+last provided value is repeated for the remaining channels.
 
 (magic)=
-## Magic stimulus names
-The stimulus name can point to a wav file with the predefined waveform in the `ethoconfig/stim`. However, there are _magic_ names for stimuli that are created on demand. They start with prefix and allow you to specify stimulus parameters in the filename:
+## Generated Stimulus Names
 
-- `SIN_frequency_phase_duration`: Generate sinusoid with frequency (Hz), phase (rad), and duration (ms) specified in the stimulus name. Will start after silencePre and end before silencePost. E.g. `SIN_100_0_1000` will produce a sinusoid with a frequency of 100Hz, a phase of 0, and duration of 1000ms.
-- `PUL_pulseDur_pulsePau_pulseNumber_pulseDelay`: Generate pulse train (square pulses) with pulse duration, pause, number and intial delay specified in stimulus name (all time units in ms). Will start after silencePre and end before silencePost.
-- `MIRROR_LED`: Will mirror the stimulus in the first channel that does not as a pulse train (pdur & ppau 5ms). Will start after silencePre and end before silencePost.
-- `CLOCK_pulseDur_pulsePau`: Create a clock signal (for instance for continuously triggering frames). Generate continuous pulse train with pulse duration and pause specified in stimulus name (all time units in ms). Will start after sample 0 (_not_ silencePre) and end at the last sample (_not_ before silencePost).
-- `SI_START`, `SI_STOP`, `SI_NEXT`: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. All three stimuli should be specified in the playlist for each stimulus, not just the first or the last one. This will make sure that e.g. starts are triggered even with shuffled playback:
-  - `SI_START` will set the digital output to 1 for the first 2ms of the trial (starting at sample 0, _not_ at silencePre)
-  - `SI_STOP` and `SI_NEXT` will set the last 2ms of the trial (_not_ before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to "rising", the stop and next triggers to "falling". See [ScanImage docs](https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html) for details.
+Stimulus names can point to files in `stimfolder`, or they can request generated
+signals:
 
+- `SIN_frequency_phase_duration`: Generate a sine wave. Frequency is in Hz, phase is in radians, and duration is in milliseconds.
+- `PUL_pulseDur_pulsePau_pulseNumber_pulseDelay`: Generate a pulse train. Time fields are in milliseconds.
+- `MIRROR_LED`: Generate a pulse train on this channel aligned to another non-`MIRROR_LED` channel. Protocols using this should define `ledamp`.
+- `CLOCK_pulseDur_pulsePau`: Generate a continuous clock signal for the full trial.
+- `SI_START`: Set the channel high for the first samples of a trial to start ScanImage acquisition.
+- `SI_STOP`: Set the channel high near the end of the final trial to stop ScanImage acquisition.
+- `SI_NEXT`: Set the channel high near the end of each trial to advance ScanImage files.
 
-<!--
-## Parsing
-Load the playlist like so:
-```python
-from ethomaster.utils.sound import parse_table, normalize_table
-# returns a raw pandas dataframe
-raw_table = pd.read_table(playlistfilename, dtype=None, delimiter='\t')
-# casts all cells in the table to lists of the correct type and
-parsed_table = parse_table(raw_table, dtypes=[str, float, float, float, float, float, str])
-# normalizes all cells in a row to have the same number of entries as there are stimuli
-playlist = normalize_table(parsed_table)
-```
-Or simply `playlist = parse_table(playlistfilename)`.
-
-Sounds can be generated from the playlist via:
-```python
-from ethomaster.utils.sound import load_sounds
-sounds = load_sounds(playlist, fs=1000, attenuation=None, stimfolder='~/stimuli'):
-```
-This will return a list of multidimensional numpy arrays, one item per row in the playlist file. -->
+`CLOCK`, `SI_START`, `SI_STOP`, and `SI_NEXT` are aligned to the trial edges, not
+to `silencePre` or `silencePost`.

@@ -1,19 +1,38 @@
 (global-configuration)=
-# Global configuration
-Specified in the `ethoconfig.yaml` [yaml](https://pyyaml.org) file in the `~/ethoconfig` directory. Example:
+# Global Configuration
 
-```yaml
-  python_exe: C:/Users/USER/miniconda3/python.exe
-  playlistfolder: C:/Users/USER/ethoconfig/playlists
-  protocolfolder: C:/Users/USER/ethoconfig/protocols
-  stimfolder: C:/Users/USER/ethoconfig/stim
-  calibrationfolder: C:/Users/USER/ethoconfig/calibrations[FUTURE]
-  savefolder: C:/Users/USER/data
+The global configuration lives at `~/ethoconfig/ethoconfig.yml`. It is created
+by:
+
+```shell
+etho init
 ```
 
-- `python_exe: C:/Users/USER/miniconda3/python.exe`: Path of the python executable in the etho environment. Used when starting the services. This global value can be overriden by specifying a `python_exe` for each service in the [protocol](experimental-protocols). That way, different services can run in different environments during the same experiment.
-- `playlistfolder: C:/Users/USER/ethoconfig/playlists`
-- `protocolfolder: C:/Users/USER/ethoconfig/protocols`
-- `stimfolder: C:/Users/USER/ethoconfig/stim  # folder for reading stimulus wav files specified in the playlists
-- `calibrationfolder: C:/Users/USER/ethoconfig/calibrations`: _Currently unused_ Folder with calibration files (audio, opto, piezo)
-- `savefolder: C:/Users/USER/data`: Parent directory for saving all videos, audios, logs etc.
+Example:
+
+```yaml
+user: ncb
+savefolder: /Users/USER/data
+python_exe: /Users/USER/miniforge3/envs/etho/bin/python
+playlistfolder: /Users/USER/ethoconfig/playlists
+protocolfolder: /Users/USER/ethoconfig/protocols
+stimfolder: /Users/USER/ethoconfig/stim
+ATTENUATION:
+  -1: 1
+  0: 1
+  100: 1
+```
+
+Fields:
+
+- `savefolder`: Parent folder for experiment output directories.
+- `python_exe`: Python executable used when services are started. This should usually point to the `etho` conda environment.
+- `playlistfolder`: Default folder shown by the GUI for playlist files.
+- `protocolfolder`: Default folder shown by the GUI for protocol files.
+- `stimfolder`: Folder used to resolve stimulus files referenced by playlists.
+- `ATTENUATION`: Frequency-keyed attenuation factors used when loading stimuli.
+- `user`: Optional user or rig label.
+
+Protocol files can override `python_exe` for a service if a specific service
+must run in a different environment. Per-service remote host blocks are no
+longer supported.

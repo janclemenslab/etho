@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <title>etho minimal pipeline glyph dark mode</title>
+  <g shape-rendering="geometricPrecision">
+    <rect x="28" y="52" width="44" height="32" rx="8" fill="#F3F5F7"/>
+    <rect x="34" y="58" width="12" height="8" rx="2" fill="#1F2430"/>
+    <rect x="104" y="62" width="8" height="12" rx="2" fill="#6FB64F"/>
+    <rect x="118" y="50" width="8" height="36" rx="2" fill="#6FB64F"/>
+    <rect x="132" y="38" width="8" height="60" rx="2" fill="#6FB64F"/>
+    <rect x="146" y="50" width="8" height="36" rx="2" fill="#6FB64F"/>
+    <rect x="160" y="62" width="8" height="12" rx="2" fill="#6FB64F"/>
+    <path d="M192 54L224 74L192 94Z" fill="#6FB64F"/>
+    <rect x="84" y="70" width="12" height="4" rx="2" fill="#F3F5F7"/>
+    <rect x="174" y="70" width="12" height="4" rx="2" fill="#F3F5F7"/>
+    <path d="M48 96V120C48 124.418 51.582 128 56 128H124M208 96V120C208 124.418 204.418 128 200 128H132" stroke="#F3F5F7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M128 112V160" stroke="#F3F5F7" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="128" cy="128" r="6" fill="#F3F5F7"/>
+    <ellipse cx="128" cy="180" rx="36" ry="12" fill="#6FB64F"/>
+    <path d="M92 180V212C92 218.627 108.118 224 128 224C147.882 224 164 218.627 164 212V180" fill="#F3F5F7"/>
+    <path d="M92 196C92 202.627 108.118 208 128 208C147.882 208 164 202.627 164 196" stroke="#1F2430" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="154" cy="198" r="3" fill="#1F2430"/>
+    <circle cx="154" cy="214" r="3" fill="#1F2430"/>
+  </g>
+</svg>

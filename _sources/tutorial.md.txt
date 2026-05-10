@@ -1,90 +1,131 @@
 # Tutorial
-Walk through the steps required to setup hardware and run an experiment in which we:
 
-- record and save sound via a daq card from National Instruments (any NI card with 2 analog outputs will work for this example)
-- record and save video via a FLIR camera (Pointgrey and Ximea will also work with small changes)
-- play back sound via the NI daq card
-- control an opto LED a NI daq card and analog-controlled LED (we use Thorlabs LEDD1B, but any LED driver with an analog input will work)
+This tutorial shows the structure of a typical rig run: global configuration,
+protocol, playlist, command-line execution, and output inspection. This assumes that you have [installed and initialized](install.rst) `etho`.
 
-## Installation
-1. Follow the general instructions [here]
-2. Importantly, install the drivers and python libraries for the hardware: pydaqmx, spinnaker SDKs
+## Goal
 
-## System configuration
-Something about `ethoconfig.yml` (Is there essential information in there? Can we make this file optional?)
+The example rig:
 
-## Hardware configuration
+- records camera frames with the `GCM` service
+- plays audio and LED stimuli with the `DAQ` service
+- records DAQ input channels with `save_h5`
 
-- connect DAQ ports to amp and LED driver, include loopbacks of outputs
-- ideally, calibrate sound and LED intensities
-- connect camera
-- make wiring diagram
+Rig-specific wiring, calibration values, and hardware serial numbers must be
+validated at the rig before collecting data.
 
+## Activate the Environment
 
-## Experiment configuration
+Activate the conda environment:
 
-### Protocol
-
-Two different blocks, for host and services
-
-#### Host
-
-- `host` (optional): Defaults to `localhost`
-- `python_exe`: Path to the python executable for the etho environment you are using, typically `$CONDADIR/envs/etho/python.exe`, where `$CONDADIR` is your conda directory, for us `C:\mambaforge\`
-- `save_directory`: Path to the parent folder for storing all files (audio, video, logs) created during an experiment. Each experiment will create a subfolder with name `HOST_YYYYMMDD-HHMMSS` (e.g. `localhost_20230401-110423`) with all associated files.
-- `use_services`: Entries lower in the protocol to use during an experiment. Useful for quickly disabling the camera or daq while debugging.
-
-#### Services
-
-Parameters for the individual services (more [here](hardware))and callbacks (more [here](callbacks)).
-
-For cam, can add external triggering with the DAQ using the NIC service.
-
-- `DAQ`:
-    - `analog_out`
-    - `callbacks`:
-        `save_h5`
-- `GCM`: (Generic CaMera)
-    - `cam_type`: `Spinnaker`, SDK to use, replace with `Ximea` or `FlyCapture` (for older PointGrey cameras).
-    - `shutter`: 4 #ms
-    - `callbacks`:
-        - `save_avi`
-        - `save_timestamps`
-
-Full file:
-```yaml
-
-HOST:
-    python_exe: test.exe
-
-DAQ:
-    analog_out: ['ao0', 'ao1']
-    analog_out_info: ['audio playback', 'led']
-    analog_in: ['ai0', 'ai1', 'ai2']
-    analog_in_info: ['audio playback', 'led', 'audio recording']
-    callbacks:
-        save_h5:  # DO NOT FORGET THE TRAILING `:`
-
-GCM:
-
+```shell
+conda activate etho
 ```
 
-### Playlist
-More [here](configuration/playlist).
-
-We have specified two analog output channels - first for audio, second for led.
+Confirm that `etho version` reports support for the hardware used by the protocol. Missing unrelated SDKs are not a problem.
 
 
-## Running an experiment
+## Protocol
 
-### CLI
-`python -m etho.call.client protfile playlist` will start the experiment.
+Create a protocol such as `~/ethoconfig/protocols/camera_daq.yml`:
+
+```yaml
+maxduration: 60
+use_services: [GCM, DAQ]
+
+GCM:
+  cam_type: Spinnaker
+  cam_serialnumber: 30959651
+  frame_rate: 100.0
+  frame_width: 640
+  frame_height: 200
+  frame_offx: 78
+  frame_offy: 10
+  shutter_speed: 5000
+  external_trigger: false
+  callbacks:
+    save_avi:
+    save_timestamps:
+
+DAQ:
+  samplingrate: 10000
+  device: Dev1
+  shuffle: false
+  clock_source:
+  nb_inputsamples_per_cycle:
+  analog_chans_in: [ai0, ai1]
+  analog_chans_in_info: [speaker_loopback, led_loopback]
+  analog_chans_out: [ao0, ao1]
+  analog_chans_out_info: [speaker, led]
+  digital_chans_out:
+  digitial_chans_out_info:
+  ledamp: 5
+  callbacks:
+    save_h5:
+```
+
+Use `cam_type: Dummy` for a no-hardware camera test. For multi-camera or
+multi-DAQ runs, add suffixed service names such as `GCM1`, `GCM2`, `DAQ1`, and
+`DAQ2`, and list those names in `use_services`.
+
+## Playlist
+
+Create a tab-delimited playlist such as
+`~/ethoconfig/playlists/sine_led.txt`:
+
+```text
+stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
+[SIN_100_0_1000,PUL_10_10_50_0]	1000	1000	0	[1.0,1.0]	[100,100]
+```
+
+The order of entries in `stimFileName` must match the protocol outputs: analog
+outputs first, then digital outputs. In this example, the first sine stimulus goes to
+`ao0` and the second pulse train goes to `ao1`.
+
+## Run
+
 
 ### GUI
-`python -m etho.gui.wxCtrl` will open a minimal GUI for selecting playlists and protocol, and starting the experiment.
+
+Start the GUI with:
+
+```shell
+etho gui
+```
 
 
-## Produced files
-List of files produced
+### Terminal
 
-Open with [DAS](https://janclemenslab.org/DAS)
+The preview mode is for camera setup only. Run it once to check camera alignment and settings:
+
+```shell
+etho run ~/ethoconfig/protocols/camera_daq.yml --preview
+```
+
+
+Now start a regular run to save camera and DAQ output, and  experiment logs:
+
+```shell
+etho run ~/ethoconfig/protocols/camera_daq.yml ~/ethoconfig/playlists/sine_led.txt --save-prefix rig_test_001
+```
+
+
+## Outputs
+
+Saved files are placed under:
+
+```text
+<savefolder>/<save-prefix>/
+```
+
+Common files include:
+
+- `<save-prefix>_gcm.log` for camera service logs
+- `<save-prefix>_daq.log` for DAQ service logs
+- video files from camera callbacks such as `save_avi`
+- timestamp files from `save_timestamps`
+- HDF5 or Zarr files from DAQ callbacks such as `save_h5` or `save_zarr`
+
+Inspect logs after a rig test before running a full experiment. Camera frame
+rate, dropped frames, DAQ channel names, and callback file paths should match
+the intended setup.

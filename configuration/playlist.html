@@ -1,188 +1,92 @@
-<!doctype html>
-<html class="no-js">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Speaker calibration" href="calibration_speaker.html" /><link rel="prev" title="Experimental protocols" href="protocol.html" />
-
-    <!-- Generated with Sphinx 4.5.0 and Furo 2023.05.20 -->
-        <title>Stimulus playlists - etho documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    
-    
-
-
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Stimulus Playlists - etho documentation</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Speaker Calibration" href="calibration_speaker.html" /><link rel="prev" title="Experimental Protocols" href="protocol.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-dropdown.css?v=995e94df" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.min.css?v=21c0b90a" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
-  
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
-  
-      }
-    }
-  }
-</style></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
-
-
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="Stimulus Playlists"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      <img class="light-logo" src="../_static/etho_light.svg" alt="etho" height="28" loading="lazy" />
+      <img class="dark-logo" src="../_static/etho_dark.svg" alt="etho" height="28" loading="lazy" />
+      <strong>etho</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../install.html">Installation</a></li><li class="link"><a href="../tutorial.html">Tutorial</a></li><li class="link"><a href="configuration.html">Configuration</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/janclemenslab/etho" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
     </div>
-    <div class="header-center">
-      <a href="../index.html"><div class="brand">etho  documentation</div></a>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
     </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
-  
-  
-  
-</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul class="current">
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="configuration.html">Configuration</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="global.html">Global configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="protocol.html">Experimental protocols</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Stimulus playlists</a></li>
-<li class="toctree-l2"><a class="reference internal" href="calibration_speaker.html">Speaker calibration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="calibration_led.html">LED calibration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="configuration.html">Configuration</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="global.html">Global Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="protocol.html">Experimental Protocols</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Stimulus Playlists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calibration_speaker.html">Speaker Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calibration_led.html">LED Calibration</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../hardware/hardware.html">Hardware</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Hardware</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/hardware.html">Hardware</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/camera.html">Cameras</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../hardware/nidaq.html">National Instruments DAQmx cards</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../hardware/projector.html">DLP projector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../hardware/rpi.html">Raspberry PI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware/nidaq.html">National Instruments DAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware/projector.html">DLP Projector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/scanimage.html">ScanImage</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">CLI</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_etho.html">API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.app.html">etho.app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.cli.html">etho.cli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.client.html">etho.client</a></li>
@@ -194,25 +98,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.CamZeroService.html">etho.services.CamZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.GOVZeroService.html">etho.services.GOVZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.Opt2ZeroService.html">etho.services.Opt2ZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.RelayZeroService.html">etho.services.RelayZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.SndZeroService.html">etho.services.SndZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ThuAZeroService.html">etho.services.ThuAZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ThuZeroService.html">etho.services.ThuZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.videocapture.html">etho.services.camera.videocapture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -221,236 +117,219 @@
 </li>
 </ul>
 
-</div>
-</div>
-
+        </div>
       </div>
-      
     </div>
   </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          
-<div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
-        </div>
-        <article role="main">
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#playlist-format">Playlist Format</a></li>
+<li><a class="reference internal" href="#multi-channel-stimulation">Multi-Channel Stimulation</a></li>
+<li><a class="reference internal" href="#generated-stimulus-names">Generated Stimulus Names</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">etho</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="configuration.html"><span itemprop="name">Configuration</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Stimulus Playlists</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
           <section id="stimulus-playlists">
-<h1>Stimulus playlists<a class="headerlink" href="#stimulus-playlists" title="Permalink to this headline">#</a></h1>
-<p>Define outputs for NI-daq.</p>
+<h1>Stimulus Playlists<a class="headerlink" href="#stimulus-playlists" title="Link to this heading">¶</a></h1>
+<p>Playlists define the trial-level output for the DAQ service. They are
+tab-delimited text files.</p>
 <section id="playlist-format">
-<h2>Playlist format<a class="headerlink" href="#playlist-format" title="Permalink to this headline">#</a></h2>
-<p>Playlists are tables saved as tab-delimited text files:</p>
+<h2>Playlist Format<a class="headerlink" href="#playlist-format" title="Link to this heading">¶</a></h2>
+<p>The parser expects these columns in this order:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
+</span></pre></div>
+</div>
+<p>Example:</p>
 <div class="table-wrapper colwidths-auto docutils container">
-<table class="colwidths-auto docutils align-default">
+<table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>stimFileName</p></th>
 <th class="head"><p>silencePre</p></th>
 <th class="head"><p>silencePost</p></th>
+<th class="head"><p>delayPost</p></th>
 <th class="head"><p>intensity</p></th>
 <th class="head"><p>freq</p></th>
+<th class="head"><p>MODE</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>superstimulus.wav</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
+<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>SIN_100_0_3000</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
+<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>[mediocre_stim.wav, MIRROR_LED]</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
+<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>[PUL_5_10_10_0, SIN_200_0_2000]</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
+<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
-</tr>
-<tr class="row-even"><td><p>[SIN_100_0_3000, SIN_200_0_2000]</p></td>
-<td><p>1000</p></td>
-<td><p>1000</p></td>
-<td><p>1.0</p></td>
-<td><p>100</p></td>
-</tr>
-<tr class="row-odd"><td><p>[SIN_100_0_3000, SIN_200_0_2000]</p></td>
-<td><p>[1000, 1000]</p></td>
-<td><p>[1000, 1000]</p></td>
-<td><p>[1.0, 1.0]</p></td>
-<td><p>[100, 100]</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p>[SIN_100_0_3000, SIN_200_0_2000]</p></td>
 <td><p>[1000, 2000]</p></td>
 <td><p>[2000, 1000]</p></td>
+<td><p>0</p></td>
 <td><p>[1.0, 2.0]</p></td>
 <td><p>[100, 200]</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The first row is a header that contain the following column names:</p>
+<p>Column meanings:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>: If not a magic name, full filename (w/ extension but w/o directory). File needs to be single-channel <code class="docutils literal notranslate"><span class="pre">*.wav</span></code>, placed in the <code class="docutils literal notranslate"><span class="pre">stimfolder</span></code> defined in the <a class="reference internal" href="global.html#global-configuration"><span class="std std-ref">global configuration file</span></a>. Currently defined magic names are: <code class="docutils literal notranslate"><span class="pre">SIN*</span></code>, <code class="docutils literal notranslate"><span class="pre">PUL*</span></code>, <code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code>, <code class="docutils literal notranslate"><span class="pre">CLOCK</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SCANIMAGE_NEXT</span></code> (see <a class="reference internal" href="#magic"><span class="std std-ref">below</span></a> for details). If you specified multiple output channels (analog and digital) in your protocol, you <em>must</em> provide one <a class="reference internal" href="#multi-channel"><span class="std std-ref">stimulus filename per channel</span></a>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">silencePre</span></code> (ms): zeros <em>pre</em>-pended to the stimulus</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">silencePost</span></code> (ms): zeros <em>post</em>-pended to the stimulus</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">intensity</span></code> (mm/s or dB for sound, mW/mm2 for light): Stimulus intensity.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">freq</span></code> (Hz for sound or nm for light): Used as a key into the calibration files</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>: WAV/HDF5 stimulus filename or a generated stimulus name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">silencePre</span></code>: Silence before the stimulus, in milliseconds.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">silencePost</span></code>: Silence after the stimulus, in milliseconds.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delayPost</span></code>: Parsed for compatibility with existing playlists.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">intensity</span></code>: Output multiplier. For calibrated sounds or LEDs, use the unit convention established by the rig calibration.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">freq</span></code>: Key into the attenuation table in <code class="docutils literal notranslate"><span class="pre">ethoconfig.yml</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MODE</span></code>: Parsed for compatibility with existing playlists.</p></li>
 </ul>
-<p>Each row in the playlist defines one trial, with a total duration of <code class="docutils literal notranslate"><span class="pre">silencePre</span></code> + “duration of stimulus” + <code class="docutils literal notranslate"><span class="pre">silencePost</span></code>. For multi-channel outputs in which the stimuli have different durations, the total duration is set by the duration of the longest stimulus across all channels. Shorter stimuli will be zero-padded the end.</p>
+<p>Each row defines one trial. The trial duration is <code class="docutils literal notranslate"><span class="pre">silencePre</span></code>, plus the longest
+stimulus across output channels, plus <code class="docutils literal notranslate"><span class="pre">silencePost</span></code>. Shorter output channels are
+zero-padded to match the longest channel.</p>
 </section>
-<section id="defining-multi-channel-stimulation">
-<span id="multi-channel"></span><h2>Defining multi-channel stimulation<a class="headerlink" href="#defining-multi-channel-stimulation" title="Permalink to this headline">#</a></h2>
-<ul class="simple">
-<li><p>For the <code class="docutils literal notranslate"><span class="pre">stimFileName</span></code> column: One entry per channel, as a bracketed, comma-separated list, <code class="docutils literal notranslate"><span class="pre">[stim_on_chan1,</span> <span class="pre">stim_on_chan2,</span> <span class="pre">...]</span></code>. Analog and digital output channels are concatenated, starting with the analog outputs and ending with the digital outputs. E.g. if you define two analog output channels and one digital output channel in your protocol, then the stimuli will map as follow <code class="docutils literal notranslate"><span class="pre">[stim_first_analog_out,</span> <span class="pre">stim_second_analog_out,</span> <span class="pre">stim_digital_out]</span></code>. Whitespace surrounding stimulus names is stripped.</p></li>
-</ul>
-<!-- `[,stim2]` defines stimulation in which the first output channel is filled with zeros. -->
-<ul class="simple">
-<li><p>The remaining columns in the playlist can be provided as as bracketed comma-separated lists of values, <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0.2,</span> <span class="pre">2]</span></code>, to set different intensities etc. for each channel. If fewer entries than channels, then the list will be padded to the number of channels with the last entry in the list.</p></li>
-</ul>
+<section id="multi-channel-stimulation">
+<span id="multi-channel"></span><h2>Multi-Channel Stimulation<a class="headerlink" href="#multi-channel-stimulation" title="Link to this heading">¶</a></h2>
+<p>For multi-channel output, write list values in brackets:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">[stim_on_chan1, stim_on_chan2, stim_on_chan3]
+</span></pre></div>
+</div>
+<p>Channel order follows the DAQ protocol: analog outputs first, then digital
+outputs. For example, if the protocol defines two analog outputs and one digital
+output, the playlist order is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">[first_analog_output, second_analog_output, digital_output]
+</span></pre></div>
+</div>
+<p>Other columns may also use bracketed lists, such as <code class="docutils literal notranslate"><span class="pre">[1.0,</span> <span class="pre">0.5]</span></code> for
+channel-specific intensity. If a list has fewer entries than <code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>, the
+last provided value is repeated for the remaining channels.</p>
 </section>
-<section id="magic-stimulus-names">
-<span id="magic"></span><h2>Magic stimulus names<a class="headerlink" href="#magic-stimulus-names" title="Permalink to this headline">#</a></h2>
-<p>The stimulus name can point to a wav file with the predefined waveform in the <code class="docutils literal notranslate"><span class="pre">ethoconfig/stim</span></code>. However, there are <em>magic</em> names for stimuli that are created on demand. They start with prefix and allow you to specify stimulus parameters in the filename:</p>
+<section id="generated-stimulus-names">
+<span id="magic"></span><h2>Generated Stimulus Names<a class="headerlink" href="#generated-stimulus-names" title="Link to this heading">¶</a></h2>
+<p>Stimulus names can point to files in <code class="docutils literal notranslate"><span class="pre">stimfolder</span></code>, or they can request generated
+signals:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">SIN_frequency_phase_duration</span></code>: Generate sinusoid with frequency (Hz), phase (rad), and duration (ms) specified in the stimulus name. Will start after silencePre and end before silencePost. E.g. <code class="docutils literal notranslate"><span class="pre">SIN_100_0_1000</span></code> will produce a sinusoid with a frequency of 100Hz, a phase of 0, and duration of 1000ms.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">PUL_pulseDur_pulsePau_pulseNumber_pulseDelay</span></code>: Generate pulse train (square pulses) with pulse duration, pause, number and intial delay specified in stimulus name (all time units in ms). Will start after silencePre and end before silencePost.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code>: Will mirror the stimulus in the first channel that does not as a pulse train (pdur &amp; ppau 5ms). Will start after silencePre and end before silencePost.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">CLOCK_pulseDur_pulsePau</span></code>: Create a clock signal (for instance for continuously triggering frames). Generate continuous pulse train with pulse duration and pause specified in stimulus name (all time units in ms). Will start after sample 0 (<em>not</em> silencePre) and end at the last sample (<em>not</em> before silencePost).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code>: Will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel. All three stimuli should be specified in the playlist for each stimulus, not just the first or the last one. This will make sure that e.g. starts are triggered even with shuffled playback:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code> will set the digital output to 1 for the first 2ms of the trial (starting at sample 0, <em>not</em> at silencePre)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code> and <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code> will set the last 2ms of the trial (<em>not</em> before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to “rising”, the stop and next triggers to “falling”. See <a class="reference external" href="https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html">ScanImage docs</a> for details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SIN_frequency_phase_duration</span></code>: Generate a sine wave. Frequency is in Hz, phase is in radians, and duration is in milliseconds.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PUL_pulseDur_pulsePau_pulseNumber_pulseDelay</span></code>: Generate a pulse train. Time fields are in milliseconds.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code>: Generate a pulse train on this channel aligned to another non-<code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code> channel. Protocols using this should define <code class="docutils literal notranslate"><span class="pre">ledamp</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CLOCK_pulseDur_pulsePau</span></code>: Generate a continuous clock signal for the full trial.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code>: Set the channel high for the first samples of a trial to start ScanImage acquisition.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>: Set the channel high near the end of the final trial to stop ScanImage acquisition.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code>: Set the channel high near the end of each trial to advance ScanImage files.</p></li>
 </ul>
-</li>
-</ul>
-<!--
-## Parsing
-Load the playlist like so:
-```python
-from ethomaster.utils.sound import parse_table, normalize_table
-# returns a raw pandas dataframe
-raw_table = pd.read_table(playlistfilename, dtype=None, delimiter='\t')
-# casts all cells in the table to lists of the correct type and
-parsed_table = parse_table(raw_table, dtypes=[str, float, float, float, float, float, str])
-# normalizes all cells in a row to have the same number of entries as there are stimuli
-playlist = normalize_table(parsed_table)
-```
-Or simply `playlist = parse_table(playlistfilename)`.
-
-Sounds can be generated from the playlist via:
-```python
-from ethomaster.utils.sound import load_sounds
-sounds = load_sounds(playlist, fs=1000, attenuation=None, stimfolder='~/stimuli'):
-```
-This will return a list of multidimensional numpy arrays, one item per row in the playlist file. --></section>
+<p><code class="docutils literal notranslate"><span class="pre">CLOCK</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, and <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code> are aligned to the trial edges, not
+to <code class="docutils literal notranslate"><span class="pre">silencePre</span></code> or <code class="docutils literal notranslate"><span class="pre">silencePost</span></code>.</p>
+</section>
 </section>
 
-        </article>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="protocol.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Experimental Protocols</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="calibration_speaker.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Speaker Calibration</div>
       </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="calibration_speaker.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Speaker calibration</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="protocol.html">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Experimental protocols</div>
-                
-              </div>
-            </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2021, Jan Clemens
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            
-          </div>
-        </div>
-        
-      </footer>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
     </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Stimulus playlists</a><ul>
-<li><a class="reference internal" href="#playlist-format">Playlist format</a></li>
-<li><a class="reference internal" href="#defining-multi-channel-stimulation">Defining multi-channel stimulation</a></li>
-<li><a class="reference internal" href="#magic-stimulus-names">Magic stimulus names</a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
-      
-      
-    </aside>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Jan Clemens</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/janclemenslab/etho" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/tabs.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
-    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
-    </body>
+</footer>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../_static/shibuya.js?v=cac61aee"></script>
+      <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
+      <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
+      <script src="https://code.iconify.design/iconify-icon/3.0.1/iconify-icon.min.js"></script></body>
 </html>

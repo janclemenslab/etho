@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Extensions - etho documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Supported Hardware" href="hardware/hardware.html" /><link rel="prev" title="Callbacks" href="callbacks.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-dropdown.css?v=995e94df" />
+    <link rel="stylesheet" type="text/css" href="_static/panels-bootstrap.min.css?v=21c0b90a" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="Extensions"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      <img class="light-logo" src="_static/etho_light.svg" alt="etho" height="28" loading="lazy" />
+      <img class="dark-logo" src="_static/etho_dark.svg" alt="etho" height="28" loading="lazy" />
+      <strong>etho</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="install.html">Installation</a></li><li class="link"><a href="tutorial.html">Tutorial</a></li><li class="link"><a href="configuration/configuration.html">Configuration</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/janclemenslab/etho" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration/configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="configuration/global.html">Global Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration/protocol.html">Experimental Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration/playlist.html">Stimulus Playlists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration/calibration_speaker.html">Speaker Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration/calibration_led.html">LED Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware/hardware.html">Hardware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hardware/camera.html">Cameras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware/nidaq.html">National Instruments DAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware/projector.html">DLP Projector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware/scanimage.html">ScanImage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_etho.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.app.html">etho.app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.cli.html">etho.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.client.html">etho.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.utils.calibration.html">etho.utils.calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.utils.config.html">etho.utils.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.utils.runner.html">etho.utils.runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.utils.sound.html">etho.utils.sound</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.utils.tui.html">etho.utils.tui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.GOVZeroService.html">etho.services.GOVZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.base.html">etho.services.camera.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.dlp.dlp_make_warpfiles.html">etho.services.dlp.dlp_make_warpfiles</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#adding-a-callback">Adding A Callback</a></li>
+<li><a class="reference internal" href="#adding-a-service">Adding A Service</a></li>
+<li><a class="reference internal" href="#wiring-a-service-into-experiments">Wiring A Service Into Experiments</a></li>
+<li><a class="reference internal" href="#documentation-and-tests">Documentation And Tests</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">etho</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Extensions</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="extensions">
+<span id="id1"></span><h1>Extensions<a class="headerlink" href="#extensions" title="Link to this heading">¶</a></h1>
+<p>Etho has two main extension points:</p>
+<ul class="simple">
+<li><p><strong>Callbacks</strong> process data that an existing service already produces.</p></li>
+<li><p><strong>Services</strong> add a new hardware controller or long-running process.</p></li>
+</ul>
+<p>Use a callback when the <code class="docutils literal notranslate"><span class="pre">GCM</span></code>, <code class="docutils literal notranslate"><span class="pre">DAQ</span></code>, or <code class="docutils literal notranslate"><span class="pre">DLP</span></code> service already gives you the
+data stream you need. Add a service when new hardware needs its own setup,
+start, stop, logging, and progress lifecycle.</p>
+<section id="adding-a-callback">
+<h2>Adding A Callback<a class="headerlink" href="#adding-a-callback" title="Link to this heading">¶</a></h2>
+<p>Callbacks are registered in <code class="docutils literal notranslate"><span class="pre">etho.services.callbacks.callbacks</span></code>. Services look
+up protocol callback names in that registry and launch each callback in a
+separate concurrent task.</p>
+<ol class="arabic simple">
+<li><p>Add a callback class under <code class="docutils literal notranslate"><span class="pre">src/etho/services/callbacks/</span></code>.</p></li>
+<li><p>Subclass <code class="docutils literal notranslate"><span class="pre">BaseCallback</span></code>.</p></li>
+<li><p>Decorate the class with <code class="docutils literal notranslate"><span class="pre">&#64;register_callback</span></code>.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">FRIENDLY_NAME</span></code> to the protocol-facing name.</p></li>
+<li><p>Implement <code class="docutils literal notranslate"><span class="pre">_loop(self,</span> <span class="pre">data)</span></code>.</p></li>
+<li><p>Implement <code class="docutils literal notranslate"><span class="pre">_cleanup(self)</span></code> if the callback opens files, hardware, windows, or
+buffers. Call <code class="docutils literal notranslate"><span class="pre">super()._cleanup()</span></code> at the end.</p></li>
+<li><p>If the class lives in a new module, import that module from
+<code class="docutils literal notranslate"><span class="pre">src/etho/services/callbacks/__init__.py</span></code> so registration happens at import
+time.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">etho.services.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_callback</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">etho.services.callbacks._base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCallback</span>
+</span><span data-line="3">
+</span><span data-line="4">
+</span><span data-line="5"><span class="nd">@register_callback</span>
+</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">SaveSummary</span><span class="p">(</span><span class="n">BaseCallback</span><span class="p">):</span>
+</span><span data-line="7">    <span class="n">FRIENDLY_NAME</span> <span class="o">=</span> <span class="s2">&quot;save_summary&quot;</span>
+</span><span data-line="8">
+</span><span data-line="9">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_source</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="10">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data_source</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="n">rate</span><span class="p">)</span>
+</span><span data-line="11">        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">file_name</span>
+</span><span data-line="12">
+</span><span data-line="13">    <span class="k">def</span><span class="w"> </span><span class="nf">_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+</span><span data-line="14">        <span class="n">payload</span><span class="p">,</span> <span class="n">timestamps</span> <span class="o">=</span> <span class="n">data</span>
+</span><span data-line="15">        <span class="o">...</span>
+</span><span data-line="16">
+</span><span data-line="17">    <span class="k">def</span><span class="w"> </span><span class="nf">_cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="18">        <span class="o">...</span>
+</span><span data-line="19">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_cleanup</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<p>Use the friendly name in the service block:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">GCM</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
+</span><span data-line="3"><span class="w">    </span><span class="nt">save_summary</span><span class="p">:</span>
+</span><span data-line="4"><span class="w">      </span><span class="nt">rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+</span></pre></div>
+</div>
+<p>Callback constructor arguments come from two places:</p>
+<ul class="simple">
+<li><p>The service supplies common arguments such as <code class="docutils literal notranslate"><span class="pre">file_name</span></code>, frame dimensions,
+frame rate, DAQ channel metadata, or input chunk size.</p></li>
+<li><p>The protocol supplies callback-specific options under the callback name.</p></li>
+</ul>
+<p>Camera callbacks usually receive <code class="docutils literal notranslate"><span class="pre">(image,</span> <span class="pre">(system_ts,</span> <span class="pre">image_ts))</span></code>. Timestamp
+callbacks receive timestamp data without the image payload. DAQ callbacks receive
+analog input chunks and metadata from the analog input task.</p>
+</section>
+<section id="adding-a-service">
+<h2>Adding A Service<a class="headerlink" href="#adding-a-service" title="Link to this heading">¶</a></h2>
+<p>New services should follow <code class="docutils literal notranslate"><span class="pre">src/etho/services/TemplateZeroService.py</span></code>. A service
+subclasses <code class="docutils literal notranslate"><span class="pre">BaseZeroService</span></code>, exposes a ZeroRPC server, and implements the same
+lifecycle used by the built-in services.</p>
+<ol class="arabic simple">
+<li><p>Copy <code class="docutils literal notranslate"><span class="pre">TemplateZeroService.py</span></code> to
+<code class="docutils literal notranslate"><span class="pre">src/etho/services/&lt;NAME&gt;ZeroService.py</span></code>.</p></li>
+<li><p>Rename the class to a short uppercase service name, such as <code class="docutils literal notranslate"><span class="pre">TMP</span></code>.</p></li>
+<li><p>Set unique <code class="docutils literal notranslate"><span class="pre">LOGGING_PORT</span></code> and <code class="docutils literal notranslate"><span class="pre">SERVICE_PORT</span></code> values. Existing services use
+logging ports in the <code class="docutils literal notranslate"><span class="pre">1420-1460</span></code> range and service ports beginning with
+<code class="docutils literal notranslate"><span class="pre">42</span></code>; the last two digits normally match.</p></li>
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">SERVICE_NAME</span></code> to the class name.</p></li>
+<li><p>Implement <code class="docutils literal notranslate"><span class="pre">setup(...)</span></code> for hardware allocation, run configuration, worker
+thread setup, and <code class="docutils literal notranslate"><span class="pre">self.info</span></code>.</p></li>
+<li><p>Implement <code class="docutils literal notranslate"><span class="pre">start()</span></code> to start workers, hardware acquisition, timers, and
+callbacks.</p></li>
+<li><p>Implement <code class="docutils literal notranslate"><span class="pre">finish(stop_service=False)</span></code> to stop timers, signal workers, close
+hardware, close callbacks, and optionally call <code class="docutils literal notranslate"><span class="pre">service_stop()</span></code>.</p></li>
+<li><p>Implement <code class="docutils literal notranslate"><span class="pre">is_busy()</span></code>, <code class="docutils literal notranslate"><span class="pre">test()</span></code>, and <code class="docutils literal notranslate"><span class="pre">cleanup()</span></code>.</p></li>
+<li><p>Keep the module-level <code class="docutils literal notranslate"><span class="pre">cli()</span></code> and <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">&quot;__main__&quot;</span></code> block so
+<code class="docutils literal notranslate"><span class="pre">BaseZeroService.make(...)</span></code> can launch the service with <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span></code>.</p></li>
+</ol>
+<p>The template shows the expected structure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">.ZeroService</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseZeroService</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">.utils.log_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">for_all_methods</span><span class="p">,</span> <span class="n">log_exceptions</span>
+</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span data-line="4">
+</span><span data-line="5">
+</span><span data-line="6"><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_exceptions</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)))</span>
+</span><span data-line="7"><span class="k">class</span><span class="w"> </span><span class="nc">TMP</span><span class="p">(</span><span class="n">BaseZeroService</span><span class="p">):</span>
+</span><span data-line="8">    <span class="n">LOGGING_PORT</span> <span class="o">=</span> <span class="mi">1443</span>
+</span><span data-line="9">    <span class="n">SERVICE_PORT</span> <span class="o">=</span> <span class="mi">4243</span>
+</span><span data-line="10">    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">&quot;TMP&quot;</span>
+</span><span data-line="11">
+</span><span data-line="12">    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+</span><span data-line="13">        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+</span><span data-line="14">        <span class="o">...</span>
+</span><span data-line="15">
+</span><span data-line="16">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="17">        <span class="o">...</span>
+</span><span data-line="18">
+</span><span data-line="19">    <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span data-line="20">        <span class="o">...</span>
+</span><span data-line="21">
+</span><span data-line="22">    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="23">        <span class="o">...</span>
+</span><span data-line="24">
+</span><span data-line="25">    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="26">        <span class="o">...</span>
+</span><span data-line="27">
+</span><span data-line="28">    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="29">        <span class="o">...</span>
+</span></pre></div>
+</div>
+<p>Services that run continuously should do the work in a thread or hardware task
+created during <code class="docutils literal notranslate"><span class="pre">setup()</span></code> and started during <code class="docutils literal notranslate"><span class="pre">start()</span></code>. Use a <code class="docutils literal notranslate"><span class="pre">threading.Event</span></code>
+or equivalent stop signal so <code class="docutils literal notranslate"><span class="pre">finish()</span></code> can stop the worker cleanly.</p>
+</section>
+<section id="wiring-a-service-into-experiments">
+<h2>Wiring A Service Into Experiments<a class="headerlink" href="#wiring-a-service-into-experiments" title="Link to this heading">¶</a></h2>
+<p>A service module is not enough for <code class="docutils literal notranslate"><span class="pre">etho</span> <span class="pre">run</span></code> by itself. The experiment client
+must know how to construct it from a protocol.</p>
+<ol class="arabic simple">
+<li><p>Import the service class in <code class="docutils literal notranslate"><span class="pre">src/etho/client.py</span></code>.</p></li>
+<li><p>Add a client branch that recognizes the protocol service name or prefix in
+<code class="docutils literal notranslate"><span class="pre">use_services</span></code>.</p></li>
+<li><p>Merge global defaults with the service block.</p></li>
+<li><p>Assign a default port when the protocol does not provide one.</p></li>
+<li><p>Call <code class="docutils literal notranslate"><span class="pre">&lt;SERVICE&gt;.make(...)</span></code>.</p></li>
+<li><p>Call <code class="docutils literal notranslate"><span class="pre">setup(...)</span></code> with arguments from the protocol.</p></li>
+<li><p>Initialize the local logger with <code class="docutils literal notranslate"><span class="pre">init_local_logger(...)</span></code>.</p></li>
+<li><p>Store the service in the <code class="docutils literal notranslate"><span class="pre">services</span></code> dictionary.</p></li>
+<li><p>Start it in the correct order relative to cameras, triggers, DAQ output, and
+other hardware.</p></li>
+<li><p>Add protocol documentation and a focused test that proves the client wires
+the new service correctly.</p></li>
+</ol>
+<p>Minimal protocol shape:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">maxduration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+</span><span data-line="2"><span class="nt">use_services</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">TMP</span><span class="p p-Indicator">]</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="nt">TMP</span><span class="p">:</span>
+</span><span data-line="5"><span class="w">  </span><span class="nt">duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+</span><span data-line="6"><span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4243</span>
+</span></pre></div>
+</div>
+<p>The exact service block should match the new service’s <code class="docutils literal notranslate"><span class="pre">setup(...)</span></code> signature
+and any runtime options it needs.</p>
+</section>
+<section id="documentation-and-tests">
+<h2>Documentation And Tests<a class="headerlink" href="#documentation-and-tests" title="Link to this heading">¶</a></h2>
+<p>When adding a public extension, update the matching docs:</p>
+<ul class="simple">
+<li><p>Callback options belong in <code class="docutils literal notranslate"><span class="pre">docs/callbacks.md</span></code> and protocol examples.</p></li>
+<li><p>Service configuration belongs in <code class="docutils literal notranslate"><span class="pre">docs/configuration/protocol.md</span></code>.</p></li>
+<li><p>Hardware-specific behavior belongs under <code class="docutils literal notranslate"><span class="pre">docs/hardware/</span></code>.</p></li>
+<li><p>API pages are automatically generated.</p></li>
+</ul>
+<p>For services, add tests around the client wiring and any non-hardware parsing or
+state handling. For callbacks, test constructor options and <code class="docutils literal notranslate"><span class="pre">_loop()</span></code> behavior
+without requiring real hardware when possible.</p>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="callbacks.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Callbacks</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="hardware/hardware.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Supported Hardware</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Jan Clemens</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/janclemenslab/etho" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/design-tabs.js?v=f930bc37"></script>
+      <script src="_static/shibuya.js?v=cac61aee"></script>
+      <script src="_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
+      <script src="_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
+      <script src="https://code.iconify.design/iconify-icon/3.0.1/iconify-icon.min.js"></script></body>
+</html>

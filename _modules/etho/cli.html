@@ -1,187 +1,92 @@
-<!doctype html>
-<html class="no-js">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
-
-    <!-- Generated with Sphinx 4.5.0 and Furo 2023.05.20 -->
-        <title>etho.cli - etho documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    
-    
-
-
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>etho.cli - etho documentation</title><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-dropdown.css?v=995e94df" />
+    <link rel="stylesheet" type="text/css" href="../../_static/panels-bootstrap.min.css?v=21c0b90a" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
-  
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
-  
-      }
-    }
-  }
-</style></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
-
-
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="etho.cli"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../index.html">
+      <img class="light-logo" src="../../_static/etho_light.svg" alt="etho" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../_static/etho_dark.svg" alt="etho" height="28" loading="lazy" />
+      <strong>etho</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../install.html">Installation</a></li><li class="link"><a href="../../tutorial.html">Tutorial</a></li><li class="link"><a href="../../configuration/configuration.html">Configuration</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/janclemenslab/etho" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
     </div>
-    <div class="header-center">
-      <a href="../../index.html"><div class="brand">etho  documentation</div></a>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
     </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
-  
-  
-  
-</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../configuration/configuration.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../configuration/global.html">Global configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../configuration/protocol.html">Experimental protocols</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../configuration/playlist.html">Stimulus playlists</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../configuration/calibration_speaker.html">Speaker calibration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../configuration/calibration_led.html">LED calibration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/global.html">Global Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/protocol.html">Experimental Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/playlist.html">Stimulus Playlists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/calibration_speaker.html">Speaker Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/calibration_led.html">LED Calibration</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../hardware/hardware.html">Hardware</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Hardware</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../hardware/hardware.html">Hardware</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../hardware/camera.html">Cameras</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../hardware/nidaq.html">National Instruments DAQmx cards</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../hardware/projector.html">DLP projector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../hardware/rpi.html">Raspberry PI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../hardware/nidaq.html">National Instruments DAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../hardware/projector.html">DLP Projector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../hardware/scanimage.html">ScanImage</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../cli.html">CLI</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_etho.html">API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.app.html">etho.app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.cli.html">etho.cli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.client.html">etho.client</a></li>
@@ -193,25 +98,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.CamZeroService.html">etho.services.CamZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.GOVZeroService.html">etho.services.GOVZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.Opt2ZeroService.html">etho.services.Opt2ZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.RelayZeroService.html">etho.services.RelayZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.SndZeroService.html">etho.services.SndZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.ThuAZeroService.html">etho.services.ThuAZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.ThuZeroService.html">etho.services.ThuZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.camera.videocapture.html">etho.services.camera.videocapture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -220,273 +117,317 @@
 </li>
 </ul>
 
-</div>
-</div>
-
+        </div>
       </div>
-      
     </div>
   </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
-        </div>
-        <article role="main">
-          <h1>Source code for etho.cli</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">defopt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">rich</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">client</span>
-<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="kc">None</span>
-
-
-<div class="viewcode-block" id="version"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.version">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Displays system, version, and hardware info.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        debug (bool): Display exception info for failed imports. Defaults to False.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">etho</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">pyqtgraph</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">qtpy</span>
-
-        <span class="n">has_gui</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
-        <span class="n">has_gui</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;etho v</span><span class="si">{</span><span class="n">etho</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  LIBRARY VERSIONS&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    python v</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    pandas v</span><span class="si">{</span><span class="n">pd</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    numpy v</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    h5py v</span><span class="si">{</span><span class="n">h5py</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    scipy v</span><span class="si">{</span><span class="n">scipy</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  GUI SUPPORT&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     GUI is </span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">has_gui</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;not&#39;</span><span class="si">}</span><span class="s2">available.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">has_gui</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     pyqtgraph v</span><span class="si">{</span><span class="n">pyqtgraph</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">API_NAME</span><span class="si">}</span><span class="s2"> v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">PYQT_VERSION</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">qtpy</span><span class="o">.</span><span class="n">PYSIDE_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     Qt v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">QT_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     qtpy v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  HARDWARE SUPPORT&quot;</span><span class="p">)</span>
-
-    <span class="n">libs</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;Spinnaker camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;PySpin&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;FlyCapture camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;PyCapture2&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Ximea camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;ximea&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;DCAM (Hamamatsu) camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;pylablib&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;NI daqmx&quot;</span><span class="p">:</span> <span class="s2">&quot;pydaqmx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Lightcrafter projector&quot;</span><span class="p">:</span> <span class="s2">&quot;pycrafter4500&quot;</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="k">for</span> <span class="n">lib_name</span><span class="p">,</span> <span class="n">lib_import</span> <span class="ow">in</span> <span class="n">libs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">lib_import</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">lib_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">lib_import</span><span class="si">}</span><span class="s2">) is available&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">lib_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">lib_import</span><span class="si">}</span><span class="s2">) is NOT available.&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;     DEBUG info&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="no_gui"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.no_gui">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">no_gui</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Could not import the GUI. For instructions on how to install the GUI, check the docs janclemenslab.org/etho/install.html.&quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not import the GUI.&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;For instructions on how to install the GUI,&quot;</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;check the docs janclemenslab.org/etho/install.html.&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="init"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.init">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializes config files and folders.&quot;&quot;&quot;</span>
-    <span class="n">home</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
-
-    <span class="n">cfg</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;ncb&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;savefolder&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;python_exe&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
-        <span class="s2">&quot;ATTENUATION&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">0</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">100</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">150</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">200</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">250</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">300</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">350</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">400</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">450</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">500</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">600</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">700</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">800</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">900</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">1000</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">1500</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="mi">2000</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="p">},</span>
-    <span class="p">}</span>
-
-    <span class="n">paths</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;playlistfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/playlists&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;protocolfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/protocols&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;stimfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/stim&quot;</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating default directories:&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;   &quot;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">p</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">cfg</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-
-    <span class="n">rich</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
-
-    <span class="n">path_cfg</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig&quot;</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig.yml&quot;</span>
-    <span class="k">if</span> <span class="n">path_cfg</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The configuration file </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span><span class="si">}</span><span class="s2"> exists. Will not overwrite. Delete the file or update it manually.&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing configuration to </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeDumper</span><span class="p">)</span>
-
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating test files:&quot;</span><span class="p">)</span>
-    <span class="c1"># generate test protocol</span>
-    <span class="n">protocol</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;maxduration&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
-        <span class="s2">&quot;use_services&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;GCM&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;GCM&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;frame_rate&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
-            <span class="s2">&quot;frame_width&quot;</span><span class="p">:</span> <span class="mi">320</span><span class="p">,</span>
-            <span class="s2">&quot;frame_height&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
-            <span class="s2">&quot;shutter_speed&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-            <span class="s2">&quot;cam_serialnumber&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
-            <span class="s2">&quot;cam_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Dummy&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;callbacks&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;disp&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;framerate&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}},</span>
-        <span class="p">},</span>
-    <span class="p">}</span>
-    <span class="n">path_protocol</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig/protocols/dummy_1min.yml&quot;</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   protocol </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_protocol</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_protocol</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeDumper</span><span class="p">)</span>
-
-    <span class="c1"># generate test playlist</span>
-    <span class="n">playlist</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;stimFileName&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;SIN_100_0_1000&quot;</span><span class="p">},</span>
-        <span class="s2">&quot;silencePre&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">10000</span><span class="p">},</span>
-        <span class="s2">&quot;silencePost&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">9000</span><span class="p">},</span>
-        <span class="s2">&quot;delayPost&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
-        <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
-        <span class="s2">&quot;freq&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">100</span><span class="p">},</span>
-        <span class="s2">&quot;MODE&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-    <span class="p">}</span>
-    <span class="n">path_playlist</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig/playlists/0_silence.txt&quot;</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   playlist </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">playlist</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.main">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Command line interface for DAS.&quot;&quot;&quot;</span>
-    <span class="n">subcommands</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
-        <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="n">init</span><span class="p">,</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">subcommands</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;run&quot;</span><span class="p">:</span> <span class="n">client</span><span class="o">.</span><span class="n">client</span><span class="p">})</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
-
-        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">main</span>
-    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;No GUI avalaible.&quot;</span><span class="p">)</span>
-        <span class="c1"># fall back to function that displays helpful instructions</span>
-        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">no_gui</span>
-
-    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">defopt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subcommands</span><span class="p">,</span> <span class="n">show_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
-</pre></div>
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          
-          
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2021, Jan Clemens
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            
-          </div>
-        </div>
-        
-      </footer>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
     </div>
-    <aside class="toc-drawer no-toc">
-      
-      
-      
-    </aside>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">etho</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">Module code</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">etho.cli</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
   </div>
-</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/scripts/furo.js"></script>
-    <script src="../../_static/tabs.js"></script>
-    <script src="../../_static/clipboard.min.js"></script>
-    <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
-    <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
-    </body>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <h1>Source code for etho.cli</h1><div class="highlight"><pre>
+<span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">defopt</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+</span><span data-line="4"><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+</span><span data-line="5"><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+</span><span data-line="6"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span data-line="7"><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</span><span data-line="8"><span class="kn">import</span><span class="w"> </span><span class="nn">rich</span>
+</span><span data-line="9"><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+</span><span data-line="10"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+</span><span data-line="11">
+</span><span data-line="12"><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span data-line="13">
+</span><span data-line="14"><span class="k">try</span><span class="p">:</span>
+</span><span data-line="15">    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">client</span>
+</span><span data-line="16"><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="17">    <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span><span data-line="18">    <span class="n">client</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="19">
+</span><span data-line="20">
+<div class="viewcode-block" id="run">
+<a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.run">[docs]</a>
+</span><span data-line="21"><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+</span><span data-line="22">    <span class="n">protocolfile</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="23">    <span class="n">playlistfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="24">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="25">    <span class="n">save_prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="26">    <span class="n">show_progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="27">    <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="28">    <span class="n">preview</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="29"><span class="p">):</span>
+</span><span data-line="30"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Starts an experiment from the CLI.&quot;&quot;&quot;</span>
+</span><span data-line="31">    <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">client</span><span class="p">(</span>
+</span><span data-line="32">        <span class="n">protocolfile</span><span class="o">=</span><span class="n">protocolfile</span><span class="p">,</span>
+</span><span data-line="33">        <span class="n">playlistfile</span><span class="o">=</span><span class="n">playlistfile</span><span class="p">,</span>
+</span><span data-line="34">        <span class="n">save_prefix</span><span class="o">=</span><span class="n">save_prefix</span><span class="p">,</span>
+</span><span data-line="35">        <span class="n">show_progress</span><span class="o">=</span><span class="n">show_progress</span><span class="p">,</span>
+</span><span data-line="36">        <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,</span>
+</span><span data-line="37">        <span class="n">preview</span><span class="o">=</span><span class="n">preview</span><span class="p">,</span>
+</span><span data-line="38">    <span class="p">)</span></div>
+
+</span><span data-line="39">
+</span><span data-line="40">
+<div class="viewcode-block" id="version">
+<a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.version">[docs]</a>
+</span><span data-line="41"><span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span data-line="42"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Displays system, version, and hardware info.</span>
+</span><span data-line="43">
+</span><span data-line="44"><span class="sd">    Args:</span>
+</span><span data-line="45"><span class="sd">        debug (bool): Display exception info for failed imports. Defaults to False.</span>
+</span><span data-line="46"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="47">    <span class="kn">import</span><span class="w"> </span><span class="nn">etho</span>
+</span><span data-line="48">    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+</span><span data-line="49">    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</span><span data-line="50">    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span data-line="51">    <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
+</span><span data-line="52">    <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+</span><span data-line="53">
+</span><span data-line="54">    <span class="k">try</span><span class="p">:</span>
+</span><span data-line="55">        <span class="kn">import</span><span class="w"> </span><span class="nn">pyqtgraph</span>
+</span><span data-line="56">        <span class="kn">import</span><span class="w"> </span><span class="nn">qtpy</span>
+</span><span data-line="57">
+</span><span data-line="58">        <span class="n">has_gui</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="59">    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
+</span><span data-line="60">        <span class="n">has_gui</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="61">
+</span><span data-line="62">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="63">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;etho v</span><span class="si">{</span><span class="n">etho</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="64">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span data-line="65">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  LIBRARY VERSIONS&quot;</span><span class="p">)</span>
+</span><span data-line="66">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    python v</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="67">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    pandas v</span><span class="si">{</span><span class="n">pd</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="68">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    numpy v</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="69">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    h5py v</span><span class="si">{</span><span class="n">h5py</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="70">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    scipy v</span><span class="si">{</span><span class="n">scipy</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="71">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span data-line="72">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  GUI SUPPORT&quot;</span><span class="p">)</span>
+</span><span data-line="73">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     GUI is </span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">has_gui</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;not&#39;</span><span class="si">}</span><span class="s2">available.&quot;</span><span class="p">)</span>
+</span><span data-line="74">    <span class="k">if</span> <span class="n">has_gui</span><span class="p">:</span>
+</span><span data-line="75">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     pyqtgraph v</span><span class="si">{</span><span class="n">pyqtgraph</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="76">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">API_NAME</span><span class="si">}</span><span class="s2"> v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">PYQT_VERSION</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">qtpy</span><span class="o">.</span><span class="n">PYSIDE_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="77">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     Qt v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">QT_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="78">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     qtpy v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="79">
+</span><span data-line="80">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span data-line="81">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  HARDWARE SUPPORT&quot;</span><span class="p">)</span>
+</span><span data-line="82">
+</span><span data-line="83">    <span class="n">libs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="84">        <span class="s2">&quot;Spinnaker camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;PySpin&quot;</span><span class="p">,</span>
+</span><span data-line="85">        <span class="s2">&quot;FlyCapture camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;PyCapture2&quot;</span><span class="p">,</span>
+</span><span data-line="86">        <span class="s2">&quot;Ximea camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;ximea&quot;</span><span class="p">,</span>
+</span><span data-line="87">        <span class="s2">&quot;DCAM (Hamamatsu) camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;pylablib&quot;</span><span class="p">,</span>
+</span><span data-line="88">        <span class="s2">&quot;NI daqmx&quot;</span><span class="p">:</span> <span class="s2">&quot;pydaqmx&quot;</span><span class="p">,</span>
+</span><span data-line="89">        <span class="s2">&quot;Lightcrafter projector&quot;</span><span class="p">:</span> <span class="s2">&quot;pycrafter4500&quot;</span><span class="p">,</span>
+</span><span data-line="90">    <span class="p">}</span>
+</span><span data-line="91">    <span class="k">for</span> <span class="n">lib_name</span><span class="p">,</span> <span class="n">lib_import</span> <span class="ow">in</span> <span class="n">libs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="92">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="93">            <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">lib_import</span><span class="p">)</span>
+</span><span data-line="94">            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">lib_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">lib_import</span><span class="si">}</span><span class="s2">) is available&quot;</span><span class="p">)</span>
+</span><span data-line="95">        <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="96">            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">lib_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">lib_import</span><span class="si">}</span><span class="s2">) is NOT available.&quot;</span><span class="p">)</span>
+</span><span data-line="97">            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+</span><span data-line="98">                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;     DEBUG info&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span></div>
+
+</span><span data-line="99">
+</span><span data-line="100">
+<div class="viewcode-block" id="no_gui">
+<a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.no_gui">[docs]</a>
+</span><span data-line="101"><span class="k">def</span><span class="w"> </span><span class="nf">no_gui</span><span class="p">():</span>
+</span><span data-line="102"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Could not import the GUI. For instructions on how to install the GUI, check the docs janclemenslab.org/etho/install.html.&quot;&quot;&quot;</span>
+</span><span data-line="103">    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not import the GUI.&quot;</span><span class="p">)</span>
+</span><span data-line="104">    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;For instructions on how to install the GUI,&quot;</span><span class="p">)</span>
+</span><span data-line="105">    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;check the docs janclemenslab.org/etho/install.html.&quot;</span><span class="p">)</span></div>
+
+</span><span data-line="106">
+</span><span data-line="107">
+<div class="viewcode-block" id="init">
+<a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.init">[docs]</a>
+</span><span data-line="108"><span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">():</span>
+</span><span data-line="109"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializes config files and folders.&quot;&quot;&quot;</span>
+</span><span data-line="110">    <span class="n">home</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
+</span><span data-line="111">
+</span><span data-line="112">    <span class="n">cfg</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="113">        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;ncb&quot;</span><span class="p">,</span>
+</span><span data-line="114">        <span class="s2">&quot;savefolder&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+</span><span data-line="115">        <span class="s2">&quot;python_exe&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+</span><span data-line="116">        <span class="s2">&quot;ATTENUATION&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span data-line="117">            <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="118">            <span class="mi">0</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="119">            <span class="mi">100</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="120">            <span class="mi">150</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="121">            <span class="mi">200</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="122">            <span class="mi">250</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="123">            <span class="mi">300</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="124">            <span class="mi">350</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="125">            <span class="mi">400</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="126">            <span class="mi">450</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="127">            <span class="mi">500</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="128">            <span class="mi">600</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="129">            <span class="mi">700</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="130">            <span class="mi">800</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="131">            <span class="mi">900</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="132">            <span class="mi">1000</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="133">            <span class="mi">1500</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="134">            <span class="mi">2000</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="135">        <span class="p">},</span>
+</span><span data-line="136">    <span class="p">}</span>
+</span><span data-line="137">
+</span><span data-line="138">    <span class="n">paths</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="139">        <span class="s2">&quot;playlistfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/playlists&quot;</span><span class="p">,</span>
+</span><span data-line="140">        <span class="s2">&quot;protocolfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/protocols&quot;</span><span class="p">,</span>
+</span><span data-line="141">        <span class="s2">&quot;stimfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/stim&quot;</span><span class="p">,</span>
+</span><span data-line="142">    <span class="p">}</span>
+</span><span data-line="143">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating default directories:&quot;</span><span class="p">)</span>
+</span><span data-line="144">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="145">        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;   &quot;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span>
+</span><span data-line="146">        <span class="n">p</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span><span data-line="147">        <span class="n">p</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="148">        <span class="n">cfg</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span><span data-line="149">
+</span><span data-line="150">    <span class="n">rich</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+</span><span data-line="151">
+</span><span data-line="152">    <span class="n">path_cfg</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig&quot;</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig.yml&quot;</span>
+</span><span data-line="153">    <span class="k">if</span> <span class="n">path_cfg</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span data-line="154">        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The configuration file </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span><span class="si">}</span><span class="s2"> exists. Will not overwrite. Delete the file or update it manually.&quot;</span><span class="p">)</span>
+</span><span data-line="155">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="156">        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing configuration to </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="157">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="158">            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeDumper</span><span class="p">)</span>
+</span><span data-line="159">
+</span><span data-line="160">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating test files:&quot;</span><span class="p">)</span>
+</span><span data-line="161">    <span class="c1"># generate test protocol</span>
+</span><span data-line="162">    <span class="n">protocol</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="163">        <span class="s2">&quot;maxduration&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+</span><span data-line="164">        <span class="s2">&quot;use_services&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;GCM&quot;</span><span class="p">],</span>
+</span><span data-line="165">        <span class="s2">&quot;GCM&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span data-line="166">            <span class="s2">&quot;frame_rate&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+</span><span data-line="167">            <span class="s2">&quot;frame_width&quot;</span><span class="p">:</span> <span class="mi">320</span><span class="p">,</span>
+</span><span data-line="168">            <span class="s2">&quot;frame_height&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
+</span><span data-line="169">            <span class="s2">&quot;shutter_speed&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+</span><span data-line="170">            <span class="s2">&quot;cam_serialnumber&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+</span><span data-line="171">            <span class="s2">&quot;cam_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Dummy&quot;</span><span class="p">,</span>
+</span><span data-line="172">            <span class="s2">&quot;callbacks&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;disp&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;framerate&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}},</span>
+</span><span data-line="173">        <span class="p">},</span>
+</span><span data-line="174">    <span class="p">}</span>
+</span><span data-line="175">    <span class="n">path_protocol</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig/protocols/dummy_1min.yml&quot;</span>
+</span><span data-line="176">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   protocol </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_protocol</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="177">
+</span><span data-line="178">    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_protocol</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="179">        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeDumper</span><span class="p">)</span>
+</span><span data-line="180">
+</span><span data-line="181">    <span class="c1"># generate test playlist</span>
+</span><span data-line="182">    <span class="n">playlist</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="183">        <span class="s2">&quot;stimFileName&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;SIN_100_0_1000&quot;</span><span class="p">},</span>
+</span><span data-line="184">        <span class="s2">&quot;silencePre&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">10000</span><span class="p">},</span>
+</span><span data-line="185">        <span class="s2">&quot;silencePost&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">9000</span><span class="p">},</span>
+</span><span data-line="186">        <span class="s2">&quot;delayPost&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+</span><span data-line="187">        <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+</span><span data-line="188">        <span class="s2">&quot;freq&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">100</span><span class="p">},</span>
+</span><span data-line="189">        <span class="s2">&quot;MODE&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+</span><span data-line="190">    <span class="p">}</span>
+</span><span data-line="191">    <span class="n">path_playlist</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig/playlists/0_silence.txt&quot;</span>
+</span><span data-line="192">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   playlist </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="193">    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">playlist</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+</span><span data-line="194">
+</span><span data-line="195">
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.main">[docs]</a>
+</span><span data-line="196"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span data-line="197"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Command line interface for DAS.&quot;&quot;&quot;</span>
+</span><span data-line="198">    <span class="n">subcommands</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="199">        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
+</span><span data-line="200">        <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="n">init</span><span class="p">,</span>
+</span><span data-line="201">    <span class="p">}</span>
+</span><span data-line="202">
+</span><span data-line="203">    <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="204">        <span class="n">subcommands</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;run&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">})</span>
+</span><span data-line="205">    <span class="k">try</span><span class="p">:</span>
+</span><span data-line="206">        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
+</span><span data-line="207">
+</span><span data-line="208">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">main</span>
+</span><span data-line="209">    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
+</span><span data-line="210">        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;No GUI avalaible.&quot;</span><span class="p">)</span>
+</span><span data-line="211">        <span class="c1"># fall back to function that displays helpful instructions</span>
+</span><span data-line="212">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">no_gui</span>
+</span><span data-line="213">
+</span><span data-line="214">    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="215">    <span class="n">defopt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subcommands</span><span class="p">,</span> <span class="n">show_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+</span></pre></div>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Jan Clemens</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/janclemenslab/etho" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../../_static/shibuya.js?v=cac61aee"></script>
+      <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
+      <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
+      <script src="https://code.iconify.design/iconify-icon/3.0.1/iconify-icon.min.js"></script></body>
 </html>

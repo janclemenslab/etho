@@ -1,12 +1,12 @@
 
-.. _gui:
+.. _configuration-overview:
 
 Configuration
-=================
+=============
 
-Configuration
-
-Protocol files and playlist files are ways to configure the system w/o messing with the code. Each file type has a specific role:
+Etho uses configuration files so common rig settings, experiment settings, and
+trial-level stimulus definitions can be changed without editing Python code.
+Each file type has a specific role:
 
 - `A global configuration <global.html>`__ file controls global hardware setting - e.g. user names, folder names etc.
 - `Experiment protocols <protocol.html>`__ files control hardware settings on a per-experiment basis - e.g. allow to set sampling rate or frame size
@@ -17,7 +17,6 @@ Protocol files and playlist files are ways to configure the system w/o messing w
    :maxdepth: 1
    :hidden:
 
-   :toctree: Configuration
    global
    protocol
    playlist

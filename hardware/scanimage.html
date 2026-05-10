@@ -1,188 +1,92 @@
-<!doctype html>
-<html class="no-js">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Command-line interface" href="../cli.html" /><link rel="prev" title="Raspberry PI" href="rpi.html" />
-
-    <!-- Generated with Sphinx 4.5.0 and Furo 2023.05.20 -->
-        <title>ScanImage - etho documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.5fd3999ee7762ccc51105388f4a9d115.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-    
-    
-
-
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ScanImage - etho documentation</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Command-Line Interface" href="../cli.html" /><link rel="prev" title="DLP Projector" href="projector.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=44020203" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-dropdown.css?v=995e94df" />
+    <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.min.css?v=21c0b90a" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body {
-    --color-code-background: #f8f8f8;
-  --color-code-foreground: black;
-  
-  }
-  @media not print {
-    body[data-theme="dark"] {
-      --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
-  
-    }
-    @media (prefers-color-scheme: dark) {
-      body:not([data-theme="light"]) {
-        --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
-  
-      }
-    }
-  }
-</style></head>
-  <body>
-    
-    <script>
-      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
-    </script>
-    
-
-<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-  <symbol id="svg-toc" viewBox="0 0 24 24">
-    <title>Contents</title>
-    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
-      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
-    </svg>
-  </symbol>
-  <symbol id="svg-menu" viewBox="0 0 24 24">
-    <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
-    <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  </symbol>
-  <symbol id="svg-sun" viewBox="0 0 24 24">
-    <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
-      <circle cx="12" cy="12" r="5"></circle>
-      <line x1="12" y1="1" x2="12" y2="3"></line>
-      <line x1="12" y1="21" x2="12" y2="23"></line>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-      <line x1="1" y1="12" x2="3" y2="12"></line>
-      <line x1="21" y1="12" x2="23" y2="12"></line>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-    </svg>
-  </symbol>
-  <symbol id="svg-moon" viewBox="0 0 24 24">
-    <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
-    </svg>
-  </symbol>
-  <symbol id="svg-sun-half" viewBox="0 0 24 24">
-    <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
-      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M13 12h5" />
-      <path d="M13 15h4" />
-      <path d="M13 18h1" />
-      <path d="M13 9h4" />
-      <path d="M13 6h1" />
-    </svg>
-  </symbol>
-</svg>
-
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
-
-
-
-<div class="page">
-  <header class="mobile-header">
-    <div class="header-left">
-      <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
-      </label>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="ScanImage"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../index.html">
+      <img class="light-logo" src="../_static/etho_light.svg" alt="etho" height="28" loading="lazy" />
+      <img class="dark-logo" src="../_static/etho_dark.svg" alt="etho" height="28" loading="lazy" />
+      <strong>etho</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../install.html">Installation</a></li><li class="link"><a href="../tutorial.html">Tutorial</a></li><li class="link"><a href="../configuration/configuration.html">Configuration</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/janclemenslab/etho" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
     </div>
-    <div class="header-center">
-      <a href="../index.html"><div class="brand">etho  documentation</div></a>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
     </div>
-    <div class="header-right">
-      <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-        </button>
-      </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-      </label>
-    </div>
-  </header>
-  <aside class="sidebar-drawer">
-    <div class="sidebar-container">
-      
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
-  
-  
-  
-</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
-  <input type="hidden" name="check_keywords" value="yes">
-  <input type="hidden" name="area" value="default">
-</form>
-<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul class="current">
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../configuration/configuration.html">Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../configuration/global.html">Global configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../configuration/protocol.html">Experimental protocols</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../configuration/playlist.html">Stimulus playlists</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../configuration/calibration_speaker.html">Speaker calibration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../configuration/calibration_led.html">LED calibration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/global.html">Global Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/protocol.html">Experimental Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/playlist.html">Stimulus Playlists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/calibration_speaker.html">Speaker Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/calibration_led.html">LED Calibration</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="hardware.html">Hardware</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Hardware</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="hardware.html">Hardware</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="camera.html">Cameras</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nidaq.html">National Instruments DAQmx cards</a></li>
-<li class="toctree-l2"><a class="reference internal" href="projector.html">DLP projector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="rpi.html">Raspberry PI</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">ScanImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nidaq.html">National Instruments DAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projector.html">DLP Projector</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ScanImage</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">CLI</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api_etho.html">API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_etho.html">API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.app.html">etho.app</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.cli.html">etho.cli</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.client.html">etho.client</a></li>
@@ -194,25 +98,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.CamZeroService.html">etho.services.CamZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.GOVZeroService.html">etho.services.GOVZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.Opt2ZeroService.html">etho.services.Opt2ZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.RelayZeroService.html">etho.services.RelayZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.SndZeroService.html">etho.services.SndZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ThuAZeroService.html">etho.services.ThuAZeroService</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ThuZeroService.html">etho.services.ThuZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.flycapture2.html">etho.services.camera.flycapture2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.videocapture.html">etho.services.camera.videocapture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -221,141 +117,148 @@
 </li>
 </ul>
 
-</div>
-</div>
-
+        </div>
       </div>
-      
     </div>
   </aside>
-  <div class="main">
-    <div class="content">
-      <div class="article-container">
-        <a href="#" class="back-to-top muted-link">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
-          </svg>
-          <span>Back to top</span>
-        </a>
-        <div class="content-icon-container">
-          
-<div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
-              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
-              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
-              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
-            </button>
-          </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
-          </label>
-        </div>
-        <article role="main">
-          <section id="scanimage">
-<h1>ScanImage<a class="headerlink" href="#scanimage" title="Permalink to this headline">#</a></h1>
-<section id="scanimage-settings">
-<h2>ScanImage settings<a class="headerlink" href="#scanimage-settings" title="Permalink to this headline">#</a></h2>
-<ul class="simple">
-<li><p>enable exterrnal triggering, leave default digital channels, set NEXT and STOP triggers to ‘falling’</p></li>
-<li><p>Set scanimage scan dur to inf and nb acq/frames to a very large value</p></li>
-<li><p>Start pb_ui</p></li>
-<li><p>select protocol and playlist</p></li>
-<li><p>Focus and Start ACQ buttons will arm scanimage acquisition/focus, set the savefilename in scanimage from the datename and session number and start etho in a terminal</p></li>
-<li><p>Imaging will be started by a START trigger signal sent with the first sample of the first stimulus.</p></li>
-<li><p>Imaging data will be saved to a separate file for each stimulus, throught a NEXT trigger at the end of each Stimulus</p></li>
-<li><p>Imaging will stop by a STOP trigger at the end of the last stimulus or if loop or shuffle is enabled, with a delay at the end of the or via the Stop ACQ button.</p></li>
-<li><p>Stimuli, triggers, and pixel/scan clocks are recorded via daq</p></li>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#scanimage-setup">ScanImage Setup</a></li>
+<li><a class="reference internal" href="#etho-protocol">Etho Protocol</a></li>
+<li><a class="reference internal" href="#playlist-triggers">Playlist Triggers</a></li>
 </ul>
-</section>
-<section id="stimulus-control">
-<h2>Stimulus control<a class="headerlink" href="#stimulus-control" title="Permalink to this headline">#</a></h2>
-<ul class="simple">
-<li><p>Specify digital outputs for the triggers in the protocol: <code class="docutils literal notranslate"><span class="pre">digital_chans_out:</span> <span class="pre">['port0/line1',</span> <span class="pre">'port0/line2',</span> <span class="pre">'port0/line3']</span></code></p></li>
-<li><p>Specify the trigger output channels for each stimulus in the playlist as <code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code>. This will add start acquisition, stop acquisition and next file triggers for remote controlling scanimage to the channel digital output channels. <code class="docutils literal notranslate"><span class="pre">SI_START</span></code> will set the digital output to 1 for the first 2ms of the stimulus (starting at sample 0, <em>not</em> at silencePre), <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code> and <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code> will set the last 2ms (<em>not</em> before silencePost) to 1. Scanimage should be configured for external triggering with the correct digital channels. The start trigger should be set to “rising”, the stop and next triggers to “falling”. See <a class="reference external" href="https://docs.scanimage.org/Windows+Reference+Guide/Trigger+Controls.html">ScanImage docs</a> for details.</p></li>
-</ul>
-</section>
-</section>
-
-        </article>
-      </div>
-      <footer>
-        
-        <div class="related-pages">
-          <a class="next-page" href="../cli.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Command-line interface</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="rpi.html">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Raspberry PI</div>
-                
-              </div>
-            </a>
-        </div>
-        <div class="bottom-of-page">
-          <div class="left-details">
-            <div class="copyright">
-                Copyright &#169; 2021, Jan Clemens
-            </div>
-            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-            
-            <a href="https://github.com/pradyunsg/furo">Furo</a>
-            
-          </div>
-          <div class="right-details">
-            
-          </div>
-        </div>
-        
-      </footer>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
     </div>
-    <aside class="toc-drawer">
-      
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">ScanImage</a><ul>
-<li><a class="reference internal" href="#scanimage-settings">ScanImage settings</a></li>
-<li><a class="reference internal" href="#stimulus-control">Stimulus control</a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
-      
-      
-    </aside>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">etho</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="hardware.html"><span itemprop="name">Supported Hardware</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">ScanImage</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/tabs.js"></script>
-    <script src="../_static/clipboard.min.js"></script>
-    <script src="../_static/copybutton.js"></script>
-    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js"></script>
-    <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js"></script>
-    </body>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <section id="scanimage">
+<h1>ScanImage<a class="headerlink" href="#scanimage" title="Link to this heading">¶</a></h1>
+<p>Etho can drive ScanImage acquisition with DAQ digital output triggers generated
+from playlist entries.</p>
+<section id="scanimage-setup">
+<h2>ScanImage Setup<a class="headerlink" href="#scanimage-setup" title="Link to this heading">¶</a></h2>
+<p>Rig-specific settings must be validated locally, but the common setup is:</p>
+<ul class="simple">
+<li><p>enable external triggering in ScanImage</p></li>
+<li><p>set acquisition duration or frame count high enough for the Etho-controlled run</p></li>
+<li><p>use a rising edge for start triggers</p></li>
+<li><p>use falling edges for stop and next-file triggers when that matches the rig wiring</p></li>
+<li><p>confirm trigger input channels against the DAQ digital output lines</p></li>
+</ul>
+<p>See the ScanImage trigger documentation for the ScanImage-side controls.</p>
+</section>
+<section id="etho-protocol">
+<h2>Etho Protocol<a class="headerlink" href="#etho-protocol" title="Link to this heading">¶</a></h2>
+<p>Add digital output channels to the DAQ service:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">DAQ</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">digital_chans_out</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">port0/line1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">port0/line2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">port0/line3</span><span class="p p-Indicator">]</span>
+</span><span data-line="3"><span class="w">  </span><span class="nt">digitial_chans_out_info</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">si_start</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">si_stop</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">si_next</span><span class="p p-Indicator">]</span>
+</span></pre></div>
+</div>
+</section>
+<section id="playlist-triggers">
+<h2>Playlist Triggers<a class="headerlink" href="#playlist-triggers" title="Link to this heading">¶</a></h2>
+<p>Add ScanImage trigger entries in the playlist. Digital outputs come after analog
+outputs in <code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
+</span><span data-line="2">[SIN_100_0_1000,SI_START,SI_STOP,SI_NEXT]	1000	1000	0	1.0	100
+</span></pre></div>
+</div>
+<p>Trigger names:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code>: start acquisition at the beginning of the trial.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code>: advance to the next ScanImage file near the end of each trial.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>: stop acquisition near the end of the final trial unless stop triggers are intentionally ignored.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code>, <code class="docutils literal notranslate"><span class="pre">SI_NEXT</span></code>, and <code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code> are aligned to trial edges, not to
+<code class="docutils literal notranslate"><span class="pre">silencePre</span></code> or <code class="docutils literal notranslate"><span class="pre">silencePost</span></code>.</p>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="projector.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">DLP Projector</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="../cli.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Command-Line Interface</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Jan Clemens</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/janclemenslab/etho" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../_static/shibuya.js?v=cac61aee"></script>
+      <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
+      <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
+      <script src="https://code.iconify.design/iconify-icon/3.0.1/iconify-icon.min.js"></script></body>
 </html>
