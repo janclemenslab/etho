@@ -10,12 +10,18 @@ on:
       - '**'
       - '!paper'
       - '!docs'
+      - '!README.md'
+      - '!CONTRIBUTING.md'
+      - '!CITATION.cff'
   pull_request:
     branches: [ "master" ]
     paths:
       - '**'
       - '!paper'
       - '!docs'
+      - '!README.md'
+      - '!CONTRIBUTING.md'
+      - '!CITATION.cff'
 
 jobs:
   build:
