@@ -6,8 +6,16 @@ name: Test
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - '**'
+      - '!paper'
+      - '!docs'
   pull_request:
     branches: [ "master" ]
+    paths:
+      - '**'
+      - '!paper'
+      - '!docs'
 
 jobs:
   build:
