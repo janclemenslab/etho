@@ -10,6 +10,7 @@ import threading
 
 try:
     import PyDAQmx as daq
+
     pydaqmx_import_error = None
 except (ImportError, NotImplementedError) as pydaqmx_import_error:
     pass
@@ -18,7 +19,9 @@ except (ImportError, NotImplementedError) as pydaqmx_import_error:
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_service
 class NIC(BaseZeroService):
-    """[summary]"""
+    """NI DAQmx Counter service for generating pulse trains via a digital output,
+    for instance as an external frame trigger for cameras.
+    """
 
     LOGGING_PORT = 1450  # set this to range 1420-1460
     SERVICE_PORT = 4250  # last to digits match logging output_channels - but start with "42" instead of "14"
@@ -57,8 +60,14 @@ class NIC(BaseZeroService):
         """Setup the counter service (intiates the digital output channels).
 
         Args:
-            duration (float): Unused - kept to keep the interface same across services [description]
-            output_channels (str): , e.g. "/dev1/port0/line0:1"
+            output_channels (str): Digital output channel, e.g. "/dev1/port0/line0:1"
+            duration (float): Duration of the service.
+            frequency (float): Frequency of the pulse train in Hz.
+            duty_cycle (float): Duty cycle (pulse duration/period = duration * frequency) of the pulse train.
+            params (_type_): Unused.
+
+        Raises:
+            pydaqmx_import_error: Raised when the pydaqmx could not be imported.
         """
         if pydaqmx_import_error is not None:
             raise pydaqmx_import_error
@@ -71,22 +80,20 @@ class NIC(BaseZeroService):
         self.task.CfgImplicitTiming(daq.DAQmx_Val_ContSamps, 1000)
 
         if self.duration > 0:  # if zero, will stop when nothing is to be outputted
-            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={'stop_service': True})
-
+            self._thread_timer = threading.Timer(self.duration, self.finish, kwargs={"stop_service": True})
 
     def start(self):
         self.task.StartTask()
-        self.log.warning('Started')
+        self.log.warning("Started")
         self._time_started = time.time()
-        if hasattr(self, '_thread_timer'):
-             self.log.warning(f'duration {self.duration} seconds')
-             self._thread_timer.start()
-             self.log.warning('finish timer started')
-
+        if hasattr(self, "_thread_timer"):
+            self.log.warning(f"duration {self.duration} seconds")
+            self._thread_timer.start()
+            self.log.warning("finish timer started")
 
     def stop(self):
         self.task.StopTask()
-        self.log.warning('Stopped')
+        self.log.warning("Stopped")
 
     def finish(self, stop_service=False):
         self.log.warning("stopping")
@@ -98,7 +105,7 @@ class NIC(BaseZeroService):
         self.log.warning("   stopped ")
         # mode log file and savefilename
         if stop_service:
-            time.sleep(.2)
+            time.sleep(0.2)
             self.service_stop()
         return True
 
