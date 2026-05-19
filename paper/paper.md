@@ -48,7 +48,8 @@ etho complements these tools by focusing on reproducible coordination of heterog
 
 # Software design
 
-`etho` is modularly organized around __services__, __protocols__, __playlists__, __callbacks__ \autoref{fig:flow}. Services define hardware interfaces. An experiment is defined by a protocol and a playlist: Protocols list and parameterize services and callbacks for processing and saving acquired data. Playlists specify trial structure and stimuli.
+`etho` is modularly organized around __services__, __protocols__, __playlists__, __callbacks__ \autoref{fig:flow}.
+Services define hardware interfaces. An experiment is defined by a protocol and a playlist: Protocols list and parameterize services and callbacks for processing and saving acquired data. Playlists specify trial structure and stimuli.
 
 __Services__ encapsulate hardware-specific functionality. Current service classes include support for multiple camera backends, National Instruments data-acquisition boards, sound playback, optogenetic LED control, environmental monitoring, DLP-projector stimulation, and remote control of ScanImage calcium imaging rigs.
 
@@ -76,7 +77,7 @@ The value of etho lies in making complex experiments easier to run, maintain, an
 
 # Acknowledgements
 
-We thank all past and current members of the Clemens lab for testing `etho` on experimental rigs and reporting bugs. Development of `etho` was funded via an Emmy Noether Grant (Project number 329518246) and an ERC Starting Grant (Grant agreement No. 851210) to JC.
+We thank past and current members of the Roemschied, Deutsch, and Clemens labs for testing `etho` on experimental rigs and reporting bugs. Development of `etho` was funded via an Emmy Noether Grant (Project number 329518246) and an ERC Starting Grant (Grant agreement No. 851210) to JC.
 
 
 # References
