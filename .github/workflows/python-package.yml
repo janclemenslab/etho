@@ -6,23 +6,20 @@ name: Test
 on:
   push:
     branches: [ "master" ]
-    paths:
-      - '**'
-      - '!paper'
-      - '!docs'
-      - '!README.md'
-      - '!CONTRIBUTING.md'
-      - '!CITATION.cff'
+    paths-ignore:
+      - 'paper/**'
+      - 'docs/**'
+      - '.github/workflows/main.yml'
+      - '.github/workflows/static.yml'
+      - '*'
   pull_request:
     branches: [ "master" ]
-    paths:
-      - '**'
-      - '!paper'
-      - '!docs'
-      - '!README.md'
-      - '!CONTRIBUTING.md'
-      - '!CITATION.cff'
-
+    paths-ignore:
+      - 'paper/**'
+      - 'docs/**'
+      - '.github/workflows/main.yml'
+      - '.github/workflows/static.yml'
+      - '*'
 jobs:
   build:
 
