@@ -48,12 +48,12 @@ etho complements these tools by focusing on reproducible coordination of heterog
 
 # Software design
 
-`etho` is modularly organized around __services__, __protocols__, __playlists__, __callbacks__ \autoref{fig:flow}.
+`etho` is modularly organized around __services__, __protocols__, __playlists__, __callbacks__ (\autoref{fig:flow}).
 Services define hardware interfaces. An experiment is defined by a protocol and a playlist: Protocols list and parameterize services and callbacks for processing and saving acquired data. Playlists specify trial structure and stimuli.
 
 __Services__ encapsulate hardware-specific functionality. Current service classes include support for multiple camera backends, National Instruments data-acquisition boards, sound playback, optogenetic LED control, environmental monitoring, DLP-projector stimulation, and remote control of ScanImage calcium imaging rigs.
 
-![`etho` software structure and data flow. Configuration files define experiments; services control hardware; callbacks and logs produce a reproducible experiment record.\label{fig:flow}](fig_flow.pdf)
+![__`etho` software structure and data flow:__˝ Command-line and graphical user interfaces allow users to select configuration files and run experiments. Protocol and playlist configuration files define and parameterize hardware and stimuli for each experiment. Hardware services control and log connected devices, while callbacks display and save data streams generated during experiments. Together, configuration files, logs, and acquired data form a standardized experimental record that can be further processed and analyzed..\label{fig:flow}](fig_flow.pdf)
 
 __Protocols__ are YAML files that define the structure of an experiment. A protocol specifies the experiment duration, active services, service-specific configuration and callbacks. For example, a protocol can configure a camera service with frame rate, region of interest, exposure, and video-saving callbacks, while also configuring a data-acquisition service with sampling rate, analog input channels, analog and digital output channels, and callbacks for Zarr [@Miles_2020_zarrdevelopers] data storage. Because protocols are plain text, they can be version controlled and stored alongside data and analysis code.
 This modular service-plus-protocol structure makes `etho` easily extensible: New hardware can be added as new python classes implementing the service interface and registering a new service. The new service can then be added to a protocol and used in an experiment.
