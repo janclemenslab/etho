@@ -26,13 +26,9 @@ ATTENUATION:
 Fields:
 
 - `savefolder`: Parent folder for experiment output directories.
-- `python_exe`: Python executable used when services are started. This should usually point to the `etho` conda environment.
+- `python_exe`: Python executable used when services are started. This should usually point to the `etho` conda environment. Protocol files can override `python_exe` for a service if a specific service must run in a different environment.
 - `playlistfolder`: Default folder shown by the GUI for playlist files.
 - `protocolfolder`: Default folder shown by the GUI for protocol files.
 - `stimfolder`: Folder used to resolve stimulus files referenced by playlists.
 - `ATTENUATION`: Frequency-keyed attenuation factors used when loading stimuli.
 - `user`: Optional user or rig label.
-
-Protocol files can override `python_exe` for a service if a specific service
-must run in a different environment. Per-service remote host blocks are no
-longer supported.

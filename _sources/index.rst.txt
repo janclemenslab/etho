@@ -62,7 +62,7 @@ Python command-line or GUI entry point.
    Logging <logging>
    Callbacks <callbacks>
    Extensions <extensions>
-   Hardware <hardware/hardware>
+   Hardware services <hardware/hardware>
    CLI <cli>
    API <api_etho>
 

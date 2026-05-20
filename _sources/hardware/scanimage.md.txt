@@ -22,7 +22,7 @@ Add digital output channels to the DAQ service:
 ```yaml
 DAQ:
   digital_chans_out: [port0/line1, port0/line2, port0/line3]
-  digitial_chans_out_info: [si_start, si_stop, si_next]
+  digital_chans_out_info: [si_start, si_stop, si_next]
 ```
 
 ## Playlist Triggers
@@ -31,8 +31,8 @@ Add ScanImage trigger entries in the playlist. Digital outputs come after analog
 outputs in `stimFileName`.
 
 ```text
-stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
-[SIN_100_0_1000,SI_START,SI_STOP,SI_NEXT]	1000	1000	0	1.0	100
+stimFileName	silencePre	silencePost	intensity	freq
+[SIN_100_0_1000,SI_START,SI_STOP,SI_NEXT]	1000	1000	1.0	100
 ```
 
 Trigger names:

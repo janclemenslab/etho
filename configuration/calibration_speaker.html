@@ -7,7 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
     <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -79,7 +79,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../extensions.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../hardware/hardware.html">Hardware</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/hardware.html">Hardware services</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/projector.html">DLP Projector</a></li>
@@ -131,7 +131,6 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#hardware-setup">Hardware Setup</a></li>
 <li><a class="reference internal" href="#run-calibration-stimuli">Run Calibration Stimuli</a></li>
 <li><a class="reference internal" href="#analyze-and-update">Analyze And Update</a></li>
-<li><a class="reference internal" href="#suggested-file-layout">Suggested File Layout</a></li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
@@ -168,9 +167,9 @@ data-aria-dark="Switch to auto color mode">
   <article class="yue" role="main">
           <section id="speaker-calibration">
 <h1>Speaker Calibration<a class="headerlink" href="#speaker-calibration" title="Link to this heading">¶</a></h1>
-<p>Speaker calibration sets the attenuation values used when Etho loads playlist
-stimuli. The goal is that playlist <code class="docutils literal notranslate"><span class="pre">intensity</span></code> values correspond to the sound
-unit convention used by the rig.</p>
+<p>Speaker calibration sets the attenuation values used when <code class="docutils literal notranslate"><span class="pre">etho</span></code> loads playlist
+stimuli. The goal is that playlist <code class="docutils literal notranslate"><span class="pre">intensity</span></code> values correspond to the sound intensity
+unit used by the rig.</p>
 <section id="hardware-setup">
 <h2>Hardware Setup<a class="headerlink" href="#hardware-setup" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
@@ -191,14 +190,15 @@ for experiments. During the run, save:</p>
 <li><p>playlist file</p></li>
 <li><p>current <code class="docutils literal notranslate"><span class="pre">ethoconfig.yml</span></code></p></li>
 <li><p>microphone calibration metadata</p></li>
+<li><p>amplifier gain and other hardware settings.</p></li>
 <li><p>rig name and date</p></li>
 </ul>
 </section>
 <section id="analyze-and-update">
 <h2>Analyze And Update<a class="headerlink" href="#analyze-and-update" title="Link to this heading">¶</a></h2>
 <p>Analyze the recorded response to calculate attenuation factors for the
-frequencies used in playlists. Store the resulting mapping in
-<code class="docutils literal notranslate"><span class="pre">~/ethoconfig/ethoconfig.yml</span></code> under <code class="docutils literal notranslate"><span class="pre">ATTENUATION</span></code>.</p>
+frequencies used in playlists. You would use the microphone calibration data to convert analog input voltage to sound intensity units.
+Store the resulting mapping in <code class="docutils literal notranslate"><span class="pre">~/ethoconfig/ethoconfig.yml</span></code> under <code class="docutils literal notranslate"><span class="pre">ATTENUATION</span></code>.</p>
 <p>Example:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">ATTENUATION</span><span class="p">:</span>
 </span><span data-line="2"><span class="w">  </span><span class="nt">-1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
@@ -207,24 +207,8 @@ frequencies used in playlists. Store the resulting mapping in
 </span><span data-line="5"><span class="w">  </span><span class="nt">200</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.74</span>
 </span></pre></div>
 </div>
-<p>After updating attenuation, run a validation playlist and confirm the measured
-output matches the target within the tolerance used by the rig.</p>
-</section>
-<section id="suggested-file-layout">
-<h2>Suggested File Layout<a class="headerlink" href="#suggested-file-layout" title="Link to this heading">¶</a></h2>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">playback/
-</span><span data-line="2">  calibration/
-</span><span data-line="3">    mic_calibration/
-</span><span data-line="4">      mic_calibration_YYYYMMDD.yml
-</span><span data-line="5">    YYYYMMDD/
-</span><span data-line="6">      rig_name_before.csv
-</span><span data-line="7">      ethoconfig_rig_name_before.yml
-</span><span data-line="8">      rig_name_after.csv
-</span><span data-line="9">      ethoconfig_rig_name_after.yml
-</span><span data-line="10">      figures/
-</span></pre></div>
-</div>
-<p>Keep enough metadata with the calibration data that another operator can repeat
+<p>After updating attenuation, run the calibration playlist and confirm the measured
+output matches the target within the tolerance used by the rig. Keep enough metadata with the calibration data that another operator can repeat
 or audit the calibration later.</p>
 </section>
 </section>

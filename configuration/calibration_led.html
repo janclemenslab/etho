@@ -7,7 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
     <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -79,7 +79,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../extensions.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../hardware/hardware.html">Hardware</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/hardware.html">Hardware services</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/projector.html">DLP Projector</a></li>
@@ -174,7 +174,7 @@ configuration or analysis notes.</p>
 <p>For each calibrated LED path, record:</p>
 <ul class="simple">
 <li><p>rig name and date</p></li>
-<li><p>LED driver model and gain/current settings</p></li>
+<li><p>LED driver model and gain/current or other hardware settings</p></li>
 <li><p>DAQ output channel</p></li>
 <li><p>measurement sensor and calibration date</p></li>
 <li><p>distance and geometry at the sample position</p></li>
@@ -191,10 +191,8 @@ configuration or analysis notes.</p>
 <li><p>Run a short playlist that steps through the expected intensity range.</p></li>
 <li><p>Measure optical output at the sample position.</p></li>
 <li><p>Update the rig’s attenuation/calibration notes.</p></li>
-<li><p>Re-run at least one validation intensity and record the measured value.</p></li>
+<li><p>Re-run at the playlist and record the measured value.</p></li>
 </ol>
-<p>If the playlist uses <code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code>, confirm that the DAQ protocol defines
-<code class="docutils literal notranslate"><span class="pre">ledamp</span></code> and that the generated pulse train has the expected voltage amplitude.</p>
 </section>
 </section>
 

@@ -9,7 +9,7 @@ configuration or analysis notes.
 For each calibrated LED path, record:
 
 - rig name and date
-- LED driver model and gain/current settings
+- LED driver model and gain/current or other hardware settings
 - DAQ output channel
 - measurement sensor and calibration date
 - distance and geometry at the sample position
@@ -24,7 +24,4 @@ For each calibrated LED path, record:
 3. Run a short playlist that steps through the expected intensity range.
 4. Measure optical output at the sample position.
 5. Update the rig's attenuation/calibration notes.
-6. Re-run at least one validation intensity and record the measured value.
-
-If the playlist uses `MIRROR_LED`, confirm that the DAQ protocol defines
-`ledamp` and that the generated pulse train has the expected voltage amplitude.
+6. Re-run at the playlist and record the measured value.

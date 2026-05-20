@@ -7,7 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
     <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -79,7 +79,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../../../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../extensions.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../hardware/hardware.html">Hardware</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../hardware/hardware.html">Hardware services</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/projector.html">DLP Projector</a></li>
@@ -224,356 +224,355 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="59">            <span class="n">playlist</span><span class="p">,</span>
 </span><span data-line="60">            <span class="n">fs</span><span class="p">,</span>
 </span><span data-line="61">            <span class="n">attenuation</span><span class="o">=</span><span class="n">attenuation</span><span class="p">,</span>
-</span><span data-line="62">            <span class="n">LEDamp</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;ledamp&quot;</span><span class="p">],</span>
-</span><span data-line="63">            <span class="n">stimfolder</span><span class="o">=</span><span class="n">global_config</span><span class="p">[</span><span class="s2">&quot;stimfolder&quot;</span><span class="p">],</span>
-</span><span data-line="64">        <span class="p">)</span>
-</span><span data-line="65">        <span class="n">sounds</span> <span class="o">=</span> <span class="p">[</span><span class="n">sound</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="k">for</span> <span class="n">sound</span> <span class="ow">in</span> <span class="n">sounds</span><span class="p">]</span>
-</span><span data-line="66">
-</span><span data-line="67">        <span class="n">playlist_items</span><span class="p">,</span> <span class="n">totallen</span> <span class="o">=</span> <span class="n">build_playlist</span><span class="p">(</span><span class="n">sounds</span><span class="p">,</span> <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">],</span> <span class="n">fs</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;shuffle&quot;</span><span class="p">])</span>
-</span><span data-line="68">        <span class="k">if</span> <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-</span><span data-line="69">            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting maxduration from playlist to </span><span class="si">{</span><span class="n">totallen</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span data-line="70">            <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">totallen</span>
-</span><span data-line="71">        <span class="n">playlist_items</span> <span class="o">=</span> <span class="n">cycle</span><span class="p">(</span><span class="n">playlist_items</span><span class="p">)</span>
-</span><span data-line="72">
-</span><span data-line="73">        <span class="k">if</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;digital_chans_out&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="74">            <span class="n">nb_digital_chans_out</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;digital_chans_out&quot;</span><span class="p">])</span>
-</span><span data-line="75">            <span class="n">digital_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">snd</span><span class="p">[:,</span> <span class="o">-</span><span class="n">nb_digital_chans_out</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="k">for</span> <span class="n">snd</span> <span class="ow">in</span> <span class="n">sounds</span><span class="p">]</span>
-</span><span data-line="76">            <span class="n">analog_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">snd</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="n">nb_digital_chans_out</span><span class="p">]</span> <span class="k">for</span> <span class="n">snd</span> <span class="ow">in</span> <span class="n">sounds</span><span class="p">]</span>
-</span><span data-line="77">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="78">            <span class="n">digital_data</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="79">            <span class="n">analog_data</span> <span class="o">=</span> <span class="n">sounds</span>
-</span><span data-line="80">
-</span><span data-line="81">        <span class="n">service</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-</span><span data-line="82">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;serializer&quot;</span><span class="p">],</span>
-</span><span data-line="83">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
-</span><span data-line="84">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;python_exe&quot;</span><span class="p">],</span>
-</span><span data-line="85">            <span class="n">new_console</span><span class="o">=</span><span class="n">new_console</span><span class="p">,</span>
-</span><span data-line="86">            <span class="n">port</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;port&quot;</span><span class="p">],</span>
-</span><span data-line="87">        <span class="p">)</span>
-</span><span data-line="88">        <span class="n">save_suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">service_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">service_index</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-</span><span data-line="89">        <span class="n">service</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span>
-</span><span data-line="90">            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">this</span><span class="p">[</span><span class="s1">&#39;savefolder&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}{</span><span class="n">save_suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span data-line="91">            <span class="n">playlist_items</span><span class="p">,</span>
-</span><span data-line="92">            <span class="n">playlist</span><span class="p">,</span>
-</span><span data-line="93">            <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">],</span>
-</span><span data-line="94">            <span class="n">fs</span><span class="p">,</span>
-</span><span data-line="95">            <span class="n">dev_name</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;device&quot;</span><span class="p">],</span>
-</span><span data-line="96">            <span class="n">clock_source</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;clock_source&quot;</span><span class="p">],</span>
-</span><span data-line="97">            <span class="n">nb_inputsamples_per_cycle</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;nb_inputsamples_per_cycle&quot;</span><span class="p">],</span>
-</span><span data-line="98">            <span class="n">analog_chans_in</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;analog_chans_in&quot;</span><span class="p">],</span>
-</span><span data-line="99">            <span class="n">analog_chans_out</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;analog_chans_out&quot;</span><span class="p">],</span>
-</span><span data-line="100">            <span class="n">analog_data_out</span><span class="o">=</span><span class="n">analog_data</span><span class="p">,</span>
-</span><span data-line="101">            <span class="n">digital_chans_out</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;digital_chans_out&quot;</span><span class="p">],</span>
-</span><span data-line="102">            <span class="n">digital_data_out</span><span class="o">=</span><span class="n">digital_data</span><span class="p">,</span>
-</span><span data-line="103">            <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
-</span><span data-line="104">                <span class="s2">&quot;analog_chans_in_info&quot;</span><span class="p">:</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;analog_chans_in_info&quot;</span><span class="p">],</span>
-</span><span data-line="105">                <span class="s2">&quot;analog_chans_out_info&quot;</span><span class="p">:</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;analog_chans_out_info&quot;</span><span class="p">],</span>
-</span><span data-line="106">                <span class="s2">&quot;digitial_chans_out_info&quot;</span><span class="p">:</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;digitial_chans_out_info&quot;</span><span class="p">],</span>
-</span><span data-line="107">            <span class="p">},</span>
-</span><span data-line="108">            <span class="n">params</span><span class="o">=</span><span class="n">undefaultify</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">]),</span>
-</span><span data-line="109">        <span class="p">)</span>
-</span><span data-line="110">        <span class="n">service</span><span class="o">.</span><span class="n">init_local_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">this</span><span class="p">[</span><span class="s1">&#39;savefolder&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}{</span><span class="n">save_suffix</span><span class="si">}</span><span class="s2">_daq.log&quot;</span><span class="p">)</span>
-</span><span data-line="111">        <span class="k">return</span> <span class="n">service</span>
-</span><span data-line="112">
-</span><span data-line="113">    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
-</span><span data-line="114">        <span class="bp">self</span><span class="p">,</span>
-</span><span data-line="115">        <span class="n">savefilename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="116">        <span class="n">play_order</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="117">        <span class="n">playlist_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span data-line="118">        <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-</span><span data-line="119">        <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
-</span><span data-line="120">        <span class="n">dev_name</span><span class="o">=</span><span class="s2">&quot;Dev1&quot;</span><span class="p">,</span>
-</span><span data-line="121">        <span class="n">nb_inputsamples_per_cycle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span data-line="122">        <span class="n">clock_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span data-line="123">        <span class="n">analog_chans_out</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="124">        <span class="n">analog_chans_out_limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span data-line="125">        <span class="n">analog_chans_in</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ai0&quot;</span><span class="p">],</span>
-</span><span data-line="126">        <span class="n">analog_chans_in_limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span data-line="127">        <span class="n">analog_chans_in_terminals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span data-line="128">        <span class="n">digital_chans_out</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="129">        <span class="n">analog_data_out</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="130">        <span class="n">digital_data_out</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="131">        <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="132">        <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span data-line="133">    <span class="p">):</span>
-</span><span data-line="134"><span class="w">        </span><span class="sd">&quot;&quot;&quot;[summary]</span>
-</span><span data-line="135">
-</span><span data-line="136"><span class="sd">        Args:</span>
-</span><span data-line="137"><span class="sd">            savefilename (str, optional): [description]. Defaults to None.</span>
-</span><span data-line="138"><span class="sd">            play_order (Iterable, optional): [description]. Defaults to None.</span>
-</span><span data-line="139"><span class="sd">            playlist_info ([type], optional): [description]. Defaults to None.</span>
-</span><span data-line="140"><span class="sd">            duration (float, optional): [description]. Defaults to -1.</span>
-</span><span data-line="141"><span class="sd">            fs (int, optional): [description]. Defaults to 10000.</span>
-</span><span data-line="142"><span class="sd">            nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.</span>
-</span><span data-line="143"><span class="sd">            clock_source (str, optional): None for AI-synced clock.</span>
-</span><span data-line="144"><span class="sd">                                          Use &#39;OnboardClock&#39; for boards that don&#39;t support this (USB-DAQ).</span>
-</span><span data-line="145"><span class="sd">                                          Defaults to None.</span>
-</span><span data-line="146"><span class="sd">            analog_chans_out (Sequence, optional): [description]. Defaults to None.</span>
-</span><span data-line="147"><span class="sd">            analog_chans_in (Sequence, optional): [description]. Defaults to [&#39;ai0&#39;].</span>
-</span><span data-line="148"><span class="sd">            digital_chans_out (Sequence, optional): [description]. Defaults to None.</span>
-</span><span data-line="149"><span class="sd">            analog_data_out (Sequence, optional): [description]. Defaults to None.</span>
-</span><span data-line="150"><span class="sd">            digital_data_out (Sequence, optional): [description]. Defaults to None.</span>
-</span><span data-line="151"><span class="sd">            metadata (dict, optional): [description]. Defaults to {}.</span>
-</span><span data-line="152"><span class="sd">            params: part of prot dict (prot[&#39;DAQ&#39;])</span>
-</span><span data-line="153">
-</span><span data-line="154"><span class="sd">        Raises:</span>
-</span><span data-line="155"><span class="sd">            ValueError: [description]</span>
-</span><span data-line="156"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="157">        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;initializing&quot;</span>
-</span><span data-line="158">
-</span><span data-line="159">        <span class="k">if</span> <span class="n">daqmx_import_error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="160">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">daqmx_import_error</span><span class="p">)</span>
-</span><span data-line="161">
-</span><span data-line="162">        <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="163">        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span>
-</span><span data-line="164">        <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="n">fs</span>
-</span><span data-line="165">        <span class="bp">self</span><span class="o">.</span><span class="n">savefilename</span> <span class="o">=</span> <span class="n">savefilename</span>
-</span><span data-line="166">        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
-</span><span data-line="167">        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_info</span> <span class="o">=</span> <span class="n">playlist_info</span>
-</span><span data-line="168">
-</span><span data-line="169">        <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span> <span class="o">=</span> <span class="n">analog_chans_out</span>
-</span><span data-line="170">        <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out_limits</span> <span class="o">=</span> <span class="n">analog_chans_out_limits</span>
-</span><span data-line="171">
-</span><span data-line="172">        <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in</span> <span class="o">=</span> <span class="n">analog_chans_in</span>
-</span><span data-line="173">        <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in_limits</span> <span class="o">=</span> <span class="n">analog_chans_in_limits</span>
-</span><span data-line="174">        <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in_terminals</span><span class="o">=</span> <span class="n">analog_chans_in_terminals</span>
-</span><span data-line="175">
-</span><span data-line="176">        <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span> <span class="o">=</span> <span class="n">digital_chans_out</span>
-</span><span data-line="177">
-</span><span data-line="178">        <span class="c1"># ANALOG OUTPUT</span>
-</span><span data-line="179">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
-</span><span data-line="180">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span> <span class="o">=</span> <span class="n">IOTask</span><span class="p">(</span>
-</span><span data-line="181">                <span class="n">dev_name</span><span class="o">=</span><span class="n">dev_name</span><span class="p">,</span>
-</span><span data-line="182">                <span class="n">cha_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">,</span>
-</span><span data-line="183">                <span class="n">rate</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
-</span><span data-line="184">                <span class="n">clock_source</span><span class="o">=</span><span class="n">clock_source</span><span class="p">,</span>
-</span><span data-line="185">                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">,</span>
-</span><span data-line="186">            <span class="p">)</span>
-</span><span data-line="187">            <span class="k">if</span> <span class="n">analog_data_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">):</span>
-</span><span data-line="188">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of analog output channels (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">)</span><span class="si">}</span><span class="s2">) does not match the number of channels in the sound files (</span><span class="si">{</span><span class="n">analog_data_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
-</span><span data-line="189">            <span class="n">play_order_new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">play_order</span><span class="p">)</span>
-</span><span data-line="190">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">data_gen</span> <span class="o">=</span> <span class="n">data_playlist</span><span class="p">(</span><span class="n">analog_data_out</span><span class="p">,</span> <span class="n">play_order_new</span><span class="p">,</span> <span class="n">playlist_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;AO&quot;</span><span class="p">)</span>
-</span><span data-line="191">            <span class="k">if</span> <span class="n">clock_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="192">                <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">CfgDigEdgeStartTrig</span><span class="p">(</span><span class="s2">&quot;ai/StartTrigger&quot;</span><span class="p">,</span> <span class="n">DAQmx_Val_Rising</span><span class="p">)</span>
-</span><span data-line="193">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="194">                <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">DisableStartTrig</span><span class="p">()</span>
-</span><span data-line="195">        <span class="c1"># DIGITAL OUTPUT</span>
-</span><span data-line="196">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">:</span>
-</span><span data-line="197">            <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span> <span class="o">=</span> <span class="n">IOTask</span><span class="p">(</span>
-</span><span data-line="198">                <span class="n">dev_name</span><span class="o">=</span><span class="n">dev_name</span><span class="p">,</span>
-</span><span data-line="199">                <span class="n">cha_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">,</span>
-</span><span data-line="200">                <span class="n">rate</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
-</span><span data-line="201">                <span class="n">clock_source</span><span class="o">=</span><span class="n">clock_source</span><span class="p">,</span>
-</span><span data-line="202">                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">,</span>
-</span><span data-line="203">            <span class="p">)</span>
-</span><span data-line="204">            <span class="n">play_order_new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">play_order</span><span class="p">)</span>
-</span><span data-line="205">            <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">data_gen</span> <span class="o">=</span> <span class="n">data_playlist</span><span class="p">(</span><span class="n">digital_data_out</span><span class="p">,</span> <span class="n">play_order_new</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DO&quot;</span><span class="p">)</span>
-</span><span data-line="206">            <span class="k">if</span> <span class="n">clock_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="207">                <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">CfgDigEdgeStartTrig</span><span class="p">(</span><span class="s2">&quot;ai/StartTrigger&quot;</span><span class="p">,</span> <span class="n">DAQmx_Val_Rising</span><span class="p">)</span>
-</span><span data-line="208">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="209">                <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">DisableStartTrig</span><span class="p">()</span>
-</span><span data-line="210">        <span class="c1"># ANALOG INPUT</span>
-</span><span data-line="211">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in</span><span class="p">:</span>
-</span><span data-line="212">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span> <span class="o">=</span> <span class="n">IOTask</span><span class="p">(</span>
-</span><span data-line="213">                <span class="n">dev_name</span><span class="o">=</span><span class="n">dev_name</span><span class="p">,</span>
-</span><span data-line="214">                <span class="n">cha_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in</span><span class="p">,</span>
-</span><span data-line="215">                <span class="n">rate</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
-</span><span data-line="216">                <span class="n">nb_inputsamples_per_cycle</span><span class="o">=</span><span class="n">nb_inputsamples_per_cycle</span><span class="p">,</span>
-</span><span data-line="217">                <span class="n">clock_source</span><span class="o">=</span><span class="n">clock_source</span><span class="p">,</span>
-</span><span data-line="218">                <span class="n">duration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span>
-</span><span data-line="219">                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">,</span>
-</span><span data-line="220">            <span class="p">)</span>
-</span><span data-line="221">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">data_rec</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="222">
-</span><span data-line="223">            <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="224">            <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="225">                <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span data-line="226">            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="227">                <span class="s2">&quot;rate&quot;</span><span class="p">:</span> <span class="n">fs</span><span class="p">,</span>
-</span><span data-line="228">                <span class="s2">&quot;analog_chans_in&quot;</span><span class="p">:</span> <span class="n">analog_chans_in</span><span class="p">,</span>
-</span><span data-line="229">                <span class="s2">&quot;analog_chans_out&quot;</span><span class="p">:</span> <span class="n">analog_chans_out</span><span class="p">,</span>
-</span><span data-line="230">                <span class="s2">&quot;digital_chans_out&quot;</span><span class="p">:</span> <span class="n">digital_chans_out</span><span class="p">,</span>
-</span><span data-line="231">                <span class="o">**</span><span class="n">metadata</span><span class="p">,</span>
-</span><span data-line="232">            <span class="p">}</span>
-</span><span data-line="233">            <span class="n">common_task_kwargs</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="234">                <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">savefilename</span><span class="p">,</span>
-</span><span data-line="235">                <span class="s2">&quot;nb_inputsamples_per_cycle&quot;</span><span class="p">:</span> <span class="n">nb_inputsamples_per_cycle</span><span class="p">,</span>
-</span><span data-line="236">                <span class="s2">&quot;nb_analog_chans_in&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">analog_chans_in</span><span class="p">),</span>
-</span><span data-line="237">                <span class="s2">&quot;attrs&quot;</span><span class="p">:</span> <span class="n">attrs</span><span class="p">,</span>
-</span><span data-line="238">            <span class="p">}</span>
-</span><span data-line="239">
-</span><span data-line="240">            <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="241">            <span class="k">if</span> <span class="s2">&quot;callbacks&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;callbacks&quot;</span><span class="p">]:</span>
-</span><span data-line="242">                <span class="k">for</span> <span class="n">cb_name</span><span class="p">,</span> <span class="n">cb_params</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;callbacks&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="243">                    <span class="k">if</span> <span class="n">cb_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="244">                        <span class="n">task_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">common_task_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">cb_params</span><span class="p">}</span>
-</span><span data-line="245">                    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="246">                        <span class="n">task_kwargs</span> <span class="o">=</span> <span class="n">common_task_kwargs</span>
-</span><span data-line="247">                    <span class="n">callback</span> <span class="o">=</span> <span class="n">callbacks</span><span class="p">[</span><span class="n">cb_name</span><span class="p">]</span><span class="o">.</span><span class="n">make_concurrent</span><span class="p">(</span><span class="n">task_kwargs</span><span class="o">=</span><span class="n">task_kwargs</span><span class="p">)</span>
-</span><span data-line="248">                    <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
-</span><span data-line="249">                    <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">data_rec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
-</span><span data-line="250">
-</span><span data-line="251">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># if zero, will stop when nothing is to be outputted</span>
-</span><span data-line="252">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;stop_service&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
-</span><span data-line="253">        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;initialized&quot;</span>
-</span><span data-line="254">
-</span><span data-line="255">        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-</span><span data-line="256">        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;job&quot;</span><span class="p">]:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="257">            <span class="s2">&quot;sample rate&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="si">}</span><span class="s2">Hz&quot;</span><span class="p">,</span>
-</span><span data-line="258">            <span class="s2">&quot;analog output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">,</span>
-</span><span data-line="259">            <span class="s2">&quot;digital output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">,</span>
-</span><span data-line="260">            <span class="s2">&quot;analog input&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in</span><span class="p">,</span>
-</span><span data-line="261">            <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span>
-</span><span data-line="262">            <span class="s2">&quot;savefilename&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">savefilename</span><span class="p">,</span>
-</span><span data-line="263">            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
-</span><span data-line="264">        <span class="p">}</span>
-</span><span data-line="265">        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;playlist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_info</span>
-</span><span data-line="266">
-</span><span data-line="267">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="268">        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;running&quot;</span>
-</span><span data-line="269">
-</span><span data-line="270">        <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span data-line="271">
-</span><span data-line="272">        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">data_rec</span><span class="p">:</span>
-</span><span data-line="273">            <span class="n">task</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span data-line="274">
-</span><span data-line="275">        <span class="c1"># Arm the output tasks - won&#39;t start until the AI start is triggered</span>
-</span><span data-line="276">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
-</span><span data-line="277">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">StartTask</span><span class="p">()</span>
-</span><span data-line="278">
-</span><span data-line="279">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">:</span>
-</span><span data-line="280">            <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">StartTask</span><span class="p">()</span>
-</span><span data-line="281">
-</span><span data-line="282">        <span class="c1"># Start the AI task - generates AI start trigger and triggers the output tasks</span>
-</span><span data-line="283">        <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">StartTask</span><span class="p">()</span>
-</span><span data-line="284">
-</span><span data-line="285">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;started&quot;</span><span class="p">)</span>
-</span><span data-line="286">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
-</span><span data-line="287">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;duration </span><span class="si">{0}</span><span class="s2"> seconds&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
-</span><span data-line="288">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span data-line="289">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;finish timer started&quot;</span><span class="p">)</span>
-</span><span data-line="290">
-</span><span data-line="291">    <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span data-line="292">        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;finishing&quot;</span>
-</span><span data-line="293">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;stopping&quot;</span><span class="p">)</span>
-</span><span data-line="294">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_stopper&quot;</span><span class="p">):</span>
-</span><span data-line="295">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-</span><span data-line="296">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
-</span><span data-line="297">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
-</span><span data-line="298">
-</span><span data-line="299">        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span>
-</span><span data-line="300">            <span class="k">try</span><span class="p">:</span>
-</span><span data-line="301">                <span class="n">callback</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
-</span><span data-line="302">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span data-line="303">                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-</span><span data-line="304">
-</span><span data-line="305">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="306">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">StopTask</span><span class="p">()</span>
-</span><span data-line="307">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;   stoppedAI&quot;</span><span class="p">)</span>
-</span><span data-line="308">        <span class="k">except</span> <span class="n">InvalidTaskError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span data-line="309">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-</span><span data-line="310">
-</span><span data-line="311">        <span class="c1"># close any files in the callbacks</span>
-</span><span data-line="312">        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span>
-</span><span data-line="313">            <span class="k">try</span><span class="p">:</span>
-</span><span data-line="314">                <span class="n">callback</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span data-line="315">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span data-line="316">                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-</span><span data-line="317">
-</span><span data-line="318">        <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">ClearTask</span><span class="p">()</span>
-</span><span data-line="319">
-</span><span data-line="320">        <span class="c1"># stop tasks and properly close callbacks (e.g. flush data to disk and close file)</span>
-</span><span data-line="321">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;digital_chans_out&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">:</span>
-</span><span data-line="322">            <span class="c1"># try:</span>
-</span><span data-line="323">
-</span><span data-line="324">            <span class="c1">#     self.taskDO.StopTask()</span>
-</span><span data-line="325">            <span class="c1"># except GenStoppedToPreventRegenOfOldSamplesError as e:</span>
-</span><span data-line="326">            <span class="c1">#     pass</span>
-</span><span data-line="327">            <span class="c1"># print(&quot;\n   stoppedDO&quot;)</span>
-</span><span data-line="328">            <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-</span><span data-line="329">
-</span><span data-line="330">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;analog_chans_out&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
-</span><span data-line="331">            <span class="c1"># try:</span>
-</span><span data-line="332">            <span class="c1">#     self.taskAO.StopTask()</span>
-</span><span data-line="333">            <span class="c1"># except GenStoppedToPreventRegenOfOldSamplesError as e:</span>
-</span><span data-line="334">            <span class="c1">#     pass</span>
-</span><span data-line="335">            <span class="c1"># print(&quot;\n   stoppedAO&quot;)</span>
-</span><span data-line="336">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-</span><span data-line="337">
-</span><span data-line="338">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
-</span><span data-line="339">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">ClearTask</span><span class="p">()</span>
-</span><span data-line="340">
-</span><span data-line="341">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">:</span>
-</span><span data-line="342">            <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">ClearTask</span><span class="p">()</span>
-</span><span data-line="343">
-</span><span data-line="344">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;   stopped &quot;</span><span class="p">)</span>
-</span><span data-line="345">        <span class="k">if</span> <span class="n">stop_service</span><span class="p">:</span>
-</span><span data-line="346">            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-</span><span data-line="347">            <span class="bp">self</span><span class="o">.</span><span class="n">service_stop</span><span class="p">()</span>
-</span><span data-line="348">
-</span><span data-line="349">    <span class="k">def</span><span class="w"> </span><span class="nf">disp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="350">        <span class="k">pass</span>
-</span><span data-line="351">
-</span><span data-line="352">    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ai</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ao</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-</span><span data-line="353">        <span class="n">taskCheckFailed</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="354">
-</span><span data-line="355">        <span class="n">taskIsDoneAI</span> <span class="o">=</span> <span class="n">daq</span><span class="o">.</span><span class="n">c_ulong</span><span class="p">()</span>
-</span><span data-line="356">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
-</span><span data-line="357">            <span class="n">taskIsDoneAO</span> <span class="o">=</span> <span class="n">daq</span><span class="o">.</span><span class="n">c_ulong</span><span class="p">()</span>
-</span><span data-line="358">        <span class="k">if</span> <span class="n">ai</span><span class="p">:</span>
-</span><span data-line="359">            <span class="k">try</span><span class="p">:</span>
-</span><span data-line="360">                <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">IsTaskDone</span><span class="p">(</span><span class="n">taskIsDoneAI</span><span class="p">)</span>
-</span><span data-line="361">            <span class="k">except</span> <span class="p">(</span>
-</span><span data-line="362">                <span class="n">daq</span><span class="o">.</span><span class="n">InvalidTaskError</span><span class="p">,</span>
-</span><span data-line="363">                <span class="n">GenStoppedToPreventRegenOfOldSamplesError</span><span class="p">,</span>
-</span><span data-line="364">            <span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span data-line="365">                <span class="n">taskCheckFailed</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span data-line="366">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="367">            <span class="n">taskIsDoneAI</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="368">        <span class="k">if</span> <span class="n">ao</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
-</span><span data-line="369">            <span class="k">try</span><span class="p">:</span>
-</span><span data-line="370">                <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">IsTaskDone</span><span class="p">(</span><span class="n">taskIsDoneAO</span><span class="p">)</span>
-</span><span data-line="371">            <span class="k">except</span> <span class="p">(</span>
-</span><span data-line="372">                <span class="n">daq</span><span class="o">.</span><span class="n">InvalidTaskError</span><span class="p">,</span>
-</span><span data-line="373">                <span class="n">GenStoppedToPreventRegenOfOldSamplesError</span><span class="p">,</span>
-</span><span data-line="374">            <span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span data-line="375">                <span class="n">taskCheckFailed</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span data-line="376">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="377">            <span class="n">taskIsDoneAO</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span data-line="378">
-</span><span data-line="379">        <span class="k">return</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">taskIsDoneAI</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">taskIsDoneAO</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">taskCheckFailed</span>
-</span><span data-line="380">
-</span><span data-line="381">    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="382">        <span class="k">return</span> <span class="kc">True</span>
-</span><span data-line="383">
-</span><span data-line="384">    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="385">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
-</span><span data-line="386">        <span class="k">return</span> <span class="kc">True</span>
-</span><span data-line="387">
-</span><span data-line="388">    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="389">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_busy</span><span class="p">():</span>
-</span><span data-line="390">            <span class="k">pass</span>  <span class="c1"># your code here</span>
-</span><span data-line="391">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="392">            <span class="k">return</span> <span class="kc">None</span></div>
+</span><span data-line="62">            <span class="n">stimfolder</span><span class="o">=</span><span class="n">global_config</span><span class="p">[</span><span class="s2">&quot;stimfolder&quot;</span><span class="p">],</span>
+</span><span data-line="63">        <span class="p">)</span>
+</span><span data-line="64">        <span class="n">sounds</span> <span class="o">=</span> <span class="p">[</span><span class="n">sound</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> <span class="k">for</span> <span class="n">sound</span> <span class="ow">in</span> <span class="n">sounds</span><span class="p">]</span>
+</span><span data-line="65">
+</span><span data-line="66">        <span class="n">playlist_items</span><span class="p">,</span> <span class="n">totallen</span> <span class="o">=</span> <span class="n">build_playlist</span><span class="p">(</span><span class="n">sounds</span><span class="p">,</span> <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">],</span> <span class="n">fs</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;shuffle&quot;</span><span class="p">])</span>
+</span><span data-line="67">        <span class="k">if</span> <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span><span data-line="68">            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting maxduration from playlist to </span><span class="si">{</span><span class="n">totallen</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="69">            <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">totallen</span>
+</span><span data-line="70">        <span class="n">playlist_items</span> <span class="o">=</span> <span class="n">cycle</span><span class="p">(</span><span class="n">playlist_items</span><span class="p">)</span>
+</span><span data-line="71">
+</span><span data-line="72">        <span class="k">if</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;digital_chans_out&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="73">            <span class="n">nb_digital_chans_out</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;digital_chans_out&quot;</span><span class="p">])</span>
+</span><span data-line="74">            <span class="n">digital_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">snd</span><span class="p">[:,</span> <span class="o">-</span><span class="n">nb_digital_chans_out</span><span class="p">:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="k">for</span> <span class="n">snd</span> <span class="ow">in</span> <span class="n">sounds</span><span class="p">]</span>
+</span><span data-line="75">            <span class="n">analog_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">snd</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="n">nb_digital_chans_out</span><span class="p">]</span> <span class="k">for</span> <span class="n">snd</span> <span class="ow">in</span> <span class="n">sounds</span><span class="p">]</span>
+</span><span data-line="76">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="77">            <span class="n">digital_data</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="78">            <span class="n">analog_data</span> <span class="o">=</span> <span class="n">sounds</span>
+</span><span data-line="79">
+</span><span data-line="80">        <span class="n">service</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
+</span><span data-line="81">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;serializer&quot;</span><span class="p">],</span>
+</span><span data-line="82">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
+</span><span data-line="83">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;python_exe&quot;</span><span class="p">],</span>
+</span><span data-line="84">            <span class="n">new_console</span><span class="o">=</span><span class="n">new_console</span><span class="p">,</span>
+</span><span data-line="85">            <span class="n">port</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;port&quot;</span><span class="p">],</span>
+</span><span data-line="86">        <span class="p">)</span>
+</span><span data-line="87">        <span class="n">save_suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">service_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">service_index</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+</span><span data-line="88">        <span class="n">service</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span>
+</span><span data-line="89">            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">this</span><span class="p">[</span><span class="s1">&#39;savefolder&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}{</span><span class="n">save_suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span data-line="90">            <span class="n">playlist_items</span><span class="p">,</span>
+</span><span data-line="91">            <span class="n">playlist</span><span class="p">,</span>
+</span><span data-line="92">            <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">],</span>
+</span><span data-line="93">            <span class="n">fs</span><span class="p">,</span>
+</span><span data-line="94">            <span class="n">dev_name</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;device&quot;</span><span class="p">],</span>
+</span><span data-line="95">            <span class="n">clock_source</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;clock_source&quot;</span><span class="p">],</span>
+</span><span data-line="96">            <span class="n">nb_inputsamples_per_cycle</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;nb_inputsamples_per_cycle&quot;</span><span class="p">],</span>
+</span><span data-line="97">            <span class="n">analog_chans_in</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;analog_chans_in&quot;</span><span class="p">],</span>
+</span><span data-line="98">            <span class="n">analog_chans_out</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;analog_chans_out&quot;</span><span class="p">],</span>
+</span><span data-line="99">            <span class="n">analog_data_out</span><span class="o">=</span><span class="n">analog_data</span><span class="p">,</span>
+</span><span data-line="100">            <span class="n">digital_chans_out</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;digital_chans_out&quot;</span><span class="p">],</span>
+</span><span data-line="101">            <span class="n">digital_data_out</span><span class="o">=</span><span class="n">digital_data</span><span class="p">,</span>
+</span><span data-line="102">            <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+</span><span data-line="103">                <span class="s2">&quot;analog_chans_in_info&quot;</span><span class="p">:</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;analog_chans_in_info&quot;</span><span class="p">],</span>
+</span><span data-line="104">                <span class="s2">&quot;analog_chans_out_info&quot;</span><span class="p">:</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;analog_chans_out_info&quot;</span><span class="p">],</span>
+</span><span data-line="105">                <span class="s2">&quot;digital_chans_out_info&quot;</span><span class="p">:</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;digital_chans_out_info&quot;</span><span class="p">],</span>
+</span><span data-line="106">            <span class="p">},</span>
+</span><span data-line="107">            <span class="n">params</span><span class="o">=</span><span class="n">undefaultify</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">]),</span>
+</span><span data-line="108">        <span class="p">)</span>
+</span><span data-line="109">        <span class="n">service</span><span class="o">.</span><span class="n">init_local_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">this</span><span class="p">[</span><span class="s1">&#39;savefolder&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}{</span><span class="n">save_suffix</span><span class="si">}</span><span class="s2">_daq.log&quot;</span><span class="p">)</span>
+</span><span data-line="110">        <span class="k">return</span> <span class="n">service</span>
+</span><span data-line="111">
+</span><span data-line="112">    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
+</span><span data-line="113">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="114">        <span class="n">savefilename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="115">        <span class="n">play_order</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="116">        <span class="n">playlist_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="117">        <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+</span><span data-line="118">        <span class="n">fs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+</span><span data-line="119">        <span class="n">dev_name</span><span class="o">=</span><span class="s2">&quot;Dev1&quot;</span><span class="p">,</span>
+</span><span data-line="120">        <span class="n">nb_inputsamples_per_cycle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="121">        <span class="n">clock_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="122">        <span class="n">analog_chans_out</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="123">        <span class="n">analog_chans_out_limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="124">        <span class="n">analog_chans_in</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ai0&quot;</span><span class="p">],</span>
+</span><span data-line="125">        <span class="n">analog_chans_in_limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="126">        <span class="n">analog_chans_in_terminals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="127">        <span class="n">digital_chans_out</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="128">        <span class="n">analog_data_out</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="129">        <span class="n">digital_data_out</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="130">        <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="131">        <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span data-line="132">    <span class="p">):</span>
+</span><span data-line="133"><span class="w">        </span><span class="sd">&quot;&quot;&quot;[summary]</span>
+</span><span data-line="134">
+</span><span data-line="135"><span class="sd">        Args:</span>
+</span><span data-line="136"><span class="sd">            savefilename (str, optional): [description]. Defaults to None.</span>
+</span><span data-line="137"><span class="sd">            play_order (Iterable, optional): [description]. Defaults to None.</span>
+</span><span data-line="138"><span class="sd">            playlist_info ([type], optional): [description]. Defaults to None.</span>
+</span><span data-line="139"><span class="sd">            duration (float, optional): [description]. Defaults to -1.</span>
+</span><span data-line="140"><span class="sd">            fs (int, optional): [description]. Defaults to 10000.</span>
+</span><span data-line="141"><span class="sd">            nb_inputsamples_per_cycle ([type], optional): [description]. Defaults to None.</span>
+</span><span data-line="142"><span class="sd">            clock_source (str, optional): None for AI-synced clock.</span>
+</span><span data-line="143"><span class="sd">                                          Use &#39;OnboardClock&#39; for boards that don&#39;t support this (USB-DAQ).</span>
+</span><span data-line="144"><span class="sd">                                          Defaults to None.</span>
+</span><span data-line="145"><span class="sd">            analog_chans_out (Sequence, optional): [description]. Defaults to None.</span>
+</span><span data-line="146"><span class="sd">            analog_chans_in (Sequence, optional): [description]. Defaults to [&#39;ai0&#39;].</span>
+</span><span data-line="147"><span class="sd">            digital_chans_out (Sequence, optional): [description]. Defaults to None.</span>
+</span><span data-line="148"><span class="sd">            analog_data_out (Sequence, optional): [description]. Defaults to None.</span>
+</span><span data-line="149"><span class="sd">            digital_data_out (Sequence, optional): [description]. Defaults to None.</span>
+</span><span data-line="150"><span class="sd">            metadata (dict, optional): [description]. Defaults to {}.</span>
+</span><span data-line="151"><span class="sd">            params: part of prot dict (prot[&#39;DAQ&#39;])</span>
+</span><span data-line="152">
+</span><span data-line="153"><span class="sd">        Raises:</span>
+</span><span data-line="154"><span class="sd">            ValueError: [description]</span>
+</span><span data-line="155"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="156">        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;initializing&quot;</span>
+</span><span data-line="157">
+</span><span data-line="158">        <span class="k">if</span> <span class="n">daqmx_import_error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="159">            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">daqmx_import_error</span><span class="p">)</span>
+</span><span data-line="160">
+</span><span data-line="161">        <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="162">        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span>
+</span><span data-line="163">        <span class="bp">self</span><span class="o">.</span><span class="n">fs</span> <span class="o">=</span> <span class="n">fs</span>
+</span><span data-line="164">        <span class="bp">self</span><span class="o">.</span><span class="n">savefilename</span> <span class="o">=</span> <span class="n">savefilename</span>
+</span><span data-line="165">        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
+</span><span data-line="166">        <span class="bp">self</span><span class="o">.</span><span class="n">playlist_info</span> <span class="o">=</span> <span class="n">playlist_info</span>
+</span><span data-line="167">
+</span><span data-line="168">        <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span> <span class="o">=</span> <span class="n">analog_chans_out</span>
+</span><span data-line="169">        <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out_limits</span> <span class="o">=</span> <span class="n">analog_chans_out_limits</span>
+</span><span data-line="170">
+</span><span data-line="171">        <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in</span> <span class="o">=</span> <span class="n">analog_chans_in</span>
+</span><span data-line="172">        <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in_limits</span> <span class="o">=</span> <span class="n">analog_chans_in_limits</span>
+</span><span data-line="173">        <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in_terminals</span><span class="o">=</span> <span class="n">analog_chans_in_terminals</span>
+</span><span data-line="174">
+</span><span data-line="175">        <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span> <span class="o">=</span> <span class="n">digital_chans_out</span>
+</span><span data-line="176">
+</span><span data-line="177">        <span class="c1"># ANALOG OUTPUT</span>
+</span><span data-line="178">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
+</span><span data-line="179">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span> <span class="o">=</span> <span class="n">IOTask</span><span class="p">(</span>
+</span><span data-line="180">                <span class="n">dev_name</span><span class="o">=</span><span class="n">dev_name</span><span class="p">,</span>
+</span><span data-line="181">                <span class="n">cha_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">,</span>
+</span><span data-line="182">                <span class="n">rate</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
+</span><span data-line="183">                <span class="n">clock_source</span><span class="o">=</span><span class="n">clock_source</span><span class="p">,</span>
+</span><span data-line="184">                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">,</span>
+</span><span data-line="185">            <span class="p">)</span>
+</span><span data-line="186">            <span class="k">if</span> <span class="n">analog_data_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">):</span>
+</span><span data-line="187">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of analog output channels (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">)</span><span class="si">}</span><span class="s2">) does not match the number of channels in the sound files (</span><span class="si">{</span><span class="n">analog_data_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+</span><span data-line="188">            <span class="n">play_order_new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">play_order</span><span class="p">)</span>
+</span><span data-line="189">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">data_gen</span> <span class="o">=</span> <span class="n">data_playlist</span><span class="p">(</span><span class="n">analog_data_out</span><span class="p">,</span> <span class="n">play_order_new</span><span class="p">,</span> <span class="n">playlist_info</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;AO&quot;</span><span class="p">)</span>
+</span><span data-line="190">            <span class="k">if</span> <span class="n">clock_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="191">                <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">CfgDigEdgeStartTrig</span><span class="p">(</span><span class="s2">&quot;ai/StartTrigger&quot;</span><span class="p">,</span> <span class="n">DAQmx_Val_Rising</span><span class="p">)</span>
+</span><span data-line="192">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="193">                <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">DisableStartTrig</span><span class="p">()</span>
+</span><span data-line="194">        <span class="c1"># DIGITAL OUTPUT</span>
+</span><span data-line="195">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">:</span>
+</span><span data-line="196">            <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span> <span class="o">=</span> <span class="n">IOTask</span><span class="p">(</span>
+</span><span data-line="197">                <span class="n">dev_name</span><span class="o">=</span><span class="n">dev_name</span><span class="p">,</span>
+</span><span data-line="198">                <span class="n">cha_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">,</span>
+</span><span data-line="199">                <span class="n">rate</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
+</span><span data-line="200">                <span class="n">clock_source</span><span class="o">=</span><span class="n">clock_source</span><span class="p">,</span>
+</span><span data-line="201">                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">,</span>
+</span><span data-line="202">            <span class="p">)</span>
+</span><span data-line="203">            <span class="n">play_order_new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">play_order</span><span class="p">)</span>
+</span><span data-line="204">            <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">data_gen</span> <span class="o">=</span> <span class="n">data_playlist</span><span class="p">(</span><span class="n">digital_data_out</span><span class="p">,</span> <span class="n">play_order_new</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DO&quot;</span><span class="p">)</span>
+</span><span data-line="205">            <span class="k">if</span> <span class="n">clock_source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="206">                <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">CfgDigEdgeStartTrig</span><span class="p">(</span><span class="s2">&quot;ai/StartTrigger&quot;</span><span class="p">,</span> <span class="n">DAQmx_Val_Rising</span><span class="p">)</span>
+</span><span data-line="207">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="208">                <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">DisableStartTrig</span><span class="p">()</span>
+</span><span data-line="209">        <span class="c1"># ANALOG INPUT</span>
+</span><span data-line="210">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in</span><span class="p">:</span>
+</span><span data-line="211">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span> <span class="o">=</span> <span class="n">IOTask</span><span class="p">(</span>
+</span><span data-line="212">                <span class="n">dev_name</span><span class="o">=</span><span class="n">dev_name</span><span class="p">,</span>
+</span><span data-line="213">                <span class="n">cha_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in</span><span class="p">,</span>
+</span><span data-line="214">                <span class="n">rate</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span>
+</span><span data-line="215">                <span class="n">nb_inputsamples_per_cycle</span><span class="o">=</span><span class="n">nb_inputsamples_per_cycle</span><span class="p">,</span>
+</span><span data-line="216">                <span class="n">clock_source</span><span class="o">=</span><span class="n">clock_source</span><span class="p">,</span>
+</span><span data-line="217">                <span class="n">duration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span>
+</span><span data-line="218">                <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">,</span>
+</span><span data-line="219">            <span class="p">)</span>
+</span><span data-line="220">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">data_rec</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="221">
+</span><span data-line="222">            <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="223">            <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="224">                <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="225">            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="226">                <span class="s2">&quot;rate&quot;</span><span class="p">:</span> <span class="n">fs</span><span class="p">,</span>
+</span><span data-line="227">                <span class="s2">&quot;analog_chans_in&quot;</span><span class="p">:</span> <span class="n">analog_chans_in</span><span class="p">,</span>
+</span><span data-line="228">                <span class="s2">&quot;analog_chans_out&quot;</span><span class="p">:</span> <span class="n">analog_chans_out</span><span class="p">,</span>
+</span><span data-line="229">                <span class="s2">&quot;digital_chans_out&quot;</span><span class="p">:</span> <span class="n">digital_chans_out</span><span class="p">,</span>
+</span><span data-line="230">                <span class="o">**</span><span class="n">metadata</span><span class="p">,</span>
+</span><span data-line="231">            <span class="p">}</span>
+</span><span data-line="232">            <span class="n">common_task_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="233">                <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">savefilename</span><span class="p">,</span>
+</span><span data-line="234">                <span class="s2">&quot;nb_inputsamples_per_cycle&quot;</span><span class="p">:</span> <span class="n">nb_inputsamples_per_cycle</span><span class="p">,</span>
+</span><span data-line="235">                <span class="s2">&quot;nb_analog_chans_in&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">analog_chans_in</span><span class="p">),</span>
+</span><span data-line="236">                <span class="s2">&quot;attrs&quot;</span><span class="p">:</span> <span class="n">attrs</span><span class="p">,</span>
+</span><span data-line="237">            <span class="p">}</span>
+</span><span data-line="238">
+</span><span data-line="239">            <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="240">            <span class="k">if</span> <span class="s2">&quot;callbacks&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;callbacks&quot;</span><span class="p">]:</span>
+</span><span data-line="241">                <span class="k">for</span> <span class="n">cb_name</span><span class="p">,</span> <span class="n">cb_params</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;callbacks&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="242">                    <span class="k">if</span> <span class="n">cb_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="243">                        <span class="n">task_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">common_task_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">cb_params</span><span class="p">}</span>
+</span><span data-line="244">                    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="245">                        <span class="n">task_kwargs</span> <span class="o">=</span> <span class="n">common_task_kwargs</span>
+</span><span data-line="246">                    <span class="n">callback</span> <span class="o">=</span> <span class="n">callbacks</span><span class="p">[</span><span class="n">cb_name</span><span class="p">]</span><span class="o">.</span><span class="n">make_concurrent</span><span class="p">(</span><span class="n">task_kwargs</span><span class="o">=</span><span class="n">task_kwargs</span><span class="p">)</span>
+</span><span data-line="247">                    <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+</span><span data-line="248">                    <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">data_rec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+</span><span data-line="249">
+</span><span data-line="250">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># if zero, will stop when nothing is to be outputted</span>
+</span><span data-line="251">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;stop_service&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+</span><span data-line="252">        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;initialized&quot;</span>
+</span><span data-line="253">
+</span><span data-line="254">        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+</span><span data-line="255">        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;job&quot;</span><span class="p">]:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="256">            <span class="s2">&quot;sample rate&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="si">}</span><span class="s2">Hz&quot;</span><span class="p">,</span>
+</span><span data-line="257">            <span class="s2">&quot;analog output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">,</span>
+</span><span data-line="258">            <span class="s2">&quot;digital output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">,</span>
+</span><span data-line="259">            <span class="s2">&quot;analog input&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_in</span><span class="p">,</span>
+</span><span data-line="260">            <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span>
+</span><span data-line="261">            <span class="s2">&quot;savefilename&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">savefilename</span><span class="p">,</span>
+</span><span data-line="262">            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+</span><span data-line="263">        <span class="p">}</span>
+</span><span data-line="264">        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;playlist&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_info</span>
+</span><span data-line="265">
+</span><span data-line="266">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="267">        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;running&quot;</span>
+</span><span data-line="268">
+</span><span data-line="269">        <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span data-line="270">
+</span><span data-line="271">        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">data_rec</span><span class="p">:</span>
+</span><span data-line="272">            <span class="n">task</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span data-line="273">
+</span><span data-line="274">        <span class="c1"># Arm the output tasks - won&#39;t start until the AI start is triggered</span>
+</span><span data-line="275">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
+</span><span data-line="276">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">StartTask</span><span class="p">()</span>
+</span><span data-line="277">
+</span><span data-line="278">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">:</span>
+</span><span data-line="279">            <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">StartTask</span><span class="p">()</span>
+</span><span data-line="280">
+</span><span data-line="281">        <span class="c1"># Start the AI task - generates AI start trigger and triggers the output tasks</span>
+</span><span data-line="282">        <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">StartTask</span><span class="p">()</span>
+</span><span data-line="283">
+</span><span data-line="284">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;started&quot;</span><span class="p">)</span>
+</span><span data-line="285">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
+</span><span data-line="286">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;duration </span><span class="si">{0}</span><span class="s2"> seconds&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
+</span><span data-line="287">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span data-line="288">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;finish timer started&quot;</span><span class="p">)</span>
+</span><span data-line="289">
+</span><span data-line="290">    <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span data-line="291">        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;finishing&quot;</span>
+</span><span data-line="292">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;stopping&quot;</span><span class="p">)</span>
+</span><span data-line="293">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_stopper&quot;</span><span class="p">):</span>
+</span><span data-line="294">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+</span><span data-line="295">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
+</span><span data-line="296">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+</span><span data-line="297">
+</span><span data-line="298">        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span>
+</span><span data-line="299">            <span class="k">try</span><span class="p">:</span>
+</span><span data-line="300">                <span class="n">callback</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span data-line="301">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="302">                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span><span data-line="303">
+</span><span data-line="304">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="305">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">StopTask</span><span class="p">()</span>
+</span><span data-line="306">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;   stoppedAI&quot;</span><span class="p">)</span>
+</span><span data-line="307">        <span class="k">except</span> <span class="n">InvalidTaskError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="308">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span><span data-line="309">
+</span><span data-line="310">        <span class="c1"># close any files in the callbacks</span>
+</span><span data-line="311">        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span>
+</span><span data-line="312">            <span class="k">try</span><span class="p">:</span>
+</span><span data-line="313">                <span class="n">callback</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span data-line="314">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="315">                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span><span data-line="316">
+</span><span data-line="317">        <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">ClearTask</span><span class="p">()</span>
+</span><span data-line="318">
+</span><span data-line="319">        <span class="c1"># stop tasks and properly close callbacks (e.g. flush data to disk and close file)</span>
+</span><span data-line="320">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;digital_chans_out&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">:</span>
+</span><span data-line="321">            <span class="c1"># try:</span>
+</span><span data-line="322">
+</span><span data-line="323">            <span class="c1">#     self.taskDO.StopTask()</span>
+</span><span data-line="324">            <span class="c1"># except GenStoppedToPreventRegenOfOldSamplesError as e:</span>
+</span><span data-line="325">            <span class="c1">#     pass</span>
+</span><span data-line="326">            <span class="c1"># print(&quot;\n   stoppedDO&quot;)</span>
+</span><span data-line="327">            <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</span><span data-line="328">
+</span><span data-line="329">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;analog_chans_out&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
+</span><span data-line="330">            <span class="c1"># try:</span>
+</span><span data-line="331">            <span class="c1">#     self.taskAO.StopTask()</span>
+</span><span data-line="332">            <span class="c1"># except GenStoppedToPreventRegenOfOldSamplesError as e:</span>
+</span><span data-line="333">            <span class="c1">#     pass</span>
+</span><span data-line="334">            <span class="c1"># print(&quot;\n   stoppedAO&quot;)</span>
+</span><span data-line="335">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</span><span data-line="336">
+</span><span data-line="337">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
+</span><span data-line="338">            <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">ClearTask</span><span class="p">()</span>
+</span><span data-line="339">
+</span><span data-line="340">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">digital_chans_out</span><span class="p">:</span>
+</span><span data-line="341">            <span class="bp">self</span><span class="o">.</span><span class="n">taskDO</span><span class="o">.</span><span class="n">ClearTask</span><span class="p">()</span>
+</span><span data-line="342">
+</span><span data-line="343">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;   stopped &quot;</span><span class="p">)</span>
+</span><span data-line="344">        <span class="k">if</span> <span class="n">stop_service</span><span class="p">:</span>
+</span><span data-line="345">            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</span><span data-line="346">            <span class="bp">self</span><span class="o">.</span><span class="n">service_stop</span><span class="p">()</span>
+</span><span data-line="347">
+</span><span data-line="348">    <span class="k">def</span><span class="w"> </span><span class="nf">disp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="349">        <span class="k">pass</span>
+</span><span data-line="350">
+</span><span data-line="351">    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ai</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ao</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="352">        <span class="n">taskCheckFailed</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="353">
+</span><span data-line="354">        <span class="n">taskIsDoneAI</span> <span class="o">=</span> <span class="n">daq</span><span class="o">.</span><span class="n">c_ulong</span><span class="p">()</span>
+</span><span data-line="355">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
+</span><span data-line="356">            <span class="n">taskIsDoneAO</span> <span class="o">=</span> <span class="n">daq</span><span class="o">.</span><span class="n">c_ulong</span><span class="p">()</span>
+</span><span data-line="357">        <span class="k">if</span> <span class="n">ai</span><span class="p">:</span>
+</span><span data-line="358">            <span class="k">try</span><span class="p">:</span>
+</span><span data-line="359">                <span class="bp">self</span><span class="o">.</span><span class="n">taskAI</span><span class="o">.</span><span class="n">IsTaskDone</span><span class="p">(</span><span class="n">taskIsDoneAI</span><span class="p">)</span>
+</span><span data-line="360">            <span class="k">except</span> <span class="p">(</span>
+</span><span data-line="361">                <span class="n">daq</span><span class="o">.</span><span class="n">InvalidTaskError</span><span class="p">,</span>
+</span><span data-line="362">                <span class="n">GenStoppedToPreventRegenOfOldSamplesError</span><span class="p">,</span>
+</span><span data-line="363">            <span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="364">                <span class="n">taskCheckFailed</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="365">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="366">            <span class="n">taskIsDoneAI</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="367">        <span class="k">if</span> <span class="n">ao</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">analog_chans_out</span><span class="p">:</span>
+</span><span data-line="368">            <span class="k">try</span><span class="p">:</span>
+</span><span data-line="369">                <span class="bp">self</span><span class="o">.</span><span class="n">taskAO</span><span class="o">.</span><span class="n">IsTaskDone</span><span class="p">(</span><span class="n">taskIsDoneAO</span><span class="p">)</span>
+</span><span data-line="370">            <span class="k">except</span> <span class="p">(</span>
+</span><span data-line="371">                <span class="n">daq</span><span class="o">.</span><span class="n">InvalidTaskError</span><span class="p">,</span>
+</span><span data-line="372">                <span class="n">GenStoppedToPreventRegenOfOldSamplesError</span><span class="p">,</span>
+</span><span data-line="373">            <span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="374">                <span class="n">taskCheckFailed</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="375">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="376">            <span class="n">taskIsDoneAO</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span data-line="377">
+</span><span data-line="378">        <span class="k">return</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">taskIsDoneAI</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">taskIsDoneAO</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">taskCheckFailed</span>
+</span><span data-line="379">
+</span><span data-line="380">    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="381">        <span class="k">return</span> <span class="kc">True</span>
+</span><span data-line="382">
+</span><span data-line="383">    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="384">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span data-line="385">        <span class="k">return</span> <span class="kc">True</span>
+</span><span data-line="386">
+</span><span data-line="387">    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="388">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_busy</span><span class="p">():</span>
+</span><span data-line="389">            <span class="k">pass</span>  <span class="c1"># your code here</span>
+</span><span data-line="390">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="391">            <span class="k">return</span> <span class="kc">None</span></div>
 
+</span><span data-line="392">
 </span><span data-line="393">
-</span><span data-line="394">
-</span><span data-line="395"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span data-line="396">    <span class="n">daqmx_import_error</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="397">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-</span><span data-line="398">        <span class="n">ser</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</span><span data-line="399">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="400">        <span class="n">ser</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span data-line="401">
-</span><span data-line="402">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-</span><span data-line="403">        <span class="n">port</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-</span><span data-line="404">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="405">        <span class="n">port</span> <span class="o">=</span> <span class="n">DAQ</span><span class="o">.</span><span class="n">SERVICE_PORT</span>
-</span><span data-line="406">
-</span><span data-line="407">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting DAQ service&quot;</span><span class="p">)</span>
-</span><span data-line="408">    <span class="n">s</span> <span class="o">=</span> <span class="n">DAQ</span><span class="p">(</span><span class="n">serializer</span><span class="o">=</span><span class="n">ser</span><span class="p">)</span>  <span class="c1"># expose class via zerorpc</span>
-</span><span data-line="409">    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;tcp://0.0.0.0:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>  <span class="c1"># broadcast on all IPs</span>
-</span><span data-line="410">    <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span data-line="394"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span data-line="395">    <span class="n">daqmx_import_error</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="396">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span data-line="397">        <span class="n">ser</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span data-line="398">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="399">        <span class="n">ser</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+</span><span data-line="400">
+</span><span data-line="401">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+</span><span data-line="402">        <span class="n">port</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</span><span data-line="403">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="404">        <span class="n">port</span> <span class="o">=</span> <span class="n">DAQ</span><span class="o">.</span><span class="n">SERVICE_PORT</span>
+</span><span data-line="405">
+</span><span data-line="406">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting DAQ service&quot;</span><span class="p">)</span>
+</span><span data-line="407">    <span class="n">s</span> <span class="o">=</span> <span class="n">DAQ</span><span class="p">(</span><span class="n">serializer</span><span class="o">=</span><span class="n">ser</span><span class="p">)</span>  <span class="c1"># expose class via zerorpc</span>
+</span><span data-line="408">    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;tcp://0.0.0.0:</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">port</span><span class="p">))</span>  <span class="c1"># broadcast on all IPs</span>
+</span><span data-line="409">    <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

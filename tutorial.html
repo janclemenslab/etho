@@ -7,7 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=e1a1ceaf" />
     <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -79,7 +79,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="extensions.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hardware/hardware.html">Hardware</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="hardware/hardware.html">Hardware services</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hardware/nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hardware/projector.html">DLP Projector</a></li>
@@ -222,10 +222,9 @@ validated at the rig before collecting data.</p>
 </span><span data-line="26"><span class="w">  </span><span class="nt">analog_chans_out</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ao0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ao1</span><span class="p p-Indicator">]</span>
 </span><span data-line="27"><span class="w">  </span><span class="nt">analog_chans_out_info</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">speaker</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">led</span><span class="p p-Indicator">]</span>
 </span><span data-line="28"><span class="w">  </span><span class="nt">digital_chans_out</span><span class="p">:</span>
-</span><span data-line="29"><span class="w">  </span><span class="nt">digitial_chans_out_info</span><span class="p">:</span>
-</span><span data-line="30"><span class="w">  </span><span class="nt">ledamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
-</span><span data-line="31"><span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
-</span><span data-line="32"><span class="w">    </span><span class="nt">save_h5</span><span class="p">:</span>
+</span><span data-line="29"><span class="w">  </span><span class="nt">digital_chans_out_info</span><span class="p">:</span>
+</span><span data-line="30"><span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
+</span><span data-line="31"><span class="w">    </span><span class="nt">save_h5</span><span class="p">:</span>
 </span></pre></div>
 </div>
 <p>Use <code class="docutils literal notranslate"><span class="pre">cam_type:</span> <span class="pre">Dummy</span></code> for a no-hardware camera test. For multi-camera or
@@ -236,8 +235,8 @@ multi-DAQ runs, add suffixed service names such as <code class="docutils literal
 <h2>Playlist<a class="headerlink" href="#playlist" title="Link to this heading">¶</a></h2>
 <p>Create a tab-delimited playlist such as
 <code class="docutils literal notranslate"><span class="pre">~/ethoconfig/playlists/sine_led.txt</span></code>:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
-</span><span data-line="2">[SIN_100_0_1000,PUL_10_10_50_0]	1000	1000	0	[1.0,1.0]	[100,100]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">stimFileName	silencePre	silencePost	intensity	freq
+</span><span data-line="2">[SIN_100_0_1000,PUL_10_10_50_0]	1000	1000	[1.0,1.0]	[100,100]
 </span></pre></div>
 </div>
 <p>The order of entries in <code class="docutils literal notranslate"><span class="pre">stimFileName</span></code> must match the protocol outputs: analog

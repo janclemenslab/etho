@@ -7,7 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
     <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -79,7 +79,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../extensions.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../hardware/hardware.html">Hardware</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/hardware.html">Hardware services</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/projector.html">DLP Projector</a></li>
@@ -172,7 +172,7 @@ tab-delimited text files.</p>
 <section id="playlist-format">
 <h2>Playlist Format<a class="headerlink" href="#playlist-format" title="Link to this heading">¶</a></h2>
 <p>The parser expects these columns in this order:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">stimFileName	silencePre	silencePost	intensity	freq
 </span></pre></div>
 </div>
 <p>Example:</p>
@@ -182,52 +182,34 @@ tab-delimited text files.</p>
 <tr class="row-odd"><th class="head"><p>stimFileName</p></th>
 <th class="head"><p>silencePre</p></th>
 <th class="head"><p>silencePost</p></th>
-<th class="head"><p>delayPost</p></th>
 <th class="head"><p>intensity</p></th>
 <th class="head"><p>freq</p></th>
-<th class="head"><p>MODE</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>superstimulus.wav</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
-<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
-<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>SIN_100_0_3000</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
-<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
-<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p>[mediocre_stim.wav, MIRROR_LED]</p></td>
+<tr class="row-even"><td><p>[PUL_5_10_10_0, SIN_200_0_2000]</p></td>
 <td><p>1000</p></td>
 <td><p>1000</p></td>
-<td><p>0</p></td>
 <td><p>1.0</p></td>
 <td><p>100</p></td>
-<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>[PUL_5_10_10_0, SIN_200_0_2000]</p></td>
-<td><p>1000</p></td>
-<td><p>1000</p></td>
-<td><p>0</p></td>
-<td><p>1.0</p></td>
-<td><p>100</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p>[SIN_100_0_3000, SIN_200_0_2000]</p></td>
+<tr class="row-odd"><td><p>[SIN_100_0_3000, SIN_200_0_2000]</p></td>
 <td><p>[1000, 2000]</p></td>
 <td><p>[2000, 1000]</p></td>
-<td><p>0</p></td>
 <td><p>[1.0, 2.0]</p></td>
 <td><p>[100, 200]</p></td>
-<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -237,12 +219,16 @@ tab-delimited text files.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>: WAV/HDF5 stimulus filename or a generated stimulus name.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">silencePre</span></code>: Silence before the stimulus, in milliseconds.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">silencePost</span></code>: Silence after the stimulus, in milliseconds.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">delayPost</span></code>: Parsed for compatibility with existing playlists.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">intensity</span></code>: Output multiplier. For calibrated sounds or LEDs, use the unit convention established by the rig calibration.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">freq</span></code>: Key into the attenuation table in <code class="docutils literal notranslate"><span class="pre">ethoconfig.yml</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">MODE</span></code>: Parsed for compatibility with existing playlists.</p></li>
 </ul>
-<p>Each row defines one trial. The trial duration is <code class="docutils literal notranslate"><span class="pre">silencePre</span></code>, plus the longest
+<p>Each row defines one trial and the whole playlist is repeated until the experiment finishes.
+The order of the trials can be specified in the protocol section, via the <code class="docutils literal notranslate"><span class="pre">shuffle</span></code> parameter for the associated DAQ service:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">shuffle:</span> <span class="pre">False</span></code>: Trials run in order as per the playlist (default).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shuffle:</span> <span class="pre">True</span></code>: Trials are block randomized.</p></li>
+</ul>
+<p>The trial duration is <code class="docutils literal notranslate"><span class="pre">silencePre</span></code>, plus the longest
 stimulus across output channels, plus <code class="docutils literal notranslate"><span class="pre">silencePost</span></code>. Shorter output channels are
 zero-padded to match the longest channel.</p>
 </section>
@@ -269,7 +255,6 @@ signals:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">SIN_frequency_phase_duration</span></code>: Generate a sine wave. Frequency is in Hz, phase is in radians, and duration is in milliseconds.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">PUL_pulseDur_pulsePau_pulseNumber_pulseDelay</span></code>: Generate a pulse train. Time fields are in milliseconds.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code>: Generate a pulse train on this channel aligned to another non-<code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code> channel. Protocols using this should define <code class="docutils literal notranslate"><span class="pre">ledamp</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">CLOCK_pulseDur_pulsePau</span></code>: Generate a continuous clock signal for the full trial.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">SI_START</span></code>: Set the channel high for the first samples of a trial to start ScanImage acquisition.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">SI_STOP</span></code>: Set the channel high near the end of the final trial to stop ScanImage acquisition.</p></li>

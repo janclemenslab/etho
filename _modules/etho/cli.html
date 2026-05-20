@@ -7,7 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=e1a1ceaf" />
     <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -79,7 +79,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../extensions.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../hardware/hardware.html">Hardware</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../hardware/hardware.html">Hardware services</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../hardware/nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../hardware/projector.html">DLP Projector</a></li>
@@ -357,39 +357,37 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="183">        <span class="s2">&quot;stimFileName&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;SIN_100_0_1000&quot;</span><span class="p">},</span>
 </span><span data-line="184">        <span class="s2">&quot;silencePre&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">10000</span><span class="p">},</span>
 </span><span data-line="185">        <span class="s2">&quot;silencePost&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">9000</span><span class="p">},</span>
-</span><span data-line="186">        <span class="s2">&quot;delayPost&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
-</span><span data-line="187">        <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
-</span><span data-line="188">        <span class="s2">&quot;freq&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">100</span><span class="p">},</span>
-</span><span data-line="189">        <span class="s2">&quot;MODE&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-</span><span data-line="190">    <span class="p">}</span>
-</span><span data-line="191">    <span class="n">path_playlist</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig/playlists/0_silence.txt&quot;</span>
-</span><span data-line="192">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   playlist </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span data-line="193">    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">playlist</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+</span><span data-line="186">        <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+</span><span data-line="187">        <span class="s2">&quot;freq&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">100</span><span class="p">},</span>
+</span><span data-line="188">    <span class="p">}</span>
+</span><span data-line="189">    <span class="n">path_playlist</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig/playlists/0_silence.txt&quot;</span>
+</span><span data-line="190">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   playlist </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="191">    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">playlist</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-</span><span data-line="194">
-</span><span data-line="195">
+</span><span data-line="192">
+</span><span data-line="193">
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.main">[docs]</a>
-</span><span data-line="196"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-</span><span data-line="197"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Command line interface for DAS.&quot;&quot;&quot;</span>
-</span><span data-line="198">    <span class="n">subcommands</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="199">        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
-</span><span data-line="200">        <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="n">init</span><span class="p">,</span>
-</span><span data-line="201">    <span class="p">}</span>
-</span><span data-line="202">
-</span><span data-line="203">    <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="204">        <span class="n">subcommands</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;run&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">})</span>
-</span><span data-line="205">    <span class="k">try</span><span class="p">:</span>
-</span><span data-line="206">        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
-</span><span data-line="207">
-</span><span data-line="208">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">main</span>
-</span><span data-line="209">    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
-</span><span data-line="210">        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;No GUI avalaible.&quot;</span><span class="p">)</span>
-</span><span data-line="211">        <span class="c1"># fall back to function that displays helpful instructions</span>
-</span><span data-line="212">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">no_gui</span>
-</span><span data-line="213">
-</span><span data-line="214">    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="215">    <span class="n">defopt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subcommands</span><span class="p">,</span> <span class="n">show_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+</span><span data-line="194"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span data-line="195"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Command line interface for DAS.&quot;&quot;&quot;</span>
+</span><span data-line="196">    <span class="n">subcommands</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="197">        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
+</span><span data-line="198">        <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="n">init</span><span class="p">,</span>
+</span><span data-line="199">    <span class="p">}</span>
+</span><span data-line="200">
+</span><span data-line="201">    <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="202">        <span class="n">subcommands</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;run&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">})</span>
+</span><span data-line="203">    <span class="k">try</span><span class="p">:</span>
+</span><span data-line="204">        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
+</span><span data-line="205">
+</span><span data-line="206">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">main</span>
+</span><span data-line="207">    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
+</span><span data-line="208">        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;No GUI avalaible.&quot;</span><span class="p">)</span>
+</span><span data-line="209">        <span class="c1"># fall back to function that displays helpful instructions</span>
+</span><span data-line="210">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">no_gui</span>
+</span><span data-line="211">
+</span><span data-line="212">    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="213">    <span class="n">defopt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subcommands</span><span class="p">,</span> <span class="n">show_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">

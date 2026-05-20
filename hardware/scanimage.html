@@ -7,7 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
     <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -79,7 +79,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../extensions.html">Extensions</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="hardware.html">Hardware</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="hardware.html">Hardware services</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="projector.html">DLP Projector</a></li>
@@ -186,7 +186,7 @@ from playlist entries.</p>
 <p>Add digital output channels to the DAQ service:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">DAQ</span><span class="p">:</span>
 </span><span data-line="2"><span class="w">  </span><span class="nt">digital_chans_out</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">port0/line1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">port0/line2</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">port0/line3</span><span class="p p-Indicator">]</span>
-</span><span data-line="3"><span class="w">  </span><span class="nt">digitial_chans_out_info</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">si_start</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">si_stop</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">si_next</span><span class="p p-Indicator">]</span>
+</span><span data-line="3"><span class="w">  </span><span class="nt">digital_chans_out_info</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">si_start</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">si_stop</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">si_next</span><span class="p p-Indicator">]</span>
 </span></pre></div>
 </div>
 </section>
@@ -194,8 +194,8 @@ from playlist entries.</p>
 <h2>Playlist Triggers<a class="headerlink" href="#playlist-triggers" title="Link to this heading">¶</a></h2>
 <p>Add ScanImage trigger entries in the playlist. Digital outputs come after analog
 outputs in <code class="docutils literal notranslate"><span class="pre">stimFileName</span></code>.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
-</span><span data-line="2">[SIN_100_0_1000,SI_START,SI_STOP,SI_NEXT]	1000	1000	0	1.0	100
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">stimFileName	silencePre	silencePost	intensity	freq
+</span><span data-line="2">[SIN_100_0_1000,SI_START,SI_STOP,SI_NEXT]	1000	1000	1.0	100
 </span></pre></div>
 </div>
 <p>Trigger names:</p>

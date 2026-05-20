@@ -7,7 +7,7 @@
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
     <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -79,7 +79,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../extensions.html">Extensions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../hardware/hardware.html">Hardware</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/hardware.html">Hardware services</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/camera.html">Cameras</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/projector.html">DLP Projector</a></li>
@@ -175,18 +175,18 @@ data-aria-dark="Switch to auto color mode">
 the hardware parameters passed to those services.</p>
 <section id="minimal-camera-and-daq-example">
 <h2>Minimal Camera And DAQ Example<a class="headerlink" href="#minimal-camera-and-daq-example" title="Link to this heading">¶</a></h2>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">maxduration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90</span>
-</span><span data-line="2"><span class="nt">use_services</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">GCM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">DAQ</span><span class="p p-Indicator">]</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">maxduration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">90</span><span class="w">  </span><span class="c1"># duration of the experiment, in seconds</span>
+</span><span data-line="2"><span class="nt">use_services</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">GCM</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">DAQ</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># use the GCM and DAQ services - these need to have blocks below.</span>
 </span><span data-line="3">
 </span><span data-line="4"><span class="nt">GCM</span><span class="p">:</span>
-</span><span data-line="5"><span class="w">  </span><span class="nt">cam_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Spinnaker</span>
-</span><span data-line="6"><span class="w">  </span><span class="nt">cam_serialnumber</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30959651</span>
-</span><span data-line="7"><span class="w">  </span><span class="nt">frame_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100.0</span>
-</span><span data-line="8"><span class="w">  </span><span class="nt">frame_width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">640</span>
-</span><span data-line="9"><span class="w">  </span><span class="nt">frame_height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
-</span><span data-line="10"><span class="w">  </span><span class="nt">frame_offx</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">78</span>
-</span><span data-line="11"><span class="w">  </span><span class="nt">frame_offy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
-</span><span data-line="12"><span class="w">  </span><span class="nt">shutter_speed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+</span><span data-line="5"><span class="w">  </span><span class="nt">cam_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Spinnaker</span><span class="w">  </span><span class="c1"># use the spinnaker interface for FLIR cameras</span>
+</span><span data-line="6"><span class="w">  </span><span class="nt">cam_serialnumber</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30959651</span><span class="w">  </span><span class="c1"># serial numner of the camera - important if you want to address different cameras attached to the same rig</span>
+</span><span data-line="7"><span class="w">  </span><span class="nt">frame_rate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100.0</span><span class="w">  </span><span class="c1"># fps</span>
+</span><span data-line="8"><span class="w">  </span><span class="nt">frame_width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">640</span><span class="w">  </span><span class="c1"># px</span>
+</span><span data-line="9"><span class="w">  </span><span class="nt">frame_height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w">  </span><span class="c1"># px</span>
+</span><span data-line="10"><span class="w">  </span><span class="nt">frame_offx</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">78</span><span class="w">  </span><span class="c1"># px</span>
+</span><span data-line="11"><span class="w">  </span><span class="nt">frame_offy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w">  </span><span class="c1"># px</span>
+</span><span data-line="12"><span class="w">  </span><span class="nt">shutter_speed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span><span class="w">  </span><span class="c1"># us</span>
 </span><span data-line="13"><span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
 </span><span data-line="14"><span class="w">    </span><span class="nt">save_avi</span><span class="p">:</span>
 </span><span data-line="15"><span class="w">    </span><span class="nt">save_timestamps</span><span class="p">:</span>
@@ -194,56 +194,47 @@ the hardware parameters passed to those services.</p>
 </span><span data-line="17"><span class="nt">DAQ</span><span class="p">:</span>
 </span><span data-line="18"><span class="w">  </span><span class="nt">samplingrate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
 </span><span data-line="19"><span class="w">  </span><span class="nt">shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span data-line="20"><span class="w">  </span><span class="nt">analog_chans_in</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ai0</span><span class="p p-Indicator">]</span>
-</span><span data-line="21"><span class="w">  </span><span class="nt">analog_chans_in_info</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">microphone</span><span class="p p-Indicator">]</span>
+</span><span data-line="20"><span class="w">  </span><span class="nt">analog_chans_in</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ai0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ai1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ai2</span><span class="p p-Indicator">]</span>
+</span><span data-line="21"><span class="w">  </span><span class="nt">analog_chans_in_info</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">speaker_loopback</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">led_loopback</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">microphone</span><span class="p p-Indicator">]</span>
 </span><span data-line="22"><span class="w">  </span><span class="nt">analog_chans_out</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ao0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">ao1</span><span class="p p-Indicator">]</span>
 </span><span data-line="23"><span class="w">  </span><span class="nt">analog_chans_out_info</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">speaker</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">led</span><span class="p p-Indicator">]</span>
-</span><span data-line="24"><span class="w">  </span><span class="nt">digital_chans_out</span><span class="p">:</span>
-</span><span data-line="25"><span class="w">  </span><span class="nt">digitial_chans_out_info</span><span class="p">:</span>
-</span><span data-line="26"><span class="w">  </span><span class="nt">ledamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
-</span><span data-line="27"><span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
-</span><span data-line="28"><span class="w">    </span><span class="nt">save_h5</span><span class="p">:</span>
+</span><span data-line="24"><span class="w">  </span><span class="nt">callbacks</span><span class="p">:</span>
+</span><span data-line="25"><span class="w">    </span><span class="nt">save_h5</span><span class="p">:</span><span class="w">  </span><span class="c1"># callback accepts no parameters but needs to be delimited with `:`</span>
 </span></pre></div>
 </div>
-<p>YAML accepts empty values as <code class="docutils literal notranslate"><span class="pre">null</span></code>, which is useful for optional fields such as
-<code class="docutils literal notranslate"><span class="pre">digital_chans_out</span></code>.</p>
 </section>
 <section id="top-level-fields">
 <h2>Top-Level Fields<a class="headerlink" href="#top-level-fields" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">maxduration</span></code>: Experiment duration in seconds. Use <code class="docutils literal notranslate"><span class="pre">-1</span></code> to play the playlist once and derive duration from the playlist.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">use_services</span></code>: List of service blocks to start. Examples: <code class="docutils literal notranslate"><span class="pre">[GCM]</span></code>, <code class="docutils literal notranslate"><span class="pre">[GCM,</span> <span class="pre">DAQ]</span></code>, <code class="docutils literal notranslate"><span class="pre">[GCM1,</span> <span class="pre">GCM2,</span> <span class="pre">DAQ]</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use_services</span></code>: List of service blocks to start. Examples: <code class="docutils literal notranslate"><span class="pre">[GCM]</span></code>, <code class="docutils literal notranslate"><span class="pre">[GCM,</span> <span class="pre">DAQ]</span></code>, <code class="docutils literal notranslate"><span class="pre">[GCM1,</span> <span class="pre">GCM2,</span> <span class="pre">DAQ]</span></code>. These service names need to have corresponding blocks in the protocol file.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">serializer</span></code>: Optional ZeroRPC serializer. Defaults to <code class="docutils literal notranslate"><span class="pre">pickle</span></code>.</p></li>
 </ul>
-<p>Service blocks are launched locally. Per-service <code class="docutils literal notranslate"><span class="pre">host</span></code> blocks are no longer
-supported and are rejected by the client.</p>
 </section>
 <section id="shared-service-fields">
 <h2>Shared Service Fields<a class="headerlink" href="#shared-service-fields" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">python_exe</span></code>: Optional service-level Python executable override.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">python_exe</span></code>: Optional service-level Python executable override. This allows you to run certain services in separate python environments, by providing the environment’s python exe.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">callbacks</span></code>: Optional mapping of callback names to callback parameters. Use an empty mapping value when a callback has no parameters.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">port</span></code>: Optional service port override. Defaults are assigned by service type.</p></li>
 </ul>
 </section>
 <section id="daq-service">
 <h2>DAQ Service<a class="headerlink" href="#daq-service" title="Link to this heading">¶</a></h2>
-<p>DAQ service block names must start with <code class="docutils literal notranslate"><span class="pre">DAQ</span></code>. Use suffixes for multiple DAQ
-services, such as <code class="docutils literal notranslate"><span class="pre">DAQ1</span></code> and <code class="docutils literal notranslate"><span class="pre">DAQ2</span></code>.</p>
+<p>DAQ service address National Instruments DAQmx compatible devices. The block names must start with <code class="docutils literal notranslate"><span class="pre">DAQ</span></code>. Use suffixes for multiple DAQ services, such as <code class="docutils literal notranslate"><span class="pre">DAQ1</span></code> and <code class="docutils literal notranslate"><span class="pre">DAQ2</span></code>.</p>
 <p>DAQ fields:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">samplingrate</span></code>: Sample rate in Hz.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">samplingrate</span></code>: Sampling rate in Hz.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">device</span></code>: NI device name from NI-MAX. Defaults to <code class="docutils literal notranslate"><span class="pre">Dev1</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">clock_source</span></code>: Leave empty for the AI-synchronized default. Use <code class="docutils literal notranslate"><span class="pre">OnboardClock</span></code> for devices that need the onboard clock.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clock_source</span></code>: Leave empty for the AI-synchronized default. Use <code class="docutils literal notranslate"><span class="pre">OnboardClock</span></code> for devices that need the onboard clock (some low-level USB boards do not implement the default).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">nb_inputsamples_per_cycle</span></code>: Optional chunk size for analog input callbacks.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">shuffle</span></code>: Block-randomize playlist order.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shuffle</span></code>: Block-randomize playlist order. Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code> (presents stimuli in order).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_in</span></code>: Analog input channels, such as <code class="docutils literal notranslate"><span class="pre">[ai0,</span> <span class="pre">ai1]</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_in_info</span></code>: Human-readable labels for analog input channels.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_out</span></code>: Analog output channels, such as <code class="docutils literal notranslate"><span class="pre">[ao0,</span> <span class="pre">ao1]</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">analog_chans_out_info</span></code>: Human-readable labels for analog output channels.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">digital_chans_out</span></code>: Digital output channels, such as <code class="docutils literal notranslate"><span class="pre">[port0/line1,</span> <span class="pre">port0/line2]</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">digitial_chans_out_info</span></code>: Human-readable labels for digital output channels. This spelling matches the current client metadata key.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ledamp</span></code>: LED amplitude used by <code class="docutils literal notranslate"><span class="pre">MIRROR_LED</span></code> playlist entries.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">digital_chans_out_info</span></code>: Human-readable labels for digital output channels.</p></li>
 </ul>
 <p>Common DAQ callbacks:</p>
 <ul class="simple">
@@ -285,7 +276,7 @@ cameras, such as <code class="docutils literal notranslate"><span class="pre">GC
 <li><p><code class="docutils literal notranslate"><span class="pre">save_avi</span></code>: Save video with OpenCV <code class="docutils literal notranslate"><span class="pre">VideoWriter</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">save_ffmpegcv</span></code>: Save video with an ffmpegcv backend.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">save_vidgear</span></code>: Save video through VidGear.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">save_vidgear_round</span></code>: Save rounded/cropped VidGear output.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save_vidgear_round</span></code>: Save long videos, chunked into a sequences of individual files using the VidGear output.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">save_avi_fast</span></code>: Save video with the NVIDIA Video Processing Framework.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">saveimg_h5</span></code>: Save frames to HDF5.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">saveimg_zarr</span></code>: Save frames to Zarr.</p></li>
@@ -294,16 +285,13 @@ cameras, such as <code class="docutils literal notranslate"><span class="pre">GC
 <section id="gov-sensor-service">
 <h2>GOV Sensor Service<a class="headerlink" href="#gov-sensor-service" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">GOV</span></code> service logs Govee H5075 temperature/humidity BLE advertisements.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">maxduration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">600</span>
-</span><span data-line="2"><span class="nt">use_services</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">GOV</span><span class="p p-Indicator">]</span>
-</span><span data-line="3">
-</span><span data-line="4"><span class="nt">GOV</span><span class="p">:</span>
-</span><span data-line="5"><span class="w">  </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AA:BB:CC:DD:EE:FF</span>
-</span><span data-line="6"><span class="w">  </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">GOV</span><span class="p">:</span>
+</span><span data-line="2"><span class="w">  </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AA:BB:CC:DD:EE:FF</span>
+</span><span data-line="3"><span class="w">  </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
 </span></pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">address</span></code>: Required BLE device address.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">address</span></code>: Required device address.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">interval</span></code>: Logging interval in seconds. Defaults to <code class="docutils literal notranslate"><span class="pre">60</span></code>.</p></li>
 </ul>
 </section>
