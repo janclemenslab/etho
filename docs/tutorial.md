@@ -74,8 +74,8 @@ Create a tab-delimited playlist such as
 `~/ethoconfig/playlists/sine_led.txt`:
 
 ```text
-stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
-[SIN_100_0_1000,PUL_10_10_50_0]	1000	1000	0	[1.0,1.0]	[100,100]
+stimFileName	silencePre	silencePost	intensity	freq
+[SIN_100_0_1000,PUL_10_10_50_0]	1000	1000	[1.0,1.0]	[100,100]
 ```
 
 The order of entries in `stimFileName` must match the protocol outputs: analog

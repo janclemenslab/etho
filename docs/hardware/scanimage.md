@@ -31,8 +31,8 @@ Add ScanImage trigger entries in the playlist. Digital outputs come after analog
 outputs in `stimFileName`.
 
 ```text
-stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
-[SIN_100_0_1000,SI_START,SI_STOP,SI_NEXT]	1000	1000	0	1.0	100
+stimFileName	silencePre	silencePost	intensity	freq
+[SIN_100_0_1000,SI_START,SI_STOP,SI_NEXT]	1000	1000	1.0	100
 ```
 
 Trigger names:

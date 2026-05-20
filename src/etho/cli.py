@@ -183,10 +183,8 @@ def init():
         "stimFileName": {0: "SIN_100_0_1000"},
         "silencePre": {0: 10000},
         "silencePost": {0: 9000},
-        "delayPost": {0: 0},
         "intensity": {0: 0.0},
         "freq": {0: 100},
-        "MODE": {0: None},
     }
     path_playlist = home / "ethoconfig/playlists/0_silence.txt"
     logging.info(f"   playlist {str(path_playlist)}.")

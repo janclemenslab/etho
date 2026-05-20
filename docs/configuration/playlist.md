@@ -8,28 +8,26 @@ tab-delimited text files.
 The parser expects these columns in this order:
 
 ```text
-stimFileName	silencePre	silencePost	delayPost	intensity	freq	MODE
+stimFileName	silencePre	silencePost	intensity	freq
 ```
 
 Example:
 
-| stimFileName                     | silencePre   | silencePost  | delayPost | intensity  | freq       | MODE |
-|----------------------------------|--------------|--------------|-----------|------------|------------|------|
-| superstimulus.wav                | 1000         | 1000         | 0         | 1.0        | 100        |      |
-| SIN_100_0_3000                   | 1000         | 1000         | 0         | 1.0        | 100        |      |
-| [mediocre_stim.wav, MIRROR_LED]  | 1000         | 1000         | 0         | 1.0        | 100        |      |
-| [PUL_5_10_10_0, SIN_200_0_2000]  | 1000         | 1000         | 0         | 1.0        | 100        |      |
-| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 2000] | [2000, 1000] | 0         | [1.0, 2.0] | [100, 200] |      |
+| stimFileName                     | silencePre   | silencePost  | intensity  | freq       |
+|----------------------------------|--------------|--------------|------------|------------|
+| superstimulus.wav                | 1000         | 1000         | 1.0        | 100        |
+| SIN_100_0_3000                   | 1000         | 1000         | 1.0        | 100        |
+| [mediocre_stim.wav, MIRROR_LED]  | 1000         | 1000         | 1.0        | 100        |
+| [PUL_5_10_10_0, SIN_200_0_2000]  | 1000         | 1000         | 1.0        | 100        |
+| [SIN_100_0_3000, SIN_200_0_2000] | [1000, 2000] | [2000, 1000] | [1.0, 2.0] | [100, 200] |
 
 Column meanings:
 
 - `stimFileName`: WAV/HDF5 stimulus filename or a generated stimulus name.
 - `silencePre`: Silence before the stimulus, in milliseconds.
 - `silencePost`: Silence after the stimulus, in milliseconds.
-- `delayPost`: Parsed for compatibility with existing playlists.
 - `intensity`: Output multiplier. For calibrated sounds or LEDs, use the unit convention established by the rig calibration.
 - `freq`: Key into the attenuation table in `ethoconfig.yml`.
-- `MODE`: Parsed for compatibility with existing playlists.
 
 Each row defines one trial. The trial duration is `silencePre`, plus the longest
 stimulus across output channels, plus `silencePost`. Shorter output channels are

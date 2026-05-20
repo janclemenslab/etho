@@ -8,6 +8,9 @@ import scipy.signal
 import h5py
 
 
+PLAYLIST_COLUMNS = ["stimFileName", "silencePre", "silencePost", "intensity", "freq"]
+
+
 def parse_cell(cell, dtype: Callable = None) -> List:
     """Cast cell to desired type and wrap into list."""
     if isinstance(cell, str):
@@ -23,7 +26,7 @@ def parse_cell(cell, dtype: Callable = None) -> List:
 
 def parse_table(
     table: Union[pd.DataFrame, str],
-    dtypes: List[Callable] = [str, float, float, float, float, float, str],
+    dtypes: List[Callable] = [str, float, float, float, float],
     normalize: bool = True,
 ) -> pd.DataFrame:
     """Parse table to desired types.
@@ -36,6 +39,7 @@ def parse_table(
     """
     if isinstance(table, str):
         table = pd.read_table(table, dtype=None, delimiter="\t", decimal=".")
+    table = table[PLAYLIST_COLUMNS]
     tb = table.to_numpy(dtype=object, copy=True)
     for row, row_values in enumerate(tb):
         for col, cell in enumerate(row_values):
