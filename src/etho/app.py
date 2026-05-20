@@ -334,17 +334,7 @@ class MainWindow(QMainWindow):
         [buttons.addWidget(b) for b in self.button.values()]
 
         self.help = QtWidgets.QLabel(
-            "<br>"
-            "<br>"
-            "<B>Instructions</B><br>"
-            "<br>"
-            "Single Click on<br>"
-            " playlist or protocol.<br>"
-            "previews the file.<br>"
-            "<br>"
-            "Double Click opens<br>"
-            "playlist or protocol<br>"
-            "in VS code.<br>"
+            "<br><br><B>Instructions</B><br><br>Single Click on<br> playlist or protocol.<br>previews the file.<br><br>Double Click opens<br>playlist or protocol<br>in VS code.<br>"
         )
         buttons.addWidget(self.help)
 
@@ -550,9 +540,9 @@ def main(protocol_folder: Optional[str] = None, playlist_folder: Optional[str] =
 
     Args:
         protocol_folder (Optional[str]): Folder with protocol files.
-                                         Defaults to value ['HEAD']['protocolfolder'] from `~/ethoconfig.yml`.
+                                         Defaults to value `protocolfolder` in `~/ethoconfig/ethoconfig.yml`.
         playlist_folder (Optional[str]): Folder with playlist files.
-                                         Defaults to value ['HEAD']['playlistfolder'] from `~/ethoconfig.yml`.
+                                         Defaults to value `playlistfolder` in `~/ethoconfig/ethoconfig.yml`.
     """
     app = QApplication(sys.argv)
     icon = _system_icon(app)
