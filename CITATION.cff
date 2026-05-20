@@ -1,7 +1,8 @@
 cff-version: 1.2.0
 message: "If you use etho in your research, please cite the software using the metadata below."
-title: "etho"
-abstract: "A Python framework for coordinating stimuli, data acquisition, and hardware control in neuroscience experiments."
+title: "`Etho`: A Python framework for coordinating stimuli, data acquisition, and hardware control in neuroscience experiments."
+abstract: `Etho` is an open-source Python package for running behavioral and neuroscience experiments that require coordinated stimulus presentation, hardware control, and data acquisition. It was developed for experiments combining stimulus playback, analog and digital input/output, video acquisition, optogenetic stimulation, environmental monitoring, and external imaging systems. The package is user-friendly and does not require programming skills for configuration or operation. It provides text-based configuration through both a command-line interface and a graphical user interface for running experiments. The central use case for `etho` is a laboratory experiment in which multiple devices must operate together with reproducible timing. For example, an experiment can present calibrated acoustic and optogenetic stimuli through National Instruments data-acquisition hardware, record multichannel microphone and trigger signals, acquire synchronized camera frames, and send control pulses to external systems such as ScanImage. After the experiment, the timing relationships between stimuli, recordings, and control signals remain available for downstream annotation and analysis. Experimental logic is specified in human-readable YAML protocol files and tabular stimulus playlists, separating scientific design from low-level device code and making experiments easier to inspect, modify, archive, and reproduce.
+
 type: software
 
 authors:
