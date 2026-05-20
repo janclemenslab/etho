@@ -28,7 +28,13 @@ Column meanings:
 - `intensity`: Output multiplier. For calibrated sounds or LEDs, use the unit convention established by the rig calibration.
 - `freq`: Key into the attenuation table in `ethoconfig.yml`.
 
-Each row defines one trial. The trial duration is `silencePre`, plus the longest
+Each row defines one trial and the whole playlist is repeated until the experiment finishes.
+The order of the trials can be specified in the protocol section, via the `shuffle` parameter for the associated DAQ service:
+
+- `shuffle: False`: Trials run in order as per the playlist (default).
+- `shuffle: True`: Trials are block randomized.
+
+The trial duration is `silencePre`, plus the longest
 stimulus across output channels, plus `silencePost`. Shorter output channels are
 zero-padded to match the longest channel.
 

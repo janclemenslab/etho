@@ -4,21 +4,22 @@
 Protocols are YAML files that define the services used for an experiment and
 the hardware parameters passed to those services.
 
+
 ## Minimal Camera And DAQ Example
 
 ```yaml
-maxduration: 90
-use_services: [GCM, DAQ]
+maxduration: 90  # duration of the experiment, in seconds
+use_services: [GCM, DAQ]  # use the GCM and DAQ services - these need to have blocks below.
 
 GCM:
-  cam_type: Spinnaker
-  cam_serialnumber: 30959651
-  frame_rate: 100.0
-  frame_width: 640
-  frame_height: 200
-  frame_offx: 78
-  frame_offy: 10
-  shutter_speed: 5000
+  cam_type: Spinnaker  # use the spinnaker interface for FLIR cameras
+  cam_serialnumber: 30959651  # serial numner of the camera - important if you want to address different cameras attached to the same rig
+  frame_rate: 100.0  # fps
+  frame_width: 640  # px
+  frame_height: 200  # px
+  frame_offx: 78  # px
+  frame_offy: 10  # px
+  shutter_speed: 5000  # us
   callbacks:
     save_avi:
     save_timestamps:
@@ -26,46 +27,40 @@ GCM:
 DAQ:
   samplingrate: 10000
   shuffle: true
-  analog_chans_in: [ai0]
-  analog_chans_in_info: [microphone]
+  analog_chans_in: [ai0, ai1, ai2]
+  analog_chans_in_info: [speaker_loopback, led_loopback, microphone]
   analog_chans_out: [ao0, ao1]
   analog_chans_out_info: [speaker, led]
-  digital_chans_out:
-  digitial_chans_out_info:
   callbacks:
-    save_h5:
+    save_h5:  # callback accepts no parameters but needs to be delimited with `:`
 ```
 
-YAML accepts empty values as `null`, which is useful for optional fields such as
-`digital_chans_out`.
 
 ## Top-Level Fields
 
 - `maxduration`: Experiment duration in seconds. Use `-1` to play the playlist once and derive duration from the playlist.
-- `use_services`: List of service blocks to start. Examples: `[GCM]`, `[GCM, DAQ]`, `[GCM1, GCM2, DAQ]`.
+- `use_services`: List of service blocks to start. Examples: `[GCM]`, `[GCM, DAQ]`, `[GCM1, GCM2, DAQ]`. These service names need to have corresponding blocks in the protocol file.
 - `serializer`: Optional ZeroRPC serializer. Defaults to `pickle`.
 
-Service blocks are launched locally. Per-service `host` blocks are no longer
-supported and are rejected by the client.
 
 ## Shared Service Fields
 
-- `python_exe`: Optional service-level Python executable override.
+- `python_exe`: Optional service-level Python executable override. This allows you to run certain services in separate python environments, by providing the environment's python exe.
 - `callbacks`: Optional mapping of callback names to callback parameters. Use an empty mapping value when a callback has no parameters.
 - `port`: Optional service port override. Defaults are assigned by service type.
 
+
 ## DAQ Service
 
-DAQ service block names must start with `DAQ`. Use suffixes for multiple DAQ
-services, such as `DAQ1` and `DAQ2`.
+DAQ service address National Instruments DAQmx compatible devices. The block names must start with `DAQ`. Use suffixes for multiple DAQ services, such as `DAQ1` and `DAQ2`.
 
 DAQ fields:
 
-- `samplingrate`: Sample rate in Hz.
+- `samplingrate`: Sampling rate in Hz.
 - `device`: NI device name from NI-MAX. Defaults to `Dev1`.
-- `clock_source`: Leave empty for the AI-synchronized default. Use `OnboardClock` for devices that need the onboard clock.
+- `clock_source`: Leave empty for the AI-synchronized default. Use `OnboardClock` for devices that need the onboard clock (some low-level USB boards do not implement the default).
 - `nb_inputsamples_per_cycle`: Optional chunk size for analog input callbacks.
-- `shuffle`: Block-randomize playlist order.
+- `shuffle`: Block-randomize playlist order. Defaults to `false` (presents stimuli in order).
 - `analog_chans_in`: Analog input channels, such as `[ai0, ai1]`.
 - `analog_chans_in_info`: Human-readable labels for analog input channels.
 - `analog_chans_out`: Analog output channels, such as `[ao0, ao1]`.
@@ -80,6 +75,7 @@ Common DAQ callbacks:
 - `plot_fast`: Display analog traces with pyqtgraph.
 - `plot`: Display analog traces with matplotlib.
 - `savedlp_h5`: Save DLP frame/stimulus metadata.
+
 
 ## Camera Service
 
@@ -113,7 +109,7 @@ Common camera callbacks:
 - `save_avi`: Save video with OpenCV `VideoWriter`.
 - `save_ffmpegcv`: Save video with an ffmpegcv backend.
 - `save_vidgear`: Save video through VidGear.
-- `save_vidgear_round`: Save rounded/cropped VidGear output.
+- `save_vidgear_round`: Save long videos, chunked into a sequences of individual files using the VidGear output.
 - `save_avi_fast`: Save video with the NVIDIA Video Processing Framework.
 - `saveimg_h5`: Save frames to HDF5.
 - `saveimg_zarr`: Save frames to Zarr.
@@ -123,15 +119,12 @@ Common camera callbacks:
 The `GOV` service logs Govee H5075 temperature/humidity BLE advertisements.
 
 ```yaml
-maxduration: 600
-use_services: [GOV]
-
 GOV:
   address: AA:BB:CC:DD:EE:FF
   interval: 60
 ```
 
-- `address`: Required BLE device address.
+- `address`: Required device address.
 - `interval`: Logging interval in seconds. Defaults to `60`.
 
 ## DLP Projector Service
