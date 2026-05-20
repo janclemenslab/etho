@@ -71,7 +71,7 @@ DAQ fields:
 - `analog_chans_out`: Analog output channels, such as `[ao0, ao1]`.
 - `analog_chans_out_info`: Human-readable labels for analog output channels.
 - `digital_chans_out`: Digital output channels, such as `[port0/line1, port0/line2]`.
-- `digitial_chans_out_info`: Human-readable labels for digital output channels. This spelling matches the current client metadata key.
+- `digital_chans_out_info`: Human-readable labels for digital output channels.
 
 Common DAQ callbacks:
 

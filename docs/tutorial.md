@@ -58,7 +58,7 @@ DAQ:
   analog_chans_out: [ao0, ao1]
   analog_chans_out_info: [speaker, led]
   digital_chans_out:
-  digitial_chans_out_info:
+  digital_chans_out_info:
   callbacks:
     save_h5:
 ```

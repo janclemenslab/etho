@@ -32,7 +32,7 @@ DAQ:
   analog_chans_out: [ao0, ao1]
   analog_chans_out_info: [speaker, led]
   digital_chans_out: [port0/line1, port0/line2, port0/line3]
-  digitial_chans_out_info: [si_start, si_stop, si_next]
+  digital_chans_out_info: [si_start, si_stop, si_next]
   callbacks:
     save_h5:
 ```

@@ -102,7 +102,7 @@ class DAQ(BaseZeroService):
             metadata={
                 "analog_chans_in_info": prot[service_key]["analog_chans_in_info"],
                 "analog_chans_out_info": prot[service_key]["analog_chans_out_info"],
-                "digitial_chans_out_info": prot[service_key]["digitial_chans_out_info"],
+                "digital_chans_out_info": prot[service_key]["digital_chans_out_info"],
             },
             params=undefaultify(prot[service_key]),
         )

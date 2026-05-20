@@ -22,7 +22,7 @@ Add digital output channels to the DAQ service:
 ```yaml
 DAQ:
   digital_chans_out: [port0/line1, port0/line2, port0/line3]
-  digitial_chans_out_info: [si_start, si_stop, si_next]
+  digital_chans_out_info: [si_start, si_stop, si_next]
 ```
 
 ## Playlist Triggers
