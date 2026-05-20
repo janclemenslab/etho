@@ -61,9 +61,7 @@ def normalize_table(table: pd.DataFrame) -> pd.DataFrame:
         nchans = len(row_values[0])  # 1. get n stim channels from len(stimFileName)
         for col, cell in enumerate(row_values[1:]):
             if len(cell) < nchans:
-                tb[row, col + 1] = [
-                    cell[0]
-                ] * nchans  # 2. fill remaining cols to match len(stimFileName)
+                tb[row, col + 1] = [cell[0]] * nchans  # 2. fill remaining cols to match len(stimFileName)
     df = pd.DataFrame(tb, columns=table.columns)
     return df
 
@@ -83,14 +81,10 @@ def select_channels_from_playlist(playlist: pd.DataFrame, channels_to_keep: List
         for row_name, row_data in col_data.iteritems():
             if isinstance(row_data, (list, tuple)):
                 # playlist_new.set_value(row_name, col_name, [row_data[channel] for channel in channels_to_keep])
-                playlist_new.at[row_name, col_name] = [
-                    row_data[channel] for channel in channels_to_keep
-                ]
+                playlist_new.at[row_name, col_name] = [row_data[channel] for channel in channels_to_keep]
             if isinstance(row_data, np.ndarray):
                 # playlist_new.set_value(row_name, col_name, np.array(row_data)[channels_to_keep])
-                playlist_new.at[row_name, col_name] = np.array(row_data)[
-                    channels_to_keep
-                ]
+                playlist_new.at[row_name, col_name] = np.array(row_data)[channels_to_keep]
     return playlist_new
 
 
@@ -137,9 +131,7 @@ def parse_pulse_parameters(playlist, sounds, fs):
     return pulse_params
 
 
-def make_sine(
-    frequency: float, phase: float, duration: float, samplingrate: float
-) -> np.array:
+def make_sine(frequency: float, phase: float, duration: float, samplingrate: float) -> np.array:
     """Make sinusoidal from parameters.
 
     Args:
@@ -158,7 +150,7 @@ def make_pulse(
     pulseNumber: float,
     pulseDelay: float,
     samplingrate: float,
-) -> np.array:
+) -> np.ndarray:
     """Make square pulse train.
 
     Args:
@@ -172,13 +164,13 @@ def make_pulse(
             np.zeros((np.intp(samplingrate * pulsePau / 1000),)),
         )
     )
-    x = np.tile(x, (np.intp(pulseNumber),))
+    x = np.tile(x, (np.uint(pulseNumber),))
     x = np.concatenate((np.ones((np.intp(samplingrate * pulseDelay / 1000),)), x))
     return x
 
 
 def build_playlist(
-    soundlist: List[np.array],
+    soundlist: List[np.ndarray],
     duration: float,
     fs: float,
     shuffle=False,
@@ -268,6 +260,7 @@ def load_sounds(
                 x = x.reshape((x.shape[0], 1))
 
             xx[stimIdx] = x
+
         # make sure each channel in xx has the same length
         max_len = max([len(ii) for ii in xx])
         xx = [np.insert(ii, ii.shape[0], np.zeros((max_len - len(ii),))) for ii in xx]
@@ -294,7 +287,7 @@ def load_sounds(
                 tmp_x = make_pulse(
                     pulsedur,
                     pulsepause,
-                    pulsenumber=pulsenumber,
+                    pulseNumber=pulsenumber,
                     pulseDelay=0,
                     samplingrate=fs,
                 )
