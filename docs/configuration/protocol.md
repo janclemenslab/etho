@@ -32,7 +32,6 @@ DAQ:
   analog_chans_out_info: [speaker, led]
   digital_chans_out:
   digitial_chans_out_info:
-  ledamp: 5
   callbacks:
     save_h5:
 ```
@@ -73,7 +72,6 @@ DAQ fields:
 - `analog_chans_out_info`: Human-readable labels for analog output channels.
 - `digital_chans_out`: Digital output channels, such as `[port0/line1, port0/line2]`.
 - `digitial_chans_out_info`: Human-readable labels for digital output channels. This spelling matches the current client metadata key.
-- `ledamp`: LED amplitude used by `MIRROR_LED` playlist entries.
 
 Common DAQ callbacks:
 

@@ -59,7 +59,6 @@ DAQ:
   analog_chans_out_info: [speaker, led]
   digital_chans_out:
   digitial_chans_out_info:
-  ledamp: 5
   callbacks:
     save_h5:
 ```

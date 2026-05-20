@@ -5,7 +5,7 @@ from etho.utils.sound import parse_table, load_sounds
 
 def test_playlist():
     # plt.ion()
-    for playlistfile in ['tests/test_sound_playlist_mono.txt', 'tests/test_sound_playlist_mirrorled.txt', 'tests/test_sound_playlist_stereo.txt']:
+    for playlistfile in ['tests/test_sound_playlist_mono.txt', 'tests/test_sound_playlist_stereo.txt']:
         print(playlistfile)
         dtypes = [str, float, float, float, float]
         df = parse_table(playlistfile, dtypes)

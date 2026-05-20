@@ -216,7 +216,6 @@ def load_sounds(
     fs: float,
     attenuation: Dict[float, float] = None,
     calibration: Dict = None,
-    LEDamp: float = 1.0,
     stimfolder: str = "./",
     aslist: bool = False,
     stim_key: str = "stimulus",
@@ -224,11 +223,10 @@ def load_sounds(
 ):
     sounddata = []
     for row_number, (row_name, listitem) in enumerate(playlist.iterrows()):
-        mirror_led_channel = []
         xx = [None] * len(listitem.stimFileName)
         for stimIdx, stimName in enumerate(listitem.stimFileName):
             x = np.zeros((0, 1))
-            # These all acknowledge the pre/post stim silence: SIN, PUL, MIRROR_LED, *.wav, *.h5
+            # These all acknowledge the pre/post stim silence: SIN, PUL, *.wav, *.h5
             if stimName[:3] == "SIN":  # SIN_FREQ_PHASE_DURATION
                 # print('sine')
                 token = stimName[4:].split("_")
@@ -241,10 +239,6 @@ def load_sounds(
                 token = [float(item) for item in token]
                 pulsedur, pulsepause, pulsenumber, pulsedelay = token[:4]
                 x = make_pulse(pulsedur, pulsepause, pulsenumber, pulsedelay, fs)
-            elif (
-                stimName == "MIRROR_LED"
-            ):  # this channel contains a pulse train which mirrors the sound from another channel
-                mirror_led_channel.append(stimIdx)  # mirror led
             elif stimName.endswith(".wav"):  # WAV file
                 # return time x channels
                 wav_rate, x = wav.read(os.path.join(stimfolder, stimName))
@@ -268,39 +262,12 @@ def load_sounds(
                 # pre/post pend silence
                 sample_start = np.intp(listitem.silencePre[stimIdx] / 1000 * fs)
                 sample_end = np.intp(listitem.silencePost[stimIdx] / 1000 * fs)
-                sample_sound = x.shape[0]
 
                 x = np.insert(x, 0, np.zeros((sample_start,)))
                 x = np.insert(x, x.shape[0], np.zeros((sample_end,)))
                 x = x.reshape((x.shape[0], 1))
 
             xx[stimIdx] = x
-        non_mirror_led_chan = [
-            x for x in list(range(len(xx))) if not x in mirror_led_channel
-        ][0]
-        for chan in mirror_led_channel:
-            xLED = np.zeros(
-                xx[non_mirror_led_chan].shape
-            )  # second channel is all zeros unless we mirrorsound
-            # copy channel for led
-            # duration of the LED pattern at least 100ms if possible so it registers in video
-            minLEDduration = 3 * fs  # at least 3s
-            # set to minimal duration
-            LEDduration = np.max((sample_sound, minLEDduration))
-            # prevent overflow (if 100ms exceeds duration of sound)
-            LEDduration = np.min((xLED.shape[0] - sample_start, LEDduration))
-            # parameters of the LED pattern
-            pdur = 5  # ms
-            ppau = 5  # ms
-            pdel = 0  # ms
-            LEDpattern = make_pulse(
-                pdur, ppau, LEDduration / (pdur + ppau) / fs * 1000, pdel, fs
-            )
-            xLED[sample_start : sample_start + LEDpattern.shape[0], 0] = (
-                LEDpattern - 0.5
-            ) * float(LEDamp)
-            xx[chan] = xLED
-
         # make sure each channel in xx has the same length
         max_len = max([len(ii) for ii in xx])
         xx = [np.insert(ii, ii.shape[0], np.zeros((max_len - len(ii),))) for ii in xx]

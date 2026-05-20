@@ -33,7 +33,6 @@ DAQ:
   analog_chans_out_info: [speaker, led]
   digital_chans_out: [port0/line1, port0/line2, port0/line3]
   digitial_chans_out_info: [si_start, si_stop, si_next]
-  ledamp: 5
   callbacks:
     save_h5:
 ```

@@ -59,7 +59,6 @@ class DAQ(BaseZeroService):
             playlist,
             fs,
             attenuation=attenuation,
-            LEDamp=prot[service_key]["ledamp"],
             stimfolder=global_config["stimfolder"],
         )
         sounds = [sound.astype(np.float64) for sound in sounds]
