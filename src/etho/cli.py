@@ -38,6 +38,35 @@ def run(
     )
 
 
+def res_run(
+    protocolfile: str,
+    playlistfile: Optional[str] = None,
+    *,
+    save_prefix: Optional[str] = None,
+    show_progress: bool = True,
+    debug: bool = False,
+    preview: bool = False,
+):
+    """Starts a resumable DAQ/GCM experiment from the CLI."""
+    from . import resumable
+
+    return resumable.run(
+        protocolfile=protocolfile,
+        playlistfile=playlistfile,
+        save_prefix=save_prefix,
+        show_progress=show_progress,
+        debug=debug,
+        preview=preview,
+    )
+
+
+def res_gui(protocol_folder: Optional[str] = None, playlist_folder: Optional[str] = None):
+    """Opens the resumable DAQ/GCM graphical user interface."""
+    from . import res_app
+
+    return res_app.main(protocol_folder=protocol_folder, playlist_folder=playlist_folder)
+
+
 def version(*, debug: bool = False):
     """Displays system, version, and hardware info.
 
@@ -200,6 +229,7 @@ def main():
 
     if client is not None:
         subcommands.update({"run": run})
+    subcommands["res-run"] = res_run
     try:
         from . import app
 
@@ -208,6 +238,13 @@ def main():
         logging.exception("No GUI avalaible.")
         # fall back to function that displays helpful instructions
         subcommands["gui"] = no_gui
+    try:
+        from . import res_app
+
+        subcommands["res-gui"] = res_app.main
+    except (ImportError, ModuleNotFoundError):
+        logging.exception("No resumable GUI avalaible.")
+        subcommands["res-gui"] = no_gui
 
     logging.basicConfig(level=logging.INFO, force=True)
     defopt.run(subcommands, show_defaults=False)

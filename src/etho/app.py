@@ -327,6 +327,8 @@ class MainWindow(QMainWindow):
         self.button["Stop"].clicked.connect(self.request_stop)
         self.button["Camera_preview"] = QPushButton("Camera preview")
         self.button["Camera_preview"].clicked.connect(self.camera_preview)
+        self.button["Exit"] = QPushButton("Exit")
+        self.button["Exit"].clicked.connect(self.close)
         self.button["Debug"] = QCheckBox("Debug")
         self.button["Progress"] = QCheckBox("Show Progress")
         self.button["Progress"].setChecked(True)
@@ -530,6 +532,7 @@ class MainWindow(QMainWindow):
         self.button["Refresh lists"].setEnabled(not running)
         self.button["Stop"].setEnabled(running and not stopping)
         self.button["Stop"].setText("Stopping..." if stopping else "Stop")
+        self.button["Exit"].setEnabled(not running)
 
     def camera_preview(self):
         self.start(preview=True)
