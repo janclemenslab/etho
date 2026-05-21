@@ -40,7 +40,37 @@ jobs:
         python -m pip install --upgrade pip uv
         uv pip install flake8 pytest --system
         uv pip install ".[dev,docs]" --upgrade --system
-        
+    - name: Create etho config
+      run: |
+        New-Item -ItemType Directory -Force "$HOME/ethoconfig" | Out-Null
+        @'
+        user: ncb
+        host: localhost
+        savefolder: data
+        protocolfolder: ethoconfig/protocols
+        playlistfolder: ethoconfig/playlists
+        stimfolder: ethoconfig/stim
+        python_exe: python
+        ATTENUATION:
+          -1: 1
+          0: 1
+          100: 1
+          150: 1
+          200: 1
+          250: 1
+          300: 1
+          350: 1
+          400: 1
+          450: 1
+          500: 1
+          600: 1
+          700: 1
+          800: 1
+          900: 1
+          1000: 1
+          1500: 1
+          2000: 1
+        '@ | Set-Content "$HOME/ethoconfig/ethoconfig.yml"
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
