@@ -18,13 +18,20 @@ from .utils.sound import build_playlist, load_sounds, parse_table
 logger = logging.getLogger(__name__)
 
 
+def _attenuation_for_host():
+    attenuation = config["ATTENUATION"]
+    host = config["host"] or "localhost"
+    if isinstance(attenuation, dict) and host in attenuation:
+        return attenuation[host]
+    return attenuation
+
+
 def _playlist_cache_key(protocol, playlistfile):
     daq_name = next((name for name in protocol["use_services"] if service_base_name(name) == "DAQ"), None)
     if daq_name is None:
         return None
     daq_params = protocol[daq_name]
-    host = config["host"] or "localhost"
-    attenuation = config["ATTENUATION"][host] if host in config["ATTENUATION"] else config["ATTENUATION"]
+    attenuation = _attenuation_for_host()
     return (
         daq_name,
         str(Path(playlistfile).resolve()),
@@ -47,8 +54,7 @@ def playlist_arrays(protocol, playlistfile, cache=None):
         logger.info(f"Reusing loaded stimuli for {playlistfile}.")
     else:
         playlist = parse_table(playlistfile)
-        host = config["host"] or "localhost"
-        attenuation = config["ATTENUATION"][host] if host in config["ATTENUATION"] else config["ATTENUATION"]
+        attenuation = _attenuation_for_host()
         sounds = load_sounds(playlist, fs, attenuation=attenuation, stimfolder=config["stimfolder"])
         sounds = [sound.astype(np.float64) for sound in sounds]
         if cache is not None:
@@ -121,10 +127,7 @@ class ResumableExperimentRunner:
         savefolder = Path(config["savefolder"] or ".")
         if self.save_prefix_root is None:
             while (savefolder / save_prefix).exists():
-                if stop_event is not None:
-                    stop_event.wait(0.2)
-                else:
-                    time.sleep(1)
+                time.sleep(1)
                 save_prefix = f"{config['host'] or 'localhost'}-{time.strftime('%Y%m%d_%H%M%S')}"
         run_duration = duration
         if run_duration is None and self.prot["maxduration"] > 0:

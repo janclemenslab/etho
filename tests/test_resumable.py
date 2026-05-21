@@ -439,6 +439,7 @@ def test_playlist_arrays_reuses_loaded_stimuli_but_rebuilds_playlist(monkeypatch
     monkeypatch.setattr("etho.resumable.parse_table", lambda playlistfile: pd.DataFrame({"stimFileName": ["a"]}))
     monkeypatch.setattr("etho.resumable.load_sounds", fake_load_sounds)
     monkeypatch.setattr("etho.resumable.build_playlist", fake_build_playlist)
+    monkeypatch.setitem(importlib.import_module("etho").config, "ATTENUATION", None)
 
     protocol = {
         "maxduration": 1,
