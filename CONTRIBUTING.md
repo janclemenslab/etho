@@ -18,10 +18,10 @@ Clone the repository and install the package in editable mode:
 ```bash
 
 git clone https://github.com/janclemenslab/etho.git
-
 cd etho
-
-pip install -e ".[dev]"
+uv venv --python 3.14
+source .venv\Scripts\activate
+uv pip install -e ".[dev,doc]"
 ```
 
 ## Running tests
