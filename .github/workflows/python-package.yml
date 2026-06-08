@@ -39,7 +39,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip uv
         uv pip install flake8 pytest --system
-        uv pip install ".[dev,docs]" --upgrade --system
+        uv pip install ".[dev,doc]" --upgrade --system
     - name: Create etho config
       run: |
         New-Item -ItemType Directory -Force "$HOME/ethoconfig" | Out-Null
