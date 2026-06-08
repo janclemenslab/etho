@@ -16,14 +16,41 @@ Please use the GitHub issue tracker to report bugs, request features, or ask que
 Clone the repository and install the package in editable mode:
 
 ```bash
-
 git clone https://github.com/janclemenslab/etho.git
 cd etho
 uv venv --python 3.14
-source .venv\Scripts\activate
+```
+
+Activate the virtual environment on linux or macOS:
+
+```bash
+source .venv/bin/activate
+```
+
+On Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+On Windows `cmd.exe`:
+
+```bat
+.venv\Scripts\activate.bat
+```
+
+Then install the package:
+
+```bash
 uv pip install -e ".[dev,doc]"
 ```
 
 ## Running tests
 
-Run the test suite locally before submitting changes with `pytest`. Continuous integration (CI) tests are automatically run on all pull requests and must pass before merging.
+Run the test suite locally before submitting changes:
+
+```bash
+python -m pytest
+```
+
+Use the same activated environment where you installed the editable package. Continuous integration (CI) tests are automatically run on all pull requests and must pass before merging.
