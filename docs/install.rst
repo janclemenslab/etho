@@ -2,51 +2,43 @@ Installation and initialization
 ===============================
 
 Etho is a Python package with optional hardware SDK dependencies.
-You can install it using uv or conda, and then initialize the config files and folders.
+Etho is tested for Windows acquisition rigs. The hardware stack depends on
+vendor SDKs, which may also work on macOS or Linux but have not been tested
+with ``etho``. The install and run commands in the user documentation are
+therefore Windows PowerShell commands. macOS and Linux can be used for
+development, tests, and documentation work that does not require hardware SDKs.
 
-.. tabs::
+Create a named conda environment, activate it, and install ``etho`` with
+``uv pip``:
 
-   .. group-tab:: :iconify:`material-icon-theme:uv` uv (recommended)
+.. code-block:: powershell
 
-         .. code-block:: bash
+   conda create -n etho -c conda-forge -y python=3.14 uv pip git
+   conda activate etho
+   uv pip install etho-python
+   etho init
 
-            uv venv --python 3.14
-            .venv\Scripts\activate
-            uv pip install etho-python
-
-   .. group-tab:: :iconify:`vscode-icons:file-type-conda` conda
-
-      Use this environment if you need vendor camera SDKs that have only been validated on Python 3.10.
-      Use conda for the base environment and ``uv pip install`` for non-conda Python packages.
-      .. code-block:: bash
-
-         conda create -n etho -c conda-forge -y \
-         python=3.10 "numpy<2" scipy h5py opencv pandas pyzmq gevent future \
-         pillow msgpack-python pyyaml ipython uv pip git defopt msgpack-numpy \
-         rich psutil pydaqmx pyqtgraph qtpy pyside6-essentials zarr
-         conda activate etho
-         uv pip install zerorpc-numpy etho-python --no-deps
-
-      The ``--no-deps`` install keeps conda-owned packages in control and only
-      installs the packages that are not available from the conda command above.
+``etho`` supports Python 3.10 through 3.14. The Python version to use depends
+on the hardware SDKs required by the rig. Check the Python versions supported
+by the required hardware SDKs before installation.
 
 
 Optional Hardware Packages
 --------------------------
 
-Install only the packages and vendor drivers required by the rig:
+Install only the packages and vendor drivers required by the Windows rig:
 
-- Ximea cameras: install the Ximea driver and Python package from Ximea.
-- FLIR/Spinnaker cameras: install the Spinnaker SDK and the matching PySpin Python package from FLIR.
+- Ximea cameras: Install the Ximea driver and Python package from Ximea.
+- FLIR/Spinnaker cameras: install the Spinnaker SDK and the matching PySpin Python package from FLIR. Public downloads only list Python 3.10, but FLIR support can provide Python 3.14 bindings.
 - Basler cameras: install Basler pylon and ``pypylon``.
 - Hamamatsu DCAM cameras: install the DCAM driver and ``pylablib``.
 - National Instruments DAQ: install NI-DAQmx. ``pydaqmx`` is installed by default.
-- LightCrafter/DLP projector rigs: install the projector control software  and ``pycrafter4500``.
+- LightCrafter/DLP projector rigs: install the projector control software and ``pycrafter4500``.
 - Video writing through VidGear: install ``vidgear[core]`` if the protocol uses VidGear callbacks.
 
 After installing optional SDKs, run:
 
-.. code-block:: bash
+.. code-block:: powershell
 
    etho version
 
@@ -56,26 +48,17 @@ that hardware.
 Initialize the config files and folders
 ---------------------------------------
 
-Activate the environment and initialize config files and folders:
+If the environment already exists, activate it before initializing config files
+and folders:
 
-.. tabs::
+.. code-block:: powershell
 
-   .. group-tab:: :iconify:`material-icon-theme:uv` uv (recommended)
-
-         .. code-block:: bash
-
-            .venv\Scripts\activate
-            etho init
-
-   .. group-tab:: :iconify:`vscode-icons:file-type-conda` conda
-
-      .. code-block:: bash
-
-         conda activate etho
-         etho init
+   conda activate etho
+   etho init
 
 
-This creates ``~/data`` for saved runs and ``~/ethoconfig`` with:
+On Windows this creates ``C:\Users\<user>\data`` for saved runs and
+``C:\Users\<user>\ethoconfig`` with:
 
 - ``ethoconfig.yml`` for :doc:`global configuration <configuration/global>`
 - ``playlists/`` for :doc:`stimulation playlists <configuration/playlist>`

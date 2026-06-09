@@ -1,6 +1,7 @@
 # Command-Line Interface
 
-The installed console command is `etho`. It exposes four subcommands:
+The installed console command is `etho`. The public interface exposes four
+subcommands. Examples on this page assume a Windows rig and PowerShell.
 
 ```text
 usage: etho [-h] {version,init,run,gui} ...
@@ -29,12 +30,12 @@ options:
 
 Run this once per user account:
 
-```shell
+```powershell
 etho init
 ```
 
-It creates `~/ethoconfig/ethoconfig.yml`, protocol and playlist folders, a
-stimulus folder, and example files for a dummy-camera run.
+It creates `%USERPROFILE%\ethoconfig\ethoconfig.yml`, protocol and playlist
+folders, a stimulus folder, and example files for a dummy-camera run.
 
 ## Start the GUI
 
@@ -45,9 +46,9 @@ Opens the graphical user interface.
 
 positional arguments:
   protocol_folder  Folder with protocol files.
-                   Defaults to value ['HEAD']['protocolfolder'] from ~/ethoconfig.yml.
+                   Defaults to value ['HEAD']['protocolfolder'] from %USERPROFILE%\ethoconfig\ethoconfig.yml.
   playlist_folder  Folder with playlist files.
-                   Defaults to value ['HEAD']['playlistfolder'] from ~/ethoconfig.yml.
+                   Defaults to value ['HEAD']['playlistfolder'] from %USERPROFILE%\ethoconfig\ethoconfig.yml.
 
 options:
   -h, --help       show this help message and exit
@@ -55,9 +56,9 @@ options:
 
 Typical usage:
 
-```shell
+```powershell
 etho gui
-etho gui ~/ethoconfig/protocols ~/ethoconfig/playlists
+etho gui "$HOME\ethoconfig\protocols" "$HOME\ethoconfig\playlists"
 ```
 
 ## Run an Experiment
@@ -84,14 +85,14 @@ options:
 
 Run a camera-only protocol:
 
-```shell
-etho run ~/ethoconfig/protocols/dummy_1min.yml --save-prefix test_camera
+```powershell
+etho run "$HOME\ethoconfig\protocols\dummy_1min.yml" --save-prefix test_camera
 ```
 
 Run a protocol that includes a DAQ service and therefore needs a playlist:
 
-```shell
-etho run ~/ethoconfig/protocols/my_protocol.yml ~/ethoconfig/playlists/my_playlist.txt --save-prefix session_001
+```powershell
+etho run "$HOME\ethoconfig\protocols\my_protocol.yml" "$HOME\ethoconfig\playlists\my_playlist.txt" --save-prefix session_001
 ```
 
 Use `--preview` for camera alignment. Preview mode disables saving and logging
@@ -113,7 +114,7 @@ options:
 
 Run:
 
-```shell
+```powershell
 etho version
 etho version --debug
 ```

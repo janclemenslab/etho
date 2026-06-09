@@ -4,11 +4,16 @@
    contain the root `toctree` directive.
 
 Etho: A Python framework for coordinating stimuli, data acquisition, and hardware control in neuroscience experiments
-=====================================
+========================================================================================================================
 
 Etho runs behavioral experiments by coordinating cameras, data acquisition,
 projectors, sensors, playlists, callbacks, and saved outputs from a single
 Python command-line or GUI entry point.
+
+Etho is tested for Windows acquisition rigs. The hardware stack depends on
+vendor SDKs, which may also work on macOS or Linux but have not been tested
+with Etho. macOS and Linux are suitable for development, tests, and
+documentation work when hardware SDKs are not required.
 
 .. grid:: 2
 
@@ -65,4 +70,3 @@ Python command-line or GUI entry point.
    Hardware services <hardware/hardware>
    CLI <cli>
    API <api_etho>
-

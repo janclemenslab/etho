@@ -8,6 +8,11 @@ ignore_modules = [
     "etho.services.ScanImageTriggerZeroService",
     "etho.services.daq",
     "etho.services.dlp.dlp_runners",
+    # Internal/non-public resumable runner modules are intentionally omitted
+    # from the public API docs.
+    "etho.res_app",
+    "etho.resumable",
+    "etho.services.resumable",
 ]
 
 def make_api_doctree():

@@ -1,10 +1,10 @@
 (global-configuration)=
 # Global Configuration
 
-The global configuration lives at `~/ethoconfig/ethoconfig.yml`. It is created
-by:
+The global configuration lives at
+`%USERPROFILE%\ethoconfig\ethoconfig.yml` on the Windows rig. It is created by:
 
-```shell
+```powershell
 etho init
 ```
 
@@ -12,11 +12,11 @@ Example:
 
 ```yaml
 user: ncb
-savefolder: /Users/USER/data
-python_exe: /Users/USER/miniforge3/envs/etho/bin/python
-playlistfolder: /Users/USER/ethoconfig/playlists
-protocolfolder: /Users/USER/ethoconfig/protocols
-stimfolder: /Users/USER/ethoconfig/stim
+savefolder: C:\Users\USER\data
+python_exe: C:\Users\USER\miniforge3\envs\etho\python.exe
+playlistfolder: C:\Users\USER\ethoconfig\playlists
+protocolfolder: C:\Users\USER\ethoconfig\protocols
+stimfolder: C:\Users\USER\ethoconfig\stim
 ATTENUATION:
   -1: 1
   0: 1

@@ -2,6 +2,15 @@
 
 Thank you for your interest in contributing to `etho`.
 
+## Platform scope
+
+`etho` is tested as runtime software for Windows acquisition rigs. The hardware
+stack depends on vendor SDKs, which may also work on macOS or Linux but have
+not been tested with `etho`. Development, unit tests, and documentation work can
+be done on Windows, macOS, or Linux when hardware SDKs are not required. Keep
+user-facing installation and run instructions Windows-focused; use
+cross-platform commands only for contributor workflows.
+
 ## Reporting issues
 
 Please use the GitHub issue tracker to report bugs, request features, or ask questions. When possible, include:
@@ -18,32 +27,13 @@ Clone the repository and install the package in editable mode:
 ```bash
 git clone https://github.com/janclemenslab/etho.git
 cd etho
-uv venv --python 3.14
-```
-
-Activate the virtual environment on linux or macOS:
-
-```bash
-source .venv/bin/activate
-```
-
-On Windows PowerShell:
-
-```powershell
-.venv\Scripts\Activate.ps1
-```
-
-On Windows `cmd.exe`:
-
-```bat
-.venv\Scripts\activate.bat
-```
-
-Then install the package:
-
-```bash
+conda create -n etho -c conda-forge -y python=3.14 uv pip git
+conda activate etho
 uv pip install -e ".[dev,doc]"
 ```
+
+Use Python 3.14 by default. Use Python 3.10 instead when reproducing behavior
+for hardware SDKs that only provide Python 3.10 bindings.
 
 ## Running tests
 
