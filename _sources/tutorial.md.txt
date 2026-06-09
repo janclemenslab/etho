@@ -1,7 +1,9 @@
 # Tutorial
 
 This tutorial shows the structure of a typical rig run: global configuration,
-protocol, playlist, command-line execution, and output inspection. This assumes that you have [installed and initialized](install.rst) `etho`.
+protocol, playlist, command-line execution, and output inspection. It assumes
+that you have [installed and initialized](install.rst) `etho` on a Windows rig
+and are running commands from PowerShell.
 
 ## Goal
 
@@ -16,9 +18,9 @@ validated at the rig before collecting data.
 
 ## Activate the Environment
 
-Activate the conda environment:
+Activate the conda environment on the Windows rig:
 
-```shell
+```powershell
 conda activate etho
 ```
 
@@ -27,7 +29,7 @@ Confirm that `etho version` reports support for the hardware used by the protoco
 
 ## Protocol
 
-Create a protocol such as `~/ethoconfig/protocols/camera_daq.yml`:
+Create a protocol such as `$HOME\ethoconfig\protocols\camera_daq.yml`:
 
 ```yaml
 maxduration: 60
@@ -70,7 +72,7 @@ multi-DAQ runs, add suffixed service names such as `GCM1`, `GCM2`, `DAQ1`, and
 ## Playlist
 
 Create a tab-delimited playlist such as
-`~/ethoconfig/playlists/sine_led.txt`:
+`$HOME\ethoconfig\playlists\sine_led.txt`:
 
 ```text
 stimFileName	silencePre	silencePost	intensity	freq
@@ -88,7 +90,7 @@ outputs first, then digital outputs. In this example, the first sine stimulus go
 
 Start the GUI with:
 
-```shell
+```powershell
 etho gui
 ```
 
@@ -97,15 +99,15 @@ etho gui
 
 The preview mode is for camera setup only. Run it once to check camera alignment and settings:
 
-```shell
-etho run ~/ethoconfig/protocols/camera_daq.yml --preview
+```powershell
+etho run "$HOME\ethoconfig\protocols\camera_daq.yml" --preview
 ```
 
 
 Now start a regular run to save camera and DAQ output, and  experiment logs:
 
-```shell
-etho run ~/ethoconfig/protocols/camera_daq.yml ~/ethoconfig/playlists/sine_led.txt --save-prefix rig_test_001
+```powershell
+etho run "$HOME\ethoconfig\protocols\camera_daq.yml" "$HOME\ethoconfig\playlists\sine_led.txt" --save-prefix rig_test_001
 ```
 
 
@@ -114,7 +116,7 @@ etho run ~/ethoconfig/protocols/camera_daq.yml ~/ethoconfig/playlists/sine_led.t
 Saved files are placed under:
 
 ```text
-<savefolder>/<save-prefix>/
+<savefolder>\<save-prefix>\
 ```
 
 Common files include:

@@ -6,8 +6,8 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -24,7 +24,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/><meta property="og:title" content="etho.cli"/>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="etho.cli"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -131,6 +132,8 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#etho.cli.init"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
 <li><a class="reference internal" href="#etho.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li><a class="reference internal" href="#etho.cli.no_gui"><code class="docutils literal notranslate"><span class="pre">no_gui()</span></code></a></li>
+<li><a class="reference internal" href="#etho.cli.res_gui"><code class="docutils literal notranslate"><span class="pre">res_gui()</span></code></a></li>
+<li><a class="reference internal" href="#etho.cli.res_run"><code class="docutils literal notranslate"><span class="pre">res_run()</span></code></a></li>
 <li><a class="reference internal" href="#etho.cli.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
 <li><a class="reference internal" href="#etho.cli.version"><code class="docutils literal notranslate"><span class="pre">version()</span></code></a></li>
 </ul>
@@ -185,6 +188,18 @@ data-aria-dark="Switch to auto color mode">
 <dt class="sig sig-object py" id="etho.cli.no_gui">
 <span class="sig-prename descclassname"><span class="pre">etho.cli.</span></span><span class="sig-name descname"><span class="pre">no_gui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/cli.html#no_gui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.cli.no_gui" title="Link to this definition">¶</a></dt>
 <dd><p>Could not import the GUI. For instructions on how to install the GUI, check the docs janclemenslab.org/etho/install.html.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="etho.cli.res_gui">
+<span class="sig-prename descclassname"><span class="pre">etho.cli.</span></span><span class="sig-name descname"><span class="pre">res_gui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocol_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlist_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/cli.html#res_gui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.cli.res_gui" title="Link to this definition">¶</a></dt>
+<dd><p>Opens the resumable DAQ/GCM graphical user interface.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="etho.cli.res_run">
+<span class="sig-prename descclassname"><span class="pre">etho.cli.</span></span><span class="sig-name descname"><span class="pre">res_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protocolfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">playlistfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preview</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/cli.html#res_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.cli.res_run" title="Link to this definition">¶</a></dt>
+<dd><p>Starts a resumable DAQ/GCM experiment from the CLI.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -255,7 +270,7 @@ data-aria-dark="Switch to auto color mode">
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
       <script src="../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../_static/shibuya.js?v=cac61aee"></script>
+      <script src="../_static/shibuya.js?v=50760d75"></script>
       <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
       <script src="../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
       <script src="https://code.iconify.design/iconify-icon/3.0.1/iconify-icon.min.js"></script></body>

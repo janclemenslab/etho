@@ -31,7 +31,8 @@ for experiments. During the run, save:
 
 Analyze the recorded response to calculate attenuation factors for the
 frequencies used in playlists. You would use the microphone calibration data to convert analog input voltage to sound intensity units.
-Store the resulting mapping in `~/ethoconfig/ethoconfig.yml` under `ATTENUATION`.
+Store the resulting mapping in
+`%USERPROFILE%\ethoconfig\ethoconfig.yml` under `ATTENUATION`.
 
 Example:
 

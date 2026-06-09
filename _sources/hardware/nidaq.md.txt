@@ -5,10 +5,10 @@ tasks for NI-DAQmx devices.
 
 ## Dependencies
 
-Install NI-DAQmx on the rig and ensure `pydaqmx` imports in the `etho` conda
-environment:
+Install NI-DAQmx on the Windows rig and ensure `pydaqmx` imports in the `etho`
+conda environment:
 
-```shell
+```powershell
 conda activate etho
 etho version --debug
 ```

@@ -6,8 +6,8 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -24,7 +24,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/><meta property="og:title" content="etho.cli"/>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="etho.cli"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -204,190 +205,233 @@ data-aria-dark="Switch to auto color mode">
 
 </span><span data-line="39">
 </span><span data-line="40">
+<div class="viewcode-block" id="res_run">
+<a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.res_run">[docs]</a>
+</span><span data-line="41"><span class="k">def</span><span class="w"> </span><span class="nf">res_run</span><span class="p">(</span>
+</span><span data-line="42">    <span class="n">protocolfile</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span data-line="43">    <span class="n">playlistfile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="44">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="45">    <span class="n">save_prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="46">    <span class="n">show_progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="47">    <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="48">    <span class="n">preview</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="49"><span class="p">):</span>
+</span><span data-line="50"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Starts a resumable DAQ/GCM experiment from the CLI.&quot;&quot;&quot;</span>
+</span><span data-line="51">    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">resumable</span>
+</span><span data-line="52">
+</span><span data-line="53">    <span class="k">return</span> <span class="n">resumable</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+</span><span data-line="54">        <span class="n">protocolfile</span><span class="o">=</span><span class="n">protocolfile</span><span class="p">,</span>
+</span><span data-line="55">        <span class="n">playlistfile</span><span class="o">=</span><span class="n">playlistfile</span><span class="p">,</span>
+</span><span data-line="56">        <span class="n">save_prefix</span><span class="o">=</span><span class="n">save_prefix</span><span class="p">,</span>
+</span><span data-line="57">        <span class="n">show_progress</span><span class="o">=</span><span class="n">show_progress</span><span class="p">,</span>
+</span><span data-line="58">        <span class="n">debug</span><span class="o">=</span><span class="n">debug</span><span class="p">,</span>
+</span><span data-line="59">        <span class="n">preview</span><span class="o">=</span><span class="n">preview</span><span class="p">,</span>
+</span><span data-line="60">    <span class="p">)</span></div>
+
+</span><span data-line="61">
+</span><span data-line="62">
+<div class="viewcode-block" id="res_gui">
+<a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.res_gui">[docs]</a>
+</span><span data-line="63"><span class="k">def</span><span class="w"> </span><span class="nf">res_gui</span><span class="p">(</span><span class="n">protocol_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">playlist_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span data-line="64"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Opens the resumable DAQ/GCM graphical user interface.&quot;&quot;&quot;</span>
+</span><span data-line="65">    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">res_app</span>
+</span><span data-line="66">
+</span><span data-line="67">    <span class="k">return</span> <span class="n">res_app</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">protocol_folder</span><span class="o">=</span><span class="n">protocol_folder</span><span class="p">,</span> <span class="n">playlist_folder</span><span class="o">=</span><span class="n">playlist_folder</span><span class="p">)</span></div>
+
+</span><span data-line="68">
+</span><span data-line="69">
 <div class="viewcode-block" id="version">
 <a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.version">[docs]</a>
-</span><span data-line="41"><span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-</span><span data-line="42"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Displays system, version, and hardware info.</span>
-</span><span data-line="43">
-</span><span data-line="44"><span class="sd">    Args:</span>
-</span><span data-line="45"><span class="sd">        debug (bool): Display exception info for failed imports. Defaults to False.</span>
-</span><span data-line="46"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="47">    <span class="kn">import</span><span class="w"> </span><span class="nn">etho</span>
-</span><span data-line="48">    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-</span><span data-line="49">    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-</span><span data-line="50">    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-</span><span data-line="51">    <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
-</span><span data-line="52">    <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
-</span><span data-line="53">
-</span><span data-line="54">    <span class="k">try</span><span class="p">:</span>
-</span><span data-line="55">        <span class="kn">import</span><span class="w"> </span><span class="nn">pyqtgraph</span>
-</span><span data-line="56">        <span class="kn">import</span><span class="w"> </span><span class="nn">qtpy</span>
-</span><span data-line="57">
-</span><span data-line="58">        <span class="n">has_gui</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span data-line="59">    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
-</span><span data-line="60">        <span class="n">has_gui</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="61">
-</span><span data-line="62">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="63">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;etho v</span><span class="si">{</span><span class="n">etho</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="64">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span data-line="65">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  LIBRARY VERSIONS&quot;</span><span class="p">)</span>
-</span><span data-line="66">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    python v</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="67">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    pandas v</span><span class="si">{</span><span class="n">pd</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="68">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    numpy v</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="69">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    h5py v</span><span class="si">{</span><span class="n">h5py</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="70">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    scipy v</span><span class="si">{</span><span class="n">scipy</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="71">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span data-line="72">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  GUI SUPPORT&quot;</span><span class="p">)</span>
-</span><span data-line="73">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     GUI is </span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">has_gui</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;not&#39;</span><span class="si">}</span><span class="s2">available.&quot;</span><span class="p">)</span>
-</span><span data-line="74">    <span class="k">if</span> <span class="n">has_gui</span><span class="p">:</span>
-</span><span data-line="75">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     pyqtgraph v</span><span class="si">{</span><span class="n">pyqtgraph</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="76">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">API_NAME</span><span class="si">}</span><span class="s2"> v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">PYQT_VERSION</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">qtpy</span><span class="o">.</span><span class="n">PYSIDE_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="77">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     Qt v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">QT_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="78">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     qtpy v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="79">
-</span><span data-line="80">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-</span><span data-line="81">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  HARDWARE SUPPORT&quot;</span><span class="p">)</span>
+</span><span data-line="70"><span class="k">def</span><span class="w"> </span><span class="nf">version</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span data-line="71"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Displays system, version, and hardware info.</span>
+</span><span data-line="72">
+</span><span data-line="73"><span class="sd">    Args:</span>
+</span><span data-line="74"><span class="sd">        debug (bool): Display exception info for failed imports. Defaults to False.</span>
+</span><span data-line="75"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="76">    <span class="kn">import</span><span class="w"> </span><span class="nn">etho</span>
+</span><span data-line="77">    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+</span><span data-line="78">    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</span><span data-line="79">    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span data-line="80">    <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
+</span><span data-line="81">    <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 </span><span data-line="82">
-</span><span data-line="83">    <span class="n">libs</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="84">        <span class="s2">&quot;Spinnaker camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;PySpin&quot;</span><span class="p">,</span>
-</span><span data-line="85">        <span class="s2">&quot;FlyCapture camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;PyCapture2&quot;</span><span class="p">,</span>
-</span><span data-line="86">        <span class="s2">&quot;Ximea camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;ximea&quot;</span><span class="p">,</span>
-</span><span data-line="87">        <span class="s2">&quot;DCAM (Hamamatsu) camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;pylablib&quot;</span><span class="p">,</span>
-</span><span data-line="88">        <span class="s2">&quot;NI daqmx&quot;</span><span class="p">:</span> <span class="s2">&quot;pydaqmx&quot;</span><span class="p">,</span>
-</span><span data-line="89">        <span class="s2">&quot;Lightcrafter projector&quot;</span><span class="p">:</span> <span class="s2">&quot;pycrafter4500&quot;</span><span class="p">,</span>
-</span><span data-line="90">    <span class="p">}</span>
-</span><span data-line="91">    <span class="k">for</span> <span class="n">lib_name</span><span class="p">,</span> <span class="n">lib_import</span> <span class="ow">in</span> <span class="n">libs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="92">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="93">            <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">lib_import</span><span class="p">)</span>
-</span><span data-line="94">            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">lib_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">lib_import</span><span class="si">}</span><span class="s2">) is available&quot;</span><span class="p">)</span>
-</span><span data-line="95">        <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span data-line="96">            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">lib_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">lib_import</span><span class="si">}</span><span class="s2">) is NOT available.&quot;</span><span class="p">)</span>
-</span><span data-line="97">            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-</span><span data-line="98">                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;     DEBUG info&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span></div>
+</span><span data-line="83">    <span class="k">try</span><span class="p">:</span>
+</span><span data-line="84">        <span class="kn">import</span><span class="w"> </span><span class="nn">pyqtgraph</span>
+</span><span data-line="85">        <span class="kn">import</span><span class="w"> </span><span class="nn">qtpy</span>
+</span><span data-line="86">
+</span><span data-line="87">        <span class="n">has_gui</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="88">    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
+</span><span data-line="89">        <span class="n">has_gui</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="90">
+</span><span data-line="91">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="92">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;etho v</span><span class="si">{</span><span class="n">etho</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="93">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span data-line="94">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  LIBRARY VERSIONS&quot;</span><span class="p">)</span>
+</span><span data-line="95">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    python v</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="96">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    pandas v</span><span class="si">{</span><span class="n">pd</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="97">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    numpy v</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="98">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    h5py v</span><span class="si">{</span><span class="n">h5py</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="99">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    scipy v</span><span class="si">{</span><span class="n">scipy</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="100">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span data-line="101">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  GUI SUPPORT&quot;</span><span class="p">)</span>
+</span><span data-line="102">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     GUI is </span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">has_gui</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;not&#39;</span><span class="si">}</span><span class="s2">available.&quot;</span><span class="p">)</span>
+</span><span data-line="103">    <span class="k">if</span> <span class="n">has_gui</span><span class="p">:</span>
+</span><span data-line="104">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     pyqtgraph v</span><span class="si">{</span><span class="n">pyqtgraph</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="105">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">API_NAME</span><span class="si">}</span><span class="s2"> v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">PYQT_VERSION</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">qtpy</span><span class="o">.</span><span class="n">PYSIDE_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="106">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     Qt v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">QT_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="107">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     qtpy v</span><span class="si">{</span><span class="n">qtpy</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="108">
+</span><span data-line="109">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span data-line="110">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  HARDWARE SUPPORT&quot;</span><span class="p">)</span>
+</span><span data-line="111">
+</span><span data-line="112">    <span class="n">libs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="113">        <span class="s2">&quot;Spinnaker camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;PySpin&quot;</span><span class="p">,</span>
+</span><span data-line="114">        <span class="s2">&quot;FlyCapture camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;PyCapture2&quot;</span><span class="p">,</span>
+</span><span data-line="115">        <span class="s2">&quot;Ximea camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;ximea&quot;</span><span class="p">,</span>
+</span><span data-line="116">        <span class="s2">&quot;DCAM (Hamamatsu) camera SDK&quot;</span><span class="p">:</span> <span class="s2">&quot;pylablib&quot;</span><span class="p">,</span>
+</span><span data-line="117">        <span class="s2">&quot;NI daqmx&quot;</span><span class="p">:</span> <span class="s2">&quot;pydaqmx&quot;</span><span class="p">,</span>
+</span><span data-line="118">        <span class="s2">&quot;Lightcrafter projector&quot;</span><span class="p">:</span> <span class="s2">&quot;pycrafter4500&quot;</span><span class="p">,</span>
+</span><span data-line="119">    <span class="p">}</span>
+</span><span data-line="120">    <span class="k">for</span> <span class="n">lib_name</span><span class="p">,</span> <span class="n">lib_import</span> <span class="ow">in</span> <span class="n">libs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="121">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="122">            <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">lib_import</span><span class="p">)</span>
+</span><span data-line="123">            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">lib_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">lib_import</span><span class="si">}</span><span class="s2">) is available&quot;</span><span class="p">)</span>
+</span><span data-line="124">        <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span data-line="125">            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;     </span><span class="si">{</span><span class="n">lib_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">lib_import</span><span class="si">}</span><span class="s2">) is NOT available.&quot;</span><span class="p">)</span>
+</span><span data-line="126">            <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+</span><span data-line="127">                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;     DEBUG info&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">e</span><span class="p">)</span></div>
 
-</span><span data-line="99">
-</span><span data-line="100">
+</span><span data-line="128">
+</span><span data-line="129">
 <div class="viewcode-block" id="no_gui">
 <a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.no_gui">[docs]</a>
-</span><span data-line="101"><span class="k">def</span><span class="w"> </span><span class="nf">no_gui</span><span class="p">():</span>
-</span><span data-line="102"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Could not import the GUI. For instructions on how to install the GUI, check the docs janclemenslab.org/etho/install.html.&quot;&quot;&quot;</span>
-</span><span data-line="103">    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not import the GUI.&quot;</span><span class="p">)</span>
-</span><span data-line="104">    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;For instructions on how to install the GUI,&quot;</span><span class="p">)</span>
-</span><span data-line="105">    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;check the docs janclemenslab.org/etho/install.html.&quot;</span><span class="p">)</span></div>
+</span><span data-line="130"><span class="k">def</span><span class="w"> </span><span class="nf">no_gui</span><span class="p">():</span>
+</span><span data-line="131"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Could not import the GUI. For instructions on how to install the GUI, check the docs janclemenslab.org/etho/install.html.&quot;&quot;&quot;</span>
+</span><span data-line="132">    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not import the GUI.&quot;</span><span class="p">)</span>
+</span><span data-line="133">    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;For instructions on how to install the GUI,&quot;</span><span class="p">)</span>
+</span><span data-line="134">    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;check the docs janclemenslab.org/etho/install.html.&quot;</span><span class="p">)</span></div>
 
-</span><span data-line="106">
-</span><span data-line="107">
+</span><span data-line="135">
+</span><span data-line="136">
 <div class="viewcode-block" id="init">
 <a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.init">[docs]</a>
-</span><span data-line="108"><span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">():</span>
-</span><span data-line="109"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializes config files and folders.&quot;&quot;&quot;</span>
-</span><span data-line="110">    <span class="n">home</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
-</span><span data-line="111">
-</span><span data-line="112">    <span class="n">cfg</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="113">        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;ncb&quot;</span><span class="p">,</span>
-</span><span data-line="114">        <span class="s2">&quot;savefolder&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
-</span><span data-line="115">        <span class="s2">&quot;python_exe&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
-</span><span data-line="116">        <span class="s2">&quot;ATTENUATION&quot;</span><span class="p">:</span> <span class="p">{</span>
-</span><span data-line="117">            <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="118">            <span class="mi">0</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="119">            <span class="mi">100</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="120">            <span class="mi">150</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="121">            <span class="mi">200</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="122">            <span class="mi">250</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="123">            <span class="mi">300</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="124">            <span class="mi">350</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="125">            <span class="mi">400</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="126">            <span class="mi">450</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="127">            <span class="mi">500</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="128">            <span class="mi">600</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="129">            <span class="mi">700</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="130">            <span class="mi">800</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="131">            <span class="mi">900</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="132">            <span class="mi">1000</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="133">            <span class="mi">1500</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="134">            <span class="mi">2000</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span data-line="135">        <span class="p">},</span>
-</span><span data-line="136">    <span class="p">}</span>
-</span><span data-line="137">
-</span><span data-line="138">    <span class="n">paths</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="139">        <span class="s2">&quot;playlistfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/playlists&quot;</span><span class="p">,</span>
-</span><span data-line="140">        <span class="s2">&quot;protocolfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/protocols&quot;</span><span class="p">,</span>
-</span><span data-line="141">        <span class="s2">&quot;stimfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/stim&quot;</span><span class="p">,</span>
-</span><span data-line="142">    <span class="p">}</span>
-</span><span data-line="143">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating default directories:&quot;</span><span class="p">)</span>
-</span><span data-line="144">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="145">        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;   &quot;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span>
-</span><span data-line="146">        <span class="n">p</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</span><span data-line="147">        <span class="n">p</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="148">        <span class="n">cfg</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-</span><span data-line="149">
-</span><span data-line="150">    <span class="n">rich</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
-</span><span data-line="151">
-</span><span data-line="152">    <span class="n">path_cfg</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig&quot;</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig.yml&quot;</span>
-</span><span data-line="153">    <span class="k">if</span> <span class="n">path_cfg</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-</span><span data-line="154">        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The configuration file </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span><span class="si">}</span><span class="s2"> exists. Will not overwrite. Delete the file or update it manually.&quot;</span><span class="p">)</span>
-</span><span data-line="155">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="156">        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing configuration to </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span data-line="157">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span data-line="158">            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeDumper</span><span class="p">)</span>
-</span><span data-line="159">
-</span><span data-line="160">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating test files:&quot;</span><span class="p">)</span>
-</span><span data-line="161">    <span class="c1"># generate test protocol</span>
-</span><span data-line="162">    <span class="n">protocol</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="163">        <span class="s2">&quot;maxduration&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
-</span><span data-line="164">        <span class="s2">&quot;use_services&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;GCM&quot;</span><span class="p">],</span>
-</span><span data-line="165">        <span class="s2">&quot;GCM&quot;</span><span class="p">:</span> <span class="p">{</span>
-</span><span data-line="166">            <span class="s2">&quot;frame_rate&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
-</span><span data-line="167">            <span class="s2">&quot;frame_width&quot;</span><span class="p">:</span> <span class="mi">320</span><span class="p">,</span>
-</span><span data-line="168">            <span class="s2">&quot;frame_height&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
-</span><span data-line="169">            <span class="s2">&quot;shutter_speed&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-</span><span data-line="170">            <span class="s2">&quot;cam_serialnumber&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
-</span><span data-line="171">            <span class="s2">&quot;cam_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Dummy&quot;</span><span class="p">,</span>
-</span><span data-line="172">            <span class="s2">&quot;callbacks&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;disp&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;framerate&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}},</span>
-</span><span data-line="173">        <span class="p">},</span>
-</span><span data-line="174">    <span class="p">}</span>
-</span><span data-line="175">    <span class="n">path_protocol</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig/protocols/dummy_1min.yml&quot;</span>
-</span><span data-line="176">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   protocol </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_protocol</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span data-line="177">
-</span><span data-line="178">    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_protocol</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-</span><span data-line="179">        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeDumper</span><span class="p">)</span>
+</span><span data-line="137"><span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">():</span>
+</span><span data-line="138"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Initializes config files and folders.&quot;&quot;&quot;</span>
+</span><span data-line="139">    <span class="n">home</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
+</span><span data-line="140">
+</span><span data-line="141">    <span class="n">cfg</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="142">        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;ncb&quot;</span><span class="p">,</span>
+</span><span data-line="143">        <span class="s2">&quot;savefolder&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span><span class="p">),</span>
+</span><span data-line="144">        <span class="s2">&quot;python_exe&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+</span><span data-line="145">        <span class="s2">&quot;ATTENUATION&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span data-line="146">            <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="147">            <span class="mi">0</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="148">            <span class="mi">100</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="149">            <span class="mi">150</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="150">            <span class="mi">200</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="151">            <span class="mi">250</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="152">            <span class="mi">300</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="153">            <span class="mi">350</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="154">            <span class="mi">400</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="155">            <span class="mi">450</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="156">            <span class="mi">500</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="157">            <span class="mi">600</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="158">            <span class="mi">700</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="159">            <span class="mi">800</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="160">            <span class="mi">900</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="161">            <span class="mi">1000</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="162">            <span class="mi">1500</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="163">            <span class="mi">2000</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="164">        <span class="p">},</span>
+</span><span data-line="165">    <span class="p">}</span>
+</span><span data-line="166">
+</span><span data-line="167">    <span class="n">paths</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="168">        <span class="s2">&quot;playlistfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/playlists&quot;</span><span class="p">,</span>
+</span><span data-line="169">        <span class="s2">&quot;protocolfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/protocols&quot;</span><span class="p">,</span>
+</span><span data-line="170">        <span class="s2">&quot;stimfolder&quot;</span><span class="p">:</span> <span class="s2">&quot;ethoconfig/stim&quot;</span><span class="p">,</span>
+</span><span data-line="171">    <span class="p">}</span>
+</span><span data-line="172">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating default directories:&quot;</span><span class="p">)</span>
+</span><span data-line="173">    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="174">        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;   &quot;</span> <span class="o">+</span> <span class="n">path</span><span class="p">)</span>
+</span><span data-line="175">        <span class="n">p</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</span><span data-line="176">        <span class="n">p</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="177">        <span class="n">cfg</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span><span data-line="178">
+</span><span data-line="179">    <span class="n">rich</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 </span><span data-line="180">
-</span><span data-line="181">    <span class="c1"># generate test playlist</span>
-</span><span data-line="182">    <span class="n">playlist</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="183">        <span class="s2">&quot;stimFileName&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;SIN_100_0_1000&quot;</span><span class="p">},</span>
-</span><span data-line="184">        <span class="s2">&quot;silencePre&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">10000</span><span class="p">},</span>
-</span><span data-line="185">        <span class="s2">&quot;silencePost&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">9000</span><span class="p">},</span>
-</span><span data-line="186">        <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
-</span><span data-line="187">        <span class="s2">&quot;freq&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">100</span><span class="p">},</span>
-</span><span data-line="188">    <span class="p">}</span>
-</span><span data-line="189">    <span class="n">path_playlist</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig/playlists/0_silence.txt&quot;</span>
-</span><span data-line="190">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   playlist </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span data-line="191">    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">playlist</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+</span><span data-line="181">    <span class="n">path_cfg</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig&quot;</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig.yml&quot;</span>
+</span><span data-line="182">    <span class="k">if</span> <span class="n">path_cfg</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span data-line="183">        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The configuration file </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span><span class="si">}</span><span class="s2"> exists. Will not overwrite. Delete the file or update it manually.&quot;</span><span class="p">)</span>
+</span><span data-line="184">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="185">        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Writing configuration to </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="186">        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_cfg</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="187">            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeDumper</span><span class="p">)</span>
+</span><span data-line="188">
+</span><span data-line="189">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating test files:&quot;</span><span class="p">)</span>
+</span><span data-line="190">    <span class="c1"># generate test protocol</span>
+</span><span data-line="191">    <span class="n">protocol</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="192">        <span class="s2">&quot;maxduration&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+</span><span data-line="193">        <span class="s2">&quot;use_services&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;GCM&quot;</span><span class="p">],</span>
+</span><span data-line="194">        <span class="s2">&quot;GCM&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span data-line="195">            <span class="s2">&quot;frame_rate&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+</span><span data-line="196">            <span class="s2">&quot;frame_width&quot;</span><span class="p">:</span> <span class="mi">320</span><span class="p">,</span>
+</span><span data-line="197">            <span class="s2">&quot;frame_height&quot;</span><span class="p">:</span> <span class="mi">240</span><span class="p">,</span>
+</span><span data-line="198">            <span class="s2">&quot;shutter_speed&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+</span><span data-line="199">            <span class="s2">&quot;cam_serialnumber&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+</span><span data-line="200">            <span class="s2">&quot;cam_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Dummy&quot;</span><span class="p">,</span>
+</span><span data-line="201">            <span class="s2">&quot;callbacks&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;disp&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;framerate&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}},</span>
+</span><span data-line="202">        <span class="p">},</span>
+</span><span data-line="203">    <span class="p">}</span>
+</span><span data-line="204">    <span class="n">path_protocol</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig/protocols/dummy_1min.yml&quot;</span>
+</span><span data-line="205">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   protocol </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_protocol</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="206">
+</span><span data-line="207">    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_protocol</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span><span data-line="208">        <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">protocol</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Dumper</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeDumper</span><span class="p">)</span>
+</span><span data-line="209">
+</span><span data-line="210">    <span class="c1"># generate test playlist</span>
+</span><span data-line="211">    <span class="n">playlist</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="212">        <span class="s2">&quot;stimFileName&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;SIN_100_0_1000&quot;</span><span class="p">},</span>
+</span><span data-line="213">        <span class="s2">&quot;silencePre&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">10000</span><span class="p">},</span>
+</span><span data-line="214">        <span class="s2">&quot;silencePost&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">9000</span><span class="p">},</span>
+</span><span data-line="215">        <span class="s2">&quot;intensity&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+</span><span data-line="216">        <span class="s2">&quot;freq&quot;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">100</span><span class="p">},</span>
+</span><span data-line="217">    <span class="p">}</span>
+</span><span data-line="218">    <span class="n">path_playlist</span> <span class="o">=</span> <span class="n">home</span> <span class="o">/</span> <span class="s2">&quot;ethoconfig/playlists/0_silence.txt&quot;</span>
+</span><span data-line="219">    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   playlist </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="220">    <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">playlist</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path_playlist</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
-</span><span data-line="192">
-</span><span data-line="193">
+</span><span data-line="221">
+</span><span data-line="222">
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../api/etho.cli.html#etho.cli.main">[docs]</a>
-</span><span data-line="194"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-</span><span data-line="195"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Command line interface for DAS.&quot;&quot;&quot;</span>
-</span><span data-line="196">    <span class="n">subcommands</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="197">        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
-</span><span data-line="198">        <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="n">init</span><span class="p">,</span>
-</span><span data-line="199">    <span class="p">}</span>
-</span><span data-line="200">
-</span><span data-line="201">    <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="202">        <span class="n">subcommands</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;run&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">})</span>
-</span><span data-line="203">    <span class="k">try</span><span class="p">:</span>
-</span><span data-line="204">        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
-</span><span data-line="205">
-</span><span data-line="206">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">main</span>
-</span><span data-line="207">    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
-</span><span data-line="208">        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;No GUI avalaible.&quot;</span><span class="p">)</span>
-</span><span data-line="209">        <span class="c1"># fall back to function that displays helpful instructions</span>
-</span><span data-line="210">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">no_gui</span>
-</span><span data-line="211">
-</span><span data-line="212">    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="213">    <span class="n">defopt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subcommands</span><span class="p">,</span> <span class="n">show_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+</span><span data-line="223"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span data-line="224"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Command line interface for DAS.&quot;&quot;&quot;</span>
+</span><span data-line="225">    <span class="n">subcommands</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="226">        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
+</span><span data-line="227">        <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="n">init</span><span class="p">,</span>
+</span><span data-line="228">    <span class="p">}</span>
+</span><span data-line="229">
+</span><span data-line="230">    <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="231">        <span class="n">subcommands</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;run&quot;</span><span class="p">:</span> <span class="n">run</span><span class="p">})</span>
+</span><span data-line="232">    <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;res-run&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">res_run</span>
+</span><span data-line="233">    <span class="k">try</span><span class="p">:</span>
+</span><span data-line="234">        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
+</span><span data-line="235">
+</span><span data-line="236">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">main</span>
+</span><span data-line="237">    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
+</span><span data-line="238">        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;No GUI avalaible.&quot;</span><span class="p">)</span>
+</span><span data-line="239">        <span class="c1"># fall back to function that displays helpful instructions</span>
+</span><span data-line="240">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">no_gui</span>
+</span><span data-line="241">    <span class="k">try</span><span class="p">:</span>
+</span><span data-line="242">        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">res_app</span>
+</span><span data-line="243">
+</span><span data-line="244">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;res-gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">res_app</span><span class="o">.</span><span class="n">main</span>
+</span><span data-line="245">    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
+</span><span data-line="246">        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;No resumable GUI avalaible.&quot;</span><span class="p">)</span>
+</span><span data-line="247">        <span class="n">subcommands</span><span class="p">[</span><span class="s2">&quot;res-gui&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">no_gui</span>
+</span><span data-line="248">
+</span><span data-line="249">    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="250">    <span class="n">defopt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">subcommands</span><span class="p">,</span> <span class="n">show_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">
@@ -425,7 +469,7 @@ data-aria-dark="Switch to auto color mode">
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../_static/shibuya.js?v=cac61aee"></script>
+      <script src="../../_static/shibuya.js?v=50760d75"></script>
       <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
       <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
       <script src="https://code.iconify.design/iconify-icon/3.0.1/iconify-icon.min.js"></script></body>

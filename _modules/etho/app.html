@@ -6,8 +6,8 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=e1a1ceaf" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=44020203" />
-    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-dropdown.css?v=995e94df" />
     <link rel="stylesheet" type="text/css" href="../../_static/panels-bootstrap.min.css?v=21c0b90a" />
@@ -24,7 +24,8 @@
   --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
 }
 </style>
-    <meta property="og:type" content="website"/><meta property="og:title" content="etho.app"/>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="etho.app"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -501,240 +502,243 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="327">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Stop&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request_stop</span><span class="p">)</span>
 </span><span data-line="328">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Camera_preview&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Camera preview&quot;</span><span class="p">)</span>
 </span><span data-line="329">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Camera_preview&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">camera_preview</span><span class="p">)</span>
-</span><span data-line="330">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Debug&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Debug&quot;</span><span class="p">)</span>
-</span><span data-line="331">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Progress&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Show Progress&quot;</span><span class="p">)</span>
-</span><span data-line="332">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Progress&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="333">
-</span><span data-line="334">        <span class="p">[</span><span class="n">buttons</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+</span><span data-line="330">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Exit&quot;</span><span class="p">)</span>
+</span><span data-line="331">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+</span><span data-line="332">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Debug&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Debug&quot;</span><span class="p">)</span>
+</span><span data-line="333">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Progress&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Show Progress&quot;</span><span class="p">)</span>
+</span><span data-line="334">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Progress&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 </span><span data-line="335">
-</span><span data-line="336">        <span class="bp">self</span><span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span>
-</span><span data-line="337">            <span class="s2">&quot;&lt;br&gt;&lt;br&gt;&lt;B&gt;Instructions&lt;/B&gt;&lt;br&gt;&lt;br&gt;Single Click on&lt;br&gt; playlist or protocol.&lt;br&gt;previews the file.&lt;br&gt;&lt;br&gt;Double Click opens&lt;br&gt;playlist or protocol&lt;br&gt;in VS code.&lt;br&gt;&quot;</span>
-</span><span data-line="338">        <span class="p">)</span>
-</span><span data-line="339">        <span class="n">buttons</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">help</span><span class="p">)</span>
-</span><span data-line="340">
-</span><span data-line="341">        <span class="c1"># Layout</span>
-</span><span data-line="342">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">QGridLayout</span><span class="p">()</span>
-</span><span data-line="343">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">buttons</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</span><span data-line="344">        <span class="bp">self</span><span class="o">.</span><span class="n">refresh_lists</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="345">
-</span><span data-line="346">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">setColumnMinimumWidth</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
-</span><span data-line="347">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">setColumnMinimumWidth</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
-</span><span data-line="348">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">setColumnStretch</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-</span><span data-line="349">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">setColumnStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-</span><span data-line="350">
-</span><span data-line="351">        <span class="n">widget</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
-</span><span data-line="352">        <span class="n">widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">)</span>
-</span><span data-line="353">        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
-</span><span data-line="354">        <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-</span><span data-line="355">
-</span><span data-line="356">    <span class="k">def</span><span class="w"> </span><span class="nf">on_protocol_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">changes</span><span class="p">):</span>
-</span><span data-line="357">        <span class="bp">self</span><span class="o">.</span><span class="n">current_protocol</span> <span class="o">=</span> <span class="n">to_yaml</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
-</span><span data-line="358">
-</span><span data-line="359">    <span class="k">def</span><span class="w"> </span><span class="nf">refresh_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-</span><span data-line="360">        <span class="n">playlist_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.txt&quot;</span><span class="p">))</span>
-</span><span data-line="361">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">playlist_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="362">            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No files found in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span data-line="363">
-</span><span data-line="364">        <span class="n">df_playlists</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;playlist&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">Path</span><span class="p">(</span><span class="n">plf</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">plf</span> <span class="ow">in</span> <span class="n">playlist_files</span><span class="p">])})</span>
-</span><span data-line="365">        <span class="n">playlist_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">playlist_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">name</span>
-</span><span data-line="366">        <span class="n">playlist_from_filename</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">filename</span><span class="p">:</span> <span class="n">parse_table</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span> <span class="o">/</span> <span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
-</span><span data-line="367">        <span class="n">playlist_model</span> <span class="o">=</span> <span class="n">PandasModel</span><span class="p">(</span><span class="n">playlist_from_filename</span><span class="p">(</span><span class="n">playlist_file</span><span class="p">))</span>
-</span><span data-line="368">        <span class="n">playlist_model</span><span class="o">.</span><span class="n">data_from_filename</span> <span class="o">=</span> <span class="n">playlist_from_filename</span>
-</span><span data-line="369">        <span class="n">playlist_view</span> <span class="o">=</span> <span class="n">TableView</span><span class="p">(</span><span class="n">playlist_model</span><span class="p">)</span>
-</span><span data-line="370">        <span class="n">playlist_view</span><span class="o">.</span><span class="n">setAlternatingRowColors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="371">
-</span><span data-line="372">        <span class="c1"># List of playlist files</span>
-</span><span data-line="373">        <span class="n">playlists_model</span> <span class="o">=</span> <span class="n">PandasModel</span><span class="p">(</span><span class="n">df_playlists</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span data-line="374">        <span class="n">playlists_view</span> <span class="o">=</span> <span class="n">TableView</span><span class="p">(</span><span class="n">playlists_model</span><span class="p">,</span> <span class="n">playlist_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span><span class="p">)</span>
-</span><span data-line="375">        <span class="n">playlists_view</span><span class="o">.</span><span class="n">setAlternatingRowColors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="376">        <span class="n">playlists_view</span><span class="o">.</span><span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span>
-</span><span data-line="377">        <span class="n">playlists_view</span><span class="o">.</span><span class="n">selectRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span data-line="378">
-</span><span data-line="379">        <span class="c1"># Protocols</span>
-</span><span data-line="380">        <span class="n">protocol_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.yml&quot;</span><span class="p">))</span>
-</span><span data-line="381">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">protocol_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="382">            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No files found in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span data-line="383">
-</span><span data-line="384">        <span class="n">df_protocols</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;protocol&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">Path</span><span class="p">(</span><span class="n">plf</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">plf</span> <span class="ow">in</span> <span class="n">protocol_files</span><span class="p">])})</span>
-</span><span data-line="385">        <span class="c1"># Content of selected protocol file</span>
-</span><span data-line="386">        <span class="n">protocol_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">protocol_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">name</span>
-</span><span data-line="387">        <span class="n">protocol_from_filename</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">filename</span><span class="p">:</span> <span class="n">from_yaml</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span> <span class="o">/</span> <span class="n">filename</span><span class="p">),</span> <span class="n">readonly</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span data-line="388">        <span class="n">protocol_model</span> <span class="o">=</span> <span class="n">protocol_from_filename</span><span class="p">(</span><span class="n">protocol_file</span><span class="p">)</span>
-</span><span data-line="389">
-</span><span data-line="390">        <span class="n">protocol_view</span> <span class="o">=</span> <span class="n">ParameterTree</span><span class="p">()</span>
+</span><span data-line="336">        <span class="p">[</span><span class="n">buttons</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+</span><span data-line="337">
+</span><span data-line="338">        <span class="bp">self</span><span class="o">.</span><span class="n">help</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span>
+</span><span data-line="339">            <span class="s2">&quot;&lt;br&gt;&lt;br&gt;&lt;B&gt;Instructions&lt;/B&gt;&lt;br&gt;&lt;br&gt;Single Click on&lt;br&gt; playlist or protocol.&lt;br&gt;previews the file.&lt;br&gt;&lt;br&gt;Double Click opens&lt;br&gt;playlist or protocol&lt;br&gt;in VS code.&lt;br&gt;&quot;</span>
+</span><span data-line="340">        <span class="p">)</span>
+</span><span data-line="341">        <span class="n">buttons</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">help</span><span class="p">)</span>
+</span><span data-line="342">
+</span><span data-line="343">        <span class="c1"># Layout</span>
+</span><span data-line="344">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="o">=</span> <span class="n">QGridLayout</span><span class="p">()</span>
+</span><span data-line="345">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">buttons</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span data-line="346">        <span class="bp">self</span><span class="o">.</span><span class="n">refresh_lists</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="347">
+</span><span data-line="348">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">setColumnMinimumWidth</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</span><span data-line="349">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">setColumnMinimumWidth</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
+</span><span data-line="350">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">setColumnStretch</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span data-line="351">        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">setColumnStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span data-line="352">
+</span><span data-line="353">        <span class="n">widget</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+</span><span data-line="354">        <span class="n">widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">)</span>
+</span><span data-line="355">        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+</span><span data-line="356">        <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="357">
+</span><span data-line="358">    <span class="k">def</span><span class="w"> </span><span class="nf">on_protocol_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">changes</span><span class="p">):</span>
+</span><span data-line="359">        <span class="bp">self</span><span class="o">.</span><span class="n">current_protocol</span> <span class="o">=</span> <span class="n">to_yaml</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+</span><span data-line="360">
+</span><span data-line="361">    <span class="k">def</span><span class="w"> </span><span class="nf">refresh_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span data-line="362">        <span class="n">playlist_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.txt&quot;</span><span class="p">))</span>
+</span><span data-line="363">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">playlist_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="364">            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No files found in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="365">
+</span><span data-line="366">        <span class="n">df_playlists</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;playlist&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">Path</span><span class="p">(</span><span class="n">plf</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">plf</span> <span class="ow">in</span> <span class="n">playlist_files</span><span class="p">])})</span>
+</span><span data-line="367">        <span class="n">playlist_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">playlist_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">name</span>
+</span><span data-line="368">        <span class="n">playlist_from_filename</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">filename</span><span class="p">:</span> <span class="n">parse_table</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span> <span class="o">/</span> <span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
+</span><span data-line="369">        <span class="n">playlist_model</span> <span class="o">=</span> <span class="n">PandasModel</span><span class="p">(</span><span class="n">playlist_from_filename</span><span class="p">(</span><span class="n">playlist_file</span><span class="p">))</span>
+</span><span data-line="370">        <span class="n">playlist_model</span><span class="o">.</span><span class="n">data_from_filename</span> <span class="o">=</span> <span class="n">playlist_from_filename</span>
+</span><span data-line="371">        <span class="n">playlist_view</span> <span class="o">=</span> <span class="n">TableView</span><span class="p">(</span><span class="n">playlist_model</span><span class="p">)</span>
+</span><span data-line="372">        <span class="n">playlist_view</span><span class="o">.</span><span class="n">setAlternatingRowColors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="373">
+</span><span data-line="374">        <span class="c1"># List of playlist files</span>
+</span><span data-line="375">        <span class="n">playlists_model</span> <span class="o">=</span> <span class="n">PandasModel</span><span class="p">(</span><span class="n">df_playlists</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="376">        <span class="n">playlists_view</span> <span class="o">=</span> <span class="n">TableView</span><span class="p">(</span><span class="n">playlists_model</span><span class="p">,</span> <span class="n">playlist_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span><span class="p">)</span>
+</span><span data-line="377">        <span class="n">playlists_view</span><span class="o">.</span><span class="n">setAlternatingRowColors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="378">        <span class="n">playlists_view</span><span class="o">.</span><span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span>
+</span><span data-line="379">        <span class="n">playlists_view</span><span class="o">.</span><span class="n">selectRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span data-line="380">
+</span><span data-line="381">        <span class="c1"># Protocols</span>
+</span><span data-line="382">        <span class="n">protocol_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.yml&quot;</span><span class="p">))</span>
+</span><span data-line="383">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">protocol_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="384">            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No files found in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="385">
+</span><span data-line="386">        <span class="n">df_protocols</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;protocol&quot;</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">Path</span><span class="p">(</span><span class="n">plf</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">plf</span> <span class="ow">in</span> <span class="n">protocol_files</span><span class="p">])})</span>
+</span><span data-line="387">        <span class="c1"># Content of selected protocol file</span>
+</span><span data-line="388">        <span class="n">protocol_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">protocol_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">name</span>
+</span><span data-line="389">        <span class="n">protocol_from_filename</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">filename</span><span class="p">:</span> <span class="n">from_yaml</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span> <span class="o">/</span> <span class="n">filename</span><span class="p">),</span> <span class="n">readonly</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="390">        <span class="n">protocol_model</span> <span class="o">=</span> <span class="n">protocol_from_filename</span><span class="p">(</span><span class="n">protocol_file</span><span class="p">)</span>
 </span><span data-line="391">
-</span><span data-line="392">        <span class="k">def</span><span class="w"> </span><span class="nf">set_protocol_model</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
-</span><span data-line="393">            <span class="bp">self</span><span class="o">.</span><span class="n">current_protocol</span> <span class="o">=</span> <span class="n">to_yaml</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
-</span><span data-line="394">            <span class="n">parameter</span><span class="o">.</span><span class="n">sigTreeStateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_protocol_changed</span><span class="p">)</span>
-</span><span data-line="395">            <span class="n">protocol_view</span><span class="o">.</span><span class="n">protocol_model</span> <span class="o">=</span> <span class="n">parameter</span>
-</span><span data-line="396">            <span class="n">protocol_view</span><span class="o">.</span><span class="n">setParameters</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">showTop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span data-line="397">
-</span><span data-line="398">        <span class="n">set_protocol_model</span><span class="p">(</span><span class="n">protocol_model</span><span class="p">)</span>
-</span><span data-line="399">        <span class="n">protocol_view</span><span class="o">.</span><span class="n">replaceData</span> <span class="o">=</span> <span class="n">set_protocol_model</span>
-</span><span data-line="400">        <span class="n">protocol_view</span><span class="o">.</span><span class="n">data_from_filename</span> <span class="o">=</span> <span class="n">protocol_from_filename</span>
-</span><span data-line="401">
-</span><span data-line="402">        <span class="c1"># List of protocol files</span>
-</span><span data-line="403">        <span class="n">protocols_model</span> <span class="o">=</span> <span class="n">PandasModel</span><span class="p">(</span><span class="n">df_protocols</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span data-line="404">        <span class="n">protocols_view</span> <span class="o">=</span> <span class="n">TableView</span><span class="p">(</span><span class="n">protocols_model</span><span class="p">,</span> <span class="n">protocol_view</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span><span class="p">)</span>
-</span><span data-line="405">        <span class="n">protocols_view</span><span class="o">.</span><span class="n">setAlternatingRowColors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="406">        <span class="n">protocols_view</span><span class="o">.</span><span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span>
-</span><span data-line="407">        <span class="n">protocols_view</span><span class="o">.</span><span class="n">selectRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span data-line="408">
-</span><span data-line="409">        <span class="k">if</span> <span class="n">init</span><span class="p">:</span>
-</span><span data-line="410">            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_view</span> <span class="o">=</span> <span class="n">playlist_view</span>
-</span><span data-line="411">            <span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span> <span class="o">=</span> <span class="n">playlists_view</span>
-</span><span data-line="412">            <span class="bp">self</span><span class="o">.</span><span class="n">protocol_view</span> <span class="o">=</span> <span class="n">protocol_view</span>
-</span><span data-line="413">            <span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span> <span class="o">=</span> <span class="n">protocols_view</span>
-</span><span data-line="414">            <span class="c1"># splitter = QSplitter(QtCore.Qt.Vertical)</span>
-</span><span data-line="415">            <span class="c1"># splitter.addWidget(self.playlists_view)</span>
-</span><span data-line="416">            <span class="c1"># splitter.addWidget(self.protocols_view)</span>
-</span><span data-line="417">
-</span><span data-line="418">            <span class="c1"># # self.layout.addWidget(splitter)</span>
+</span><span data-line="392">        <span class="n">protocol_view</span> <span class="o">=</span> <span class="n">ParameterTree</span><span class="p">()</span>
+</span><span data-line="393">
+</span><span data-line="394">        <span class="k">def</span><span class="w"> </span><span class="nf">set_protocol_model</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
+</span><span data-line="395">            <span class="bp">self</span><span class="o">.</span><span class="n">current_protocol</span> <span class="o">=</span> <span class="n">to_yaml</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+</span><span data-line="396">            <span class="n">parameter</span><span class="o">.</span><span class="n">sigTreeStateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_protocol_changed</span><span class="p">)</span>
+</span><span data-line="397">            <span class="n">protocol_view</span><span class="o">.</span><span class="n">protocol_model</span> <span class="o">=</span> <span class="n">parameter</span>
+</span><span data-line="398">            <span class="n">protocol_view</span><span class="o">.</span><span class="n">setParameters</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">showTop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="399">
+</span><span data-line="400">        <span class="n">set_protocol_model</span><span class="p">(</span><span class="n">protocol_model</span><span class="p">)</span>
+</span><span data-line="401">        <span class="n">protocol_view</span><span class="o">.</span><span class="n">replaceData</span> <span class="o">=</span> <span class="n">set_protocol_model</span>
+</span><span data-line="402">        <span class="n">protocol_view</span><span class="o">.</span><span class="n">data_from_filename</span> <span class="o">=</span> <span class="n">protocol_from_filename</span>
+</span><span data-line="403">
+</span><span data-line="404">        <span class="c1"># List of protocol files</span>
+</span><span data-line="405">        <span class="n">protocols_model</span> <span class="o">=</span> <span class="n">PandasModel</span><span class="p">(</span><span class="n">df_protocols</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="406">        <span class="n">protocols_view</span> <span class="o">=</span> <span class="n">TableView</span><span class="p">(</span><span class="n">protocols_model</span><span class="p">,</span> <span class="n">protocol_view</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span><span class="p">)</span>
+</span><span data-line="407">        <span class="n">protocols_view</span><span class="o">.</span><span class="n">setAlternatingRowColors</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="408">        <span class="n">protocols_view</span><span class="o">.</span><span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span>
+</span><span data-line="409">        <span class="n">protocols_view</span><span class="o">.</span><span class="n">selectRow</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span data-line="410">
+</span><span data-line="411">        <span class="k">if</span> <span class="n">init</span><span class="p">:</span>
+</span><span data-line="412">            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_view</span> <span class="o">=</span> <span class="n">playlist_view</span>
+</span><span data-line="413">            <span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span> <span class="o">=</span> <span class="n">playlists_view</span>
+</span><span data-line="414">            <span class="bp">self</span><span class="o">.</span><span class="n">protocol_view</span> <span class="o">=</span> <span class="n">protocol_view</span>
+</span><span data-line="415">            <span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span> <span class="o">=</span> <span class="n">protocols_view</span>
+</span><span data-line="416">            <span class="c1"># splitter = QSplitter(QtCore.Qt.Vertical)</span>
+</span><span data-line="417">            <span class="c1"># splitter.addWidget(self.playlists_view)</span>
+</span><span data-line="418">            <span class="c1"># splitter.addWidget(self.protocols_view)</span>
 </span><span data-line="419">
-</span><span data-line="420">            <span class="c1"># splitter2 = QSplitter(QtCore.Qt.Vertical)</span>
-</span><span data-line="421">            <span class="c1"># splitter2.addWidget(self.playlist_view)</span>
-</span><span data-line="422">            <span class="c1"># splitter2.addWidget(self.protocol_view)</span>
-</span><span data-line="423">
-</span><span data-line="424">            <span class="c1"># splitterH = QSplitter(QtCore.Qt.Horizontal)</span>
-</span><span data-line="425">            <span class="c1"># splitterH.addWidget(splitter)</span>
-</span><span data-line="426">            <span class="c1"># splitterH.addWidget(splitter2)</span>
-</span><span data-line="427">            <span class="c1"># self.layout.addWidget(splitterH, 0, 1, 1, 1)</span>
-</span><span data-line="428">
-</span><span data-line="429">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-</span><span data-line="430">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_view</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-</span><span data-line="431">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-</span><span data-line="432">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_view</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-</span><span data-line="433">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="434">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">replaceWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span><span class="p">,</span> <span class="n">playlists_view</span><span class="p">)</span>
-</span><span data-line="435">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">replaceWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_view</span><span class="p">,</span> <span class="n">playlist_view</span><span class="p">)</span>
-</span><span data-line="436">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">replaceWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span><span class="p">,</span> <span class="n">protocols_view</span><span class="p">)</span>
-</span><span data-line="437">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">replaceWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_view</span><span class="p">,</span> <span class="n">protocol_view</span><span class="p">)</span>
-</span><span data-line="438">            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_view</span> <span class="o">=</span> <span class="n">playlist_view</span>
-</span><span data-line="439">            <span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span> <span class="o">=</span> <span class="n">playlists_view</span>
-</span><span data-line="440">            <span class="bp">self</span><span class="o">.</span><span class="n">protocol_view</span> <span class="o">=</span> <span class="n">protocol_view</span>
-</span><span data-line="441">            <span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span> <span class="o">=</span> <span class="n">protocols_view</span>
-</span><span data-line="442">
-</span><span data-line="443">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preview</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-</span><span data-line="444">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-</span><span data-line="445">            <span class="k">return</span>
-</span><span data-line="446">
-</span><span data-line="447">        <span class="n">msg</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span data-line="448">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span><span class="o">.</span><span class="n">selected_string</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="449">            <span class="n">msg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;playlist&quot;</span><span class="p">)</span>
-</span><span data-line="450">
-</span><span data-line="451">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span><span class="o">.</span><span class="n">selected_string</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="452">            <span class="n">msg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;protocol&quot;</span><span class="p">)</span>
-</span><span data-line="453">
-</span><span data-line="454">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
-</span><span data-line="455">            <span class="n">dlg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span data-line="456">            <span class="n">dlg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Error: Could not start the experiment.&quot;</span><span class="p">)</span>
-</span><span data-line="457">            <span class="n">dlg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please select a </span><span class="si">{</span><span class="s1">&#39; and a &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span data-line="458">            <span class="n">dlg</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
-</span><span data-line="459">            <span class="k">return</span>
-</span><span data-line="460">
-</span><span data-line="461">        <span class="n">stop_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
-</span><span data-line="462">        <span class="n">done_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
-</span><span data-line="463">
-</span><span data-line="464">        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="465">            <span class="s2">&quot;playlistfile&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span><span class="o">.</span><span class="n">selected_string</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
-</span><span data-line="466">            <span class="s2">&quot;protocolfile&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span><span class="o">.</span><span class="n">selected_string</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
-</span><span data-line="467">            <span class="s2">&quot;protocol&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_protocol</span><span class="p">,</span>
-</span><span data-line="468">            <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Debug&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">(),</span>
-</span><span data-line="469">            <span class="s2">&quot;show_progress&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Progress&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">(),</span>
-</span><span data-line="470">            <span class="s2">&quot;monitor&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-</span><span data-line="471">            <span class="s2">&quot;save_prefix&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="472">            <span class="s2">&quot;preview&quot;</span><span class="p">:</span> <span class="n">preview</span><span class="p">,</span>
-</span><span data-line="473">            <span class="s2">&quot;_stop_event&quot;</span><span class="p">:</span> <span class="n">stop_event</span><span class="p">,</span>
-</span><span data-line="474">            <span class="s2">&quot;_done_event&quot;</span><span class="p">:</span> <span class="n">done_event</span><span class="p">,</span>
-</span><span data-line="475">        <span class="p">}</span>
-</span><span data-line="476">
-</span><span data-line="477">        <span class="n">rich</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Starting experiment with these args:&quot;</span><span class="p">)</span>
-</span><span data-line="478">        <span class="n">rich</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="479">
-</span><span data-line="480">        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="n">stop_event</span>
-</span><span data-line="481">        <span class="bp">self</span><span class="o">.</span><span class="n">done_event</span> <span class="o">=</span> <span class="n">done_event</span>
-</span><span data-line="482">        <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run_client</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="483">        <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="484">        <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span data-line="485">        <span class="bp">self</span><span class="o">.</span><span class="n">run_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span data-line="486">
-</span><span data-line="487">        <span class="c1"># dlg = RunDialog(stop_event, done_event, queue_total)</span>
-</span><span data-line="488">        <span class="c1"># dlg.exec_()</span>
-</span><span data-line="489">
-</span><span data-line="490">    <span class="k">def</span><span class="w"> </span><span class="nf">run_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="491">        <span class="n">done_event</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_done_event&quot;</span><span class="p">)</span>
-</span><span data-line="492">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="493">            <span class="n">client</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="494">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span data-line="495">            <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Experiment failed.&quot;</span><span class="p">)</span>
-</span><span data-line="496">        <span class="k">finally</span><span class="p">:</span>
-</span><span data-line="497">            <span class="k">if</span> <span class="n">done_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="498">                <span class="n">done_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-</span><span data-line="499">
-</span><span data-line="500">    <span class="k">def</span><span class="w"> </span><span class="nf">request_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="501">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="502">            <span class="k">return</span>
-</span><span data-line="503">        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-</span><span data-line="504">        <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">stopping</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="505">
-</span><span data-line="506">    <span class="k">def</span><span class="w"> </span><span class="nf">sync_run_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="507">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="508">            <span class="bp">self</span><span class="o">.</span><span class="n">run_timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-</span><span data-line="509">            <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-</span><span data-line="510">            <span class="k">return</span>
-</span><span data-line="511">
-</span><span data-line="512">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-</span><span data-line="513">            <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">stopping</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="514">
-</span><span data-line="515">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-</span><span data-line="516">            <span class="k">return</span>
-</span><span data-line="517">
-</span><span data-line="518">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">done_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">done_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-</span><span data-line="519">            <span class="k">return</span>
-</span><span data-line="520">
-</span><span data-line="521">        <span class="bp">self</span><span class="o">.</span><span class="n">run_timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-</span><span data-line="522">        <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="523">        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="524">        <span class="bp">self</span><span class="o">.</span><span class="n">done_event</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="525">        <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-</span><span data-line="526">
-</span><span data-line="527">    <span class="k">def</span><span class="w"> </span><span class="nf">set_run_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">running</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">stopping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-</span><span data-line="528">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">running</span><span class="p">)</span>
-</span><span data-line="529">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Camera_preview&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">running</span><span class="p">)</span>
-</span><span data-line="530">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Refresh lists&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">running</span><span class="p">)</span>
-</span><span data-line="531">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Stop&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">running</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">stopping</span><span class="p">)</span>
-</span><span data-line="532">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Stop&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Stopping...&quot;</span> <span class="k">if</span> <span class="n">stopping</span> <span class="k">else</span> <span class="s2">&quot;Stop&quot;</span><span class="p">)</span>
-</span><span data-line="533">
-</span><span data-line="534">    <span class="k">def</span><span class="w"> </span><span class="nf">camera_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="535">        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">preview</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-
+</span><span data-line="420">            <span class="c1"># # self.layout.addWidget(splitter)</span>
+</span><span data-line="421">
+</span><span data-line="422">            <span class="c1"># splitter2 = QSplitter(QtCore.Qt.Vertical)</span>
+</span><span data-line="423">            <span class="c1"># splitter2.addWidget(self.playlist_view)</span>
+</span><span data-line="424">            <span class="c1"># splitter2.addWidget(self.protocol_view)</span>
+</span><span data-line="425">
+</span><span data-line="426">            <span class="c1"># splitterH = QSplitter(QtCore.Qt.Horizontal)</span>
+</span><span data-line="427">            <span class="c1"># splitterH.addWidget(splitter)</span>
+</span><span data-line="428">            <span class="c1"># splitterH.addWidget(splitter2)</span>
+</span><span data-line="429">            <span class="c1"># self.layout.addWidget(splitterH, 0, 1, 1, 1)</span>
+</span><span data-line="430">
+</span><span data-line="431">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span data-line="432">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_view</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</span><span data-line="433">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span data-line="434">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_view</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+</span><span data-line="435">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="436">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">replaceWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span><span class="p">,</span> <span class="n">playlists_view</span><span class="p">)</span>
+</span><span data-line="437">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">replaceWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_view</span><span class="p">,</span> <span class="n">playlist_view</span><span class="p">)</span>
+</span><span data-line="438">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">replaceWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span><span class="p">,</span> <span class="n">protocols_view</span><span class="p">)</span>
+</span><span data-line="439">            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">replaceWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_view</span><span class="p">,</span> <span class="n">protocol_view</span><span class="p">)</span>
+</span><span data-line="440">            <span class="bp">self</span><span class="o">.</span><span class="n">playlist_view</span> <span class="o">=</span> <span class="n">playlist_view</span>
+</span><span data-line="441">            <span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span> <span class="o">=</span> <span class="n">playlists_view</span>
+</span><span data-line="442">            <span class="bp">self</span><span class="o">.</span><span class="n">protocol_view</span> <span class="o">=</span> <span class="n">protocol_view</span>
+</span><span data-line="443">            <span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span> <span class="o">=</span> <span class="n">protocols_view</span>
+</span><span data-line="444">
+</span><span data-line="445">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preview</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span data-line="446">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+</span><span data-line="447">            <span class="k">return</span>
+</span><span data-line="448">
+</span><span data-line="449">        <span class="n">msg</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="450">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span><span class="o">.</span><span class="n">selected_string</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="451">            <span class="n">msg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;playlist&quot;</span><span class="p">)</span>
+</span><span data-line="452">
+</span><span data-line="453">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span><span class="o">.</span><span class="n">selected_string</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="454">            <span class="n">msg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;protocol&quot;</span><span class="p">)</span>
+</span><span data-line="455">
+</span><span data-line="456">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+</span><span data-line="457">            <span class="n">dlg</span> <span class="o">=</span> <span class="n">QMessageBox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span data-line="458">            <span class="n">dlg</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Error: Could not start the experiment.&quot;</span><span class="p">)</span>
+</span><span data-line="459">            <span class="n">dlg</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please select a </span><span class="si">{</span><span class="s1">&#39; and a &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="460">            <span class="n">dlg</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+</span><span data-line="461">            <span class="k">return</span>
+</span><span data-line="462">
+</span><span data-line="463">        <span class="n">stop_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+</span><span data-line="464">        <span class="n">done_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+</span><span data-line="465">
+</span><span data-line="466">        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="467">            <span class="s2">&quot;playlistfile&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">playlist_folder</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">playlists_view</span><span class="o">.</span><span class="n">selected_string</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
+</span><span data-line="468">            <span class="s2">&quot;protocolfile&quot;</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_folder</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocols_view</span><span class="o">.</span><span class="n">selected_string</span><span class="p">)</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
+</span><span data-line="469">            <span class="s2">&quot;protocol&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_protocol</span><span class="p">,</span>
+</span><span data-line="470">            <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Debug&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">(),</span>
+</span><span data-line="471">            <span class="s2">&quot;show_progress&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Progress&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isChecked</span><span class="p">(),</span>
+</span><span data-line="472">            <span class="s2">&quot;monitor&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+</span><span data-line="473">            <span class="s2">&quot;save_prefix&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="474">            <span class="s2">&quot;preview&quot;</span><span class="p">:</span> <span class="n">preview</span><span class="p">,</span>
+</span><span data-line="475">            <span class="s2">&quot;_stop_event&quot;</span><span class="p">:</span> <span class="n">stop_event</span><span class="p">,</span>
+</span><span data-line="476">            <span class="s2">&quot;_done_event&quot;</span><span class="p">:</span> <span class="n">done_event</span><span class="p">,</span>
+</span><span data-line="477">        <span class="p">}</span>
+</span><span data-line="478">
+</span><span data-line="479">        <span class="n">rich</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;Starting experiment with these args:&quot;</span><span class="p">)</span>
+</span><span data-line="480">        <span class="n">rich</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="481">
+</span><span data-line="482">        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="n">stop_event</span>
+</span><span data-line="483">        <span class="bp">self</span><span class="o">.</span><span class="n">done_event</span> <span class="o">=</span> <span class="n">done_event</span>
+</span><span data-line="484">        <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run_client</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="485">        <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="486">        <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span data-line="487">        <span class="bp">self</span><span class="o">.</span><span class="n">run_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span data-line="488">
+</span><span data-line="489">        <span class="c1"># dlg = RunDialog(stop_event, done_event, queue_total)</span>
+</span><span data-line="490">        <span class="c1"># dlg.exec_()</span>
+</span><span data-line="491">
+</span><span data-line="492">    <span class="k">def</span><span class="w"> </span><span class="nf">run_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="493">        <span class="n">done_event</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_done_event&quot;</span><span class="p">)</span>
+</span><span data-line="494">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="495">            <span class="n">client</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="496">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span data-line="497">            <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Experiment failed.&quot;</span><span class="p">)</span>
+</span><span data-line="498">        <span class="k">finally</span><span class="p">:</span>
+</span><span data-line="499">            <span class="k">if</span> <span class="n">done_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="500">                <span class="n">done_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+</span><span data-line="501">
+</span><span data-line="502">    <span class="k">def</span><span class="w"> </span><span class="nf">request_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="503">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="504">            <span class="k">return</span>
+</span><span data-line="505">        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+</span><span data-line="506">        <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">stopping</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="507">
+</span><span data-line="508">    <span class="k">def</span><span class="w"> </span><span class="nf">sync_run_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="509">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="510">            <span class="bp">self</span><span class="o">.</span><span class="n">run_timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</span><span data-line="511">            <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="512">            <span class="k">return</span>
+</span><span data-line="513">
+</span><span data-line="514">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+</span><span data-line="515">            <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">stopping</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="516">
+</span><span data-line="517">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+</span><span data-line="518">            <span class="k">return</span>
+</span><span data-line="519">
+</span><span data-line="520">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">done_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">done_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+</span><span data-line="521">            <span class="k">return</span>
+</span><span data-line="522">
+</span><span data-line="523">        <span class="bp">self</span><span class="o">.</span><span class="n">run_timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</span><span data-line="524">        <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="525">        <span class="bp">self</span><span class="o">.</span><span class="n">stop_event</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="526">        <span class="bp">self</span><span class="o">.</span><span class="n">done_event</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="527">        <span class="bp">self</span><span class="o">.</span><span class="n">set_run_buttons</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span><span data-line="528">
+</span><span data-line="529">    <span class="k">def</span><span class="w"> </span><span class="nf">set_run_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">running</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">stopping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span data-line="530">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Start&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">running</span><span class="p">)</span>
+</span><span data-line="531">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Camera_preview&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">running</span><span class="p">)</span>
+</span><span data-line="532">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Refresh lists&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">running</span><span class="p">)</span>
+</span><span data-line="533">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Stop&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="n">running</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">stopping</span><span class="p">)</span>
+</span><span data-line="534">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Stop&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Stopping...&quot;</span> <span class="k">if</span> <span class="n">stopping</span> <span class="k">else</span> <span class="s2">&quot;Stop&quot;</span><span class="p">)</span>
+</span><span data-line="535">        <span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="p">[</span><span class="s2">&quot;Exit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">running</span><span class="p">)</span>
 </span><span data-line="536">
-</span><span data-line="537">
+</span><span data-line="537">    <span class="k">def</span><span class="w"> </span><span class="nf">camera_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="538">        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">preview</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+</span><span data-line="539">
+</span><span data-line="540">
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../api/etho.app.html#etho.app.main">[docs]</a>
-</span><span data-line="538"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">protocol_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">playlist_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span data-line="539"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Opens the graphical user interface.</span>
-</span><span data-line="540">
-</span><span data-line="541"><span class="sd">    Args:</span>
-</span><span data-line="542"><span class="sd">        protocol_folder (Optional[str]): Folder with protocol files.</span>
-</span><span data-line="543"><span class="sd">                                         Defaults to value `protocolfolder` in `~/ethoconfig/ethoconfig.yml`.</span>
-</span><span data-line="544"><span class="sd">        playlist_folder (Optional[str]): Folder with playlist files.</span>
-</span><span data-line="545"><span class="sd">                                         Defaults to value `playlistfolder` in `~/ethoconfig/ethoconfig.yml`.</span>
-</span><span data-line="546"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="547">    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
-</span><span data-line="548">    <span class="n">icon</span> <span class="o">=</span> <span class="n">_system_icon</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
-</span><span data-line="549">    <span class="n">app</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
-</span><span data-line="550">
-</span><span data-line="551">    <span class="n">m</span> <span class="o">=</span> <span class="n">MainWindow</span><span class="p">(</span><span class="n">protocol_folder</span><span class="p">,</span> <span class="n">playlist_folder</span><span class="p">)</span>
-</span><span data-line="552">    <span class="n">m</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
-</span><span data-line="553">    <span class="n">m</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</span><span data-line="554">
-</span><span data-line="555">    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">())</span></div>
-
-</span><span data-line="556">
+</span><span data-line="541"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">protocol_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">playlist_folder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span data-line="542"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Opens the graphical user interface.</span>
+</span><span data-line="543">
+</span><span data-line="544"><span class="sd">    Args:</span>
+</span><span data-line="545"><span class="sd">        protocol_folder (Optional[str]): Folder with protocol files.</span>
+</span><span data-line="546"><span class="sd">                                         Defaults to value `protocolfolder` in `~/ethoconfig/ethoconfig.yml`.</span>
+</span><span data-line="547"><span class="sd">        playlist_folder (Optional[str]): Folder with playlist files.</span>
+</span><span data-line="548"><span class="sd">                                         Defaults to value `playlistfolder` in `~/ethoconfig/ethoconfig.yml`.</span>
+</span><span data-line="549"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="550">    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+</span><span data-line="551">    <span class="n">icon</span> <span class="o">=</span> <span class="n">_system_icon</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span data-line="552">    <span class="n">app</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
+</span><span data-line="553">
+</span><span data-line="554">    <span class="n">m</span> <span class="o">=</span> <span class="n">MainWindow</span><span class="p">(</span><span class="n">protocol_folder</span><span class="p">,</span> <span class="n">playlist_folder</span><span class="p">)</span>
+</span><span data-line="555">    <span class="n">m</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
+</span><span data-line="556">    <span class="n">m</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </span><span data-line="557">
-</span><span data-line="558"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span data-line="559">    <span class="n">main</span><span class="p">()</span>
+</span><span data-line="558">    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">())</span></div>
+
+</span><span data-line="559">
+</span><span data-line="560">
+</span><span data-line="561"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span data-line="562">    <span class="n">main</span><span class="p">()</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -771,7 +775,7 @@ data-aria-dark="Switch to auto color mode">
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../_static/design-tabs.js?v=f930bc37"></script>
-      <script src="../../_static/shibuya.js?v=cac61aee"></script>
+      <script src="../../_static/shibuya.js?v=50760d75"></script>
       <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
       <script src="../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
       <script src="https://code.iconify.design/iconify-icon/3.0.1/iconify-icon.min.js"></script></body>
