@@ -28,7 +28,6 @@ doc = [
        "sphinx", "furo", "shibuya", "sphinx-copybutton", "ghp-import",
        "myst-nb", "sphinx-panels", "sphinxcontrib-images",
        "sphinx-tabs", "sphinx-iconify", "sphinx-design",
-
        ]
 
 [project.urls]
