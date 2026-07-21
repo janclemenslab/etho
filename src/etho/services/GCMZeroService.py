@@ -1,4 +1,5 @@
 from .ZeroService import BaseZeroService
+from pathlib import Path
 import time
 import threading
 import sys
@@ -44,14 +45,17 @@ class GCM(BaseZeroService):
             params["callbacks"] = {"disp_fast": None}
 
         save_suffix = f"_{service_index + 1}" if service_index > 0 else ""
+        save_dir = Path(this["savefolder"]) / save_prefix
+        save_dir.mkdir(parents=True, exist_ok=True)
+        save_base = save_dir / f"{save_prefix}{save_suffix}"
         service.setup(
-            f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}",
+            str(save_base),
             duration,
             params,
         )
 
         if not preview:
-            service.init_local_logger(f"{this['savefolder']}/{save_prefix}/{save_prefix}{save_suffix}_gcm.log")
+            service.init_local_logger(f"{save_base}_gcm.log")
         return service
 
     def setup(self, savefilename, duration, params):

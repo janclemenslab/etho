@@ -37,7 +37,7 @@ for hardware SDKs that only provide Python 3.10 bindings.
 
 ## Running tests
 
-Run the test suite locally before submitting changes:
+Run the test suite locally before submitting changes. Tests do not require hardware SDKs.
 
 ```bash
 python -m pytest
