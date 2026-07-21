@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime
 import sys
 import threading
@@ -11,6 +12,7 @@ from etho.services.GOVZeroService import (
     H5075_MANUFACTURER_ID,
     H5075Measurement,
     decode_h5075_measurement,
+    discover_h5075_sensors,
     format_measurement_log_line,
     normalize_address,
 )
@@ -75,6 +77,32 @@ def test_decode_h5075_measurement():
     negative = decode_h5075_measurement(encode_h5075_payload(-5.4, 42.0))
     assert negative.temperature_c == -5.4
     assert negative.humidity == 42.0
+
+
+def test_discover_h5075_sensors(monkeypatch):
+    payload = encode_h5075_payload(21.9, 63.1)
+
+    class FakeScanner:
+        def __init__(self, detection_callback):
+            self.detection_callback = detection_callback
+
+        async def __aenter__(self):
+            self.detection_callback(
+                DummyDevice("aa:bb:cc:dd:ee:ff"),
+                DummyAdvertisement({H5075_MANUFACTURER_ID: payload}),
+            )
+            return self
+
+        async def __aexit__(self, *args):
+            pass
+
+    monkeypatch.setattr("etho.services.GOVZeroService.BleakScanner", FakeScanner)
+
+    [(address, name, measurement)] = asyncio.run(discover_h5075_sensors(0.001))
+
+    assert address == "AA:BB:CC:DD:EE:FF"
+    assert name == ""
+    assert (measurement.temperature_c, measurement.humidity) == (21.9, 63.1)
 
 
 def test_detection_callback_filters_by_address():

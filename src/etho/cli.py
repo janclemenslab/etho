@@ -67,6 +67,23 @@ def res_gui(protocol_folder: Optional[str] = None, playlist_folder: Optional[str
     return res_app.main(protocol_folder=protocol_folder, playlist_folder=playlist_folder)
 
 
+def govee(duration: float = 10.0):
+    """Lists nearby Govee H5075 sensors and their protocol addresses/readings."""
+    import asyncio
+
+    from .services.GOVZeroService import discover_h5075_sensors
+
+    print(f"Scanning for Govee sensors for {duration:g} seconds...", flush=True)
+    sensors = asyncio.run(discover_h5075_sensors(duration))
+    if not sensors:
+        print("No Govee H5075 sensors found.")
+        return
+
+    print(f"{'Address (use as GOV.address)':<38} {'Name':<16} {'Temperature':>11} {'Humidity':>9}")
+    for address, name, measurement in sensors:
+        print(f"{address:<38} {(name or '-'):<16} {measurement.temperature_c:>10.1f}°C {measurement.humidity:>8.1f}%")
+
+
 def version(*, debug: bool = False):
     """Displays system, version, and hardware info.
 
@@ -225,6 +242,7 @@ def main():
     subcommands = {
         "version": version,
         "init": init,
+        "govee": govee,
     }
 
     if client is not None:

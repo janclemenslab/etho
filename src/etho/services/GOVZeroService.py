@@ -67,6 +67,37 @@ def format_measurement_log_line(measurement: H5075Measurement) -> str:
     return f"{measurement.timestamp:%Y-%m-%d %H:%M:%S},{measurement.temperature_c:.1f},{measurement.humidity:.1f}"
 
 
+async def discover_h5075_sensors(duration: float = 10.0):
+    """Return nearby H5075 addresses, names, and latest measurements."""
+    if bleak_import_error is not None:
+        raise bleak_import_error
+
+    duration = float(duration)
+    if duration <= 0:
+        raise ValueError("duration must be > 0")
+
+    sensors = {}
+
+    def detection_callback(device: BLEDevice, advertisement_data: AdvertisementData):
+        address = getattr(device, "address", None)
+        payload = advertisement_data.manufacturer_data.get(H5075_MANUFACTURER_ID)
+        if address is None or payload is None:
+            return
+
+        try:
+            measurement = decode_h5075_measurement(payload)
+        except ValueError:
+            return
+
+        name = getattr(advertisement_data, "local_name", None) or getattr(device, "name", None) or ""
+        sensors[normalize_address(address)] = (name, measurement)
+
+    async with BleakScanner(detection_callback=detection_callback):
+        await asyncio.sleep(duration)
+
+    return sorted((address, name, measurement) for address, (name, measurement) in sensors.items())
+
+
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_service
 class GOV(BaseZeroService):
