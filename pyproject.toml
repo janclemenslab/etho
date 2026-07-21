@@ -17,7 +17,7 @@ dependencies = [
                 'pydaqmx', 'pyqtgraph', 'qtpy', 'PySide6-Essentials', 'zarr', 'zerorpc-numpy'
                 ]
 readme= "README.md"
-version="1.1"
+version="1.2"
 
 [project.scripts]
 etho = "etho.cli:main"
