@@ -83,15 +83,10 @@ The value of `etho`lies in making complex experiments easier to run, maintain, a
 
 During the preparation of this work, the author used ChatGPT to assist with language and phrasing throughout the manuscript. ChatGPT and codex were also used for drafting the documentation and for refactoring code. After using these services, the author reviewed and edited the content as needed and takes full responsibility for the content of the publication and the software.
 
+
 # Acknowledgements
 
 We thank past and current members of the Roemschied, Deutsch, and Clemens labs for testing `etho` on experimental rigs and reporting bugs. Development of `etho` was funded via an Emmy Noether Grant (Project number 329518246) and an ERC Starting Grant (Grant agreement No. 851210) to JC.
 
-
-During the preparation of this work, the authors used ChatGPT, Claude, as well
-as built-in spelling and grammar checkers in Overleaf, to assist with language
-and phrasing throughout the manuscript (including this footnote). After using
-these tool or services, the authors reviewed and edited the content as needed
-and take full responsibility for the content of the publication.
 
 # References
