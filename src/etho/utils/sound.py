@@ -16,7 +16,7 @@ def parse_cell(cell, dtype: Callable = None) -> List:
     if isinstance(cell, str):
         cell = cell.strip()
         token = cell.lstrip("[").rstrip("]").split(",")
-        token = [tok.strip() for tok in token]
+        token = [tok.strip().strip("'\"") for tok in token]
         if dtype:
             token = [dtype(tok) for tok in token]
     else:

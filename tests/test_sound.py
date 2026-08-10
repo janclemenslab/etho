@@ -41,3 +41,12 @@ def test_parse_table_ignores_unused_playlist_columns():
     assert list(parsed.columns) == ["stimFileName", "silencePre", "silencePost", "intensity", "freq"]
     assert parsed.loc[0, "stimFileName"] == ["SIN_100_0_3000"]
     assert parsed.loc[0, "intensity"] == [1.0]
+
+
+def test_parse_table_accepts_quoted_bracketed_stimulus_name():
+    playlist = pd.DataFrame(
+        [["['SIN_100_0_3000']", 1000, 1000, 1.0, 100]],
+        columns=["stimFileName", "silencePre", "silencePost", "intensity", "freq"],
+    )
+
+    assert parse_table(playlist).loc[0, "stimFileName"] == ["SIN_100_0_3000"]
