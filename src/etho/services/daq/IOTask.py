@@ -295,18 +295,18 @@ def coroutine(func):
 def data_playlist(sounds, play_order, playlist_info=None, logger=None, name="standard"):
     """sounds - list of nparrays"""
     first_run = True
-    run_cnt = 0
+    playlist_index = 0
     playlist_cnt = 0
 
     try:
         while play_order:
-            run_cnt += 1
             # duplicate first stim - otherwise we miss the first in the playlist
             if first_run:
                 pp = 0
                 first_run = False
             else:
-                pp = next(play_order)
+                pp = play_order[playlist_index % len(play_order)]
+                playlist_index += 1
                 playlist_cnt += 1
                 if playlist_info is not None:
                     msg = _format_playlist(playlist_info.loc[pp], playlist_cnt)

@@ -2,9 +2,7 @@ from .ZeroService import BaseZeroService
 import time
 import threading
 import sys
-import copy
-from itertools import cycle
-from typing import Iterable, Sequence, Optional, Dict, Any
+from typing import Sequence, Optional, Dict, Any
 from . import register_service
 from .. import config as global_config
 from ..utils.config import undefaultify
@@ -67,8 +65,6 @@ class DAQ(BaseZeroService):
         if prot["maxduration"] == -1:
             logging.info(f"Setting maxduration from playlist to {totallen}.")
             prot["maxduration"] = totallen
-        playlist_items = cycle(playlist_items)
-
         if prot[service_key]["digital_chans_out"] is not None:
             nb_digital_chans_out = len(prot[service_key]["digital_chans_out"])
             digital_data = [snd[:, -nb_digital_chans_out:].astype(np.uint8) for snd in sounds]
@@ -112,7 +108,7 @@ class DAQ(BaseZeroService):
     def setup(
         self,
         savefilename: str = None,
-        play_order: Iterable = None,
+        play_order: Sequence = None,
         playlist_info=None,
         duration: float = -1,
         fs: int = 10000,
@@ -134,7 +130,7 @@ class DAQ(BaseZeroService):
 
         Args:
             savefilename (str, optional): [description]. Defaults to None.
-            play_order (Iterable, optional): [description]. Defaults to None.
+            play_order (Sequence, optional): [description]. Defaults to None.
             playlist_info ([type], optional): [description]. Defaults to None.
             duration (float, optional): [description]. Defaults to -1.
             fs (int, optional): [description]. Defaults to 10000.
@@ -185,8 +181,7 @@ class DAQ(BaseZeroService):
             )
             if analog_data_out[0].shape[-1] is not len(self.analog_chans_out):
                 raise ValueError(f"Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]}).")
-            play_order_new = copy.deepcopy(play_order)
-            self.taskAO.data_gen = data_playlist(analog_data_out, play_order_new, playlist_info, self.log, name="AO")
+            self.taskAO.data_gen = data_playlist(analog_data_out, play_order, playlist_info, self.log, name="AO")
             if clock_source is None:
                 self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             else:
@@ -200,8 +195,7 @@ class DAQ(BaseZeroService):
                 clock_source=clock_source,
                 logger=self.log,
             )
-            play_order_new = copy.deepcopy(play_order)
-            self.taskDO.data_gen = data_playlist(digital_data_out, play_order_new, name="DO")
+            self.taskDO.data_gen = data_playlist(digital_data_out, play_order, name="DO")
             if clock_source is None:
                 self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             else:
