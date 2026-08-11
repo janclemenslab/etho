@@ -27,7 +27,7 @@ class IOTask(daq.Task):
         dev_name="Dev1",
         cha_name=["ai0"],
         limits=None,
-        rate=10000.0,
+        rate: float = 10000.0,
         nb_inputsamples_per_cycle=None,
         clock_source=None,
         terminals: Optional[List[str]] = None,
@@ -63,7 +63,8 @@ class IOTask(daq.Task):
             raise TypeError(f"`cha_name` is {type(cha_name)}. Should be `list` or `tuple`")
 
         self.samples_read = daq.int32()
-
+        self.samples_written = daq.int32()
+        self.rate = rate
         # channels
         cha_types = {
             "ai": "analog_input",
@@ -80,7 +81,7 @@ class IOTask(daq.Task):
         self.cha_string = ", ".join(self.cha_names)
         self.num_channels = len(self.cha_names)
         if nb_inputsamples_per_cycle is None:
-            nb_inputsamples_per_cycle = int(rate)
+            nb_inputsamples_per_cycle = int(self.rate)
 
         # terminals
         terminal_types = {
@@ -111,21 +112,30 @@ class IOTask(daq.Task):
         self.data_gen = None  # called at start of callback
         self.data_rec = None  # called at end of callback
 
+        self.buffer_seconds = 100
+        self.refresh_seconds = 0.1
+        self.num_samples_per_chan = int(rate * self.buffer_seconds)
+        self.num_samples_per_event = int(rate * self.refresh_seconds)
+
         if len(set(self.cha_type)) != 1:
             raise ValueError("Mixed channel types (AI, AO, DI, DO).")
 
         if self.cha_type[0] == "analog_input":
             # add all channels
             for name, terminal, limit in zip(self.cha_names, self.cha_terminals, self.cha_limits):
-                self.CreateAIVoltageChan(
-                    name,
-                    "",
-                    terminal,
-                    limit[0],
-                    limit[1],
-                    daq.DAQmx_Val_Volts,
-                    None,
-                )
+                try:
+                    self.CreateAIVoltageChan(
+                        name,
+                        "",
+                        terminal,
+                        limit[0],
+                        limit[1],
+                        daq.DAQmx_Val_Volts,
+                        None,
+                    )
+                except DAQError as e:
+                    logging.exception(f"Failed creating AO {name}: %s", e)
+                    raise
             self.num_samples_per_chan = nb_inputsamples_per_cycle
             self.num_samples_per_event = nb_inputsamples_per_cycle  # self.num_samples_per_chan*self.num_channels
             self.AutoRegisterEveryNSamplesEvent(daq.DAQmx_Val_Acquired_Into_Buffer, self.num_samples_per_event, 0)
@@ -140,19 +150,16 @@ class IOTask(daq.Task):
                     daq.DAQmx_Val_Volts,
                     None,
                 )
-            self.num_samples_per_chan = 5000
-            self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
+
             self.AutoRegisterEveryNSamplesEvent(daq.DAQmx_Val_Transferred_From_Buffer, self.num_samples_per_event, 0)
-            self.CfgOutputBuffer(self.num_samples_per_chan * self.num_channels * 2)
+            self.CfgOutputBuffer(self.num_samples_per_chan)
             # ensures continuous output and avoids collision of old and new data in buffer
             self.SetWriteRegenMode(daq.DAQmx_Val_DoNotAllowRegen)
         elif self.cha_type[0] == "digital_output":
             for name in self.cha_names:
                 self.CreateDOChan(name, "", daq.DAQmx_Val_ChanPerLine)
-            self.num_samples_per_chan = 5000
-            self.num_samples_per_event = 1000  # determines shortest interval at which new data can be generated
             self.AutoRegisterEveryNSamplesEvent(daq.DAQmx_Val_Transferred_From_Buffer, self.num_samples_per_event, 0)
-            self.CfgOutputBuffer(self.num_samples_per_chan * self.num_channels * 2)
+            self.CfgOutputBuffer(self.num_samples_per_chan)
             # ensures continuous output and avoids collision of old and new data in buffer
             self.SetWriteRegenMode(daq.DAQmx_Val_DoNotAllowRegen)
 
@@ -174,7 +181,7 @@ class IOTask(daq.Task):
 
         self.CfgSampClkTiming(
             clock_source,
-            rate,
+            self.rate,
             daq.DAQmx_Val_Rising,
             daq.DAQmx_Val_ContSamps,
             self.num_samples_per_chan,
@@ -210,50 +217,58 @@ class IOTask(daq.Task):
             if self.data_gen is not None:
                 try:
                     self._data = next(self.data_gen)  # get data from data generator
-                    self.log.warning(f"datagen {self.data_gen}")
                 except StopIteration as e:
-                    self.log.warning(f"datagen {self.data_gen} StopIteration {e}")
+                    self.log.warning(f"Generator out of data - stopping iteration. This is okay!")
                     self._data = None
 
             if self.cha_type[0] == "analog_input":
                 # should only read self.num_samples_per_event!! otherwise recordings will be zeropadded for each chunk
-                self.ReadAnalogF64(
-                    daq.DAQmx_Val_Auto,
-                    1.0,
-                    daq.DAQmx_Val_GroupByScanNumber,
-                    self._data,
-                    self.num_samples_per_chan * self.num_channels,
-                    daq.byref(self.samples_read),
-                    None,
-                )
-                # only keep samples that were actually read, .value converts c_long to int
-                self._data = self._data[: self.samples_read.value, :]
+                try:
+                    self.ReadAnalogF64(
+                        daq.DAQmx_Val_Auto,
+                        1.0,
+                        daq.DAQmx_Val_GroupByScanNumber,
+                        self._data,
+                        self.num_samples_per_chan * self.num_channels,
+                        daq.byref(self.samples_read),
+                        None,
+                    )
+                    # only keep samples that were actually read, .value converts c_long to int
+                    self._data = self._data[: self.samples_read.value, :]
+                except daq.DAQError as e:
+                    logging.exception("Error Reading Analog %d: %s", e.error, e)
 
             elif self.cha_type[0] == "analog_output" and self._data is not None:
-                self.WriteAnalogF64(
-                    self._data.shape[0],
-                    0,
-                    daq.DAQmx_Val_WaitInfinitely,
-                    daq.DAQmx_Val_GroupByScanNumber,
-                    self._data,
-                    daq.byref(self.samples_read),
-                    None,
-                )
+                try:
+                    self.WriteAnalogF64(
+                        self._data.shape[0],
+                        0,
+                        daq.DAQmx_Val_WaitInfinitely,
+                        daq.DAQmx_Val_GroupByScanNumber,
+                        self._data,
+                        daq.byref(self.samples_written),
+                        None,
+                    )
+                except daq.DAQError as e:
+                    logging.exception("Error Writing Analog %d: %s", e.error, e)
+
             elif self.cha_type[0] == "digital_output" and self._data is not None:
-                self.WriteDigitalLines(
-                    self._data.shape[0],
-                    0,
-                    daq.DAQmx_Val_WaitInfinitely,
-                    daq.DAQmx_Val_GroupByScanNumber,
-                    self._data,
-                    daq.byref(self.samples_read),
-                    None,
-                )
+                try:
+                    self.WriteDigitalLines(
+                        self._data.shape[0],
+                        0,
+                        daq.DAQmx_Val_WaitInfinitely,
+                        daq.DAQmx_Val_GroupByScanNumber,
+                        self._data,
+                        daq.byref(self.samples_read),
+                        None,
+                    )
+                except daq.DAQError as e:
+                    logging.exception("Error Writing Digital %d: %s", e.error, e)
 
             if self.data_rec is not None:
                 for data_rec in self.data_rec:
                     if self._data is not None:
-                        self.log.warning(f"{data_rec} {systemtime}")
                         data_rec.send((self._data, systemtime))
             self._newdata_event.set()
 
