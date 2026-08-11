@@ -2,7 +2,6 @@ import time
 import numpy as np
 from typing import Tuple, Union
 from .base import BaseCam
-import cv2
 
 
 try:
@@ -24,7 +23,7 @@ class Spinnaker_OLD(BaseCam):
         self.serialnumber = serialnumber
 
     def init(self):
-        self.cam_system = PySpin.System_GetInstance()
+        self.cam_system = PySpin.System.GetInstance()
         self.cam_list = self.cam_system.GetCameras()
         self.c = self.cam_list.GetBySerial(self.serialnumber)
         self.c.Init()

@@ -2,19 +2,18 @@ import time
 import numpy as np
 from typing import Tuple, Union
 from .base import BaseCam
-import cv2
 
 
 try:
     import PySpin
+
     pyspin_error = None
 except ImportError as pyspin_error:
     pass
 
+
 class Spinnaker(BaseCam):
-
-    NAME = 'SPN'
-
+    NAME = "SPN"
 
     def __init__(self, serialnumber):
         if pyspin_error is not None:
@@ -22,7 +21,7 @@ class Spinnaker(BaseCam):
         self.serialnumber = serialnumber
 
     def init(self):
-        self.cam_system = PySpin.System_GetInstance()
+        self.cam_system = PySpin.System.GetInstance()
         self.cam_list = self.cam_system.GetCameras()
         self.c = self.cam_list.GetBySerial(self.serialnumber)
         self.c.Init()
@@ -75,7 +74,7 @@ class Spinnaker(BaseCam):
         try:
             x0, y0, x, y = x0_y0_x_y
         except ValueError:
-            raise ValueError('Need 4-tuple with x0_y0_x_y')
+            raise ValueError("Need 4-tuple with x0_y0_x_y")
         else:
             self._min_max_inc(self.c.Width, int(x))
             self._min_max_inc(self.c.Height, int(y))
@@ -114,7 +113,7 @@ class Spinnaker(BaseCam):
 
     @exposure.setter
     def exposure(self, value: Union[float, str]):
-        if value == 'AUTO':
+        if value == "AUTO":
             self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Continuous)
         else:
             self.c.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
@@ -127,18 +126,18 @@ class Spinnaker(BaseCam):
 
     @gain.setter
     def gain(self, value: Union[float, str]):
-        if value == 'AUTO':
+        if value == "AUTO":
             self.c.GainAuto.SetValue(PySpin.GainAuto_Continuous)
         else:
             self.c.GainAuto.SetValue(PySpin.GainAuto_Off)
             self.c.Gain.SetValue(float(value))
 
     def optimize_auto_exposure(self):
-        self.setattr('AutoExposureControlLoopDamping', 0.1)
-        self.setattr('AutoExposureLightingMode_Val', 2)  # Frontlight
-        self.setattr('AutoExposureExposureTimeLowerLimit', 6)
-        self.setattr('AutoExposureExposureTimeUpperLimit', 30000)
-        self.setattr('AutoExposureEVCompensation', 3)
+        self.setattr("AutoExposureControlLoopDamping", 0.1)
+        self.setattr("AutoExposureLightingMode_Val", 2)  # Frontlight
+        self.setattr("AutoExposureExposureTimeLowerLimit", 6)
+        self.setattr("AutoExposureExposureTimeUpperLimit", 30000)
+        self.setattr("AutoExposureEVCompensation", 3)
 
     @property
     def external_trigger(self):
@@ -155,12 +154,7 @@ class Spinnaker(BaseCam):
 
     def _generate_attrs(self):
 
-        self._rw_modes = {
-            PySpin.RO: "read only",
-            PySpin.RW: "read/write",
-            PySpin.WO: "write only",
-            PySpin.NA: "not available"
-        }
+        self._rw_modes = {PySpin.RO: "read only", PySpin.RW: "read/write", PySpin.WO: "write only", PySpin.NA: "not available"}
 
         self._attr_types = {
             PySpin.intfIFloat: PySpin.CFloatPtr,
@@ -171,12 +165,12 @@ class Spinnaker(BaseCam):
         }
 
         self._attr_type_names = {
-            PySpin.intfIFloat: 'float',
-            PySpin.intfIBoolean: 'bool',
-            PySpin.intfIInteger: 'int',
-            PySpin.intfIEnumeration: 'enum',
-            PySpin.intfIString: 'string',
-            PySpin.intfICommand: 'command',
+            PySpin.intfIFloat: "float",
+            PySpin.intfIBoolean: "bool",
+            PySpin.intfIInteger: "int",
+            PySpin.intfIEnumeration: "enum",
+            PySpin.intfIString: "string",
+            PySpin.intfICommand: "command",
         }
 
         self.camera_attributes = {}
@@ -195,7 +189,6 @@ class Spinnaker(BaseCam):
 
     def getattr(self, attr):
         if attr in self.camera_attributes:
-
             prop = self.camera_attributes[attr]
             if not PySpin.IsReadable(prop):
                 raise AttributeError("Camera property '%s' is not readable" % attr)
@@ -213,12 +206,11 @@ class Spinnaker(BaseCam):
 
     def setattr(self, attr, val):
         if attr in self.camera_attributes:
-
             prop = self.camera_attributes[attr]
             if not PySpin.IsWritable(prop):
                 raise AttributeError("Property '%s' is not currently writable!" % attr)
 
-            if hasattr(prop, 'SetValue'):
+            if hasattr(prop, "SetValue"):
                 prop.SetValue(val)
             else:
                 prop.FromString(val)
