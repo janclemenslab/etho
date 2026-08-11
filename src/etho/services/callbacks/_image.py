@@ -1,6 +1,7 @@
 """Callbacks for processing images."""
 
 import logging
+from fractions import Fraction
 from xml.dom import NotFoundErr
 import numpy as np
 from . import register_callback
@@ -16,6 +17,13 @@ try:
 
     cv2_import_error = None
 except ImportError as cv2_import_error:
+    pass
+
+try:
+    import av
+
+    av_import_error = None
+except ImportError as av_import_error:
     pass
 
 try:
@@ -205,6 +213,51 @@ class ImageWriterCV2(ImageCallback):
     def _cleanup(self):
         self.vw.release()
         del self.vw
+        super()._cleanup()
+
+
+@for_all_methods(log_exceptions(logger))
+@register_callback
+class ImageWriterPyAV(ImageCallback):
+    """Save H.264 video using PyAV."""
+
+    SUFFIX: str = ".mp4"
+    FRIENDLY_NAME = "save_pyav"
+    TIMESTAMPS_ONLY = False
+
+    def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
+        super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+
+        if av_import_error is not None:
+            logger.exception("Could not import PyAV. Aborting!", exc_info=av_import_error)
+            raise av_import_error
+
+        self.container = None
+
+    def _loop(self, data):
+        if hasattr(self.data_source, "WHOAMI") and self.data_source.WHOAMI == "array":
+            image = data
+        else:
+            image, timestamp = data
+
+        if self.container is None:
+            self.container = av.open(self.file_name + self.SUFFIX, "w")
+            self.stream = self.container.add_stream("libx264", rate=Fraction(str(self.frame_rate)))
+            self.stream.width = image.shape[1]
+            self.stream.height = image.shape[0]
+            self.stream.pix_fmt = "yuv420p"
+
+        frame_format = "gray" if image.ndim == 2 else "bgr24"
+        frame = av.VideoFrame.from_ndarray(image, format=frame_format)
+        for packet in self.stream.encode(frame):
+            self.container.mux(packet)
+
+    def _cleanup(self):
+        if self.container is not None:
+            for packet in self.stream.encode():
+                self.container.mux(packet)
+            self.container.close()
+            self.container = None
         super()._cleanup()
 
 

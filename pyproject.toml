@@ -11,7 +11,7 @@ classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["description"]
 requires-python = ">=3.10"
 dependencies = [
-                'numpy<2; python_version < "3.11"', 'numpy; python_version >= "3.11"', 'scipy', 'h5py', 'opencv-python-headless', 'bleak',
+                'numpy<2; python_version < "3.11"', 'numpy; python_version >= "3.11"', 'scipy', 'h5py', 'opencv-python-headless', 'av>=16,<18', 'bleak',
                 'pandas', 'pyzmq', 'gevent', 'future', 'pillow', 'msgpack-python',
                 'pyyaml', 'ipython', 'defopt', 'msgpack-numpy', 'rich', 'psutil', 'tables',
                 'pydaqmx', 'pyqtgraph', 'qtpy', 'PySide6-Essentials', 'zarr>=2,<3; python_version < "3.11"', 'zarr>=3,<4; python_version >= "3.11"', 'zerorpc-numpy'

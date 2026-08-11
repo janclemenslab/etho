@@ -107,6 +107,7 @@ Common camera callbacks:
 - `disp_top`: Display a center/top view helper.
 - `save_timestamps`: Save system and camera timestamps.
 - `save_avi`: Save video with OpenCV `VideoWriter`.
+- `save_pyav`: Save H.264 MP4 video with PyAV.
 - `save_ffmpegcv`: Save video with an ffmpegcv backend.
 - `save_vidgear`: Save video through VidGear.
 - `save_vidgear_round`: Save long videos, chunked into a sequences of individual files using the VidGear output.
