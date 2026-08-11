@@ -224,10 +224,12 @@ class SaveZarr(BaseCallback):
             self.f = zarr.DirectoryStore(self.file_name + self.SUFFIX)
             self.arrays = zarr.group(self.f, overwrite=True)
             self._create_array = self.arrays.create_dataset
+            self._auto_chunks = True
         else:
             self.f = zarr.storage.LocalStore(self.file_name + self.SUFFIX)
             self.arrays = zarr.group(self.f, overwrite=True, zarr_format=2)
             self._create_array = self.arrays.create_array
+            self._auto_chunks = "auto"
         self.vanilla: bool = True
 
         self.attrs = attrs
@@ -245,10 +247,10 @@ class SaveZarr(BaseCallback):
             for key, val in self.attrs.items():
                 self.arrays["samples"].attrs[key] = val
 
-        self._create_array("systemtime", shape=(0, 1), chunks=True, dtype=systemtime.dtype, compressor=compressor)
+        self._create_array("systemtime", shape=(0, 1), chunks=self._auto_chunks, dtype=systemtime.dtype, compressor=compressor)
 
         sn = np.array(data.shape[:1])[:, np.newaxis]
-        self._create_array("samplenumber", shape=(0, 1), chunks=True, dtype=sn.dtype, compressor=compressor)
+        self._create_array("samplenumber", shape=(0, 1), chunks=self._auto_chunks, dtype=sn.dtype, compressor=compressor)
         # print([(k, v.shape) for k, v in self.arrays.items()])
 
     def _append_data(self, data, systemtime):
