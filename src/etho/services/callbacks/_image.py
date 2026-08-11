@@ -1,4 +1,5 @@
 """Callbacks for processing images."""
+
 import logging
 from xml.dom import NotFoundErr
 import numpy as np
@@ -12,18 +13,21 @@ import tables
 
 try:
     import cv2
+
     cv2_import_error = None
 except ImportError as cv2_import_error:
     pass
 
 try:
     import ffmpegcv
+
     ffmpegcv_import_error = None
 except ImportError as ffmpegcv_import_error:
     pass
 
 try:
     from vidgear.gears import WriteGear
+
     vidgear_import_error = None
 except ImportError as vidgear_import_error:
     pass
@@ -32,6 +36,7 @@ try:
     from qtpy import QtWidgets
     import pyqtgraph as pg
     from pyqtgraph.widgets.RawImageWidget import RawImageWidget
+
     pyqtgraph_import_error = None
 except Exception as pyqtgraph_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
     pass
@@ -43,7 +48,6 @@ try:
     zarr_import_error = None
 except Exception as zarr_import_error:  # catch generic Exception to cover missing Qt error from pyqtgraph
     pass
-
 
 
 logger = logging.getLogger(__name__)
@@ -73,7 +77,6 @@ class ImageCallback(BaseCallback):
 @for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageDisplayCV2(ImageCallback):
-
     FRIENDLY_NAME = "disp"
     TIMESTAMPS_ONLY = False
 
@@ -81,7 +84,7 @@ class ImageDisplayCV2(ImageCallback):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if cv2_import_error is not None:
-            logger.exception('Could not import cv2. Aborting!', exc_info=cv2_import_error)
+            logger.exception("Could not import cv2. Aborting!", exc_info=cv2_import_error)
             raise cv2_import_error
 
         logger.info("setting up disp")
@@ -110,7 +113,6 @@ class ImageDisplayCV2(ImageCallback):
 @for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageDisplayPQG(ImageCallback):
-
     FRIENDLY_NAME = "disp_fast"
     TIMESTAMPS_ONLY = False
 
@@ -118,7 +120,7 @@ class ImageDisplayPQG(ImageCallback):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if pyqtgraph_import_error is not None:
-            logger.exception('Could not import pyqtgraph. Aborting!', exc_info=pyqtgraph_import_error)
+            logger.exception("Could not import pyqtgraph. Aborting!", exc_info=pyqtgraph_import_error)
             raise pyqtgraph_import_error
 
         logger.info("setting up ImageDisplayPQG")
@@ -180,7 +182,7 @@ class ImageWriterCV2(ImageCallback):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if cv2_import_error is not None:
-            logger.exception('Could not import cv2. Aborting!', exc_info=cv2_import_error)
+            logger.exception("Could not import cv2. Aborting!", exc_info=cv2_import_error)
             raise cv2_import_error
 
         self.vw = cv2.VideoWriter()
@@ -204,7 +206,6 @@ class ImageWriterCV2(ImageCallback):
         self.vw.release()
         del self.vw
         super()._cleanup()
-
 
 
 @for_all_methods(log_exceptions(logger))
@@ -232,7 +233,7 @@ class ImageWriterFCV(ImageCallback):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if ffmpegcv_import_error is not None:
-            logger.exception('Could not import ffmpegcv. Aborting!', exc_info=ffmpegcv_import_error)
+            logger.exception("Could not import ffmpegcv. Aborting!", exc_info=ffmpegcv_import_error)
             raise ffmpegcv_import_error
 
         # self.vw = ffmpegcv.VideoWriter()
@@ -292,7 +293,7 @@ class ImageWriterCVR(ImageCallback):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if vidgear_import_error is not None:
-            logger.exception('No!', exc_info=vidgear_import_error)
+            logger.exception("No!", exc_info=vidgear_import_error)
             self._cleanup()
             raise vidgear_import_error
 
@@ -307,7 +308,6 @@ class ImageWriterCVR(ImageCallback):
             self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
         except:
             self.vw = WriteGear(output=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
-
 
     def _loop(self, data):
         if hasattr(self.data_source, "WHOAMI") and self.data_source.WHOAMI == "array":
@@ -369,7 +369,7 @@ class ImageWriterVidGear(ImageCallback):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if vidgear_import_error is not None:
-            logger.exception('Failed to import VidGear. Closing!', exc_info=vidgear_import_error)
+            logger.exception("Failed to import VidGear. Closing!", exc_info=vidgear_import_error)
             self._cleanup()
             # raise vidgear_import_error
 
@@ -398,7 +398,6 @@ class ImageWriterVidGear(ImageCallback):
         super()._cleanup()
 
 
-
 @for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageWriterVPF(ImageCallback):
@@ -418,10 +417,11 @@ class ImageWriterVPF(ImageCallback):
 
         try:
             import sys
+
             sys.path.append(VPF_bin_path)
             import PyNvCodec as nvc
         except Exception as e:
-            logging.exception('Could not import PyNvCodec. Quitting.', exc_info=e)
+            logging.exception("Could not import PyNvCodec. Quitting.", exc_info=e)
             self._cleanup()
 
         gpuID = 0
@@ -444,9 +444,7 @@ class ImageWriterVPF(ImageCallback):
             gpuID,
         )
         self.nvUpl = nvc.PyFrameUploader(self.nvEnc.Width(), self.nvEnc.Height(), nvc.PixelFormat.YUV420, gpuID)
-        self.nvCvt = nvc.PySurfaceConverter(
-            self.nvEnc.Width(), self.nvEnc.Height(), nvc.PixelFormat.YUV420, nvc.PixelFormat.NV12, gpuID
-        )
+        self.nvCvt = nvc.PySurfaceConverter(self.nvEnc.Width(), self.nvEnc.Height(), nvc.PixelFormat.YUV420, nvc.PixelFormat.NV12, gpuID)
 
     def _loop(self, data):
         image, timestamp = data
@@ -478,7 +476,6 @@ class ImageWriterVPF(ImageCallback):
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class ImageWriterH5(BaseCallback):
-
     FRIENDLY_NAME = "saveimg_h5"
     SUFFIX = "_images.h5"
 
@@ -524,7 +521,7 @@ class ImageWriterH5(BaseCallback):
 
     def _loop(self, data):
         data_to_save, timestamp = data  # unpack
-        data_to_save = data_to_save[np.newaxis,...]
+        data_to_save = data_to_save[np.newaxis, ...]
         timestamp = np.array([timestamp])[:, np.newaxis]
         if self.vanilla:
             self._init_data(data_to_save, timestamp)
@@ -542,7 +539,6 @@ class ImageWriterH5(BaseCallback):
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_callback
 class ImageWriterZarr(BaseCallback):
-
     FRIENDLY_NAME = "saveimg_zarr"
     SUFFIX = "_images.zarr"
 
@@ -550,13 +546,20 @@ class ImageWriterZarr(BaseCallback):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if zarr_import_error is not None:
-            logger.exception("Could not import zarr. Aborting!", exc_info=tables_import_error)
+            logger.exception("Could not import zarr. Aborting!", exc_info=zarr_import_error)
             raise zarr_import_error
 
         self.file_name = file_name
-        self.f = zarr.DirectoryStore(self.file_name + self.SUFFIX)  # ONLY FOR ZARR2 - otherwise zarr.storage.LocalStore
+        # Backward compatibility for Zarr 2; remove when Python 3.10 support ends.
+        if hasattr(zarr, "DirectoryStore"):
+            self.f = zarr.DirectoryStore(self.file_name + self.SUFFIX)
+            self.arrays = zarr.group(self.f, overwrite=True)
+            self._create_array = self.arrays.create_dataset
+        else:
+            self.f = zarr.storage.LocalStore(self.file_name + self.SUFFIX)
+            self.arrays = zarr.group(self.f, overwrite=True, zarr_format=2)
+            self._create_array = self.arrays.create_array
         self.vanilla: bool = True
-        self.arrays = zarr.group(self.f, overwrite=True)
         self.attrs = attrs
 
     @classmethod
@@ -566,22 +569,21 @@ class ImageWriterZarr(BaseCallback):
     def _init_data(self, data, timestamp):
         compressor = Blosc(cname="zstd", clevel=3, shuffle=Blosc.BITSHUFFLE)
 
-        self.arrays.create_dataset("images", shape=(0, *data.shape[1:]), chunks=(30, *data.shape[1:]), dtype=data.dtype, compressor=compressor)
+        self._create_array("images", shape=(0, *data.shape[1:]), chunks=(30, *data.shape[1:]), dtype=data.dtype, compressor=compressor)
 
         if self.attrs is not None:
             for key, val in self.attrs.items():
                 self.arrays["images"].attrs[key] = val
 
-        self.arrays.create_dataset("timestamp", shape=(0, *timestamp.shape[1:]), chunks=(100, *timestamp.shape[1:]), dtype=timestamp.dtype, compressor=None)
+        self._create_array("timestamp", shape=(0, *timestamp.shape[1:]), chunks=(100, *timestamp.shape[1:]), dtype=timestamp.dtype, compressor=None)
 
     def _append_data(self, data, timestamp):
         self.arrays["images"].append(data, axis=0)
         self.arrays["timestamp"].append(timestamp, axis=0)
 
-
     def _loop(self, data):
         data_to_save, timestamp = data  # unpack
-        data_to_save = data_to_save[np.newaxis,...]
+        data_to_save = data_to_save[np.newaxis, ...]
         timestamp = np.array([timestamp])[:, np.newaxis]
         if self.vanilla:
             self._init_data(data_to_save, timestamp)
@@ -619,9 +621,7 @@ class TimestampWriterHDF(ImageCallback):
 
         self.increment = increment
         self.f = h5py.File(self.file_name + self.SUFFIX, "w")
-        self.ts = self.f.create_dataset(
-            name="timeStamps", shape=[self.increment, data_dim], maxshape=[None, data_dim], dtype=np.float64, compression="gzip"
-        )
+        self.ts = self.f.create_dataset(name="timeStamps", shape=[self.increment, data_dim], maxshape=[None, data_dim], dtype=np.float64, compression="gzip")
         self.frame_count = 0
 
     def _loop(self, data):
@@ -644,7 +644,6 @@ class TimestampWriterHDF(ImageCallback):
 @for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageDisplayCenterBackCV2(ImageCallback):
-
     FRIENDLY_NAME = "disp_back"
     TIMESTAMPS_ONLY = False
 
@@ -683,12 +682,8 @@ class ImageDisplayCenterBackCV2(ImageCallback):
             color=self.color,
             thickness=self.thickness,
         )  # ball region
-        image = cv2.line(
-            image, (60, self.center_y), (self.frame_height - 60, self.center_y), self.color, self.thickness
-        )  # y-axis cross
-        image = cv2.line(
-            image, (self.center_x, 60), (self.center_x, self.frame_width - 60), self.color, self.thickness
-        )  # x-axis cross
+        image = cv2.line(image, (60, self.center_y), (self.frame_height - 60, self.center_y), self.color, self.thickness)  # y-axis cross
+        image = cv2.line(image, (self.center_x, 60), (self.center_x, self.frame_width - 60), self.color, self.thickness)  # x-axis cross
         # image = cv2.rectangle(image, (self.center_x-40,self.center_y-35), (self.center_x+20,self.center_y+35), color=self.color, thickness=self.thickness) # fly
         cv2.imshow("display", image)
         cv2.waitKey(1)
@@ -702,7 +697,6 @@ class ImageDisplayCenterBackCV2(ImageCallback):
 @for_all_methods(log_exceptions(logger))
 @register_callback
 class ImageDisplayCenterTopCV2(ImageCallback):
-
     FRIENDLY_NAME = "disp_top"
     TIMESTAMPS_ONLY = False
 
@@ -730,17 +724,26 @@ class ImageDisplayCenterTopCV2(ImageCallback):
         self.needle_color = [250, 0, 0]
         self.circ_thickness = 2
 
-        self.flyhead_topleft, self.flyhead_bottomright = (self.circ_center_x - 45, self.circ_center_y - 50), (
-            self.circ_center_x + 5,
-            self.circ_center_y + 50,
+        self.flyhead_topleft, self.flyhead_bottomright = (
+            (self.circ_center_x - 45, self.circ_center_y - 50),
+            (
+                self.circ_center_x + 5,
+                self.circ_center_y + 50,
+            ),
         )
-        self.flybody_topleft, self.flybody_bottomright = (self.circ_center_x, self.circ_center_y - 45), (
-            self.circ_center_x + 200,
-            self.circ_center_y + 45,
+        self.flybody_topleft, self.flybody_bottomright = (
+            (self.circ_center_x, self.circ_center_y - 45),
+            (
+                self.circ_center_x + 200,
+                self.circ_center_y + 45,
+            ),
         )
-        self.needle_topleft, self.needle_bottomright = (self.circ_center_x + 195, self.circ_center_y - 40), (
-            self.frame_width,
-            self.circ_center_y + 40,
+        self.needle_topleft, self.needle_bottomright = (
+            (self.circ_center_x + 195, self.circ_center_y - 40),
+            (
+                self.frame_width,
+                self.circ_center_y + 40,
+            ),
         )
 
     @classmethod
@@ -754,21 +757,11 @@ class ImageDisplayCenterTopCV2(ImageCallback):
             image, timestamp = data
 
         image = cv2.circle(image, (self.circ_center_x, self.circ_center_y), self.circ_r, self.circ_color, self.circ_thickness)
-        image = cv2.line(
-            image, (self.circ_center_x, 0), (self.circ_center_x, self.frame_width), self.circ_color, self.circ_thickness
-        )
-        image = cv2.line(
-            image, (0, self.circ_center_y), (self.frame_height, self.circ_center_y), self.circ_color, self.circ_thickness
-        )
-        image = cv2.rectangle(
-            image, self.flyhead_topleft, self.flyhead_bottomright, color=self.circ_color, thickness=self.circ_thickness
-        )
-        image = cv2.rectangle(
-            image, self.flybody_topleft, self.flybody_bottomright, color=self.circ_color, thickness=self.circ_thickness
-        )
-        image = cv2.rectangle(
-            image, self.needle_topleft, self.needle_bottomright, color=self.needle_color, thickness=self.circ_thickness
-        )
+        image = cv2.line(image, (self.circ_center_x, 0), (self.circ_center_x, self.frame_width), self.circ_color, self.circ_thickness)
+        image = cv2.line(image, (0, self.circ_center_y), (self.frame_height, self.circ_center_y), self.circ_color, self.circ_thickness)
+        image = cv2.rectangle(image, self.flyhead_topleft, self.flyhead_bottomright, color=self.circ_color, thickness=self.circ_thickness)
+        image = cv2.rectangle(image, self.flybody_topleft, self.flybody_bottomright, color=self.circ_color, thickness=self.circ_thickness)
+        image = cv2.rectangle(image, self.needle_topleft, self.needle_bottomright, color=self.needle_color, thickness=self.circ_thickness)
         cv2.imshow("display", image)
         cv2.waitKey(1)
 
@@ -783,7 +776,7 @@ if __name__ == "__main__":
     import ctypes
 
     ct = ImageDisplayPQG.make_concurrent(
-        task_kwargs={"frame_width": 1000, "frame_height": 1000, "rate": .1},
+        task_kwargs={"frame_width": 1000, "frame_height": 1000, "rate": 0.1},
         comms="array",
         comms_kwargs={"shape": (1000, 1000, 3), "ctype": ctypes.c_uint8},
     )

@@ -216,12 +216,19 @@ class SaveZarr(BaseCallback):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
         if zarr_import_error is not None:
-            logger.exception("Could not import zarr. Aborting!", exc_info=tables_import_error)
+            logger.exception("Could not import zarr. Aborting!", exc_info=zarr_import_error)
             raise zarr_import_error
         self.file_name = file_name
-        self.f = zarr.DirectoryStore(self.file_name + self.SUFFIX)
+        # Backward compatibility for Zarr 2; remove when Python 3.10 support ends.
+        if hasattr(zarr, "DirectoryStore"):
+            self.f = zarr.DirectoryStore(self.file_name + self.SUFFIX)
+            self.arrays = zarr.group(self.f, overwrite=True)
+            self._create_array = self.arrays.create_dataset
+        else:
+            self.f = zarr.storage.LocalStore(self.file_name + self.SUFFIX)
+            self.arrays = zarr.group(self.f, overwrite=True, zarr_format=2)
+            self._create_array = self.arrays.create_array
         self.vanilla: bool = True
-        self.arrays = zarr.group(self.f, overwrite=True)
 
         self.attrs = attrs
 
@@ -232,16 +239,16 @@ class SaveZarr(BaseCallback):
     def _init_data(self, data, systemtime):
         compressor = Blosc(cname="zstd", clevel=3, shuffle=Blosc.BITSHUFFLE)
 
-        self.arrays.create_dataset("samples", shape=(0, *data.shape[1:]), chunks=data.shape, dtype=data.dtype, compressor=compressor)
+        self._create_array("samples", shape=(0, *data.shape[1:]), chunks=data.shape, dtype=data.dtype, compressor=compressor)
 
         if self.attrs is not None:
             for key, val in self.attrs.items():
                 self.arrays["samples"].attrs[key] = val
 
-        self.arrays.create_dataset("systemtime", shape=(0, 1), chunks=True, dtype=systemtime.dtype, compressor=compressor)
+        self._create_array("systemtime", shape=(0, 1), chunks=True, dtype=systemtime.dtype, compressor=compressor)
 
         sn = np.array(data.shape[:1])[:, np.newaxis]
-        self.arrays.create_dataset("samplenumber", shape=(0, 1), chunks=True, dtype=sn.dtype, compressor=compressor)
+        self._create_array("samplenumber", shape=(0, 1), chunks=True, dtype=sn.dtype, compressor=compressor)
         # print([(k, v.shape) for k, v in self.arrays.items()])
 
     def _append_data(self, data, systemtime):
