@@ -20,7 +20,6 @@ Developer API
    etho.utils.calibration
    etho.utils.config
    etho.utils.runner
-   etho.utils.shuffled_cycle
    etho.utils.sound
    etho.utils.tui
    etho.utils.zeroclient
