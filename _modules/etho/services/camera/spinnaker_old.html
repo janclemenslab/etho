@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>etho.services.camera.spinnaker_old - etho documentation</title><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=e1a1ceaf" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/shibuya.css?v=9454f7d5" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-dropdown.css?v=995e94df" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/panels-bootstrap.min.css?v=21c0b90a" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/css/lightbox.min.css?v=6e7d0de0" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/pointer.css?v=c97663ff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    
+  <meta property="og:type" content="website"/><meta property="og:title" content="etho.services.camera.spinnaker_old"/>
+    <meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../../../index.html">
+      <img class="light-logo" src="../../../../_static/etho_light.svg" alt="etho" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../../../_static/etho_dark.svg" alt="etho" height="28" loading="lazy" />
+      <strong>etho</strong>
+    </a>
+    <div class="sy-head-nav" id="head-nav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../../install.html">Installation</a></li><li class="link"><a href="../../../../tutorial.html">Tutorial</a></li><li class="link"><a href="../../../../configuration/configuration.html">Configuration</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/janclemenslab/etho" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../configuration/configuration.html">Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../configuration/global.html">Global Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../configuration/protocol.html">Experimental Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../configuration/playlist.html">Stimulus Playlists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../configuration/calibration_speaker.html">Speaker Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../configuration/calibration_led.html">LED Calibration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../extensions.html">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../hardware/hardware.html">Hardware services</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../hardware/camera.html">Cameras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../hardware/nidaq.html">National Instruments DAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../hardware/projector.html">DLP Projector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../hardware/scanimage.html">ScanImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../hardware/govee.html">Govee Temperature/Humidity Sensors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli.html">CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_etho.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.app.html">etho.app</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.cli.html">etho.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.client.html">etho.client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.calibration.html">etho.utils.calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.config.html">etho.utils.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.runner.html">etho.utils.runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.sound.html">etho.utils.sound</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.tui.html">etho.utils.tui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.BLTZeroService.html">etho.services.BLTZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.DAQZeroService.html">etho.services.DAQZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.GCMZeroService.html">etho.services.GCMZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.GOVZeroService.html">etho.services.GOVZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/etho.services.dlp.dlp_make_warpfiles.html">etho.services.dlp.dlp_make_warpfiles</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../../index.html"><span itemprop="name">etho</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../index.html"><span itemprop="name">Module code</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">etho.services.camera.spinnaker_old</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+  <article class="yue" role="main">
+          <h1>Source code for etho.services.camera.spinnaker_old</h1><div class="highlight"><pre>
+<span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCam</span>
+</span><span data-line="5"><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+</span><span data-line="6">
+</span><span data-line="7">
+</span><span data-line="8"><span class="k">try</span><span class="p">:</span>
+</span><span data-line="9">    <span class="kn">import</span><span class="w"> </span><span class="nn">PySpin</span>
+</span><span data-line="10">
+</span><span data-line="11">    <span class="n">pyspin_error</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="12"><span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">pyspin_error</span><span class="p">:</span>
+</span><span data-line="13">    <span class="k">pass</span>
+</span><span data-line="14">
+</span><span data-line="15">
+<div class="viewcode-block" id="Spinnaker_OLD">
+<a class="viewcode-back" href="../../../../api/etho.services.camera.spinnaker_old.html#etho.services.camera.spinnaker_old.Spinnaker_OLD">[docs]</a>
+</span><span data-line="16"><span class="k">class</span><span class="w"> </span><span class="nc">Spinnaker_OLD</span><span class="p">(</span><span class="n">BaseCam</span><span class="p">):</span>
+</span><span data-line="17"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Supports older FLIR cameras (Flea3, Grasshopper) with only partial support for the Spinnaker SDK.&quot;&quot;&quot;</span>
+</span><span data-line="18">
+</span><span data-line="19">    <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;SPO&quot;</span>
+</span><span data-line="20">
+</span><span data-line="21">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serialnumber</span><span class="p">):</span>
+</span><span data-line="22">        <span class="k">if</span> <span class="n">pyspin_error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="23">            <span class="k">raise</span> <span class="n">pyspin_error</span>
+</span><span data-line="24">        <span class="bp">self</span><span class="o">.</span><span class="n">serialnumber</span> <span class="o">=</span> <span class="n">serialnumber</span>
+</span><span data-line="25">
+</span><span data-line="26">    <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="27">        <span class="bp">self</span><span class="o">.</span><span class="n">cam_system</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">System_GetInstance</span><span class="p">()</span>
+</span><span data-line="28">        <span class="bp">self</span><span class="o">.</span><span class="n">cam_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cam_system</span><span class="o">.</span><span class="n">GetCameras</span><span class="p">()</span>
+</span><span data-line="29">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cam_list</span><span class="o">.</span><span class="n">GetBySerial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serialnumber</span><span class="p">)</span>
+</span><span data-line="30">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Init</span><span class="p">()</span>
+</span><span data-line="31">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">PixelFormat</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">PixelFormat_Mono8</span><span class="p">)</span>
+</span><span data-line="32">        <span class="bp">self</span><span class="o">.</span><span class="n">_generate_attrs</span><span class="p">()</span>
+</span><span data-line="33">
+</span><span data-line="34">        <span class="c1"># enable embedding of frame TIME STAMP</span>
+</span><span data-line="35">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ChunkModeActive</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="36">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ChunkSelector</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">ChunkSelector_Timestamp</span><span class="p">)</span>
+</span><span data-line="37">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ChunkEnable</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="38">        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_offset</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># self._estimate_timestamp_offset()</span>
+</span><span data-line="39">
+</span><span data-line="40">        <span class="c1"># set pixel format</span>
+</span><span data-line="41">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">PixelFormat</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">PixelFormat_Mono8</span><span class="p">)</span>
+</span><span data-line="42">
+</span><span data-line="43">        <span class="c1"># set continuous acquisition</span>
+</span><span data-line="44">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">AcquisitionMode</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">AcquisitionMode_Continuous</span><span class="p">)</span>
+</span><span data-line="45">
+</span><span data-line="46">        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">EVENT_TIMEOUT_INFINITE</span>
+</span><span data-line="47">        <span class="bp">self</span><span class="o">.</span><span class="n">processor</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">ImageProcessor</span><span class="p">()</span>
+</span><span data-line="48">        <span class="bp">self</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">SetColorProcessing</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">SPINNAKER_COLOR_PROCESSING_ALGORITHM_HQ_LINEAR</span><span class="p">)</span>
+</span><span data-line="49">
+<div class="viewcode-block" id="Spinnaker_OLD.get">
+<a class="viewcode-back" href="../../../../api/etho.services.camera.spinnaker_old.html#etho.services.camera.spinnaker_old.Spinnaker_OLD.get">[docs]</a>
+</span><span data-line="50">    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span data-line="51">
+</span><span data-line="52">        <span class="c1"># get image</span>
+</span><span data-line="53">        <span class="n">im</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GetNextImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+</span><span data-line="54">        <span class="n">system_stimestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span data-line="55">
+</span><span data-line="56">        <span class="k">if</span> <span class="n">im</span><span class="o">.</span><span class="n">IsIncomplete</span><span class="p">():</span>
+</span><span data-line="57">            <span class="n">im</span><span class="o">.</span><span class="n">Release</span><span class="p">()</span>
+</span><span data-line="58">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image incomplete with image status </span><span class="si">{</span><span class="n">im</span><span class="o">.</span><span class="n">GetImageStatus</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="59">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="60">            <span class="n">im_converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">Convert</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">PixelFormat_BGR8</span><span class="p">)</span>
+</span><span data-line="61">            <span class="n">image_timestamp</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">GetTimeStamp</span><span class="p">()</span>
+</span><span data-line="62">            <span class="n">im</span><span class="o">.</span><span class="n">Release</span><span class="p">()</span>
+</span><span data-line="63">
+</span><span data-line="64">            <span class="n">BGR</span> <span class="o">=</span> <span class="n">im_converted</span><span class="o">.</span><span class="n">GetNDArray</span><span class="p">()</span>
+</span><span data-line="65">            <span class="n">image_timestamp</span> <span class="o">=</span> <span class="n">image_timestamp</span> <span class="o">/</span> <span class="mf">1e9</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_offset</span>
+</span><span data-line="66">            <span class="k">return</span> <span class="n">BGR</span><span class="p">,</span> <span class="n">image_timestamp</span><span class="p">,</span> <span class="n">system_stimestamp</span></div>
+
+</span><span data-line="67">
+</span><span data-line="68">    <span class="nd">@property</span>
+</span><span data-line="69">    <span class="k">def</span><span class="w"> </span><span class="nf">roi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+</span><span data-line="70">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">OffsetX</span><span class="o">.</span><span class="n">GetValue</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">OffsetY</span><span class="o">.</span><span class="n">GetValue</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Width</span><span class="o">.</span><span class="n">GetValue</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Height</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+</span><span data-line="71">
+</span><span data-line="72">    <span class="nd">@roi</span><span class="o">.</span><span class="n">setter</span>
+</span><span data-line="73">    <span class="k">def</span><span class="w"> </span><span class="nf">roi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0_y0_x_y</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+</span><span data-line="74">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="75">            <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x0_y0_x_y</span>
+</span><span data-line="76">        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span data-line="77">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Need 4-tuple with x0_y0_x_y&quot;</span><span class="p">)</span>
+</span><span data-line="78">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="79">            <span class="bp">self</span><span class="o">.</span><span class="n">_min_max_inc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Width</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</span><span data-line="80">            <span class="bp">self</span><span class="o">.</span><span class="n">_min_max_inc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Height</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+</span><span data-line="81">            <span class="bp">self</span><span class="o">.</span><span class="n">_min_max_inc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">OffsetX</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">x0</span><span class="p">))</span>
+</span><span data-line="82">            <span class="bp">self</span><span class="o">.</span><span class="n">_min_max_inc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">OffsetY</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">y0</span><span class="p">))</span>
+</span><span data-line="83">
+</span><span data-line="84">    <span class="nd">@property</span>
+</span><span data-line="85">    <span class="k">def</span><span class="w"> </span><span class="nf">framerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="86">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">AcquisitionFrameRate</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+</span><span data-line="87">
+</span><span data-line="88">    <span class="nd">@framerate</span><span class="o">.</span><span class="n">setter</span>
+</span><span data-line="89">    <span class="k">def</span><span class="w"> </span><span class="nf">framerate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+</span><span data-line="90">        <span class="n">nodemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GetNodeMap</span><span class="p">()</span>
+</span><span data-line="91">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TriggerMode</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">TriggerMode_Off</span><span class="p">)</span>
+</span><span data-line="92">        <span class="n">node</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CEnumerationPtr</span><span class="p">(</span><span class="n">nodemap</span><span class="o">.</span><span class="n">GetNode</span><span class="p">(</span><span class="s2">&quot;AcquisitionFrameRateAuto&quot;</span><span class="p">))</span>
+</span><span data-line="93">        <span class="n">val</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CEnumEntryPtr</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">GetEntryByName</span><span class="p">(</span><span class="s2">&quot;Off&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>  <span class="c1"># Once, Continuous</span>
+</span><span data-line="94">        <span class="n">node</span><span class="o">.</span><span class="n">SetIntValue</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span data-line="95">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">AcquisitionFrameRate</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</span><span data-line="96">
+</span><span data-line="97">    <span class="nd">@property</span>
+</span><span data-line="98">    <span class="k">def</span><span class="w"> </span><span class="nf">gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="99">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Gamma</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+</span><span data-line="100">
+</span><span data-line="101">    <span class="nd">@gamma</span><span class="o">.</span><span class="n">setter</span>
+</span><span data-line="102">    <span class="k">def</span><span class="w"> </span><span class="nf">gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+</span><span data-line="103">        <span class="c1"># self.c.GammaEnabled.SetValue(bool(True))</span>
+</span><span data-line="104">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Gamma</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span data-line="105">
+</span><span data-line="106">    <span class="nd">@property</span>
+</span><span data-line="107">    <span class="k">def</span><span class="w"> </span><span class="nf">brightness</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span data-line="108">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">BlackLevel</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+</span><span data-line="109">
+</span><span data-line="110">    <span class="nd">@brightness</span><span class="o">.</span><span class="n">setter</span>
+</span><span data-line="111">    <span class="k">def</span><span class="w"> </span><span class="nf">brightness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+</span><span data-line="112">        <span class="c1"># self.c.BlackLevelSelector.SetValue(PySpin.BlackLevelSelector_All)</span>
+</span><span data-line="113">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">BlackLevel</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</span><span data-line="114">
+</span><span data-line="115">    <span class="nd">@property</span>
+</span><span data-line="116">    <span class="k">def</span><span class="w"> </span><span class="nf">exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="117">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ExposureTime</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+</span><span data-line="118">
+</span><span data-line="119">    <span class="nd">@exposure</span><span class="o">.</span><span class="n">setter</span>
+</span><span data-line="120">    <span class="k">def</span><span class="w"> </span><span class="nf">exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+</span><span data-line="121">        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;AUTO&quot;</span><span class="p">:</span>
+</span><span data-line="122">            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ExposureAuto</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">ExposureAuto_Continuous</span><span class="p">)</span>
+</span><span data-line="123">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="124">            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ExposureAuto</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">ExposureAuto_Off</span><span class="p">)</span>
+</span><span data-line="125">            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ExposureMode</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">ExposureMode_Timed</span><span class="p">)</span>
+</span><span data-line="126">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">ExposureTime</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</span><span data-line="127">
+</span><span data-line="128">    <span class="nd">@property</span>
+</span><span data-line="129">    <span class="k">def</span><span class="w"> </span><span class="nf">gain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="130">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Gain</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+</span><span data-line="131">
+</span><span data-line="132">    <span class="nd">@gain</span><span class="o">.</span><span class="n">setter</span>
+</span><span data-line="133">    <span class="k">def</span><span class="w"> </span><span class="nf">gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+</span><span data-line="134">        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;AUTO&quot;</span><span class="p">:</span>
+</span><span data-line="135">            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GainAuto</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">GainAuto_Continuous</span><span class="p">)</span>
+</span><span data-line="136">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="137">            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GainAuto</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">GainAuto_Off</span><span class="p">)</span>
+</span><span data-line="138">            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">Gain</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</span><span data-line="139">
+</span><span data-line="140">    <span class="k">def</span><span class="w"> </span><span class="nf">optimize_auto_exposure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="141">        <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s2">&quot;AutoExposureControlLoopDamping&quot;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+</span><span data-line="142">        <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s2">&quot;AutoExposureLightingMode_Val&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Frontlight</span>
+</span><span data-line="143">        <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s2">&quot;AutoExposureExposureTimeLowerLimit&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</span><span data-line="144">        <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s2">&quot;AutoExposureExposureTimeUpperLimit&quot;</span><span class="p">,</span> <span class="mi">30000</span><span class="p">)</span>
+</span><span data-line="145">        <span class="bp">self</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="s2">&quot;AutoExposureEVCompensation&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span><span data-line="146">
+</span><span data-line="147">    <span class="nd">@property</span>
+</span><span data-line="148">    <span class="k">def</span><span class="w"> </span><span class="nf">external_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="149">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TriggerMode</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+</span><span data-line="150">
+</span><span data-line="151">    <span class="nd">@external_trigger</span><span class="o">.</span><span class="n">setter</span>
+</span><span data-line="152">    <span class="k">def</span><span class="w"> </span><span class="nf">external_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span data-line="153">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TriggerMode</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">TriggerMode_Off</span><span class="p">)</span>
+</span><span data-line="154">
+</span><span data-line="155">        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+</span><span data-line="156">            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TriggerSource</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">TriggerSource_Line3</span><span class="p">)</span>
+</span><span data-line="157">            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TriggerMode</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">PySpin</span><span class="o">.</span><span class="n">TriggerMode_On</span><span class="p">)</span>
+</span><span data-line="158">
+</span><span data-line="159">    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="160">
+</span><span data-line="161">        <span class="bp">self</span><span class="o">.</span><span class="n">_rw_modes</span> <span class="o">=</span> <span class="p">{</span><span class="n">PySpin</span><span class="o">.</span><span class="n">RO</span><span class="p">:</span> <span class="s2">&quot;read only&quot;</span><span class="p">,</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">RW</span><span class="p">:</span> <span class="s2">&quot;read/write&quot;</span><span class="p">,</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">WO</span><span class="p">:</span> <span class="s2">&quot;write only&quot;</span><span class="p">,</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">NA</span><span class="p">:</span> <span class="s2">&quot;not available&quot;</span><span class="p">}</span>
+</span><span data-line="162">
+</span><span data-line="163">        <span class="bp">self</span><span class="o">.</span><span class="n">_attr_types</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="164">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfIFloat</span><span class="p">:</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CFloatPtr</span><span class="p">,</span>
+</span><span data-line="165">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfIBoolean</span><span class="p">:</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CBooleanPtr</span><span class="p">,</span>
+</span><span data-line="166">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfIInteger</span><span class="p">:</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CIntegerPtr</span><span class="p">,</span>
+</span><span data-line="167">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfIEnumeration</span><span class="p">:</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CEnumerationPtr</span><span class="p">,</span>
+</span><span data-line="168">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfIString</span><span class="p">:</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CStringPtr</span><span class="p">,</span>
+</span><span data-line="169">        <span class="p">}</span>
+</span><span data-line="170">
+</span><span data-line="171">        <span class="bp">self</span><span class="o">.</span><span class="n">_attr_type_names</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="172">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfIFloat</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+</span><span data-line="173">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfIBoolean</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span><span class="p">,</span>
+</span><span data-line="174">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfIInteger</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+</span><span data-line="175">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfIEnumeration</span><span class="p">:</span> <span class="s2">&quot;enum&quot;</span><span class="p">,</span>
+</span><span data-line="176">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfIString</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+</span><span data-line="177">            <span class="n">PySpin</span><span class="o">.</span><span class="n">intfICommand</span><span class="p">:</span> <span class="s2">&quot;command&quot;</span><span class="p">,</span>
+</span><span data-line="178">        <span class="p">}</span>
+</span><span data-line="179">
+</span><span data-line="180">        <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="181">        <span class="bp">self</span><span class="o">.</span><span class="n">camera_methods</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="182">        <span class="bp">self</span><span class="o">.</span><span class="n">camera_node_types</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="183">
+</span><span data-line="184">        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GetNodeMap</span><span class="p">()</span><span class="o">.</span><span class="n">GetNodes</span><span class="p">():</span>
+</span><span data-line="185">            <span class="n">pit</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">GetPrincipalInterfaceType</span><span class="p">()</span>
+</span><span data-line="186">            <span class="n">name</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">GetName</span><span class="p">()</span>
+</span><span data-line="187">            <span class="bp">self</span><span class="o">.</span><span class="n">camera_node_types</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attr_type_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pit</span><span class="p">,</span> <span class="n">pit</span><span class="p">)</span>
+</span><span data-line="188">            <span class="k">if</span> <span class="n">pit</span> <span class="o">==</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">intfICommand</span><span class="p">:</span>
+</span><span data-line="189">                <span class="bp">self</span><span class="o">.</span><span class="n">camera_methods</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CCommandPtr</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+</span><span data-line="190">            <span class="k">if</span> <span class="n">pit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attr_types</span><span class="p">:</span>
+</span><span data-line="191">                <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attr_types</span><span class="p">[</span><span class="n">pit</span><span class="p">](</span><span class="n">node</span><span class="p">)</span>
+</span><span data-line="192">        <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="193">
+</span><span data-line="194">    <span class="k">def</span><span class="w"> </span><span class="nf">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+</span><span data-line="195">        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span><span class="p">:</span>
+</span><span data-line="196">            <span class="n">prop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+</span><span data-line="197">            <span class="k">if</span> <span class="ow">not</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">IsReadable</span><span class="p">(</span><span class="n">prop</span><span class="p">):</span>
+</span><span data-line="198">                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Camera property &#39;</span><span class="si">%s</span><span class="s2">&#39; is not readable&quot;</span> <span class="o">%</span> <span class="n">attr</span><span class="p">)</span>
+</span><span data-line="199">
+</span><span data-line="200">            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="s2">&quot;GetValue&quot;</span><span class="p">):</span>
+</span><span data-line="201">                <span class="k">return</span> <span class="n">prop</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+</span><span data-line="202">            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="s2">&quot;ToString&quot;</span><span class="p">):</span>
+</span><span data-line="203">                <span class="k">return</span> <span class="n">prop</span><span class="o">.</span><span class="n">ToString</span><span class="p">()</span>
+</span><span data-line="204">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="205">                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Camera property &#39;</span><span class="si">%s</span><span class="s2">&#39; is not readable&quot;</span> <span class="o">%</span> <span class="n">attr</span><span class="p">)</span>
+</span><span data-line="206">        <span class="k">elif</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_methods</span><span class="p">:</span>
+</span><span data-line="207">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_methods</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">Execute</span>
+</span><span data-line="208">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="209">            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+</span><span data-line="210">
+</span><span data-line="211">    <span class="k">def</span><span class="w"> </span><span class="nf">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+</span><span data-line="212">        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span><span class="p">:</span>
+</span><span data-line="213">            <span class="n">prop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+</span><span data-line="214">            <span class="k">if</span> <span class="ow">not</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">IsWritable</span><span class="p">(</span><span class="n">prop</span><span class="p">):</span>
+</span><span data-line="215">                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Property &#39;</span><span class="si">%s</span><span class="s2">&#39; is not currently writable!&quot;</span> <span class="o">%</span> <span class="n">attr</span><span class="p">)</span>
+</span><span data-line="216">
+</span><span data-line="217">            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="s2">&quot;SetValue&quot;</span><span class="p">):</span>
+</span><span data-line="218">                <span class="n">prop</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span data-line="219">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="220">                <span class="n">prop</span><span class="o">.</span><span class="n">FromString</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span data-line="221">
+</span><span data-line="222">        <span class="k">elif</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">camera_methods</span><span class="p">:</span>
+</span><span data-line="223">            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Camera method &#39;</span><span class="si">%s</span><span class="s2">&#39; is a function -- you can&#39;t assign it a value!&quot;</span> <span class="o">%</span> <span class="n">attr</span><span class="p">)</span>
+</span><span data-line="224">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="225">            <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+</span><span data-line="226">                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Unknown property &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="n">attr</span><span class="p">)</span>
+</span><span data-line="227">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="228">                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+</span><span data-line="229">
+</span><span data-line="230">    <span class="k">def</span><span class="w"> </span><span class="nf">_min_max_inc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span><span data-line="231">        <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">,</span> <span class="n">inc</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">GetMin</span><span class="p">(),</span> <span class="n">prop</span><span class="o">.</span><span class="n">GetMax</span><span class="p">(),</span> <span class="n">prop</span><span class="o">.</span><span class="n">GetInc</span><span class="p">()</span>
+</span><span data-line="232">
+</span><span data-line="233">        <span class="n">prop_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">prop</span><span class="o">.</span><span class="n">GetValue</span><span class="p">())</span>
+</span><span data-line="234">        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="235">            <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">)</span>
+</span><span data-line="236">            <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="n">inc</span><span class="p">)</span> <span class="o">*</span> <span class="n">inc</span>
+</span><span data-line="237">            <span class="k">if</span> <span class="n">set_value</span><span class="p">:</span>
+</span><span data-line="238">                <span class="n">value</span> <span class="o">=</span> <span class="n">prop_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span data-line="239">                <span class="n">prop</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span data-line="240">                <span class="n">value</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+</span><span data-line="241">        <span class="k">return</span> <span class="n">value</span>
+</span><span data-line="242">
+</span><span data-line="243">    <span class="k">def</span><span class="w"> </span><span class="nf">_estimate_timestamp_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp_offset_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+</span><span data-line="244"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets offset between system time and timestamps.&quot;&quot;&quot;</span>
+</span><span data-line="245">        <span class="c1"># This method is required because the timestamp stored in the camera is relative to when it was powered on, so an</span>
+</span><span data-line="246">        <span class="c1"># offset needs to be applied to get it into epoch time; from tests I’ve done, this appears to be accurate to ~1e-3</span>
+</span><span data-line="247">        <span class="c1"># seconds.</span>
+</span><span data-line="248">        <span class="n">timestamp_offsets</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="249">        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">timestamp_offset_iterations</span><span class="p">):</span>
+</span><span data-line="250">            <span class="c1"># Latch timestamp. This basically “freezes” the current camera timer into a variable that can be read with</span>
+</span><span data-line="251">            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TimestampLatch</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
+</span><span data-line="252">            <span class="n">system_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span data-line="253">            <span class="c1"># Compute timestamp offset in seconds; note that timestamp latch value is in nanoseconds</span>
+</span><span data-line="254">            <span class="n">timestamp_offset</span> <span class="o">=</span> <span class="n">system_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">TimestampLatchValue</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span> <span class="o">/</span> <span class="mf">1e9</span>
+</span><span data-line="255">            <span class="n">timestamp_offsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timestamp_offset</span><span class="p">)</span>
+</span><span data-line="256">        <span class="c1"># Return the median value</span>
+</span><span data-line="257">        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">timestamp_offsets</span><span class="p">)</span>
+</span><span data-line="258">
+</span><span data-line="259">    <span class="k">def</span><span class="w"> </span><span class="nf">enable_gpio_strobe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="260">        <span class="k">pass</span>  <span class="c1"># self._set_gpio_strobe(enable=True)</span>
+</span><span data-line="261">
+</span><span data-line="262">    <span class="k">def</span><span class="w"> </span><span class="nf">disable_gpio_strobe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="263">        <span class="k">pass</span>  <span class="c1"># self._set_gpio_strobe(enable=False)</span>
+</span><span data-line="264">
+</span><span data-line="265">    <span class="k">def</span><span class="w"> </span><span class="nf">set_node_and_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">entry_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span data-line="266">        <span class="n">nodemap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GetNodeMap</span><span class="p">()</span>
+</span><span data-line="267">
+</span><span data-line="268">        <span class="n">node</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CEnumerationPtr</span><span class="p">(</span><span class="n">nodemap</span><span class="o">.</span><span class="n">GetNode</span><span class="p">(</span><span class="n">node_name</span><span class="p">))</span>
+</span><span data-line="269">        <span class="k">if</span> <span class="ow">not</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">IsAvailable</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">IsWritable</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+</span><span data-line="270">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot retrieve node </span><span class="si">{</span><span class="n">node_name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="271">
+</span><span data-line="272">        <span class="n">entry</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">GetEntryByName</span><span class="p">(</span><span class="n">entry_name</span><span class="p">)</span>
+</span><span data-line="273">        <span class="k">if</span> <span class="ow">not</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">IsAvailable</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">IsReadable</span><span class="p">(</span><span class="n">entry</span><span class="p">):</span>
+</span><span data-line="274">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot retrieve entry </span><span class="si">{</span><span class="n">entry_name</span><span class="si">}</span><span class="s2"> from node </span><span class="si">{</span><span class="n">node_name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</span><span data-line="275">
+</span><span data-line="276">        <span class="n">node</span><span class="o">.</span><span class="n">SetIntValue</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">GetValue</span><span class="p">())</span>
+</span><span data-line="277">
+</span><span data-line="278">    <span class="c1"># def _set_gpio_strobe(self, line: str = &quot;Line2&quot;, enable: bool = True):</span>
+</span><span data-line="279">    <span class="c1">#     # from PySpin/Examples/Python3/CounterAndTimer.py</span>
+</span><span data-line="280">    <span class="c1">#     # from https://github.com/CapAI/misc/blob/a22cd50e90018c03cde3c1339aa622185502bb05/spinnaker/pyspin/Examples/Python3/CounterAndTimer.py#L193</span>
+</span><span data-line="281">    <span class="c1">#     if enable:</span>
+</span><span data-line="282">    <span class="c1">#         line_mode = &quot;Output&quot;</span>
+</span><span data-line="283">    <span class="c1">#     else:</span>
+</span><span data-line="284">    <span class="c1">#         line_mode = &quot;Input&quot;</span>
+</span><span data-line="285">
+</span><span data-line="286">    <span class="c1">#     # Select line to control</span>
+</span><span data-line="287">    <span class="c1">#     self.set_node_and_entry(&quot;LineSelector&quot;, line)</span>
+</span><span data-line="288">    <span class="c1">#     self.set_node_and_entry(&quot;LineMode&quot;, line_mode)</span>
+</span><span data-line="289">    <span class="c1">#     self.set_node_and_entry(&quot;LineSource&quot;, &quot;ExposureActive&quot;)</span>
+</span><span data-line="290">
+<div class="viewcode-block" id="Spinnaker_OLD.reset">
+<a class="viewcode-back" href="../../../../api/etho.services.camera.spinnaker_old.html#etho.services.camera.spinnaker_old.Spinnaker_OLD.reset">[docs]</a>
+</span><span data-line="291">    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sleep</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">):</span>
+</span><span data-line="292">        <span class="n">device_reset</span> <span class="o">=</span> <span class="n">PySpin</span><span class="o">.</span><span class="n">CCommandPtr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">GetNodeMap</span><span class="p">()</span><span class="o">.</span><span class="n">GetNode</span><span class="p">(</span><span class="s2">&quot;DeviceReset&quot;</span><span class="p">))</span>
+</span><span data-line="293">        <span class="n">device_reset</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
+</span><span data-line="294">        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span data-line="295">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">sleep</span><span class="p">)</span></div>
+
+</span><span data-line="296">
+</span><span data-line="297">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="298">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">BeginAcquisition</span><span class="p">()</span>
+</span><span data-line="299">
+</span><span data-line="300">    <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="301">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="302">            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">EndAcquisition</span><span class="p">()</span>  <span class="c1"># not sure this works if BeginAcquistion has not been called</span>
+</span><span data-line="303">        <span class="k">except</span><span class="p">:</span>
+</span><span data-line="304">            <span class="k">pass</span>
+</span><span data-line="305">
+</span><span data-line="306">    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="307">        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>  <span class="c1"># should check if cam started</span>
+</span><span data-line="308">        <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">DeInit</span><span class="p">()</span>
+</span><span data-line="309">        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span>
+</span><span data-line="310">        <span class="bp">self</span><span class="o">.</span><span class="n">cam_list</span><span class="o">.</span><span class="n">Clear</span><span class="p">()</span>
+</span><span data-line="311">        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">cam_list</span></div>
+
+</span><span data-line="312">        <span class="c1"># self.cam_system.ReleaseInstance()</span>
+</span><span data-line="313">        <span class="c1"># del self.cam_system</span>
+</span></pre></div>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2026, Jan Clemens</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/janclemenslab/etho" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+      <script src="../../../../_static/shibuya.js?v=50760d75"></script>
+      <script src="../../../../_static/sphinxcontrib-images/LightBox2/lightbox2/dist/js/lightbox-plus-jquery.min.js?v=f0ca4bb6"></script>
+      <script src="../../../../_static/sphinxcontrib-images/LightBox2/lightbox2-customize/jquery-noconflict.js?v=12818e64"></script>
+      <script src="https://code.iconify.design/iconify-icon/3.0.1/iconify-icon.min.js"></script></body>
+</html>

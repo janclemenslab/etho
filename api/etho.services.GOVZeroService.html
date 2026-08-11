@@ -85,6 +85,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="../hardware/nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/projector.html">DLP Projector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/scanimage.html">ScanImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware/govee.html">Govee Temperature/Humidity Sensors</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">CLI</a></li>
@@ -111,6 +112,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -136,6 +138,7 @@ data-aria-dark="Switch to auto color mode">
 </ul>
 </li>
 <li><a class="reference internal" href="#etho.services.GOVZeroService.H5075Measurement"><code class="docutils literal notranslate"><span class="pre">H5075Measurement</span></code></a></li>
+<li><a class="reference internal" href="#etho.services.GOVZeroService.discover_h5075_sensors"><code class="docutils literal notranslate"><span class="pre">discover_h5075_sensors()</span></code></a></li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
   </aside>
@@ -210,6 +213,12 @@ data-aria-dark="Switch to auto color mode">
 <dt class="sig sig-object py" id="etho.services.GOVZeroService.H5075Measurement">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">etho.services.GOVZeroService.</span></span><span class="sig-name descname"><span class="pre">H5075Measurement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime.datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature_c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">humidity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/services/GOVZeroService.html#H5075Measurement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.services.GOVZeroService.H5075Measurement" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="etho.services.GOVZeroService.discover_h5075_sensors">
+<span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">etho.services.GOVZeroService.</span></span><span class="sig-name descname"><span class="pre">discover_h5075_sensors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/services/GOVZeroService.html#discover_h5075_sensors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.services.GOVZeroService.discover_h5075_sensors" title="Link to this definition">¶</a></dt>
+<dd><p>Return nearby H5075 addresses, names, and latest measurements.</p>
+</dd></dl>
 
 </section>
 

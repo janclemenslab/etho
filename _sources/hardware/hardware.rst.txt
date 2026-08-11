@@ -12,6 +12,7 @@ operated from protocols:
 - :doc:`National Instruments DAQmx compatible devices <nidaq>`
 - :doc:`DLP projectors <projector>`
 - :doc:`ScanImage microscopes <scanimage>`
+- :doc:`Govee H5075 temperature/humidity sensors <govee>`
 
 You can add support for new hardware by implementing the appropriate service interface. See :ref:`extensions`.
 
@@ -24,3 +25,4 @@ You can add support for new hardware by implementing the appropriate service int
    nidaq
    projector
    scanimage
+   govee

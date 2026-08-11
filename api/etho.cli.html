@@ -85,6 +85,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="../hardware/nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/projector.html">DLP Projector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../hardware/scanimage.html">ScanImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardware/govee.html">Govee Temperature/Humidity Sensors</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../cli.html">CLI</a></li>
@@ -111,6 +112,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -129,6 +131,7 @@ data-aria-dark="Switch to auto color mode">
       <i class="i-lucide close"></i>
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#etho.cli.govee"><code class="docutils literal notranslate"><span class="pre">govee()</span></code></a></li>
 <li><a class="reference internal" href="#etho.cli.init"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
 <li><a class="reference internal" href="#etho.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li><a class="reference internal" href="#etho.cli.no_gui"><code class="docutils literal notranslate"><span class="pre">no_gui()</span></code></a></li>
@@ -172,6 +175,12 @@ data-aria-dark="Switch to auto color mode">
   <article class="yue" role="main">
           <section id="module-etho.cli">
 <span id="etho-cli"></span><h1>etho.cli<a class="headerlink" href="#module-etho.cli" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="etho.cli.govee">
+<span class="sig-prename descclassname"><span class="pre">etho.cli.</span></span><span class="sig-name descname"><span class="pre">govee</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/cli.html#govee"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.cli.govee" title="Link to this definition">¶</a></dt>
+<dd><p>Lists nearby Govee H5075 sensors and their protocol addresses/readings.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="etho.cli.init">
 <span class="sig-prename descclassname"><span class="pre">etho.cli.</span></span><span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/cli.html#init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.cli.init" title="Link to this definition">¶</a></dt>

@@ -85,6 +85,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/nidaq.html">National Instruments DAQ</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/projector.html">DLP Projector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../hardware/scanimage.html">ScanImage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../hardware/govee.html">Govee Temperature/Humidity Sensors</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../cli.html">CLI</a></li>
@@ -111,6 +112,7 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -234,200 +236,234 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="67">    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">measurement</span><span class="o">.</span><span class="n">timestamp</span><span class="si">:</span><span class="s2">%Y-%m-%d %H:%M:%S</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">measurement</span><span class="o">.</span><span class="n">temperature_c</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">measurement</span><span class="o">.</span><span class="n">humidity</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
 </span><span data-line="68">
 </span><span data-line="69">
+<div class="viewcode-block" id="discover_h5075_sensors">
+<a class="viewcode-back" href="../../../api/etho.services.GOVZeroService.html#etho.services.GOVZeroService.discover_h5075_sensors">[docs]</a>
+</span><span data-line="70"><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">discover_h5075_sensors</span><span class="p">(</span><span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">):</span>
+</span><span data-line="71"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Return nearby H5075 addresses, names, and latest measurements.&quot;&quot;&quot;</span>
+</span><span data-line="72">    <span class="k">if</span> <span class="n">bleak_import_error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="73">        <span class="k">raise</span> <span class="n">bleak_import_error</span>
+</span><span data-line="74">
+</span><span data-line="75">    <span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+</span><span data-line="76">    <span class="k">if</span> <span class="n">duration</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="77">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;duration must be &gt; 0&quot;</span><span class="p">)</span>
+</span><span data-line="78">
+</span><span data-line="79">    <span class="n">sensors</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="80">
+</span><span data-line="81">    <span class="k">def</span><span class="w"> </span><span class="nf">detection_callback</span><span class="p">(</span><span class="n">device</span><span class="p">:</span> <span class="n">BLEDevice</span><span class="p">,</span> <span class="n">advertisement_data</span><span class="p">:</span> <span class="n">AdvertisementData</span><span class="p">):</span>
+</span><span data-line="82">        <span class="n">address</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s2">&quot;address&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span data-line="83">        <span class="n">payload</span> <span class="o">=</span> <span class="n">advertisement_data</span><span class="o">.</span><span class="n">manufacturer_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">H5075_MANUFACTURER_ID</span><span class="p">)</span>
+</span><span data-line="84">        <span class="k">if</span> <span class="n">address</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">payload</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="85">            <span class="k">return</span>
+</span><span data-line="86">
+</span><span data-line="87">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="88">            <span class="n">measurement</span> <span class="o">=</span> <span class="n">decode_h5075_measurement</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+</span><span data-line="89">        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span data-line="90">            <span class="k">return</span>
+</span><span data-line="91">
+</span><span data-line="92">        <span class="n">name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">advertisement_data</span><span class="p">,</span> <span class="s2">&quot;local_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+</span><span data-line="93">        <span class="n">sensors</span><span class="p">[</span><span class="n">normalize_address</span><span class="p">(</span><span class="n">address</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">measurement</span><span class="p">)</span>
+</span><span data-line="94">
+</span><span data-line="95">    <span class="k">async</span> <span class="k">with</span> <span class="n">BleakScanner</span><span class="p">(</span><span class="n">detection_callback</span><span class="o">=</span><span class="n">detection_callback</span><span class="p">):</span>
+</span><span data-line="96">        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+</span><span data-line="97">
+</span><span data-line="98">    <span class="k">return</span> <span class="nb">sorted</span><span class="p">((</span><span class="n">address</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">measurement</span><span class="p">)</span> <span class="k">for</span> <span class="n">address</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">measurement</span><span class="p">)</span> <span class="ow">in</span> <span class="n">sensors</span><span class="o">.</span><span class="n">items</span><span class="p">())</span></div>
+
+</span><span data-line="99">
+</span><span data-line="100">
 <div class="viewcode-block" id="GOV">
 <a class="viewcode-back" href="../../../api/etho.services.GOVZeroService.html#etho.services.GOVZeroService.GOV">[docs]</a>
-</span><span data-line="70"><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_exceptions</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)))</span>
-</span><span data-line="71"><span class="nd">@register_service</span>
-</span><span data-line="72"><span class="k">class</span><span class="w"> </span><span class="nc">GOV</span><span class="p">(</span><span class="n">BaseZeroService</span><span class="p">):</span>
-</span><span data-line="73">    <span class="n">LOGGING_PORT</span> <span class="o">=</span> <span class="mi">1455</span>
-</span><span data-line="74">    <span class="n">SERVICE_PORT</span> <span class="o">=</span> <span class="mi">4255</span>
-</span><span data-line="75">    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">&quot;GOV&quot;</span>
-</span><span data-line="76">    <span class="n">CLIENT_START_GROUP</span> <span class="o">=</span> <span class="s2">&quot;pre&quot;</span>
-</span><span data-line="77">
-</span><span data-line="78">    <span class="nd">@classmethod</span>
-</span><span data-line="79">    <span class="k">def</span><span class="w"> </span><span class="nf">setup_client</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">service_key</span><span class="p">,</span> <span class="n">service_index</span><span class="p">,</span> <span class="n">prot</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">playlistfile</span><span class="p">,</span> <span class="n">save_prefix</span><span class="p">,</span> <span class="n">preview</span><span class="p">,</span> <span class="n">new_console</span><span class="p">):</span>
-</span><span data-line="80">        <span class="k">if</span> <span class="n">preview</span><span class="p">:</span>
-</span><span data-line="81">            <span class="k">return</span> <span class="kc">None</span>
-</span><span data-line="82">
-</span><span data-line="83">        <span class="n">this</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</span><span data-line="84">        <span class="n">this</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">])</span>
-</span><span data-line="85">
-</span><span data-line="86">        <span class="k">if</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="87">            <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;port&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SERVICE_PORT</span> <span class="o">+</span> <span class="n">service_index</span>
-</span><span data-line="88">
-</span><span data-line="89">        <span class="n">interval</span> <span class="o">=</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;interval&quot;</span><span class="p">)</span>
-</span><span data-line="90">        <span class="k">if</span> <span class="n">interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="91">            <span class="n">interval</span> <span class="o">=</span> <span class="n">DEFAULT_INTERVAL</span>
-</span><span data-line="92">
-</span><span data-line="93">        <span class="n">service</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-</span><span data-line="94">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;serializer&quot;</span><span class="p">],</span>
-</span><span data-line="95">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
-</span><span data-line="96">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;python_exe&quot;</span><span class="p">],</span>
-</span><span data-line="97">            <span class="n">new_console</span><span class="o">=</span><span class="n">new_console</span><span class="p">,</span>
-</span><span data-line="98">            <span class="n">port</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;port&quot;</span><span class="p">],</span>
-</span><span data-line="99">        <span class="p">)</span>
-</span><span data-line="100">        <span class="n">service</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;address&quot;</span><span class="p">],</span> <span class="n">interval</span><span class="p">,</span> <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">10</span><span class="p">)</span>
-</span><span data-line="101">        <span class="n">service</span><span class="o">.</span><span class="n">init_local_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">this</span><span class="p">[</span><span class="s1">&#39;savefolder&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">service_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="p">)</span>
-</span><span data-line="102">        <span class="k">return</span> <span class="n">service</span>
-</span><span data-line="103">
-</span><span data-line="104">    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_INTERVAL</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-</span><span data-line="105">        <span class="k">if</span> <span class="n">bleak_import_error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="106">            <span class="k">raise</span> <span class="n">bleak_import_error</span>
-</span><span data-line="107">
-</span><span data-line="108">        <span class="n">interval</span> <span class="o">=</span> <span class="n">DEFAULT_INTERVAL</span> <span class="k">if</span> <span class="n">interval</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
-</span><span data-line="109">        <span class="k">if</span> <span class="n">interval</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="110">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;interval must be &gt; 0&quot;</span><span class="p">)</span>
-</span><span data-line="111">
-</span><span data-line="112">        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">normalize_address</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
-</span><span data-line="113">        <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">interval</span>
-</span><span data-line="114">        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
-</span><span data-line="115">        <span class="bp">self</span><span class="o">.</span><span class="n">measurement</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">H5075Measurement</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="116">        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="117">
-</span><span data-line="118">        <span class="bp">self</span><span class="o">.</span><span class="n">_state_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
-</span><span data-line="119">        <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">H5075Measurement</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="120">        <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement_seen_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="121">        <span class="bp">self</span><span class="o">.</span><span class="n">_last_logged_measurement_seen_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="122">        <span class="bp">self</span><span class="o">.</span><span class="n">_last_emit_monotonic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span data-line="123">        <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
-</span><span data-line="124">        <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_scanner_worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="p">,),</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="125">
-</span><span data-line="126">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="127">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;stop_service&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
-</span><span data-line="128">
-</span><span data-line="129">        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
-</span><span data-line="130">            <span class="s2">&quot;job&quot;</span><span class="p">:</span> <span class="p">{</span>
-</span><span data-line="131">                <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
-</span><span data-line="132">                <span class="s2">&quot;interval&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span>
-</span><span data-line="133">                <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span>
-</span><span data-line="134">            <span class="p">}</span>
-</span><span data-line="135">        <span class="p">}</span>
-</span><span data-line="136">
-</span><span data-line="137">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="138">        <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span data-line="139">        <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span data-line="140">        <span class="bp">self</span><span class="o">.</span><span class="n">_emit_info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;scanning for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="141">        <span class="bp">self</span><span class="o">.</span><span class="n">_emit_info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;logging at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s resolution&quot;</span><span class="p">)</span>
-</span><span data-line="142">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
-</span><span data-line="143">            <span class="bp">self</span><span class="o">.</span><span class="n">_emit_info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;duration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
-</span><span data-line="144">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span data-line="145">            <span class="bp">self</span><span class="o">.</span><span class="n">_emit_info</span><span class="p">(</span><span class="s2">&quot;finish timer started&quot;</span><span class="p">)</span>
-</span><span data-line="146">
-</span><span data-line="147">    <span class="k">def</span><span class="w"> </span><span class="nf">_scanner_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_event</span><span class="p">):</span>
-</span><span data-line="148">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="149">            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scanner_loop</span><span class="p">(</span><span class="n">stop_event</span><span class="p">))</span>
-</span><span data-line="150">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span data-line="151">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;scanner loop failed&quot;</span><span class="p">)</span>
-</span><span data-line="152">
-</span><span data-line="153">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_scanner_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_event</span><span class="p">):</span>
-</span><span data-line="154">        <span class="k">async</span> <span class="k">with</span> <span class="n">BleakScanner</span><span class="p">(</span><span class="n">detection_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_detection_callback</span><span class="p">):</span>
-</span><span data-line="155">            <span class="k">while</span> <span class="ow">not</span> <span class="n">stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-</span><span data-line="156">                <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_log_latest_measurement</span><span class="p">()</span>
-</span><span data-line="157">                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
-</span><span data-line="158">
-</span><span data-line="159">    <span class="k">def</span><span class="w"> </span><span class="nf">_detection_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">BLEDevice</span><span class="p">,</span> <span class="n">advertisement_data</span><span class="p">:</span> <span class="n">AdvertisementData</span><span class="p">):</span>
-</span><span data-line="160">        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s2">&quot;address&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="161">            <span class="k">return</span>
-</span><span data-line="162">        <span class="k">if</span> <span class="n">normalize_address</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">:</span>
-</span><span data-line="163">            <span class="k">return</span>
-</span><span data-line="164">
-</span><span data-line="165">        <span class="n">manufacturer_data</span> <span class="o">=</span> <span class="n">advertisement_data</span><span class="o">.</span><span class="n">manufacturer_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">H5075_MANUFACTURER_ID</span><span class="p">)</span>
-</span><span data-line="166">        <span class="k">if</span> <span class="n">manufacturer_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="167">            <span class="k">return</span>
-</span><span data-line="168">
-</span><span data-line="169">        <span class="n">measurement</span> <span class="o">=</span> <span class="n">decode_h5075_measurement</span><span class="p">(</span><span class="n">manufacturer_data</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
-</span><span data-line="170">        <span class="n">seen_at</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
-</span><span data-line="171">        <span class="bp">self</span><span class="o">.</span><span class="n">_record_measurement</span><span class="p">(</span><span class="n">measurement</span><span class="p">,</span> <span class="n">seen_at</span><span class="p">)</span>
-</span><span data-line="172">        <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_log_latest_measurement</span><span class="p">(</span><span class="n">now_monotonic</span><span class="o">=</span><span class="n">seen_at</span><span class="p">)</span>
-</span><span data-line="173">
-</span><span data-line="174">    <span class="k">def</span><span class="w"> </span><span class="nf">_record_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measurement</span><span class="p">:</span> <span class="n">H5075Measurement</span><span class="p">,</span> <span class="n">seen_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span data-line="175">        <span class="k">if</span> <span class="n">seen_at</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="176">            <span class="n">seen_at</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+</span><span data-line="101"><span class="nd">@for_all_methods</span><span class="p">(</span><span class="n">log_exceptions</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)))</span>
+</span><span data-line="102"><span class="nd">@register_service</span>
+</span><span data-line="103"><span class="k">class</span><span class="w"> </span><span class="nc">GOV</span><span class="p">(</span><span class="n">BaseZeroService</span><span class="p">):</span>
+</span><span data-line="104">    <span class="n">LOGGING_PORT</span> <span class="o">=</span> <span class="mi">1455</span>
+</span><span data-line="105">    <span class="n">SERVICE_PORT</span> <span class="o">=</span> <span class="mi">4255</span>
+</span><span data-line="106">    <span class="n">SERVICE_NAME</span> <span class="o">=</span> <span class="s2">&quot;GOV&quot;</span>
+</span><span data-line="107">    <span class="n">CLIENT_START_GROUP</span> <span class="o">=</span> <span class="s2">&quot;pre&quot;</span>
+</span><span data-line="108">
+</span><span data-line="109">    <span class="nd">@classmethod</span>
+</span><span data-line="110">    <span class="k">def</span><span class="w"> </span><span class="nf">setup_client</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">service_key</span><span class="p">,</span> <span class="n">service_index</span><span class="p">,</span> <span class="n">prot</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">playlistfile</span><span class="p">,</span> <span class="n">save_prefix</span><span class="p">,</span> <span class="n">preview</span><span class="p">,</span> <span class="n">new_console</span><span class="p">):</span>
+</span><span data-line="111">        <span class="k">if</span> <span class="n">preview</span><span class="p">:</span>
+</span><span data-line="112">            <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="113">
+</span><span data-line="114">        <span class="n">this</span> <span class="o">=</span> <span class="n">defaults</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span data-line="115">        <span class="n">this</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">])</span>
+</span><span data-line="116">
+</span><span data-line="117">        <span class="k">if</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;port&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="118">            <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;port&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SERVICE_PORT</span> <span class="o">+</span> <span class="n">service_index</span>
+</span><span data-line="119">
+</span><span data-line="120">        <span class="n">interval</span> <span class="o">=</span> <span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;interval&quot;</span><span class="p">)</span>
+</span><span data-line="121">        <span class="k">if</span> <span class="n">interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="122">            <span class="n">interval</span> <span class="o">=</span> <span class="n">DEFAULT_INTERVAL</span>
+</span><span data-line="123">
+</span><span data-line="124">        <span class="n">service</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
+</span><span data-line="125">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;serializer&quot;</span><span class="p">],</span>
+</span><span data-line="126">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">],</span>
+</span><span data-line="127">            <span class="n">this</span><span class="p">[</span><span class="s2">&quot;python_exe&quot;</span><span class="p">],</span>
+</span><span data-line="128">            <span class="n">new_console</span><span class="o">=</span><span class="n">new_console</span><span class="p">,</span>
+</span><span data-line="129">            <span class="n">port</span><span class="o">=</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;port&quot;</span><span class="p">],</span>
+</span><span data-line="130">        <span class="p">)</span>
+</span><span data-line="131">        <span class="n">service</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">prot</span><span class="p">[</span><span class="n">service_key</span><span class="p">][</span><span class="s2">&quot;address&quot;</span><span class="p">],</span> <span class="n">interval</span><span class="p">,</span> <span class="n">prot</span><span class="p">[</span><span class="s2">&quot;maxduration&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">10</span><span class="p">)</span>
+</span><span data-line="132">        <span class="n">service</span><span class="o">.</span><span class="n">init_local_logger</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">this</span><span class="p">[</span><span class="s1">&#39;savefolder&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">save_prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">service_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="p">)</span>
+</span><span data-line="133">        <span class="k">return</span> <span class="n">service</span>
+</span><span data-line="134">
+</span><span data-line="135">    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DEFAULT_INTERVAL</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+</span><span data-line="136">        <span class="k">if</span> <span class="n">bleak_import_error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="137">            <span class="k">raise</span> <span class="n">bleak_import_error</span>
+</span><span data-line="138">
+</span><span data-line="139">        <span class="n">interval</span> <span class="o">=</span> <span class="n">DEFAULT_INTERVAL</span> <span class="k">if</span> <span class="n">interval</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+</span><span data-line="140">        <span class="k">if</span> <span class="n">interval</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="141">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;interval must be &gt; 0&quot;</span><span class="p">)</span>
+</span><span data-line="142">
+</span><span data-line="143">        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">normalize_address</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+</span><span data-line="144">        <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">interval</span>
+</span><span data-line="145">        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+</span><span data-line="146">        <span class="bp">self</span><span class="o">.</span><span class="n">measurement</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">H5075Measurement</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="147">        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="148">
+</span><span data-line="149">        <span class="bp">self</span><span class="o">.</span><span class="n">_state_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+</span><span data-line="150">        <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">H5075Measurement</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="151">        <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement_seen_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="152">        <span class="bp">self</span><span class="o">.</span><span class="n">_last_logged_measurement_seen_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="153">        <span class="bp">self</span><span class="o">.</span><span class="n">_last_emit_monotonic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="154">        <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+</span><span data-line="155">        <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_scanner_worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="p">,),</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="156">
+</span><span data-line="157">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="158">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;stop_service&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+</span><span data-line="159">
+</span><span data-line="160">        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="161">            <span class="s2">&quot;job&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span data-line="162">                <span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+</span><span data-line="163">                <span class="s2">&quot;interval&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span>
+</span><span data-line="164">                <span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span>
+</span><span data-line="165">            <span class="p">}</span>
+</span><span data-line="166">        <span class="p">}</span>
+</span><span data-line="167">
+</span><span data-line="168">    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="169">        <span class="bp">self</span><span class="o">.</span><span class="n">_time_started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span data-line="170">        <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span data-line="171">        <span class="bp">self</span><span class="o">.</span><span class="n">_emit_info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;scanning for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="172">        <span class="bp">self</span><span class="o">.</span><span class="n">_emit_info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;logging at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s resolution&quot;</span><span class="p">)</span>
+</span><span data-line="173">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
+</span><span data-line="174">            <span class="bp">self</span><span class="o">.</span><span class="n">_emit_info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;duration </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+</span><span data-line="175">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span data-line="176">            <span class="bp">self</span><span class="o">.</span><span class="n">_emit_info</span><span class="p">(</span><span class="s2">&quot;finish timer started&quot;</span><span class="p">)</span>
 </span><span data-line="177">
-</span><span data-line="178">        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_lock</span><span class="p">:</span>
-</span><span data-line="179">            <span class="bp">self</span><span class="o">.</span><span class="n">measurement</span> <span class="o">=</span> <span class="n">measurement</span>
-</span><span data-line="180">            <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement</span> <span class="o">=</span> <span class="n">measurement</span>
-</span><span data-line="181">            <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement_seen_at</span> <span class="o">=</span> <span class="n">seen_at</span>
-</span><span data-line="182">
-</span><span data-line="183">    <span class="k">def</span><span class="w"> </span><span class="nf">_maybe_log_latest_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now_monotonic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span data-line="184">        <span class="k">if</span> <span class="n">now_monotonic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="185">            <span class="n">now_monotonic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
-</span><span data-line="186">
-</span><span data-line="187">        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_lock</span><span class="p">:</span>
-</span><span data-line="188">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement_seen_at</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="189">                <span class="k">return</span>
-</span><span data-line="190">
-</span><span data-line="191">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement_seen_at</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_logged_measurement_seen_at</span><span class="p">:</span>
-</span><span data-line="192">                <span class="k">return</span>
-</span><span data-line="193">
-</span><span data-line="194">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_emit_monotonic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">now_monotonic</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_emit_monotonic</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">:</span>
-</span><span data-line="195">                <span class="k">return</span>
-</span><span data-line="196">
-</span><span data-line="197">            <span class="n">line</span> <span class="o">=</span> <span class="n">format_measurement_log_line</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement</span><span class="p">)</span>
-</span><span data-line="198">            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">line</span>
-</span><span data-line="199">            <span class="bp">self</span><span class="o">.</span><span class="n">_last_logged_measurement_seen_at</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement_seen_at</span>
-</span><span data-line="200">            <span class="bp">self</span><span class="o">.</span><span class="n">_last_emit_monotonic</span> <span class="o">=</span> <span class="n">now_monotonic</span>
-</span><span data-line="201">
-</span><span data-line="202">        <span class="bp">self</span><span class="o">.</span><span class="n">_emit_info</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-</span><span data-line="203">
-</span><span data-line="204">    <span class="k">def</span><span class="w"> </span><span class="nf">_write_to_console</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-</span><span data-line="205">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="206">            <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span data-line="207">        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-</span><span data-line="208">            <span class="c1"># Hidden/disowned Windows service processes can have an invalid stdout.</span>
-</span><span data-line="209">            <span class="c1"># Logging should continue even when there is no usable console.</span>
-</span><span data-line="210">            <span class="k">pass</span>
-</span><span data-line="211">
-</span><span data-line="212">    <span class="k">def</span><span class="w"> </span><span class="nf">_emit_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-</span><span data-line="213">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span data-line="214">        <span class="bp">self</span><span class="o">.</span><span class="n">_write_to_console</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span data-line="215">
-</span><span data-line="216">    <span class="k">def</span><span class="w"> </span><span class="nf">_emit_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-</span><span data-line="217">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span data-line="218">        <span class="bp">self</span><span class="o">.</span><span class="n">_write_to_console</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-</span><span data-line="219">
-</span><span data-line="220">    <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span data-line="221">        <span class="bp">self</span><span class="o">.</span><span class="n">_emit_warning</span><span class="p">(</span><span class="s2">&quot;stopping&quot;</span><span class="p">)</span>
-</span><span data-line="222">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_stopper&quot;</span><span class="p">):</span>
-</span><span data-line="223">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-</span><span data-line="224">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
-</span><span data-line="225">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
-</span><span data-line="226">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_scanner_thread&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span> <span class="ow">and</span> <span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span><span class="p">:</span>
-</span><span data-line="227">            <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-</span><span data-line="228">
-</span><span data-line="229">        <span class="bp">self</span><span class="o">.</span><span class="n">_emit_warning</span><span class="p">(</span><span class="s2">&quot;   stopped &quot;</span><span class="p">)</span>
-</span><span data-line="230">        <span class="bp">self</span><span class="o">.</span><span class="n">_flush_loggers</span><span class="p">()</span>
-</span><span data-line="231">        <span class="k">if</span> <span class="n">stop_service</span><span class="p">:</span>
-</span><span data-line="232">            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-</span><span data-line="233">            <span class="bp">self</span><span class="o">.</span><span class="n">service_stop</span><span class="p">()</span>
+</span><span data-line="178">    <span class="k">def</span><span class="w"> </span><span class="nf">_scanner_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_event</span><span class="p">):</span>
+</span><span data-line="179">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="180">            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scanner_loop</span><span class="p">(</span><span class="n">stop_event</span><span class="p">))</span>
+</span><span data-line="181">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span data-line="182">            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;scanner loop failed&quot;</span><span class="p">)</span>
+</span><span data-line="183">
+</span><span data-line="184">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_scanner_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_event</span><span class="p">):</span>
+</span><span data-line="185">        <span class="k">async</span> <span class="k">with</span> <span class="n">BleakScanner</span><span class="p">(</span><span class="n">detection_callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_detection_callback</span><span class="p">):</span>
+</span><span data-line="186">            <span class="k">while</span> <span class="ow">not</span> <span class="n">stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+</span><span data-line="187">                <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_log_latest_measurement</span><span class="p">()</span>
+</span><span data-line="188">                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+</span><span data-line="189">
+</span><span data-line="190">    <span class="k">def</span><span class="w"> </span><span class="nf">_detection_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">BLEDevice</span><span class="p">,</span> <span class="n">advertisement_data</span><span class="p">:</span> <span class="n">AdvertisementData</span><span class="p">):</span>
+</span><span data-line="191">        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="s2">&quot;address&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="192">            <span class="k">return</span>
+</span><span data-line="193">        <span class="k">if</span> <span class="n">normalize_address</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">:</span>
+</span><span data-line="194">            <span class="k">return</span>
+</span><span data-line="195">
+</span><span data-line="196">        <span class="n">manufacturer_data</span> <span class="o">=</span> <span class="n">advertisement_data</span><span class="o">.</span><span class="n">manufacturer_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">H5075_MANUFACTURER_ID</span><span class="p">)</span>
+</span><span data-line="197">        <span class="k">if</span> <span class="n">manufacturer_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="198">            <span class="k">return</span>
+</span><span data-line="199">
+</span><span data-line="200">        <span class="n">measurement</span> <span class="o">=</span> <span class="n">decode_h5075_measurement</span><span class="p">(</span><span class="n">manufacturer_data</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+</span><span data-line="201">        <span class="n">seen_at</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+</span><span data-line="202">        <span class="bp">self</span><span class="o">.</span><span class="n">_record_measurement</span><span class="p">(</span><span class="n">measurement</span><span class="p">,</span> <span class="n">seen_at</span><span class="p">)</span>
+</span><span data-line="203">        <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_log_latest_measurement</span><span class="p">(</span><span class="n">now_monotonic</span><span class="o">=</span><span class="n">seen_at</span><span class="p">)</span>
+</span><span data-line="204">
+</span><span data-line="205">    <span class="k">def</span><span class="w"> </span><span class="nf">_record_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measurement</span><span class="p">:</span> <span class="n">H5075Measurement</span><span class="p">,</span> <span class="n">seen_at</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span data-line="206">        <span class="k">if</span> <span class="n">seen_at</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="207">            <span class="n">seen_at</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+</span><span data-line="208">
+</span><span data-line="209">        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_lock</span><span class="p">:</span>
+</span><span data-line="210">            <span class="bp">self</span><span class="o">.</span><span class="n">measurement</span> <span class="o">=</span> <span class="n">measurement</span>
+</span><span data-line="211">            <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement</span> <span class="o">=</span> <span class="n">measurement</span>
+</span><span data-line="212">            <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement_seen_at</span> <span class="o">=</span> <span class="n">seen_at</span>
+</span><span data-line="213">
+</span><span data-line="214">    <span class="k">def</span><span class="w"> </span><span class="nf">_maybe_log_latest_measurement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now_monotonic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span data-line="215">        <span class="k">if</span> <span class="n">now_monotonic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="216">            <span class="n">now_monotonic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+</span><span data-line="217">
+</span><span data-line="218">        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_lock</span><span class="p">:</span>
+</span><span data-line="219">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement_seen_at</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="220">                <span class="k">return</span>
+</span><span data-line="221">
+</span><span data-line="222">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement_seen_at</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_logged_measurement_seen_at</span><span class="p">:</span>
+</span><span data-line="223">                <span class="k">return</span>
+</span><span data-line="224">
+</span><span data-line="225">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_emit_monotonic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">now_monotonic</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_emit_monotonic</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">:</span>
+</span><span data-line="226">                <span class="k">return</span>
+</span><span data-line="227">
+</span><span data-line="228">            <span class="n">line</span> <span class="o">=</span> <span class="n">format_measurement_log_line</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement</span><span class="p">)</span>
+</span><span data-line="229">            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">line</span>
+</span><span data-line="230">            <span class="bp">self</span><span class="o">.</span><span class="n">_last_logged_measurement_seen_at</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_latest_measurement_seen_at</span>
+</span><span data-line="231">            <span class="bp">self</span><span class="o">.</span><span class="n">_last_emit_monotonic</span> <span class="o">=</span> <span class="n">now_monotonic</span>
+</span><span data-line="232">
+</span><span data-line="233">        <span class="bp">self</span><span class="o">.</span><span class="n">_emit_info</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 </span><span data-line="234">
-</span><span data-line="235">    <span class="k">def</span><span class="w"> </span><span class="nf">disp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="236">        <span class="k">pass</span>
-</span><span data-line="237">
-</span><span data-line="238">    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="239">        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_scanner_thread&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span>
-</span><span data-line="240">
-</span><span data-line="241">    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="242">        <span class="k">return</span> <span class="n">bleak_import_error</span> <span class="ow">is</span> <span class="kc">None</span>
-</span><span data-line="243">
-</span><span data-line="244">    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="245">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
-</span><span data-line="246">        <span class="k">return</span> <span class="kc">True</span></div>
+</span><span data-line="235">    <span class="k">def</span><span class="w"> </span><span class="nf">_write_to_console</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span data-line="236">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="237">            <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="238">        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+</span><span data-line="239">            <span class="c1"># Hidden/disowned Windows service processes can have an invalid stdout.</span>
+</span><span data-line="240">            <span class="c1"># Logging should continue even when there is no usable console.</span>
+</span><span data-line="241">            <span class="k">pass</span>
+</span><span data-line="242">
+</span><span data-line="243">    <span class="k">def</span><span class="w"> </span><span class="nf">_emit_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span data-line="244">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span data-line="245">        <span class="bp">self</span><span class="o">.</span><span class="n">_write_to_console</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span data-line="246">
+</span><span data-line="247">    <span class="k">def</span><span class="w"> </span><span class="nf">_emit_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span data-line="248">        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span data-line="249">        <span class="bp">self</span><span class="o">.</span><span class="n">_write_to_console</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+</span><span data-line="250">
+</span><span data-line="251">    <span class="k">def</span><span class="w"> </span><span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop_service</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span data-line="252">        <span class="bp">self</span><span class="o">.</span><span class="n">_emit_warning</span><span class="p">(</span><span class="s2">&quot;stopping&quot;</span><span class="p">)</span>
+</span><span data-line="253">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_stopper&quot;</span><span class="p">):</span>
+</span><span data-line="254">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_stopper</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+</span><span data-line="255">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_thread_timer&quot;</span><span class="p">):</span>
+</span><span data-line="256">            <span class="bp">self</span><span class="o">.</span><span class="n">_thread_timer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+</span><span data-line="257">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_scanner_thread&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span> <span class="ow">and</span> <span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span><span class="p">:</span>
+</span><span data-line="258">            <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</span><span data-line="259">
+</span><span data-line="260">        <span class="bp">self</span><span class="o">.</span><span class="n">_emit_warning</span><span class="p">(</span><span class="s2">&quot;   stopped &quot;</span><span class="p">)</span>
+</span><span data-line="261">        <span class="bp">self</span><span class="o">.</span><span class="n">_flush_loggers</span><span class="p">()</span>
+</span><span data-line="262">        <span class="k">if</span> <span class="n">stop_service</span><span class="p">:</span>
+</span><span data-line="263">            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span><span data-line="264">            <span class="bp">self</span><span class="o">.</span><span class="n">service_stop</span><span class="p">()</span>
+</span><span data-line="265">
+</span><span data-line="266">    <span class="k">def</span><span class="w"> </span><span class="nf">disp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="267">        <span class="k">pass</span>
+</span><span data-line="268">
+</span><span data-line="269">    <span class="k">def</span><span class="w"> </span><span class="nf">is_busy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="270">        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_scanner_thread&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scanner_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span>
+</span><span data-line="271">
+</span><span data-line="272">    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="273">        <span class="k">return</span> <span class="n">bleak_import_error</span> <span class="ow">is</span> <span class="kc">None</span>
+</span><span data-line="274">
+</span><span data-line="275">    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="276">        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+</span><span data-line="277">        <span class="k">return</span> <span class="kc">True</span></div>
 
-</span><span data-line="247">
-</span><span data-line="248">
-</span><span data-line="249"><span class="k">def</span><span class="w"> </span><span class="nf">cli</span><span class="p">(</span><span class="n">serializer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span data-line="250">    <span class="k">if</span> <span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="251">        <span class="n">port</span> <span class="o">=</span> <span class="n">GOV</span><span class="o">.</span><span class="n">SERVICE_PORT</span>
-</span><span data-line="252">    <span class="n">s</span> <span class="o">=</span> <span class="n">GOV</span><span class="p">(</span><span class="n">serializer</span><span class="o">=</span><span class="n">serializer</span><span class="p">)</span>
-</span><span data-line="253">    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tcp://0.0.0.0:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span data-line="254">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;running GOVZeroService&quot;</span><span class="p">)</span>
-</span><span data-line="255">    <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</span><span data-line="256">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
-</span><span data-line="257">
-</span><span data-line="258">
-</span><span data-line="259"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span data-line="260">    <span class="n">defopt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cli</span><span class="p">)</span>
+</span><span data-line="278">
+</span><span data-line="279">
+</span><span data-line="280"><span class="k">def</span><span class="w"> </span><span class="nf">cli</span><span class="p">(</span><span class="n">serializer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span data-line="281">    <span class="k">if</span> <span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="282">        <span class="n">port</span> <span class="o">=</span> <span class="n">GOV</span><span class="o">.</span><span class="n">SERVICE_PORT</span>
+</span><span data-line="283">    <span class="n">s</span> <span class="o">=</span> <span class="n">GOV</span><span class="p">(</span><span class="n">serializer</span><span class="o">=</span><span class="n">serializer</span><span class="p">)</span>
+</span><span data-line="284">    <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tcp://0.0.0.0:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span data-line="285">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;running GOVZeroService&quot;</span><span class="p">)</span>
+</span><span data-line="286">    <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span data-line="287">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+</span><span data-line="288">
+</span><span data-line="289">
+</span><span data-line="290"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span data-line="291">    <span class="n">defopt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cli</span><span class="p">)</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

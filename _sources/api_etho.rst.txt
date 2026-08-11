@@ -36,6 +36,7 @@ Developer API
    etho.services.camera.dummy
    etho.services.camera.hamamatsu
    etho.services.camera.spinnaker
+   etho.services.camera.spinnaker_old
    etho.services.camera.ximea
    etho.services.utils.concurrent_task
    etho.services.utils.log_exceptions
