@@ -181,7 +181,7 @@ class DAQ(BaseZeroService):
             )
             if analog_data_out[0].shape[-1] is not len(self.analog_chans_out):
                 raise ValueError(f"Number of analog output channels ({len(self.analog_chans_out)}) does not match the number of channels in the sound files ({analog_data_out[0].shape[-1]}).")
-            self.taskAO.data_gen = data_playlist(analog_data_out, play_order, playlist_info, self.log, name="AO")
+            self.taskAO.set_data_generator(data_playlist(analog_data_out, play_order, playlist_info, self.log, name="AO"))
             if clock_source is None:
                 self.taskAO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             else:
@@ -195,7 +195,7 @@ class DAQ(BaseZeroService):
                 clock_source=clock_source,
                 logger=self.log,
             )
-            self.taskDO.data_gen = data_playlist(digital_data_out, play_order, name="DO")
+            self.taskDO.set_data_generator(data_playlist(digital_data_out, play_order, name="DO"))
             if clock_source is None:
                 self.taskDO.CfgDigEdgeStartTrig("ai/StartTrigger", DAQmx_Val_Rising)
             else:

@@ -190,11 +190,18 @@ class IOTask(daq.Task):
         self.AutoRegisterDoneEvent(0)
         self._data_lock = threading.Lock()
         self._newdata_event = threading.Event()
-        if "output" in self.cha_type[0]:
-            self.EveryNCallback()
-
+        # Output data is supplied by the service after this task has been
+        # constructed.  Do not prefill the buffer here: doing so writes a full
+        # buffer of zeros before the playlist generator is attached.  With the
+        # 100 s output buffer that makes the first stimulus arrive about 100 s
+        # after the protocol starts.
     def __repr__(self):
         return "{0}: {1}".format(self.cha_type[0], self.cha_string)
+
+    def set_data_generator(self, data_gen):
+        """Attach and prefill an output generator before starting the task."""
+        self.data_gen = data_gen
+        self.EveryNCallback()
 
     def stop(self):
         """Stop DAQ."""
@@ -276,7 +283,7 @@ class IOTask(daq.Task):
 
     def DoneCallback(self, status):
         """Call when Task is stopped/done."""
-        self.log.warning("Done status", status)
+        self.log.warning("Done status %s", status)
         return 0  # The function should return an integer
 
 
