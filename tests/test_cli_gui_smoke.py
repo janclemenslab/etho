@@ -5,8 +5,6 @@ import subprocess
 import sys
 import textwrap
 import time
-
-import pytest
 from pathlib import Path
 
 import yaml
@@ -43,8 +41,6 @@ def _wait_for_nonempty_file(path: Path, *, timeout=5) -> bool:
     return path.is_file() and path.stat().st_size > 0
 
 
-
-@pytest.mark.skip(reason="flit does not support --target install with entry points")
 def test_installed_cli_init_and_run_modified_video_protocol(tmp_path):
     repo_root = _repo_root()
     install_dir = tmp_path / "install"
@@ -79,13 +75,15 @@ def test_installed_cli_init_and_run_modified_video_protocol(tmp_path):
 
     _run(install_command, env=os.environ.copy(), cwd=repo_root, timeout=120)
 
-    etho = install_dir / ("Scripts" if os.name == "nt" else "bin") / ("etho.exe" if os.name == "nt" else "etho")
+    # pip/uv --target put console scripts in bin/ even on Windows
+    etho = next(install_dir.glob("[bS]*/etho*"))
     assert etho.exists()
 
     env = os.environ.copy()
     env.update(
         {
             "HOME": str(home),
+            "USERPROFILE": str(home),  # Path.home() on Windows
             "PYTHONPATH": str(install_dir),
             "QT_QPA_PLATFORM": "offscreen",
         }
@@ -134,7 +132,7 @@ def test_installed_cli_init_and_run_modified_video_protocol(tmp_path):
                     size = (int(frame_height), int(frame_width))
                     self.writer = cv2.VideoWriter(
                         str(self.path),
-                        cv2.VideoWriter_fourcc(*"x264"),
+                        cv2.VideoWriter_fourcc(*"MJPG"),  # pip opencv on Windows ships no openh264
                         frame_rate,
                         size,
                         True,
@@ -195,13 +193,12 @@ def test_installed_cli_init_and_run_modified_video_protocol(tmp_path):
     assert "disp" not in protocol["GCM"]["callbacks"]
 
 
-
-@pytest.mark.skipif(sys.platform == "win32", reason="Path.home() does not respect HOME env on Windows")
 def test_gui_starts_with_initialized_default_files(tmp_path):
     env = os.environ.copy()
     env.update(
         {
             "HOME": str(tmp_path / "home"),
+            "USERPROFILE": str(tmp_path / "home"),  # Path.home() on Windows
             "PYTHONPATH": str(_repo_root() / "src"),
             "QT_QPA_PLATFORM": "offscreen",
         }
