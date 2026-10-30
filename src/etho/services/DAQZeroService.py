@@ -45,11 +45,10 @@ class DAQ(BaseZeroService):
         if prot[service_key].get("port") is None:
             prot[service_key]["port"] = cls.SERVICE_PORT + service_index
 
-        if this["host"] in global_config["ATTENUATION"]:
-            attenuation = global_config["ATTENUATION"][this["host"]]
+        attenuation = global_config.get("ATTENUATION")
+        if attenuation and this["host"] in attenuation:
+            attenuation = attenuation[this["host"]]
             logging.info(f"Using attenuation data specific to {this['host']}.")
-        else:
-            attenuation = global_config["ATTENUATION"]
 
         fs = prot[service_key]["samplingrate"]
         playlist = parse_table(playlistfile)
