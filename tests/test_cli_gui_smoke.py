@@ -240,6 +240,7 @@ def test_hardware_dialog_in_both_guis(tmp_path):
     env.update(
         {
             "HOME": str(tmp_path / "home"),
+            "USERPROFILE": str(tmp_path / "home"),  # Path.home() on Windows
             "PYTHONPATH": os.pathsep.join((str(tmp_path), str(_repo_root() / "src"))),
             "QT_QPA_PLATFORM": "offscreen",
         }
