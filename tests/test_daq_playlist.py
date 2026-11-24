@@ -1,4 +1,7 @@
 import pickle
+import pytest
+from conftest import has_daq_hardware
+
 
 import numpy as np
 
@@ -60,6 +63,8 @@ def test_setup_client_passes_pickleable_playlist(monkeypatch):
     pickle.dumps(service.play_order)
 
 
+
+@pytest.mark.skipif(not has_daq_hardware(), reason="Requires PyDAQmx hardware")
 def test_setup_prefills_output_with_first_playlist_item(monkeypatch):
     monkeypatch.setattr("etho.services.DAQZeroService.IOTask", FakeTask)
     service = type("Service", (), {})()
