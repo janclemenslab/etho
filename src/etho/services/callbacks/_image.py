@@ -12,34 +12,7 @@ from typing import Optional, Dict, Any
 import tables
 
 
-try:
-    import cv2
-
-    cv2_import_error = None
-except ImportError as cv2_import_error:
-    pass
-
-try:
-    import av
-
-    av_import_error = None
-except ImportError as av_import_error:
-    pass
-
-try:
-    import ffmpegcv
-
-    ffmpegcv_import_error = None
-except ImportError as ffmpegcv_import_error:
-    pass
-
-try:
-    from vidgear.gears import WriteGear
-
-    vidgear_import_error = None
-except ImportError as vidgear_import_error:
-    pass
-
+# Import video libraries inside their callbacks to avoid mixing FFmpeg builds on macOS.
 try:
     from qtpy import QtWidgets
     import pyqtgraph as pg
@@ -91,13 +64,13 @@ class ImageDisplayCV2(ImageCallback):
     def __init__(self, data_source, poll_timeout=0.01, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        if cv2_import_error is not None:
-            logger.exception("Could not import cv2. Aborting!", exc_info=cv2_import_error)
-            raise cv2_import_error
+        import cv2
+
+        self.cv2 = cv2
 
         logger.info("setting up disp")
-        cv2.namedWindow("display")
-        cv2.resizeWindow("display", self.frame_width, self.frame_height)
+        self.cv2.namedWindow("display")
+        self.cv2.resizeWindow("display", self.frame_width, self.frame_height)
 
     @classmethod
     def make_concurrent(cls, comms="pipe", **kwargs):
@@ -109,12 +82,12 @@ class ImageDisplayCV2(ImageCallback):
         else:
             image, timestamp = data
 
-        cv2.imshow("display", image)
-        cv2.waitKey(1)
+        self.cv2.imshow("display", image)
+        self.cv2.waitKey(1)
 
     def _cleanup(self):
         logger.info("closing display")
-        cv2.destroyWindow("display")
+        self.cv2.destroyWindow("display")
         super()._cleanup()
 
 
@@ -124,8 +97,9 @@ class ImageDisplayPQG(ImageCallback):
     FRIENDLY_NAME = "disp_fast"
     TIMESTAMPS_ONLY = False
 
-    def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
+    def __init__(self, data_source, *, poll_timeout=0.01, row_major_bgr=False, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
+        self.row_major_bgr = row_major_bgr
 
         if pyqtgraph_import_error is not None:
             logger.exception("Could not import pyqtgraph. Aborting!", exc_info=pyqtgraph_import_error)
@@ -139,7 +113,10 @@ class ImageDisplayPQG(ImageCallback):
         # set up window and subplots
         self.app = QtWidgets.QApplication([])
         self.win = RawImageWidget(scaled=True)
-        self.win.resize(self.frame_width, self.frame_height)
+        if self.row_major_bgr:
+            self.win.resize(self.frame_height, self.frame_width)
+        else:
+            self.win.resize(self.frame_width, self.frame_height)
         self.win.show()
         self.app.processEvents()
 
@@ -153,6 +130,10 @@ class ImageDisplayPQG(ImageCallback):
         else:
             image, timestamp = data
 
+        if self.row_major_bgr:
+            if pg.getConfigOption("imageAxisOrder") == "col-major":
+                image = image.swapaxes(0, 1)
+            image = np.ascontiguousarray(image[..., ::-1])
         self.win.setImage(image)
         self.app.processEvents()
 
@@ -175,8 +156,6 @@ class ImageWriterCV2(ImageCallback):
         - openh264 (?) form the cisco github page
         - opencv: `mamba install opencv -c conda-forge`
 
-    Raises:
-        cv2_import_error: If cv2 (opencv) could not be imported.
 
     Args:
         ImageCallback (_type_): _description_
@@ -189,9 +168,7 @@ class ImageWriterCV2(ImageCallback):
     def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        if cv2_import_error is not None:
-            logger.exception("Could not import cv2. Aborting!", exc_info=cv2_import_error)
-            raise cv2_import_error
+        import cv2
 
         self.vw = cv2.VideoWriter()
         self.vw.open(
@@ -228,9 +205,9 @@ class ImageWriterPyAV(ImageCallback):
     def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        if av_import_error is not None:
-            logger.exception("Could not import PyAV. Aborting!", exc_info=av_import_error)
-            raise av_import_error
+        import av
+
+        self.av = av
 
         self.container = None
 
@@ -241,14 +218,14 @@ class ImageWriterPyAV(ImageCallback):
             image, timestamp = data
 
         if self.container is None:
-            self.container = av.open(self.file_name + self.SUFFIX, "w")
+            self.container = self.av.open(self.file_name + self.SUFFIX, "w")
             self.stream = self.container.add_stream("libx264", rate=Fraction(str(self.frame_rate)))
             self.stream.width = image.shape[1]
             self.stream.height = image.shape[0]
             self.stream.pix_fmt = "yuv420p"
 
         frame_format = "gray" if image.ndim == 2 else "bgr24"
-        frame = av.VideoFrame.from_ndarray(image, format=frame_format)
+        frame = self.av.VideoFrame.from_ndarray(image, format=frame_format)
         for packet in self.stream.encode(frame):
             self.container.mux(packet)
 
@@ -271,8 +248,6 @@ class ImageWriterFCV(ImageCallback):
         - ffmpeg>=6 (?): `mamba install ffmpeg>=6 -c conda-forge
         - ffmpegcv: `pip install ffmpegcv`
 
-    Raises:
-        ffmpegcv_import_error: If ffmpegcv could not be imported.
 
     Args:
         ImageCallback (_type_): _description_
@@ -285,9 +260,7 @@ class ImageWriterFCV(ImageCallback):
     def __init__(self, data_source, *, poll_timeout=0.01, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        if ffmpegcv_import_error is not None:
-            logger.exception("Could not import ffmpegcv. Aborting!", exc_info=ffmpegcv_import_error)
-            raise ffmpegcv_import_error
+        import ffmpegcv
 
         # self.vw = ffmpegcv.VideoWriter()
         self.vw = ffmpegcv.VideoWriter(
@@ -345,10 +318,9 @@ class ImageWriterCVR(ImageCallback):
     ):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        if vidgear_import_error is not None:
-            logger.exception("No!", exc_info=vidgear_import_error)
-            self._cleanup()
-            raise vidgear_import_error
+        from vidgear.gears import WriteGear
+
+        self.WriteGear = WriteGear
 
         self.video_count = 0
         self.frame_count = 0
@@ -358,9 +330,9 @@ class ImageWriterCVR(ImageCallback):
         if ffmpeg_params is not None:
             self.output_params.update(ffmpeg_params)
         try:
-            self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
+            self.vw = self.WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
         except:
-            self.vw = WriteGear(output=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
+            self.vw = self.WriteGear(output=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
 
     def _loop(self, data):
         if hasattr(self.data_source, "WHOAMI") and self.data_source.WHOAMI == "array":
@@ -376,9 +348,9 @@ class ImageWriterCVR(ImageCallback):
             self.frame_count = 0
             self.video_count += 1
             try:
-                self.vw = WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
+                self.vw = self.WriteGear(output_filename=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
             except:
-                self.vw = WriteGear(output=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
+                self.vw = self.WriteGear(output=self.file_name + f"_{self.video_count:06d}" + self.SUFFIX, **self.output_params)
 
     def _cleanup(self):
         try:
@@ -410,8 +382,6 @@ class ImageWriterVidGear(ImageCallback):
                 -crf: 16
     ```
 
-    Raises:
-        vidgear_import_error: If VidGear could not be imported.
     """
 
     SUFFIX: str = ".avi"
@@ -421,10 +391,7 @@ class ImageWriterVidGear(ImageCallback):
     def __init__(self, data_source, *, poll_timeout=0.01, ffmpeg_params: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
-        if vidgear_import_error is not None:
-            logger.exception("Failed to import VidGear. Closing!", exc_info=vidgear_import_error)
-            self._cleanup()
-            # raise vidgear_import_error
+        from vidgear.gears import WriteGear
 
         self.output_params = {"-input_framerate": self.frame_rate, "-r": self.frame_rate}
         if ffmpeg_params is not None:
@@ -477,6 +444,9 @@ class ImageWriterVPF(ImageCallback):
             logging.exception("Could not import PyNvCodec. Quitting.", exc_info=e)
             self._cleanup()
 
+        import cv2
+
+        self.cv2 = cv2
         gpuID = 0
         self.encFile = open(self.file_name + self.SUFFIX, "wb")
         # self.nvEnc = nvc.PyNvEncoder({'rc':'vbr_hq','profile': 'high', 'cq': '10', 'codec': 'h264', 'bf':'3',
@@ -501,7 +471,7 @@ class ImageWriterVPF(ImageCallback):
 
     def _loop(self, data):
         image, timestamp = data
-        rawFrameYUV420 = cv2.cvtColor(image, cv2.COLOR_RGB2YUV_I420)  # convert to YUV420 - nvenc can't handle RGB inputs
+        rawFrameYUV420 = self.cv2.cvtColor(image, self.cv2.COLOR_RGB2YUV_I420)  # convert to YUV420 - nvenc can't handle RGB inputs
         rawSurfaceYUV420 = self.nvUpl.UploadSingleFrame(rawFrameYUV420)  # upload YUV420 frame to GPU
         if rawSurfaceYUV420.Empty():
             return  # break
@@ -703,9 +673,13 @@ class ImageDisplayCenterBackCV2(ImageCallback):
     def __init__(self, data_source, poll_timeout=0.01, center_x=0, center_y=0, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
+        import cv2
+
+        self.cv2 = cv2
+
         logger.info("setting up disp")
-        cv2.namedWindow("display")
-        cv2.resizeWindow("display", self.frame_width, self.frame_height)
+        self.cv2.namedWindow("display")
+        self.cv2.resizeWindow("display", self.frame_width, self.frame_height)
 
         if center_x != 0:
             self.center_x = center_x
@@ -728,22 +702,22 @@ class ImageDisplayCenterBackCV2(ImageCallback):
         else:
             image, timestamp = data
 
-        image = cv2.rectangle(
+        image = self.cv2.rectangle(
             image,
             (self.frame_height - 95, self.frame_width),
             (95, self.frame_width - 45),
             color=self.color,
             thickness=self.thickness,
         )  # ball region
-        image = cv2.line(image, (60, self.center_y), (self.frame_height - 60, self.center_y), self.color, self.thickness)  # y-axis cross
-        image = cv2.line(image, (self.center_x, 60), (self.center_x, self.frame_width - 60), self.color, self.thickness)  # x-axis cross
+        image = self.cv2.line(image, (60, self.center_y), (self.frame_height - 60, self.center_y), self.color, self.thickness)  # y-axis cross
+        image = self.cv2.line(image, (self.center_x, 60), (self.center_x, self.frame_width - 60), self.color, self.thickness)  # x-axis cross
         # image = cv2.rectangle(image, (self.center_x-40,self.center_y-35), (self.center_x+20,self.center_y+35), color=self.color, thickness=self.thickness) # fly
-        cv2.imshow("display", image)
-        cv2.waitKey(1)
+        self.cv2.imshow("display", image)
+        self.cv2.waitKey(1)
 
     def _cleanup(self):
         logger.info("closing display")
-        cv2.destroyWindow("display")
+        self.cv2.destroyWindow("display")
         super()._cleanup()
 
 
@@ -756,9 +730,13 @@ class ImageDisplayCenterTopCV2(ImageCallback):
     def __init__(self, data_source, poll_timeout=0.01, circ_center_x=0, circ_center_y=0, circ_r=0, **kwargs):
         super().__init__(data_source=data_source, poll_timeout=poll_timeout, **kwargs)
 
+        import cv2
+
+        self.cv2 = cv2
+
         logger.info("setting up disp")
-        cv2.namedWindow("display")
-        cv2.resizeWindow("display", self.frame_width, self.frame_height)
+        self.cv2.namedWindow("display")
+        self.cv2.resizeWindow("display", self.frame_width, self.frame_height)
 
         # properties of drawn circle
         if circ_center_x != 0:
@@ -809,18 +787,18 @@ class ImageDisplayCenterTopCV2(ImageCallback):
         else:
             image, timestamp = data
 
-        image = cv2.circle(image, (self.circ_center_x, self.circ_center_y), self.circ_r, self.circ_color, self.circ_thickness)
-        image = cv2.line(image, (self.circ_center_x, 0), (self.circ_center_x, self.frame_width), self.circ_color, self.circ_thickness)
-        image = cv2.line(image, (0, self.circ_center_y), (self.frame_height, self.circ_center_y), self.circ_color, self.circ_thickness)
-        image = cv2.rectangle(image, self.flyhead_topleft, self.flyhead_bottomright, color=self.circ_color, thickness=self.circ_thickness)
-        image = cv2.rectangle(image, self.flybody_topleft, self.flybody_bottomright, color=self.circ_color, thickness=self.circ_thickness)
-        image = cv2.rectangle(image, self.needle_topleft, self.needle_bottomright, color=self.needle_color, thickness=self.circ_thickness)
-        cv2.imshow("display", image)
-        cv2.waitKey(1)
+        image = self.cv2.circle(image, (self.circ_center_x, self.circ_center_y), self.circ_r, self.circ_color, self.circ_thickness)
+        image = self.cv2.line(image, (self.circ_center_x, 0), (self.circ_center_x, self.frame_width), self.circ_color, self.circ_thickness)
+        image = self.cv2.line(image, (0, self.circ_center_y), (self.frame_height, self.circ_center_y), self.circ_color, self.circ_thickness)
+        image = self.cv2.rectangle(image, self.flyhead_topleft, self.flyhead_bottomright, color=self.circ_color, thickness=self.circ_thickness)
+        image = self.cv2.rectangle(image, self.flybody_topleft, self.flybody_bottomright, color=self.circ_color, thickness=self.circ_thickness)
+        image = self.cv2.rectangle(image, self.needle_topleft, self.needle_bottomright, color=self.needle_color, thickness=self.circ_thickness)
+        self.cv2.imshow("display", image)
+        self.cv2.waitKey(1)
 
     def _cleanup(self):
         logger.info("closing display")
-        cv2.destroyWindow("display")
+        self.cv2.destroyWindow("display")
         super()._cleanup()
 
 

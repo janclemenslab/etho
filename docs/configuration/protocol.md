@@ -84,14 +84,14 @@ cameras, such as `GCM1` and `GCM2`.
 
 Camera fields:
 
-- `cam_type`: One of `Dummy`, `Spinnaker`, `Basler`, `Ximea`, or `Hamamatsu`.
-- `cam_serialnumber`: Camera serial number. The dummy camera accepts arbitrary values.
+- `cam_type`: One of `Dummy`, `Spinnaker`, `Basler`, `Ximea`, `Hamamatsu`, or `Webcam`.
+- `cam_serialnumber`: Camera serial number, or a zero-based device number for `Webcam`. The dummy camera accepts arbitrary values.
 - `frame_rate`: Requested frame rate in frames per second.
 - `frame_width`: ROI width in pixels.
 - `frame_height`: ROI height in pixels.
-- `shutter_speed`: Exposure time in microseconds for the generic camera service.
-- `frame_offx`: ROI x offset in pixels. Defaults to `0`.
-- `frame_offy`: ROI y offset in pixels. Defaults to `0`.
+- `shutter_speed`: Exposure time in microseconds. Webcam uses device-managed exposure and warns if this is set.
+- `frame_offx`, `frame_offy`: ROI x and y offsets in pixels. Both default to `0`.
+  Webcam ignores nonzero offsets and logs a warning.
 - `binning`: Horizontal and vertical binning factor. Defaults to `1`.
 - `brightness`: Camera brightness or black level. Defaults to `0`.
 - `gamma`: Gamma value. Defaults to `1`.

@@ -27,6 +27,15 @@ def test_register_service_decorator_adds_class(monkeypatch):
     assert registry == {"FAK": FakeService}
 
 
+@pytest.mark.parametrize("duration_field", [{}, {"maxduration": None}])
+def test_gcm_requires_recording_duration_before_launch(monkeypatch, duration_field):
+    camera_service = service_module.service_class_for("GCM")
+    monkeypatch.setattr(camera_service, "make", lambda *args, **kwargs: pytest.fail("GCM started before duration validation"))
+
+    with pytest.raises(ValueError, match="top-level 'maxduration'"):
+        camera_service.setup_client("GCM", 0, {"GCM": {}, **duration_field}, {}, None, "test", False, False)
+
+
 def test_client_uses_service_owned_setup_and_start_groups(monkeypatch):
     started = []
 

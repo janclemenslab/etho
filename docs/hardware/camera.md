@@ -10,6 +10,7 @@ camera block or multiple suffixed blocks such as `GCM1` and `GCM2`.
 | `cam_type` | Dependency |
 |------------|------------|
 | `Dummy` | Built in; useful for smoke tests. |
+| `Webcam` | PyAV 17 or later, installed with Etho. |
 | `Spinnaker` | FLIR Spinnaker SDK and Python bindings. |
 | `Basler` | Basler pylon and `pypylon`. |
 | `Ximea` | Ximea driver and Python package. |

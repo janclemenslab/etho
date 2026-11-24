@@ -24,11 +24,21 @@ class GCM(BaseZeroService):
 
     @classmethod
     def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):
+        maxduration = prot.get("maxduration")
+        if not preview and maxduration is None:
+            raise ValueError("A GCM recording requires a top-level 'maxduration' in seconds, for example 'maxduration: 60'.")
+        duration = 1_000_000 if preview else maxduration + 10
+
         this = defaults.copy()
         this.update(prot[service_key])
 
         if prot[service_key].get("port") is None:
             prot[service_key]["port"] = cls.SERVICE_PORT + service_index
+
+        params = undefaultify(prot[service_key])
+        if params.get("cam_type") == "Webcam":
+            # Report warnings in the client before launching the camera process.
+            camera.Webcam.ignore_unsupported_settings(params)
 
         service = cls.make(
             this["serializer"],
@@ -37,9 +47,6 @@ class GCM(BaseZeroService):
             new_console=new_console,
             port=prot[service_key]["port"],
         )
-
-        params = undefaultify(prot[service_key])
-        duration = 1_000_000 if preview else prot["maxduration"] + 10
 
         if preview:
             params["callbacks"] = {"disp_fast": None}
@@ -90,6 +97,8 @@ class GCM(BaseZeroService):
             "frame_offy": 0,
         }
         params = defaults | params  # merge directory - keep existing values in params, only add non-existing from defaults
+        if self.cam_type == "Webcam":
+            camera.Webcam.ignore_unsupported_settings(params)
 
         self.c.roi = [
             params["frame_offx"],
@@ -97,7 +106,8 @@ class GCM(BaseZeroService):
             params["frame_width"],
             params["frame_height"],
         ]
-        self.c.exposure = params["shutter_speed"]
+        shutter_speed = params.get("shutter_speed") if self.cam_type == "Webcam" else params["shutter_speed"]
+        self.c.exposure = shutter_speed
         self.c.brightness = params["brightness"]
         self.c.gamma = params["gamma"]
         self.c.gain = params["gain"]
@@ -111,8 +121,10 @@ class GCM(BaseZeroService):
         self.c.disable_gpio_strobe()  # to prevent the test image producing strobes
         self.c.external_trigger = False  # disable here so test image acq works w/o ext trigger
         self.c.start()
-        self.test_image, image_ts, system_ts = self.c.get()
-        self.c.stop()
+        try:
+            self.test_image, _, _ = self.c.get()
+        finally:
+            self.c.stop()
 
         self.c.external_trigger = params["external_trigger"]
 
@@ -138,6 +150,8 @@ class GCM(BaseZeroService):
                 else:
                     task_kwargs = common_task_kwargs
 
+                if self.cam_type == "Webcam" and cb_name == "disp_fast":
+                    task_kwargs = {**task_kwargs, "row_major_bgr": True}
                 self.callbacks.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
                 self.callback_names.append(cb_name)
 
@@ -153,8 +167,9 @@ class GCM(BaseZeroService):
         self._worker_thread = threading.Thread(target=self._worker, args=(self._thread_stopper,))
 
         iii = self.c.info_imaging()
-        iii["exposure"] = f"{iii['exposure']:1.2f}ms"
-        params["exposure"] = f"{params['shutter_speed']/1_000:1.2f}ms"
+        if "exposure" in iii:
+            iii["exposure"] = f"{iii['exposure']:1.2f}ms"
+        params["exposure"] = "auto" if shutter_speed is None else f"{shutter_speed / 1_000:1.2f}ms"
         params["framerate"] = params["frame_rate"]
         params["offsetX"], params["offsetY"], params["width"], params["height"] = (
             params["frame_offx"],
@@ -165,10 +180,7 @@ class GCM(BaseZeroService):
 
         hii = self.c.info_hardware()
         self.log.info(params.__str__())
-        try:
-            hii.update({k: v if v is not None else "defaults" for k, v in params["callbacks"].items()})
-        except AttributeError:
-            pass
+        hii.update({k: v if v is not None else "defaults" for k, v in (params.get("callbacks") or {}).items()})
         hii["savefilename"] = self.savefilename
         hii["duration"] = self.duration
         self.info = {"hardware": hii, "image": (iii, params)}
@@ -194,9 +206,13 @@ class GCM(BaseZeroService):
         self.prev_framenumber = 0
         self.log.info("started worker")
         self.c.enable_gpio_strobe()
-        self.c.start()
+        try:
+            self.c.start()
+        except ValueError:
+            self.log.exception("Camera start failed")
+            return
 
-        while RUN:
+        while RUN and not stop_event.is_set():
             try:
                 out = self.c.get()
                 if out is None:
@@ -204,6 +220,8 @@ class GCM(BaseZeroService):
                 else:
                     image, image_ts, system_ts = out
 
+                if stop_event.is_set():
+                    break
                 for callback_name, callback in zip(self.callback_names, self.callbacks):
                     if "timestamps" in callback_name:
                         package = (0, (system_ts, image_ts))
@@ -223,6 +241,9 @@ class GCM(BaseZeroService):
             except Exception as e:
                 self.log.exception("Error", exc_info=e)
 
+        if self.cam_type == "Webcam":
+            self.c.stop()
+
     def finish(self, stop_service=False):
         self.log.warning("stopping")
         try:
@@ -237,16 +258,24 @@ class GCM(BaseZeroService):
             self._thread_timer.cancel()
 
         # clean up code here
-        try:
-            self.c.close()  # not sure this works if BeginAcquistion has not been called
-        except:
-            pass
+        if getattr(self, "cam_type", None) == "Webcam":
+            # Let the capture thread close its own FFmpeg input.
+            worker = getattr(self, "_worker_thread", None)
+            if worker is not None and worker.is_alive():
+                worker.join(timeout=7)
+                if worker.is_alive():
+                    self.log.warning("Webcam capture is still stopping.")
+        else:
+            try:
+                self.c.close()  # not sure this works if BeginAcquistion has not been called
+            except:
+                pass
 
-        for callback in self.callbacks:
+        callbacks, self.callbacks = getattr(self, "callbacks", []), []
+        for callback in callbacks:
             callback.finish()
 
-        # callbacks clean up after themselves now so probably no need for this:
-        for callback in self.callbacks:
+        for callback in callbacks:
             try:
                 callback.close()
             except Exception as e:

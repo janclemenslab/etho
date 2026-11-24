@@ -2,7 +2,7 @@ import numpy as np
 from typing import Tuple, Optional
 import time
 from .base import BaseCam
-import cv2
+from PIL import Image, ImageDraw
 
 
 class Dummy(BaseCam):
@@ -39,18 +39,10 @@ class Dummy(BaseCam):
         image_timestamp = system_timestamp - self._t0
 
         image = np.random.randint(0, 64, size=(self._roi[2], self._roi[3], 3), dtype=np.uint8)
-        image = cv2.putText(
-            image,
-            f"{image_timestamp: 1.3f} s",
-            org=(20, 100),
-            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale=1,
-            color=(128, 64, 96),
-            thickness=2,
-            lineType=2,
-        )
+        preview = Image.fromarray(image)
+        ImageDraw.Draw(preview).text((20, 85), f"{image_timestamp: 1.3f} s", fill=(128, 64, 96))
 
-        return image, image_timestamp, system_timestamp
+        return np.array(preview), image_timestamp, system_timestamp
 
     def _estimate_timestamp_offset(self) -> float:
         """[summary]

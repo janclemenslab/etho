@@ -297,6 +297,8 @@ class ResumableGCM(ResumableZeroService):
             "frame_offy": 0,
             **self.params,
         }
+        if params["cam_type"] == "Webcam":
+            camera.Webcam.ignore_unsupported_settings(params)
         self.params = params
         self.c = camera.make[params["cam_type"]](str(params["cam_serialnumber"]))
         try:
@@ -306,7 +308,7 @@ class ResumableGCM(ResumableZeroService):
             self.c.init()
 
         self.c.roi = [params["frame_offx"], params["frame_offy"], params["frame_width"], params["frame_height"]]
-        self.c.exposure = params["shutter_speed"]
+        self.c.exposure = params.get("shutter_speed") if params["cam_type"] == "Webcam" else params["shutter_speed"]
         self.c.brightness = params["brightness"]
         self.c.gamma = params["gamma"]
         self.c.gain = params["gain"]
@@ -318,8 +320,10 @@ class ResumableGCM(ResumableZeroService):
         self.c.disable_gpio_strobe()
         self.c.external_trigger = False
         self.c.start()
-        self.test_image, _, _ = self.c.get()
-        self.c.stop()
+        try:
+            self.test_image, _, _ = self.c.get()
+        finally:
+            self.c.stop()
         self.c.external_trigger = params["external_trigger"]
 
         self.frame_width, self.frame_height, self.frame_channels = self.test_image.shape
@@ -334,7 +338,8 @@ class ResumableGCM(ResumableZeroService):
         if "exposure" in iii:
             iii["exposure"] = f"{iii['exposure']:1.2f}ms"
         params = dict(self.params)
-        params["exposure"] = f"{params['shutter_speed'] / 1_000:1.2f}ms"
+        shutter_speed = params.get("shutter_speed")
+        params["exposure"] = "auto" if shutter_speed is None else f"{shutter_speed / 1_000:1.2f}ms"
         params["framerate"] = params["frame_rate"]
         params["offsetX"], params["offsetY"], params["width"], params["height"] = (
             params["frame_offx"],
@@ -375,6 +380,8 @@ class ResumableGCM(ResumableZeroService):
         run_callbacks = {"disp_fast": None} if preview else (self.params.get("callbacks") or {})
         for cb_name, cb_params in run_callbacks.items():
             task_kwargs = common if cb_params is None else {**common, **cb_params}
+            if self.params["cam_type"] == "Webcam" and cb_name == "disp_fast":
+                task_kwargs = {**task_kwargs, "row_major_bgr": True}
             self.callbacks.append(callbacks[cb_name].make_concurrent(task_kwargs=task_kwargs))
             self.callback_names.append(cb_name)
             self.log.info(f"   callback {cb_name}.")
@@ -403,17 +410,23 @@ class ResumableGCM(ResumableZeroService):
     def _worker(self, stop_event):
         self.log.info("Camera worker started.")
         self.c.enable_gpio_strobe()
-        self.c.start()
+        try:
+            self.c.start()
+        except ValueError:
+            self.log.exception("Camera start failed")
+            return
         while not stop_event.is_set() and self.frameNumber < self.nFrames:
             try:
                 image, image_ts, system_ts = self.c.get()
+                if stop_event.is_set():
+                    break
+                for callback_name, callback in zip(self.callback_names, self.callbacks):
+                    package = (0, (system_ts, image_ts)) if "timestamps" in callback_name else (image, (system_ts, image_ts))
+                    callback.send(package)
+                self.frameNumber += 1
             except Exception as e:
-                self.log.exception("Camera get failed", exc_info=e)
+                self.log.exception("Camera acquisition failed", exc_info=e)
                 break
-            for callback_name, callback in zip(self.callback_names, self.callbacks):
-                package = (0, (system_ts, image_ts)) if "timestamps" in callback_name else (image, (system_ts, image_ts))
-                callback.send(package)
-            self.frameNumber += 1
         try:
             self.c.stop()
         except Exception:
@@ -429,13 +442,18 @@ class ResumableGCM(ResumableZeroService):
             del self._thread_timer
         if hasattr(self, "_thread_stopper"):
             self._thread_stopper.set()
-        try:
-            self.c.disable_gpio_strobe()
-            self.c.stop()
-        except Exception:
-            pass
+        webcam = self.params.get("cam_type") == "Webcam"
+        # The webcam worker closes the FFmpeg input on the thread that opened it.
+        if not webcam:
+            try:
+                self.c.disable_gpio_strobe()
+                self.c.stop()
+            except Exception:
+                pass
         if hasattr(self, "_worker_thread") and self._worker_thread.is_alive():
-            self._worker_thread.join(timeout=0.5)
+            self._worker_thread.join(timeout=7 if webcam else 0.5)
+            if webcam and self._worker_thread.is_alive():
+                raise RuntimeError("Webcam capture is still stopping.")
         for callback in self.callbacks:
             try:
                 callback.finish()
