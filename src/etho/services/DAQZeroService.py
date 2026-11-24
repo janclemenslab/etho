@@ -1,3 +1,5 @@
+from ctypes import create_string_buffer
+
 from .ZeroService import BaseZeroService
 import time
 import threading
@@ -9,6 +11,7 @@ from ..utils.config import undefaultify
 from ..utils.sound import parse_table, load_sounds, build_playlist
 from .utils.log_exceptions import for_all_methods, log_exceptions
 from .callbacks import callbacks
+from .hardware import HardwareDevice, HardwareProbe
 import logging
 import numpy as np
 
@@ -21,6 +24,27 @@ except (ImportError, NameError, NotImplementedError) as daqmx_import_error:
     pass
 
 
+def _daqmx_text(getter, *args):
+    size = getter(*args, None, 0)
+    if size < 0:
+        raise RuntimeError(f"NI-DAQmx device query failed with status {size}.")
+    if size == 0:
+        return ""
+
+    buffer = create_string_buffer(size)
+    getter(*args, buffer, size)
+    return buffer.value.decode("utf-8", errors="replace")
+
+
+def _discover_nidaq():
+    from PyDAQmx.DAQmxFunctions import DAQmxGetDevProductType, DAQmxGetSysDevNames
+
+    devices = [name.strip() for name in _daqmx_text(DAQmxGetSysDevNames).split(",")]
+    for device in filter(None, devices):
+        model = _daqmx_text(DAQmxGetDevProductType, device.encode())
+        yield HardwareDevice(model or "NI-DAQ device", {"device": device})
+
+
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_service
 class DAQ(BaseZeroService):
@@ -30,6 +54,10 @@ class DAQ(BaseZeroService):
     SERVICE_PORT = 4249  # last to digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "DAQ"  # short, uppercase, 3-letter ID of the service (equals class name)
     CLIENT_START_GROUP = "daq"
+
+    @classmethod
+    def hardware_probes(cls, *, ble_duration: float) -> dict[str, HardwareProbe]:
+        return {"NI-DAQmx": _discover_nidaq}
 
     @classmethod
     def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):

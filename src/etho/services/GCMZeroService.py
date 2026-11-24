@@ -1,4 +1,5 @@
 from .ZeroService import BaseZeroService
+from functools import partial
 from pathlib import Path
 import time
 import threading
@@ -9,9 +10,16 @@ import logging
 from ..services import camera
 from ..utils.config import undefaultify
 from .callbacks import callbacks
+from .hardware import HardwareDevice, HardwareProbe
 
 
 logger = logging.getLogger(__name__)
+
+
+def _discover_cameras(cam_type, enumerate_devices):
+    details = "Older FLIR models use cam_type=Spinnaker_OLD" if cam_type == "Spinnaker" else ""
+    for identifier, name in enumerate_devices():
+        yield HardwareDevice(name, {"cam_type": cam_type, "cam_serialnumber": identifier}, details)
 
 
 @for_all_methods(log_exceptions(logger))
@@ -21,6 +29,14 @@ class GCM(BaseZeroService):
     SERVICE_PORT = 4246  # last to digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "GCM"  # short, uppercase, 3-letter ID of the service (equals class name)
     CLIENT_START_GROUP = "pre"
+
+    @classmethod
+    def hardware_probes(cls, *, ble_duration: float) -> dict[str, HardwareProbe]:
+        return {
+            ("Spinnaker and Spinnaker_OLD" if cam_type == "Spinnaker" else cam_type): partial(_discover_cameras, cam_type, backend.enumerate_devices)
+            for cam_type, backend in camera.make.items()
+            if backend.enumerate_devices is not None
+        }
 
     @classmethod
     def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):

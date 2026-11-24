@@ -16,7 +16,8 @@ camera block or multiple suffixed blocks such as `GCM1` and `GCM2`.
 | `Ximea` | Ximea driver and Python package. |
 | `Hamamatsu` | DCAM driver and `pylablib`. |
 
-Run `etho version --debug` on the rig to confirm the expected backend imports.
+
+Run `etho hardware` on the computer to list all installed camera backends and enumerate the associated cameras with their serial numbers.
 
 ## Protocol Fields
 
@@ -39,6 +40,7 @@ GCM:
 The service acquires one test image during setup, then applies
 `external_trigger` before the experiment starts. If triggering is enabled,
 confirm that the camera is armed before the DAQ or counter trigger starts.
+
 
 ## Operator Checklist
 

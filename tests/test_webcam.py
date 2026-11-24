@@ -56,7 +56,10 @@ def test_webcam_numbers_match_list_and_select_ffmpeg_input(monkeypatch, system, 
         return devices
 
     monkeypatch.setattr(av, "enumerate_input_devices", enumerate_devices)
-    assert list(Webcam.enumerate_devices()) == list(enumerate(name for _, name in expected))
+    discover = GCM.hardware_probes(ble_duration=10)["Webcam"]
+    assert [(device.protocol, device.name) for device in discover()] == [
+        ({"cam_type": "Webcam", "cam_serialnumber": number}, name) for number, (_, name) in enumerate(expected)
+    ]
 
     for number, (source, _) in enumerate(expected):
         camera = Webcam(str(number))

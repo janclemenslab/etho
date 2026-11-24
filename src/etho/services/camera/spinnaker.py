@@ -8,12 +8,38 @@ try:
     import PySpin
 
     pyspin_error = None
-except ImportError as pyspin_error:
-    pass
+except Exception as exc:
+    pyspin_error = exc
 
 
 class Spinnaker(BaseCam):
     NAME = "SPN"
+
+    @staticmethod
+    def enumerate_devices():
+        if pyspin_error is not None:
+            raise pyspin_error
+
+        devices = []
+        system = PySpin.System.GetInstance()
+        try:
+            cameras = system.GetCameras()
+            try:
+                for index in range(cameras.GetSize()):
+                    camera = cameras.GetByIndex(index)
+                    try:
+                        nodes = camera.GetTLDeviceNodeMap()
+                        serial = PySpin.CStringPtr(nodes.GetNode("DeviceSerialNumber")).GetValue()
+                        model = PySpin.CStringPtr(nodes.GetNode("DeviceModelName"))
+                        name = model.GetValue() if PySpin.IsReadable(model) else "FLIR camera"
+                        devices.append((serial, name))
+                    finally:
+                        del camera
+            finally:
+                cameras.Clear()
+        finally:
+            system.ReleaseInstance()
+        return devices
 
     def __init__(self, serialnumber):
         if pyspin_error is not None:

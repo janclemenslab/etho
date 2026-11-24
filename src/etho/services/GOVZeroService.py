@@ -5,19 +5,22 @@ import threading
 import time
 from dataclasses import dataclass
 from datetime import datetime
+from functools import partial
 from typing import Any, Optional
 
 import defopt
 
 from .ZeroService import BaseZeroService
 from . import register_service
+from .hardware import HardwareDevice, HardwareProbe
 from .utils.log_exceptions import for_all_methods, log_exceptions
 
 try:
     from bleak import AdvertisementData, BleakScanner, BLEDevice
 
     bleak_import_error = None
-except ImportError as bleak_import_error:
+except ImportError as exc:
+    bleak_import_error = exc
     AdvertisementData = Any
     BLEDevice = Any
     BleakScanner = None
@@ -98,6 +101,12 @@ async def discover_h5075_sensors(duration: float = 10.0):
     return sorted((address, name, measurement) for address, (name, measurement) in sensors.items())
 
 
+def _discover_govee(duration: float):
+    for address, name, measurement in asyncio.run(discover_h5075_sensors(duration)):
+        readings = f"{measurement.temperature_c:.1f}°C, {measurement.humidity:.1f}% RH"
+        yield HardwareDevice(name or "Govee H5075", {"address": address}, readings)
+
+
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_service
 class GOV(BaseZeroService):
@@ -105,6 +114,10 @@ class GOV(BaseZeroService):
     SERVICE_PORT = 4255
     SERVICE_NAME = "GOV"
     CLIENT_START_GROUP = "pre"
+
+    @classmethod
+    def hardware_probes(cls, *, ble_duration: float) -> dict[str, HardwareProbe]:
+        return {"Govee H5075": partial(_discover_govee, ble_duration)}
 
     @classmethod
     def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):

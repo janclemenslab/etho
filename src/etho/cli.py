@@ -1,5 +1,6 @@
 import defopt
 import logging
+import math
 import platform
 import importlib
 import yaml
@@ -67,21 +68,33 @@ def res_gui(protocol_folder: Optional[str] = None, playlist_folder: Optional[str
     return res_app.main(protocol_folder=protocol_folder, playlist_folder=playlist_folder)
 
 
-def govee(duration: float = 10.0):
-    """Lists nearby Govee H5075 sensors and their protocol addresses/readings."""
-    import asyncio
+def hardware(*, ble_duration: float = 10.0):
+    """Lists hardware detected by local etho services.
 
-    from .services.GOVZeroService import discover_h5075_sensors
+    Args:
+        ble_duration: Time in seconds to listen for Bluetooth advertisements.
+    """
+    from .services.hardware import discover_hardware
 
-    print(f"Scanning for Govee sensors for {duration:g} seconds...", flush=True)
-    sensors = asyncio.run(discover_h5075_sensors(duration))
-    if not sensors:
-        print("No Govee H5075 sensors found.")
-        return
+    if not math.isfinite(ble_duration) or ble_duration <= 0:
+        raise SystemExit("--ble-duration must be a finite number greater than zero.")
 
-    print(f"{'Address (use as GOV.address)':<38} {'Name':<16} {'Temperature':>11} {'Humidity':>9}")
-    for address, name, measurement in sensors:
-        print(f"{address:<38} {(name or '-'):<16} {measurement.temperature_c:>10.1f}°C {measurement.humidity:>8.1f}%")
+    print(f"Scanning local hardware (Bluetooth scan: {ble_duration:g} seconds)...", flush=True)
+    for result in discover_hardware(ble_duration=ble_duration):
+        label = f"{result.service} / {result.probe}" if result.probe else result.service
+        if result.error is not None:
+            message = str(result.error).strip() or type(result.error).__name__
+            print(f"{label}: unavailable ({message})", flush=True)
+        elif not result.devices:
+            print(f"{label}: no devices found", flush=True)
+        else:
+            print(label)
+            for device in result.devices:
+                fields = [f"{key}={value}" for key, value in device.protocol.items()]
+                if device.details:
+                    fields.append(device.details)
+                suffix = f"  ({', '.join(fields)})" if fields else ""
+                print(f"  {device.name}{suffix}", flush=True)
 
 
 def version(*, debug: bool = False):
@@ -238,11 +251,11 @@ def init():
 
 
 def main():
-    """Command line interface for DAS."""
+    """Command line interface for etho."""
     subcommands = {
         "version": version,
         "init": init,
-        "govee": govee,
+        "hardware": hardware,
     }
 
     if client is not None:
@@ -266,3 +279,7 @@ def main():
 
     logging.basicConfig(level=logging.INFO, force=True)
     defopt.run(subcommands, show_defaults=False)
+
+
+if __name__ == "__main__":
+    main()

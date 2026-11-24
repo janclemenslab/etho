@@ -6,13 +6,20 @@ from .base import BaseCam
 try:
     from pylablib.devices import DCAM
     hamamatsu_error = None
-except ImportError as e:
+except Exception as e:
     hamamatsu_error = e
 
 
 class Hamamatsu(BaseCam):
 
     NAME = "HAM"
+
+    @staticmethod
+    def enumerate_devices():
+        if hamamatsu_error is not None:
+            raise hamamatsu_error
+
+        return [(index, "Hamamatsu DCAM camera") for index in range(DCAM.get_cameras_number())]
 
     def __init__(self, serialnumber):
         if hamamatsu_error is not None:

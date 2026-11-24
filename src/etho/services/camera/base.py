@@ -9,6 +9,10 @@ def gray2rgb(image: np.ndarray) -> np.ndarray:
 
 
 class BaseCam:
+    # Physical backends can list (protocol identifier, display name) pairs
+    # before a camera is opened.
+    enumerate_devices = None
+
     def __init__(self, serialnumber: int):
         """[summary]
 

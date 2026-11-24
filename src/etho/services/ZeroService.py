@@ -9,6 +9,8 @@ import os
 from typing import Optional, Dict, Any
 import psutil
 
+from .hardware import HardwareProbe
+
 
 class BaseZeroService(abc.ABC, zerorpc.Server):
     """Define abstract base class for all 0services.
@@ -94,6 +96,11 @@ class BaseZeroService(abc.ABC, zerorpc.Server):
     @classmethod
     def setup_client(cls, *args, **kwargs):
         raise NotImplementedError(f"{cls.__name__} must implement setup_client() for etho.client.")
+
+    @classmethod
+    def hardware_probes(cls, *, ble_duration: float) -> dict[str, HardwareProbe]:
+        """Return named local device probes that run without a service instance."""
+        return {}
 
     def _init_network_logger(self, head_ip: str = "192.168.1.1", log_level: int = logging.INFO):
         """Initialize logger that publishes messages over the network format.

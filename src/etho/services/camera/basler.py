@@ -8,12 +8,19 @@ try:
     import pypylon.pylon as py
 
     pylon_error = None
-except ImportError as pylon_error:
-    pass
+except Exception as exc:
+    pylon_error = exc
 
 
 class Basler(BaseCam):
     NAME = "BAS"
+
+    @staticmethod
+    def enumerate_devices():
+        if pylon_error is not None:
+            raise pylon_error
+
+        return [(device.GetSerialNumber(), device.GetModelName()) for device in py.TlFactory.GetInstance().EnumerateDevices()]
 
     def __init__(self, serialnumber):
         if pylon_error is not None:

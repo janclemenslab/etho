@@ -84,12 +84,12 @@ class Webcam(BaseCam):
     def init(self):
         number = str(self.serialnumber)
         if not number.isascii() or not number.isdecimal():
-            raise ValueError("Webcam cam_serialnumber must be a nonnegative integer.")
+            raise ValueError("Webcam cam_serialnumber must be a nonnegative integer. Run 'etho hardware' on the camera host.")
         self._format = _input_format()
         inputs = _webcam_inputs(self._format)
         index = int(number)
         if index >= len(inputs):
-            raise ValueError(f"Webcam {index} is unavailable ({len(inputs)} found).")
+            raise ValueError(f"Webcam {index} is unavailable ({len(inputs)} found). Run 'etho hardware' on the camera host.")
         self._source, self._name = inputs[index]
 
     @property

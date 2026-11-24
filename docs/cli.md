@@ -1,17 +1,20 @@
 # Command-Line Interface
 
-The installed console command is `etho`. The public interface exposes four
-subcommands. Examples on this page assume a Windows rig and PowerShell.
+The installed console command is `etho`. Examples on this page assume a
+Windows rig and PowerShell.
 
 ```text
-usage: etho [-h] {version,init,run,gui} ...
+usage: etho [-h] {version,init,hardware,run,res-run,gui,res-gui} ...
 
 positional arguments:
-  {version,init,run,gui}
+  {version,init,hardware,run,res-run,gui,res-gui}
     version             Displays system, version, and hardware info.
     init                Initializes config files and folders.
+    hardware            Lists hardware detected by local etho services.
     run                 Starts an experiment from the CLI.
+    res-run             Starts a resumable DAQ/GCM experiment from the CLI.
     gui                 Opens the graphical user interface.
+    res-gui             Opens the resumable graphical user interface.
 
 options:
   -h, --help            show this help message and exit
@@ -98,6 +101,24 @@ etho run "$HOME\ethoconfig\protocols\my_protocol.yml" "$HOME\ethoconfig\playlist
 Use `--preview` for camera alignment. Preview mode disables saving and logging
 for the camera run and replaces configured camera callbacks with a display
 callback.
+
+## Discover Hardware
+
+In either GUI, click **Enumerate hardware** in the lower-left corner. The
+dialog scans the acquisition computer and displays each result as it arrives.
+You can select and copy device identifiers from the results.
+
+Run the command on the acquisition computer.
+
+```powershell
+etho hardware
+etho hardware --ble-duration 20
+```
+
+The scan lists cameras, NI-DAQmx devices, USB LightCrafter 4500 projectors,
+and nearby Govee H5075 sensors. It prints the camera settings, DAQ device names,
+and sensor addresses to use in a protocol. The Bluetooth scan lasts 10 seconds
+by default. Each backend reports when it finds no devices or cannot scan.
 
 ## Display System Support
 

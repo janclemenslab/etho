@@ -10,9 +10,10 @@ import time
 import psutil
 import threading
 import queue
+from codecs import getincrementaldecoder
 
 from qtpy import QtWidgets
-from qtpy.QtGui import QIcon, QPalette
+from qtpy.QtGui import QIcon, QPalette, QTextCursor
 from qtpy.QtWidgets import (
     QApplication,
     QTableView,
@@ -28,9 +29,10 @@ from qtpy.QtWidgets import (
     QLabel,
     QSplitter,
     QProgressBar,
+    QPlainTextEdit,
 )
 
-from qtpy.QtCore import QAbstractTableModel, Qt, QTimer
+from qtpy.QtCore import QAbstractTableModel, QProcess, Qt, QTimer
 
 from pyqtgraph.parametertree import Parameter, ParameterTree
 
@@ -221,6 +223,54 @@ def kill_child_processes():
         # os.kill(child.pid, signal.SIGKILL)
 
 
+class HardwareDialog(QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.setWindowTitle("Hardware")
+        self.resize(640, 400)
+
+        self.status = QLabel("Scanning local hardware…")
+        self.results = QPlainTextEdit()
+        self.results.setReadOnly(True)
+        buttons = QDialogButtonBox(QDialogButtonBox.Close)
+        buttons.rejected.connect(self.reject)
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.status)
+        layout.addWidget(self.results)
+        layout.addWidget(buttons)
+
+        self._decoder = getincrementaldecoder("utf-8")(errors="replace")
+        self._scan = QProcess(self)
+        self._scan.setProcessChannelMode(QProcess.MergedChannels)
+        self._scan.readyReadStandardOutput.connect(self._read_scan_output)
+        self._scan.finished.connect(self._scan_finished)
+        self._scan.errorOccurred.connect(self._scan_error)
+        self._scan.start(sys.executable, ["-X", "utf8", "-u", "-m", "etho.cli", "hardware"])
+
+    def _read_scan_output(self, *, final=False):
+        output = self._decoder.decode(bytes(self._scan.readAllStandardOutput()), final=final)
+        cursor = QTextCursor(self.results.document())
+        cursor.movePosition(QTextCursor.End)
+        cursor.insertText(output)
+
+    def _scan_finished(self, exit_code, exit_status):
+        self._read_scan_output(final=True)
+        complete = exit_status == QProcess.NormalExit and exit_code == 0
+        self.status.setText("Scan complete." if complete else "Hardware scan failed.")
+
+    def _scan_error(self, error):
+        if error == QProcess.FailedToStart:
+            self.status.setText("Could not start the hardware scan.")
+            self.results.appendPlainText(self._scan.errorString())
+
+    def done(self, result):
+        if self._scan.state() != QProcess.NotRunning:
+            self._scan.kill()
+            self._scan.waitForFinished(250)
+        super().done(result)
+
+
 class RunDialog(QDialog):
     def __init__(self, stop_event, done_event, queue_total):
         super().__init__()
@@ -343,6 +393,9 @@ class MainWindow(QMainWindow):
         # Layout
         self.layout = QGridLayout()
         self.layout.addLayout(buttons, 0, 0)
+        self.button["Hardware"] = QPushButton("Enumerate hardware")
+        self.button["Hardware"].clicked.connect(self.show_hardware)
+        self.layout.addWidget(self.button["Hardware"], 1, 0, Qt.AlignBottom)
         self.refresh_lists(init=True)
 
         self.layout.setColumnMinimumWidth(1, 200)
@@ -357,6 +410,11 @@ class MainWindow(QMainWindow):
 
     def on_protocol_changed(self, param, changes):
         self.current_protocol = to_yaml(param)
+
+    def show_hardware(self):
+        dialog = HardwareDialog(self)
+        dialog.setAttribute(Qt.WA_DeleteOnClose)
+        dialog.open()
 
     def refresh_lists(self, init: bool = False):
         playlist_files = sorted(self.playlist_folder.glob("*.txt"))

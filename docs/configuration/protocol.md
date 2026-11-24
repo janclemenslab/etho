@@ -85,7 +85,7 @@ cameras, such as `GCM1` and `GCM2`.
 Camera fields:
 
 - `cam_type`: One of `Dummy`, `Spinnaker`, `Basler`, `Ximea`, `Hamamatsu`, or `Webcam`.
-- `cam_serialnumber`: Camera serial number, or a zero-based device number for `Webcam`. The dummy camera accepts arbitrary values.
+- `cam_serialnumber`: Camera serial number or device number, as reported by `etho hardware`. The `Webcam` and `Hamamatsu` backends use zero-based device numbers. The dummy camera accepts arbitrary values.
 - `frame_rate`: Requested frame rate in frames per second.
 - `frame_width`: ROI width in pixels.
 - `frame_height`: ROI height in pixels.

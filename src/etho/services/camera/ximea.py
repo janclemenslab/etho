@@ -6,13 +6,27 @@ from .base import BaseCam, gray2rgb
 try:
     from ximea import xiapi
     ximea_error = None
-except ImportError as ximea_error:
-    pass
+except Exception as exc:
+    ximea_error = exc
 
 
 class Ximea(BaseCam):
 
     NAME = "XIM"
+
+    @staticmethod
+    def enumerate_devices():
+        if ximea_error is not None:
+            raise ximea_error
+
+        for index in range(xiapi.Camera().get_number_devices()):
+            camera = xiapi.Camera(dev_id=index)
+            identifier = camera.get_device_info_string("device_sn")
+            name = camera.get_device_info_string("device_name")
+            yield (
+                identifier.decode() if isinstance(identifier, bytes) else identifier,
+                name.decode(errors="replace") if isinstance(name, bytes) else name,
+            )
 
     def __init__(self, serialnumber):
         if ximea_error is not None:

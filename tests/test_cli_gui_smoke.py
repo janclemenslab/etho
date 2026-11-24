@@ -219,3 +219,59 @@ def test_gui_starts_with_initialized_default_files(tmp_path):
     window.close()
     """
     _run([sys.executable, "-c", textwrap.dedent(code)], env=env, cwd=_repo_root())
+
+
+def test_hardware_dialog_in_both_guis(tmp_path):
+    patch = """
+    from etho.services import hardware
+
+    def discover_hardware(*, ble_duration=10.0):
+        sensor = hardware.HardwareDevice("Test sensor", {"address": "AB:CD"}, "21.2°C")
+        yield hardware.HardwareDiscovery("GOV", "Govee H5075", (sensor,))
+        yield hardware.HardwareDiscovery("GCM", "Webcam", error=ImportError("SDK missing"))
+
+    hardware.discover_hardware = discover_hardware
+    """
+    (tmp_path / "sitecustomize.py").write_text(textwrap.dedent(patch), encoding="utf-8")
+    env = os.environ.copy()
+    env.update(
+        {
+            "HOME": str(tmp_path / "home"),
+            "PYTHONPATH": os.pathsep.join((str(tmp_path), str(_repo_root() / "src"))),
+            "QT_QPA_PLATFORM": "offscreen",
+        }
+    )
+    code = """
+    from qtpy.QtCore import QEventLoop, QProcess, QTimer
+    from qtpy.QtWidgets import QApplication
+    from etho import cli
+    from etho.app import HardwareDialog, MainWindow
+    from etho.res_app import MainWindow as ResumableMainWindow
+
+    cli.init()
+    app = QApplication([])
+    for window_class in (MainWindow, ResumableMainWindow):
+        window = window_class()
+        window.show()
+        button = window.button["Hardware"]
+        assert button.text() == "Enumerate hardware"
+        assert window.layout.itemAtPosition(1, 0).widget() is button
+        button.click()
+        dialog = window.findChild(HardwareDialog)
+        try:
+            assert dialog.isVisible()
+            assert dialog.results.isReadOnly()
+            if dialog._scan.state() != QProcess.NotRunning:
+                loop = QEventLoop()
+                dialog._scan.finished.connect(loop.quit)
+                QTimer.singleShot(10000, loop.quit)
+                loop.exec()
+            output = dialog.results.toPlainText()
+            assert dialog.status.text() == "Scan complete.", output
+            assert "Test sensor  (address=AB:CD, 21.2°C)" in output
+            assert "GCM / Webcam: unavailable (SDK missing)" in output
+        finally:
+            dialog.reject()
+            window.close()
+    """
+    _run([sys.executable, "-c", textwrap.dedent(code)], env=env, cwd=_repo_root())

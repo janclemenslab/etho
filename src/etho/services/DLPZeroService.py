@@ -3,6 +3,7 @@ from .ZeroService import BaseZeroService  # import super class
 import time  # for timer
 import threading
 from . import register_service
+from .hardware import HardwareDevice, HardwareProbe
 from .utils.log_exceptions import for_all_methods, log_exceptions
 from .dlp import dlp_runners
 from ..utils.config import undefaultify
@@ -22,6 +23,13 @@ except ImportError as dlp_import_error:
     pass
 
 
+def _discover_projectors():
+    from usb.core import find
+
+    for device in find(find_all=True, idVendor=0x0451, idProduct=0x6401):
+        yield HardwareDevice("TI LightCrafter 4500", details=f"USB bus {device.bus}, address {device.address}")
+
+
 # decorate all methods in the class so that exceptions are properly logged
 @for_all_methods(log_exceptions(logging.getLogger(__name__)))
 @register_service
@@ -31,6 +39,10 @@ class DLP(BaseZeroService):
     SERVICE_PORT = 4253  # last two digits match logging port - but start with "42" instead of "14"
     SERVICE_NAME = "DLP"  # short, uppercase, 3-letter ID of the service (must equal class name)
     CLIENT_START_GROUP = "pre"
+
+    @classmethod
+    def hardware_probes(cls, *, ble_duration: float) -> dict[str, HardwareProbe]:
+        return {"LightCrafter 4500": _discover_projectors}
 
     @classmethod
     def setup_client(cls, service_key, service_index, prot, defaults, playlistfile, save_prefix, preview, new_console):

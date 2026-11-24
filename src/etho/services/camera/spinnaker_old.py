@@ -8,8 +8,8 @@ try:
     import PySpin
 
     pyspin_error = None
-except ImportError as pyspin_error:
-    pass
+except Exception as exc:
+    pyspin_error = exc
 
 
 class Spinnaker_OLD(BaseCam):
@@ -34,7 +34,7 @@ class Spinnaker_OLD(BaseCam):
         self.c.ChunkModeActive.SetValue(True)
         self.c.ChunkSelector.SetValue(PySpin.ChunkSelector_Timestamp)
         self.c.ChunkEnable.SetValue(True)
-        self.timestamp_offset = 0  # self._estimate_timestamp_offset()
+        self.timestamp_offset = self._estimate_timestamp_offset()
 
         # set pixel format
         self.c.PixelFormat.SetValue(PySpin.PixelFormat_Mono8)
@@ -240,19 +240,17 @@ class Spinnaker_OLD(BaseCam):
         return value
 
     def _estimate_timestamp_offset(self, timestamp_offset_iterations=10):
-        """Gets offset between system time and timestamps."""
-        # This method is required because the timestamp stored in the camera is relative to when it was powered on, so an
-        # offset needs to be applied to get it into epoch time; from tests I’ve done, this appears to be accurate to ~1e-3
-        # seconds.
+        """Estimate the system-minus-camera offset using legacy timestamp nodes."""
+        seconds_per_tick = self.getattr("TimestampIncrement") / 1e9
         timestamp_offsets = []
-        for i in range(timestamp_offset_iterations):
-            # Latch timestamp. This basically “freezes” the current camera timer into a variable that can be read with
-            self.c.TimestampLatch.Execute()
-            system_time = time.time()
-            # Compute timestamp offset in seconds; note that timestamp latch value is in nanoseconds
-            timestamp_offset = system_time - self.c.TimestampLatchValue.GetValue() / 1e9
-            timestamp_offsets.append(timestamp_offset)
-        # Return the median value
+        for _ in range(timestamp_offset_iterations):
+            # Bracket the latch to account for the command's round-trip latency.
+            system_before = time.time()
+            self.getattr("TimestampLatch")()
+            system_after = time.time()
+            camera_time = self.getattr("Timestamp") * seconds_per_tick
+            system_time = system_before + (system_after - system_before) / 2
+            timestamp_offsets.append(system_time - camera_time)
         return np.median(timestamp_offsets)
 
     def enable_gpio_strobe(self):
