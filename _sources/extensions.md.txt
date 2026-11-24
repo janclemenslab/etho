@@ -140,6 +140,20 @@ Services that run continuously should do the work in a thread or hardware task
 created during `setup()` and started during `start()`. Use a `threading.Event`
 or equivalent stop signal so `finish()` can stop the worker cleanly.
 
+## Hardware Discovery
+
+A service can implement the class method `hardware_probes(*, ble_duration)`
+to participate in `etho hardware`. Return a mapping from display labels to
+zero-argument probe functions. Each probe returns an iterable of
+`HardwareDevice` records from `etho.services.hardware`. Include the device name
+and any protocol fields that identify it. An empty iterable means the scan
+found no devices. Raise an exception when the scan cannot run.
+
+Probes use the SDK's device-listing functions and release SDK resources before
+returning. They run locally without creating a service instance or starting
+acquisition. GCM discovers backends from `camera.make` that implement
+`enumerate_devices()`, which returns `(identifier, name)` pairs.
+
 ## Wiring A Service Into Experiments
 
 `etho run` looks up services in `etho.services.SERVICE_REGISTRY` by their

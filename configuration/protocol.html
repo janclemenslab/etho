@@ -96,7 +96,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.calibration.html">etho.utils.calibration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.runner.html">etho.utils.runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
@@ -107,12 +106,14 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.hardware.html">etho.services.hardware</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.webcam.html">etho.services.camera.webcam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -254,14 +255,14 @@ the hardware parameters passed to those services.</p>
 cameras, such as <code class="docutils literal notranslate"><span class="pre">GCM1</span></code> and <code class="docutils literal notranslate"><span class="pre">GCM2</span></code>.</p>
 <p>Camera fields:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">cam_type</span></code>: One of <code class="docutils literal notranslate"><span class="pre">Dummy</span></code>, <code class="docutils literal notranslate"><span class="pre">Spinnaker</span></code>, <code class="docutils literal notranslate"><span class="pre">Basler</span></code>, <code class="docutils literal notranslate"><span class="pre">Ximea</span></code>, or <code class="docutils literal notranslate"><span class="pre">Hamamatsu</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cam_serialnumber</span></code>: Camera serial number. The dummy camera accepts arbitrary values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cam_type</span></code>: One of <code class="docutils literal notranslate"><span class="pre">Dummy</span></code>, <code class="docutils literal notranslate"><span class="pre">Spinnaker</span></code>, <code class="docutils literal notranslate"><span class="pre">Basler</span></code>, <code class="docutils literal notranslate"><span class="pre">Ximea</span></code>, <code class="docutils literal notranslate"><span class="pre">Hamamatsu</span></code>, or <code class="docutils literal notranslate"><span class="pre">Webcam</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cam_serialnumber</span></code>: Camera serial number or device number, as reported by <code class="docutils literal notranslate"><span class="pre">etho</span> <span class="pre">hardware</span></code>. The <code class="docutils literal notranslate"><span class="pre">Webcam</span></code> and <code class="docutils literal notranslate"><span class="pre">Hamamatsu</span></code> backends use zero-based device numbers. The dummy camera accepts arbitrary values.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">frame_rate</span></code>: Requested frame rate in frames per second.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">frame_width</span></code>: ROI width in pixels.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">frame_height</span></code>: ROI height in pixels.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">shutter_speed</span></code>: Exposure time in microseconds for the generic camera service.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">frame_offx</span></code>: ROI x offset in pixels. Defaults to <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">frame_offy</span></code>: ROI y offset in pixels. Defaults to <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shutter_speed</span></code>: Exposure time in microseconds. Webcam uses device-managed exposure and warns if this is set.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frame_offx</span></code>, <code class="docutils literal notranslate"><span class="pre">frame_offy</span></code>: ROI x and y offsets in pixels. Both default to <code class="docutils literal notranslate"><span class="pre">0</span></code>.
+Webcam ignores nonzero offsets and logs a warning.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">binning</span></code>: Horizontal and vertical binning factor. Defaults to <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">brightness</span></code>: Camera brightness or black level. Defaults to <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code>: Gamma value. Defaults to <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
@@ -277,6 +278,7 @@ cameras, such as <code class="docutils literal notranslate"><span class="pre">GC
 <li><p><code class="docutils literal notranslate"><span class="pre">disp_top</span></code>: Display a center/top view helper.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">save_timestamps</span></code>: Save system and camera timestamps.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">save_avi</span></code>: Save video with OpenCV <code class="docutils literal notranslate"><span class="pre">VideoWriter</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">save_pyav</span></code>: Save H.264 MP4 video with PyAV.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">save_ffmpegcv</span></code>: Save video with an ffmpegcv backend.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">save_vidgear</span></code>: Save video through VidGear.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">save_vidgear_round</span></code>: Save long videos, chunked into a sequences of individual files using the VidGear output.</p></li>

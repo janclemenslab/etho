@@ -1,0 +1,5 @@
+﻿etho.services.camera.webcam
+===========================
+
+.. automodule:: etho.services.camera.webcam
+   :members:

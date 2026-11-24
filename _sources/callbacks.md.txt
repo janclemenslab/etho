@@ -33,6 +33,7 @@ the callback accepts options.
 | `disp` | Display frames with OpenCV. |
 | `disp_fast` | Display frames with pyqtgraph. |
 | `save_avi` | Save frames with OpenCV `VideoWriter`. |
+| `save_pyav` | Save H.264 MP4 video with PyAV. |
 | `save_ffmpegcv` | Save frames with an ffmpegcv backend. |
 | `save_vidgear` | Save frames through VidGear. |
 | `save_avi_fast` | Save video with NVIDIA Video Processing Framework. |

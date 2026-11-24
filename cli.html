@@ -96,7 +96,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="api/etho.utils.calibration.html">etho.utils.calibration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.utils.runner.html">etho.utils.runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
@@ -107,12 +106,14 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.hardware.html">etho.services.hardware</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.webcam.html">etho.services.camera.webcam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -134,6 +135,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#initialize-configuration">Initialize Configuration</a></li>
 <li><a class="reference internal" href="#start-the-gui">Start the GUI</a></li>
 <li><a class="reference internal" href="#run-an-experiment">Run an Experiment</a></li>
+<li><a class="reference internal" href="#discover-hardware">Discover Hardware</a></li>
 <li><a class="reference internal" href="#display-system-support">Display System Support</a></li>
 </ul>
 </div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
@@ -167,19 +169,22 @@ data-aria-dark="Switch to auto color mode">
   <article class="yue" role="main">
           <section id="command-line-interface">
 <h1>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading">¶</a></h1>
-<p>The installed console command is <code class="docutils literal notranslate"><span class="pre">etho</span></code>. The public interface exposes four
-subcommands. Examples on this page assume a Windows rig and PowerShell.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">usage: etho [-h] {version,init,run,gui} ...
+<p>The installed console command is <code class="docutils literal notranslate"><span class="pre">etho</span></code>. Examples on this page assume a
+Windows rig and PowerShell.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span><span data-line="1">usage: etho [-h] {version,init,hardware,run,res-run,gui,res-gui} ...
 </span><span data-line="2">
 </span><span data-line="3">positional arguments:
-</span><span data-line="4">  {version,init,run,gui}
+</span><span data-line="4">  {version,init,hardware,run,res-run,gui,res-gui}
 </span><span data-line="5">    version             Displays system, version, and hardware info.
 </span><span data-line="6">    init                Initializes config files and folders.
-</span><span data-line="7">    run                 Starts an experiment from the CLI.
-</span><span data-line="8">    gui                 Opens the graphical user interface.
-</span><span data-line="9">
-</span><span data-line="10">options:
-</span><span data-line="11">  -h, --help            show this help message and exit
+</span><span data-line="7">    hardware            Lists hardware detected by local etho services.
+</span><span data-line="8">    run                 Starts an experiment from the CLI.
+</span><span data-line="9">    res-run             Starts a resumable DAQ/GCM experiment from the CLI.
+</span><span data-line="10">    gui                 Opens the graphical user interface.
+</span><span data-line="11">    res-gui             Opens the resumable graphical user interface.
+</span><span data-line="12">
+</span><span data-line="13">options:
+</span><span data-line="14">  -h, --help            show this help message and exit
 </span></pre></div>
 </div>
 <section id="initialize-configuration">
@@ -253,6 +258,21 @@ folders, a stimulus folder, and example files for a dummy-camera run.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">--preview</span></code> for camera alignment. Preview mode disables saving and logging
 for the camera run and replaces configured camera callbacks with a display
 callback.</p>
+</section>
+<section id="discover-hardware">
+<h2>Discover Hardware<a class="headerlink" href="#discover-hardware" title="Link to this heading">¶</a></h2>
+<p>In either GUI, click <strong>Enumerate hardware</strong> in the lower-left corner. The
+dialog scans the acquisition computer and displays each result as it arrives.
+You can select and copy device identifiers from the results.</p>
+<p>Run the command on the acquisition computer.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">etho</span> <span class="n">hardware</span>
+</span><span data-line="2"><span class="n">etho</span> <span class="n">hardware</span> <span class="p">-</span><span class="n">-ble-duration</span> <span class="n">20</span>
+</span></pre></div>
+</div>
+<p>The scan lists cameras, NI-DAQmx devices, USB LightCrafter 4500 projectors,
+and nearby Govee H5075 sensors. It prints the camera settings, DAQ device names,
+and sensor addresses to use in a protocol. The Bluetooth scan lasts 10 seconds
+by default. Each backend reports when it finds no devices or cannot scan.</p>
 </section>
 <section id="display-system-support">
 <h2>Display System Support<a class="headerlink" href="#display-system-support" title="Link to this heading">¶</a></h2>

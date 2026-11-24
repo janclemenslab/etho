@@ -2,7 +2,7 @@
 <html lang="en" data-accent-color="violet" data-content_root="../../../">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>etho.utils.shuffled_cycle - etho documentation</title><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>etho.services.hardware - etho documentation</title><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=e1a1ceaf" />
@@ -25,7 +25,7 @@
 }
 </style>
     
-  <meta property="og:type" content="website"/><meta property="og:title" content="etho.utils.shuffled_cycle"/>
+  <meta property="og:type" content="website"/><meta property="og:title" content="etho.services.hardware"/>
     <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
@@ -96,7 +96,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.calibration.html">etho.utils.calibration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.runner.html">etho.utils.runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
@@ -107,12 +106,14 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.hardware.html">etho.services.hardware</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.webcam.html">etho.services.camera.webcam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -150,7 +151,7 @@ data-aria-dark="Switch to auto color mode">
         <span>/</span>
         <meta itemprop="position" content="2" />
       </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-        <strong itemprop="name">etho.utils.shuffled_cycle</strong>
+        <strong itemprop="name">etho.services.hardware</strong>
         <meta itemprop="position" content="3" />
       </li></ol>
     <div class="xl:hidden ml-1">
@@ -163,54 +164,61 @@ data-aria-dark="Switch to auto color mode">
 </div><div class="flex flex-col break-words justify-between">
       <div class="relative min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
   <article class="yue" role="main">
-          <h1>Source code for etho.utils.shuffled_cycle</h1><div class="highlight"><pre>
-<span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
-</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cycle</span>
-</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
-</span><span data-line="4">
+          <h1>Source code for etho.services.hardware</h1><div class="highlight"><pre>
+<span></span><span data-line="1"><span class="sd">&quot;&quot;&quot;Local hardware discovery shared by services and the command line.&quot;&quot;&quot;</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Mapping</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 </span><span data-line="5">
-<div class="viewcode-block" id="shuffled_cycle">
-<a class="viewcode-back" href="../../../api/etho.utils.shuffled_cycle.html#etho.utils.shuffled_cycle.shuffled_cycle">[docs]</a>
-</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">shuffled_cycle</span><span class="p">(</span><span class="n">cycle</span><span class="p">):</span>
-</span><span data-line="7"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Shuffled cycle.</span>
-</span><span data-line="8">
-</span><span data-line="9"><span class="sd">    cycle(&#39;ABCD&#39;)                  --&gt; ABCD ABCD ABCD ...</span>
-</span><span data-line="10"><span class="sd">    cycle(&#39;ABCD&#39;, shuffle=&#39;block&#39;) --&gt; ACBD BDCA CDAB ...</span>
-</span><span data-line="11"><span class="sd">    cycle(&#39;ABCD&#39;, shuffle=&#39;full&#39;)  --&gt; ACCBBDBDCABA ...</span>
-</span><span data-line="12"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="6">
+<div class="viewcode-block" id="HardwareDevice">
+<a class="viewcode-back" href="../../../api/etho.services.hardware.html#etho.services.hardware.HardwareDevice">[docs]</a>
+</span><span data-line="7"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="8"><span class="k">class</span><span class="w"> </span><span class="nc">HardwareDevice</span><span class="p">:</span>
+</span><span data-line="9">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="10">    <span class="n">protocol</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span data-line="11">    <span class="n">details</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span></div>
+
+</span><span data-line="12">
 </span><span data-line="13">
-</span><span data-line="14">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">it</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">shuffle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;block&quot;</span><span class="p">):</span>
-</span><span data-line="15"><span class="w">        </span><span class="sd">&quot;&quot;&quot;.</span>
+</span><span data-line="14"><span class="n">HardwareProbe</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">HardwareDevice</span><span class="p">]]</span>
+</span><span data-line="15">
 </span><span data-line="16">
-</span><span data-line="17"><span class="sd">        Arguments:</span>
-</span><span data-line="18"><span class="sd">            it: Iterable</span>
-</span><span data-line="19"><span class="sd">            shuffle: None, &#39;block&#39;, &#39;full&#39;</span>
-</span><span data-line="20"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="21">        <span class="n">allowed_shuffles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;block&quot;</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">]</span>
-</span><span data-line="22">        <span class="k">if</span> <span class="n">shuffle</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_shuffles</span><span class="p">:</span>
-</span><span data-line="23">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;shuffle should be one of </span><span class="si">{</span><span class="n">allowed_shuffles</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</span><span data-line="24">        <span class="nb">super</span><span class="p">(</span><span class="n">shuffled_cycle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-</span><span data-line="25">        <span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
-</span><span data-line="26">        <span class="bp">self</span><span class="o">.</span><span class="n">_it</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
-</span><span data-line="27">        <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<div class="viewcode-block" id="HardwareDiscovery">
+<a class="viewcode-back" href="../../../api/etho.services.hardware.html#etho.services.hardware.HardwareDiscovery">[docs]</a>
+</span><span data-line="17"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="18"><span class="k">class</span><span class="w"> </span><span class="nc">HardwareDiscovery</span><span class="p">:</span>
+</span><span data-line="19">    <span class="n">service</span><span class="p">:</span> <span class="nb">str</span>
+</span><span data-line="20">    <span class="n">probe</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="21">    <span class="n">devices</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">HardwareDevice</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+</span><span data-line="22">    <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+</span><span data-line="23">
+</span><span data-line="24">
+<div class="viewcode-block" id="discover_hardware">
+<a class="viewcode-back" href="../../../api/etho.services.hardware.html#etho.services.hardware.discover_hardware">[docs]</a>
+</span><span data-line="25"><span class="k">def</span><span class="w"> </span><span class="nf">discover_hardware</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">ble_duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">HardwareDiscovery</span><span class="p">]:</span>
+</span><span data-line="26"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Run each registered service&#39;s local probes independently.&quot;&quot;&quot;</span>
+</span><span data-line="27">    <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">SERVICE_IMPORT_ERRORS</span><span class="p">,</span> <span class="n">SERVICE_REGISTRY</span>
 </span><span data-line="28">
-</span><span data-line="29">    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="30"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return next item in iterator.&quot;&quot;&quot;</span>
-</span><span data-line="31">        <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">)</span>  <span class="c1"># wrap index</span>
-</span><span data-line="32">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span> <span class="o">==</span> <span class="s2">&quot;block&quot;</span><span class="p">:</span>
-</span><span data-line="33">            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="34">                <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">)</span>  <span class="c1"># in-place shuffle the iterator</span>
-</span><span data-line="35">            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span>
-</span><span data-line="36">        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span> <span class="o">==</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span>
-</span><span data-line="37">            <span class="n">idx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># since randint bounds are inclusive</span>
-</span><span data-line="38">        <span class="c1"># else:</span>
-</span><span data-line="39">        <span class="c1">#     idx = self._pos</span>
-</span><span data-line="40">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-</span><span data-line="41">
-</span><span data-line="42">    <span class="k">def</span><span class="w"> </span><span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span data-line="43">        <span class="n">cp</span> <span class="o">=</span> <span class="n">shuffled_cycle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_it</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_shuffle</span><span class="p">)</span>
-</span><span data-line="44">        <span class="n">cp</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span>
-</span><span data-line="45">        <span class="k">return</span> <span class="n">cp</span></div>
+</span><span data-line="29">    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">SERVICE_REGISTRY</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">|</span> <span class="n">SERVICE_IMPORT_ERRORS</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+</span><span data-line="30">        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SERVICE_REGISTRY</span><span class="p">:</span>
+</span><span data-line="31">            <span class="k">yield</span> <span class="n">HardwareDiscovery</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">SERVICE_IMPORT_ERRORS</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+</span><span data-line="32">            <span class="k">continue</span>
+</span><span data-line="33">
+</span><span data-line="34">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="35">            <span class="n">probes</span> <span class="o">=</span> <span class="n">SERVICE_REGISTRY</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">hardware_probes</span><span class="p">(</span><span class="n">ble_duration</span><span class="o">=</span><span class="n">ble_duration</span><span class="p">)</span>
+</span><span data-line="36">        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+</span><span data-line="37">            <span class="k">yield</span> <span class="n">HardwareDiscovery</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">exc</span><span class="p">)</span>
+</span><span data-line="38">            <span class="k">continue</span>
+</span><span data-line="39">
+</span><span data-line="40">        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">probe</span> <span class="ow">in</span> <span class="n">probes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="41">            <span class="k">try</span><span class="p">:</span>
+</span><span data-line="42">                <span class="n">devices</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">probe</span><span class="p">())</span>
+</span><span data-line="43">            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+</span><span data-line="44">                <span class="k">yield</span> <span class="n">HardwareDiscovery</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">exc</span><span class="p">)</span>
+</span><span data-line="45">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="46">                <span class="k">yield</span> <span class="n">HardwareDiscovery</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">devices</span><span class="p">)</span></div>
 
 </span></pre></div>
         </article><button class="back-to-top" type="button">

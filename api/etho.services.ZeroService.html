@@ -2,7 +2,7 @@
 <html lang="en" data-accent-color="violet" data-content_root="../">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>etho.services.ZeroService - etho documentation</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.services.camera.base" href="etho.services.camera.base.html" /><link rel="prev" title="etho.services.TemplateZeroService" href="etho.services.TemplateZeroService.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>etho.services.ZeroService - etho documentation</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.services.hardware" href="etho.services.hardware.html" /><link rel="prev" title="etho.services.TemplateZeroService" href="etho.services.TemplateZeroService.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
@@ -96,7 +96,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.calibration.html">etho.utils.calibration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.runner.html">etho.utils.runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
@@ -107,12 +106,14 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.hardware.html">etho.services.hardware</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.webcam.html">etho.services.camera.webcam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -133,6 +134,7 @@ data-aria-dark="Switch to auto color mode">
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
 <li><a class="reference internal" href="#etho.services.ZeroService.BaseZeroService"><code class="docutils literal notranslate"><span class="pre">BaseZeroService</span></code></a><ul>
 <li><a class="reference internal" href="#etho.services.ZeroService.BaseZeroService.cleanup"><code class="docutils literal notranslate">cleanup()</span></code></a></li>
+<li><a class="reference internal" href="#etho.services.ZeroService.BaseZeroService.hardware_probes"><code class="docutils literal notranslate">hardware_probes()</span></code></a></li>
 <li><a class="reference internal" href="#etho.services.ZeroService.BaseZeroService.information"><code class="docutils literal notranslate">information()</span></code></a></li>
 <li><a class="reference internal" href="#etho.services.ZeroService.BaseZeroService.init_local_logger"><code class="docutils literal notranslate">init_local_logger()</span></code></a></li>
 <li><a class="reference internal" href="#etho.services.ZeroService.BaseZeroService.is_busy"><code class="docutils literal notranslate">is_busy()</span></code></a></li>
@@ -214,6 +216,12 @@ init_local_logger(self, logfilename)</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="etho.services.ZeroService.BaseZeroService.hardware_probes">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">hardware_probes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">ble_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="etho.services.hardware.html#etho.services.hardware.HardwareDevice" title="etho.services.hardware.HardwareDevice"><span class="pre">HardwareDevice</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/etho/services/ZeroService.html#BaseZeroService.hardware_probes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.services.ZeroService.BaseZeroService.hardware_probes" title="Link to this definition">¶</a></dt>
+<dd><p>Return named local device probes that run without a service instance.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="etho.services.ZeroService.BaseZeroService.information">
 <span class="sig-name descname"><span class="pre">information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/services/ZeroService.html#BaseZeroService.information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.services.ZeroService.BaseZeroService.information" title="Link to this definition">¶</a></dt>
 <dd><p>Information to display about the</p>
@@ -274,10 +282,10 @@ should be Dict[str, pd.DataFrame]</p>
         <span>Previous</span><div class="title">etho.services.TemplateZeroService</div></div>
     </a>
   </div><div class="navigation-next">
-    <a href="etho.services.camera.base.html">
+    <a href="etho.services.hardware.html">
       <div class="page-info">
         <span>Next</span>
-        <div class="title">etho.services.camera.base</div>
+        <div class="title">etho.services.hardware</div>
       </div>
       <i class="i-lucide chevron-right"></i>
     </a>

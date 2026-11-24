@@ -2,7 +2,7 @@
 <html lang="en" data-accent-color="violet" data-content_root="../">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>etho.services.camera.base - etho documentation</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.services.camera.basler" href="etho.services.camera.basler.html" /><link rel="prev" title="etho.services.ZeroService" href="etho.services.ZeroService.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>etho.services.camera.base - etho documentation</title><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="etho.services.camera.basler" href="etho.services.camera.basler.html" /><link rel="prev" title="etho.services.hardware" href="etho.services.hardware.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e1a1ceaf" />
@@ -96,7 +96,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.calibration.html">etho.utils.calibration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.runner.html">etho.utils.runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
@@ -107,12 +106,14 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.ZeroService.html">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.hardware.html">etho.services.hardware</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.webcam.html">etho.services.camera.webcam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -173,10 +174,10 @@ data-aria-dark="Switch to auto color mode">
   </svg>
   <span>Back to top</span>
 </button><div class="navigation flex print:hidden"><div class="navigation-prev">
-    <a href="etho.services.ZeroService.html">
+    <a href="etho.services.hardware.html">
       <i class="i-lucide chevron-left"></i>
       <div class="page-info">
-        <span>Previous</span><div class="title">etho.services.ZeroService</div></div>
+        <span>Previous</span><div class="title">etho.services.hardware</div></div>
     </a>
   </div><div class="navigation-next">
     <a href="etho.services.camera.basler.html">

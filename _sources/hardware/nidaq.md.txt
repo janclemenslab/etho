@@ -10,14 +10,14 @@ conda environment:
 
 ```powershell
 conda activate etho
-etho version --debug
+etho version
 ```
 
-On machines without NI-DAQmx, DAQ API imports and DAQ runs are expected to fail.
 
 ## Channel Naming
 
-Use NI-MAX to confirm the device name and available channels.
+Run `etho hardware` to list the NI-DAQmx device names. Use the reported
+`device` value in the `DAQ` block. You can enumerate NI-DAQmx devices via `etho hardware`. The `NIC` and `SIT` services use the same device names in their channel paths. Use NI-MAX to check available channels.
 
 Example protocol fields:
 

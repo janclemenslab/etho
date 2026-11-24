@@ -96,7 +96,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.calibration.html">etho.utils.calibration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.runner.html">etho.utils.runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
@@ -107,12 +106,14 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.ZeroService.html">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.hardware.html">etho.services.hardware</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.webcam.html">etho.services.camera.webcam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -178,14 +179,14 @@ tasks for NI-DAQmx devices.</p>
 <p>Install NI-DAQmx on the Windows rig and ensure <code class="docutils literal notranslate"><span class="pre">pydaqmx</span></code> imports in the <code class="docutils literal notranslate"><span class="pre">etho</span></code>
 conda environment:</p>
 <div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">conda</span> <span class="n">activate</span> <span class="n">etho</span>
-</span><span data-line="2"><span class="n">etho</span> <span class="n">version</span> <span class="p">-</span><span class="n">-debug</span>
+</span><span data-line="2"><span class="n">etho</span> <span class="n">version</span>
 </span></pre></div>
 </div>
-<p>On machines without NI-DAQmx, DAQ API imports and DAQ runs are expected to fail.</p>
 </section>
 <section id="channel-naming">
 <h2>Channel Naming<a class="headerlink" href="#channel-naming" title="Link to this heading">¶</a></h2>
-<p>Use NI-MAX to confirm the device name and available channels.</p>
+<p>Run <code class="docutils literal notranslate"><span class="pre">etho</span> <span class="pre">hardware</span></code> to list the NI-DAQmx device names. Use the reported
+<code class="docutils literal notranslate"><span class="pre">device</span></code> value in the <code class="docutils literal notranslate"><span class="pre">DAQ</span></code> block. You can enumerate NI-DAQmx devices via <code class="docutils literal notranslate"><span class="pre">etho</span> <span class="pre">hardware</span></code>. The <code class="docutils literal notranslate"><span class="pre">NIC</span></code> and <code class="docutils literal notranslate"><span class="pre">SIT</span></code> services use the same device names in their channel paths. Use NI-MAX to check available channels.</p>
 <p>Example protocol fields:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nt">DAQ</span><span class="p">:</span>
 </span><span data-line="2"><span class="w">  </span><span class="nt">samplingrate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>

@@ -9,13 +9,13 @@ nearby sensors:
 
 ```powershell
 conda activate etho
-etho govee
+etho hardware
 ```
 
-After scanning for 10 seconds, the command lists each sensor's address, name,
-temperature, and humidity. Match the temperature and humidity pair in a row to
+After scanning for 10 seconds, the `GOV` section lists each sensor's address,
+name, temperature, and humidity. Match the temperature and humidity pair in a row to
 the values shown on the physical sensor's display. If multiple sensors show
-similar values, temporarily move or warm one sensor, run `etho govee` again,
+similar values, temporarily move or warm one sensor, run `etho hardware` again,
 and match the changed readings.
 
 Copy the address from the matching row into the sensor's protocol block:

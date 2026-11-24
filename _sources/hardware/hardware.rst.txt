@@ -15,7 +15,7 @@ operated from protocols:
 - :doc:`Govee H5075 temperature/humidity sensors <govee>`
 
 You can add support for new hardware by implementing the appropriate service interface. See :ref:`extensions`.
-
+Existing hardware can be enumerated with `etho hardware`.
 
 .. toctree::
    :maxdepth: 1

@@ -96,7 +96,6 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.calibration.html">etho.utils.calibration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.config.html">etho.utils.config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.runner.html">etho.utils.runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="etho.utils.shuffled_cycle.html">etho.utils.shuffled_cycle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.sound.html">etho.utils.sound</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.tui.html">etho.utils.tui</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.utils.zeroclient.html">etho.utils.zeroclient</a></li>
@@ -107,12 +106,14 @@ data-aria-dark="Switch to auto color mode">
 <li class="toctree-l2"><a class="reference internal" href="etho.services.NICounterZeroService.html">etho.services.NICounterZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.TemplateZeroService.html">etho.services.TemplateZeroService</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.ZeroService.html">etho.services.ZeroService</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.hardware.html">etho.services.hardware</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.base.html">etho.services.camera.base</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.basler.html">etho.services.camera.basler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.dummy.html">etho.services.camera.dummy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.hamamatsu.html">etho.services.camera.hamamatsu</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker.html">etho.services.camera.spinnaker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.spinnaker_old.html">etho.services.camera.spinnaker_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="etho.services.camera.webcam.html">etho.services.camera.webcam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.camera.ximea.html">etho.services.camera.ximea</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.utils.concurrent_task.html">etho.services.utils.concurrent_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="etho.services.utils.log_exceptions.html">etho.services.utils.log_exceptions</a></li>
@@ -131,7 +132,7 @@ data-aria-dark="Switch to auto color mode">
       <i class="i-lucide close"></i>
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
-<li><a class="reference internal" href="#etho.cli.govee"><code class="docutils literal notranslate"><span class="pre">govee()</span></code></a></li>
+<li><a class="reference internal" href="#etho.cli.hardware"><code class="docutils literal notranslate"><span class="pre">hardware()</span></code></a></li>
 <li><a class="reference internal" href="#etho.cli.init"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
 <li><a class="reference internal" href="#etho.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li><a class="reference internal" href="#etho.cli.no_gui"><code class="docutils literal notranslate"><span class="pre">no_gui()</span></code></a></li>
@@ -176,9 +177,14 @@ data-aria-dark="Switch to auto color mode">
           <section id="module-etho.cli">
 <span id="etho-cli"></span><h1>etho.cli<a class="headerlink" href="#module-etho.cli" title="Link to this heading">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="etho.cli.govee">
-<span class="sig-prename descclassname"><span class="pre">etho.cli.</span></span><span class="sig-name descname"><span class="pre">govee</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/cli.html#govee"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.cli.govee" title="Link to this definition">¶</a></dt>
-<dd><p>Lists nearby Govee H5075 sensors and their protocol addresses/readings.</p>
+<dt class="sig sig-object py" id="etho.cli.hardware">
+<span class="sig-prename descclassname"><span class="pre">etho.cli.</span></span><span class="sig-name descname"><span class="pre">hardware</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">ble_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/cli.html#hardware"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.cli.hardware" title="Link to this definition">¶</a></dt>
+<dd><p>Lists hardware detected by local etho services.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ble_duration</strong> – Time in seconds to listen for Bluetooth advertisements.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -190,7 +196,7 @@ data-aria-dark="Switch to auto color mode">
 <dl class="py function">
 <dt class="sig sig-object py" id="etho.cli.main">
 <span class="sig-prename descclassname"><span class="pre">etho.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/etho/cli.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#etho.cli.main" title="Link to this definition">¶</a></dt>
-<dd><p>Command line interface for DAS.</p>
+<dd><p>Command line interface for etho.</p>
 </dd></dl>
 
 <dl class="py function">
